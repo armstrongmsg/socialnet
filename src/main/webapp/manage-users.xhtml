@@ -1,0 +1,81 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns = "http://www.w3.org/1999/xhtml"
+   xmlns:f = "http://java.sun.com/jsf/core"
+   xmlns:h = "http://java.sun.com/jsf/html">
+
+   <h:body>
+      <h:form>
+         <h:dataTable value = "#{networkBean.users}" var = "user"
+            styleClass = "usersTable"
+            headerClass = "usersTableHeader"
+            rowClasses = "usersTableOddRow,usersTableEvenRow">
+            
+            <h:column>    				
+               <f:facet name = "header">ID</f:facet>    				
+               <h:inputText value = "#{user.userId}"
+                  size = "20" rendered = "#{user.canEdit}" />
+               <h:outputText value = "#{user.userId}"
+                  rendered = "#{not user.canEdit}" />
+            </h:column>
+            
+            <h:column>
+               <f:facet name = "header">Name</f:facet>
+               <h:inputText value = "#{user.username}" 
+                  size = "5" rendered = "#{user.canEdit}" />
+               <h:outputText value = "#{user.username}" 
+                  rendered = "#{not user.canEdit}" />
+            </h:column>
+            
+            <h:column>
+               <f:facet name = "header">Profile description</f:facet>
+               <h:inputText value = "#{user.profileDescription}" 
+                  size = "5" rendered = "#{user.canEdit}" />
+               <h:outputText value = "#{user.profileDescription}" 
+                  rendered = "#{not user.canEdit}" />
+            </h:column>
+            
+            <h:column>
+               <f:facet name = "header">Edit</f:facet>
+               <h:commandButton value = "Edit" 
+                  action = "#{networkBean.editUser}" 
+                  rendered = "#{not user.canEdit}">        
+                  <f:setPropertyActionListener 
+                  target = "#{networkBean.user}" value = "#{user}" />
+               </h:commandButton>
+            </h:column>
+            
+            <h:column>
+            <f:facet name = "header">Delete</f:facet>
+               <h:commandButton value = "Delete" 
+                  action = "#{networkBean.removeUser}"  >                
+                  <f:setPropertyActionListener 
+                     target = "#{networkBean.user}" value = "#{user}" />
+               </h:commandButton>
+            </h:column>
+            
+            <h:column>
+               <f:facet name = "header">Show</f:facet>
+               <h:commandButton value = "Show" 
+                  action = "#{navigationController.showPage}">
+                  <f:param name = "pageId" value = "show-user" />        
+                  <f:setPropertyActionListener 
+                  target = "#{networkBean.user}" value = "#{user}" />
+               </h:commandButton>
+            </h:column>
+         </h:dataTable> 
+     
+         <h:commandButton value = "Save users"
+            action = "#{networkBean.saveUsers}" />
+      </h:form>
+      
+      <h:form>
+      	<h:commandButton action = "#{navigationController.showPage}"
+            value = "Back" >
+        	<f:param name = "pageId" value = "home" />
+        </h:commandButton>
+      </h:form>
+   </h:body>
+</html>
