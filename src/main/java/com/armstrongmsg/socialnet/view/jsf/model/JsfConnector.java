@@ -1,6 +1,8 @@
 package com.armstrongmsg.socialnet.view.jsf.model;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 public class JsfConnector {
@@ -18,5 +20,30 @@ public class JsfConnector {
 		}
 		
 		return newViewUsers;
+	}
+	
+	private String toViewDate(GregorianCalendar calendar) {
+		return String.format("%02d/%02d/%04d - %02d:%02d:%02d", 
+				calendar.get(Calendar.DAY_OF_MONTH),
+				calendar.get(Calendar.MONTH), 
+				calendar.get(Calendar.YEAR),
+				calendar.get(Calendar.HOUR_OF_DAY),
+				calendar.get(Calendar.MINUTE),
+				calendar.get(Calendar.SECOND));
+	}
+	
+	public Post getViewPost(com.armstrongmsg.socialnet.model.Post modelPost) {
+		return new Post(modelPost.getTitle(), toViewDate(modelPost.getDate()), 
+				modelPost.getContent(), modelPost.getVisibility().getValue());
+	}
+	
+	public List<Post> getViewPosts(List<com.armstrongmsg.socialnet.model.Post> modelPosts) {
+		List<Post> newViewPosts = new ArrayList<Post>();
+		
+		for (com.armstrongmsg.socialnet.model.Post modelPost : modelPosts) {
+			newViewPosts.add(getViewPost(modelPost));
+		}
+		
+		return newViewPosts;
 	}
 }

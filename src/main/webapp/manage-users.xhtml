@@ -65,6 +65,18 @@
                   target = "#{networkBean.user}" value = "#{user}" />
                </h:commandButton>
             </h:column>
+            
+            <h:column>
+               <f:facet name = "header">Profile</f:facet>
+               <h:commandButton value = "Profile"
+                  action = "#{navigationController.showPage}">
+                  <f:param name = "pageId" value = "user-profile" />        
+                  <f:setPropertyActionListener 
+                  target = "#{networkBean.user}" value = "#{user}" />
+                  <f:setPropertyActionListener 
+                  target = "#{postBean.user}" value = "#{user}" />
+               </h:commandButton>
+            </h:column>
          </h:dataTable> 
      
          <h:commandButton value = "Save users"

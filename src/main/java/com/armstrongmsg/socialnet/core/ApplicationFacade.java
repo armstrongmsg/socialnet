@@ -6,6 +6,7 @@ import java.util.List;
 import com.armstrongmsg.socialnet.model.Admin;
 import com.armstrongmsg.socialnet.model.Group;
 import com.armstrongmsg.socialnet.model.Network;
+import com.armstrongmsg.socialnet.model.Post;
 import com.armstrongmsg.socialnet.model.Relationship;
 import com.armstrongmsg.socialnet.model.User;
 
@@ -44,5 +45,13 @@ public class ApplicationFacade {
 	
 	public List<User> getUsers() {
 		return this.network.getUsers();
+	}
+
+	public void createPost(String userId, String title, String content, String postVisibility) {
+		this.network.createPost(userId, title, content, postVisibility);
+	}
+
+	public List<Post> getUserPosts(String userId) {
+		return this.network.getUserPosts(userId);
 	}
 }

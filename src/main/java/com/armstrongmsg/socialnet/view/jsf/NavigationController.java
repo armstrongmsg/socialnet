@@ -27,6 +27,7 @@ public class NavigationController {
 			case "add-user": return "add-user";
 			case "manage-users": return "manage-users";
 			case "show-user": return "show-user";
+			case "user-profile": return "user-profile";
 		}
 		
 		return "";

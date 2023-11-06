@@ -52,4 +52,14 @@ public class Network {
 		//FIXME
 		return null;
 	}
+
+	public void createPost(String userId, String title, String content, String postVisibility) {
+		User user = findUserById(userId);
+		user.getProfile().createPost(title, content, postVisibility);
+	}
+
+	public List<Post> getUserPosts(String userId) {
+		User user = findUserById(userId);
+		return user.getProfile().getPosts();
+	}
 }
