@@ -24,6 +24,43 @@ xmlns:f = "http://java.sun.com/jsf/core">
       
       <hr />
       
+      <h:form>
+        <h:commandButton value = "Set context">
+		   <f:setPropertyActionListener 
+                     target = "#{contextBean.user}" value = "#{networkBean.user}" />
+        </h:commandButton>
+      </h:form>
+      
+      <hr />
+      
+      <h:form>
+        <h:commandButton value = "Add friend" action = "#{friendshipBean.addFriendship}">
+		   <f:setPropertyActionListener 
+                     target = "#{friendshipBean.user1}" value = "#{contextBean.user}"/>
+		   <f:setPropertyActionListener 
+                     target = "#{friendshipBean.user2}" value = "#{networkBean.user}" />
+        </h:commandButton>
+      </h:form>
+      
+      <hr />
+      
+      Friends
+      
+      <h:form>
+         <h:dataTable value = "#{networkBean.friends}" var = "friend"
+            styleClass = "usersTable"
+            headerClass = "usersTableHeader"
+            rowClasses = "usersTableOddRow,usersTableEvenRow">
+            
+            <h:column>    				
+               <f:facet name = "header">Name</f:facet>
+               <h:outputText value = "#{friend.username}" />
+            </h:column>
+         </h:dataTable>
+      </h:form>
+      
+      <hr />
+      
       Create post
       
       <h:form>

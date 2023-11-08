@@ -7,13 +7,15 @@ public class Network {
 	private Admin admin;
 	private List<User> users;
 	private List<Group> groups;
-	private List<Relationship> relationships;
+	private List<Friendship> friendships;
+	private List<Follow> follows;
 	
-	public Network(Admin admin, List<User> users, List<Group> groups, List<Relationship> relationships) {
+	public Network(Admin admin, List<User> users, List<Group> groups, List<Friendship> friendships, List<Follow> follows) {
 		this.admin = admin;
 		this.users = users;
 		this.groups = groups;
-		this.relationships = relationships;
+		this.friendships = friendships;
+		this.follows = follows;
 	}
 
 	public Admin getAdmin() {
@@ -28,8 +30,12 @@ public class Network {
 		return groups;
 	}
 
-	public List<Relationship> getRelationships() {
-		return relationships;
+	public List<Friendship> getFriendships() {
+		return friendships;
+	}
+
+	public List<Follow> getFollows() {
+		return follows;
 	}
 
 	public void addUser(String userId, String username, String profileDescription) {
@@ -61,5 +67,28 @@ public class Network {
 	public List<Post> getUserPosts(String userId) {
 		User user = findUserById(userId);
 		return user.getProfile().getPosts();
+	}
+
+	public void addFriendship(String userId1, String userId2) {
+		User user1 = findUserById(userId1);
+		User user2 = findUserById(userId2);
+		this.friendships.add(new Friendship(user1, user2));
+	}
+
+	public List<User> getFriends(String userId) {
+		User user = findUserById(userId);
+		List<User> friends = new ArrayList<User>();
+		
+		for (Friendship friendship : getFriendships()) {
+			if (friendship.getFriend1().equals(user)) {
+				friends.add(friendship.getFriend2());
+			}
+			
+			if (friendship.getFriend2().equals(user)) {
+				friends.add(friendship.getFriend1());
+			}
+		}
+		
+		return friends;
 	}
 }

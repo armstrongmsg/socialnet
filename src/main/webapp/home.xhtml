@@ -11,6 +11,10 @@
       <hr />
       
       <h:form>
+        Logged as <h:outputText value = "#{contextBean.user.userId}" /> - <h:outputText value = "#{contextBean.user.username}" />
+      </h:form>
+      
+      <h:form>
          <h:commandButton action = "#{navigationController.showPage}"
             value = "List users" >
             <f:param name = "pageId" value = "list-users" />

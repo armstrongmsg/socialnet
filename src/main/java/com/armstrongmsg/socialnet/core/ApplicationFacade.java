@@ -4,10 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.armstrongmsg.socialnet.model.Admin;
+import com.armstrongmsg.socialnet.model.Follow;
+import com.armstrongmsg.socialnet.model.Friendship;
 import com.armstrongmsg.socialnet.model.Group;
 import com.armstrongmsg.socialnet.model.Network;
 import com.armstrongmsg.socialnet.model.Post;
-import com.armstrongmsg.socialnet.model.Relationship;
 import com.armstrongmsg.socialnet.model.User;
 
 public class ApplicationFacade {
@@ -19,8 +20,9 @@ public class ApplicationFacade {
 		Admin admin = new Admin("admin", "admin");
 		List<User> users = new ArrayList<User>();
 		List<Group> groups = new ArrayList<Group>();
-		List<Relationship> relationships = new ArrayList<Relationship>();
-		this.network = new Network(admin, users, groups, relationships);
+		List<Friendship> friendships = new ArrayList<Friendship>();
+		List<Follow> follows = new ArrayList<Follow>();
+		this.network = new Network(admin, users, groups, friendships, follows);
 	}
 	
 	public static ApplicationFacade getInstance() {
@@ -53,5 +55,13 @@ public class ApplicationFacade {
 
 	public List<Post> getUserPosts(String userId) {
 		return this.network.getUserPosts(userId);
+	}
+	
+	public void addFriendship(String userId1, String userId2) {
+		this.network.addFriendship(userId1, userId2);
+	}
+
+	public List<User> getFriends(String userId) {
+		return this.network.getFriends(userId);
 	}
 }
