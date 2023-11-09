@@ -64,4 +64,12 @@ public class ApplicationFacade {
 	public List<User> getFriends(String userId) {
 		return this.network.getFriends(userId);
 	}
+
+	public void addFollow(String followerId, String followedId) {
+		this.network.addFollow(followerId, followedId);
+	}
+
+	public List<User> getFollowedUsers(String userId) {
+		return this.network.getFollowedUsers(userId);
+	}
 }

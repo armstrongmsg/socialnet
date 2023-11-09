@@ -91,4 +91,23 @@ public class Network {
 		
 		return friends;
 	}
+
+	public void addFollow(String followerId, String followedId) {
+		User follower = findUserById(followerId);
+		User followed = findUserById(followedId);
+		this.follows.add(new Follow(follower, followed));
+	}
+	
+	public List<User> getFollowedUsers(String followerId) {
+		User user = findUserById(followerId);
+		List<User> followedUsers = new ArrayList<User>();
+		
+		for (Follow follow : getFollows()) {
+			if (follow.getFollower().equals(user)) {
+				followedUsers.add(follow.getFollowed());
+			}
+		}
+		
+		return followedUsers;
+	}
 }

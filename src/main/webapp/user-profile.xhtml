@@ -44,6 +44,17 @@ xmlns:f = "http://java.sun.com/jsf/core">
       
       <hr />
       
+      <h:form>
+        <h:commandButton value = "Follow" action = "#{followBean.addFollow}">
+		   <f:setPropertyActionListener 
+                     target = "#{followBean.follower}" value = "#{contextBean.user}"/>
+		   <f:setPropertyActionListener 
+                     target = "#{followBean.followed}" value = "#{networkBean.user}" />
+        </h:commandButton>
+      </h:form>
+      
+      <hr />
+      
       Friends
       
       <h:form>
@@ -55,6 +66,23 @@ xmlns:f = "http://java.sun.com/jsf/core">
             <h:column>    				
                <f:facet name = "header">Name</f:facet>
                <h:outputText value = "#{friend.username}" />
+            </h:column>
+         </h:dataTable>
+      </h:form>
+      
+      <hr />
+      
+      Followed
+      
+      <h:form>
+         <h:dataTable value = "#{networkBean.follows}" var = "follow"
+            styleClass = "usersTable"
+            headerClass = "usersTableHeader"
+            rowClasses = "usersTableOddRow,usersTableEvenRow">
+            
+            <h:column>    				
+               <f:facet name = "header">Name</f:facet>
+               <h:outputText value = "#{follow.username}" />
             </h:column>
          </h:dataTable>
       </h:form>

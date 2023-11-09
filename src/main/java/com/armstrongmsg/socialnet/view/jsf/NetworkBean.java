@@ -89,4 +89,8 @@ public class NetworkBean {
 	public List<User> getFriends() {
 		return new JsfConnector().getViewUsers(facade.getFriends(user.getUserId()));
 	}
+	
+	public List<User> getFollows() {
+		return new JsfConnector().getViewUsers(facade.getFollowedUsers(user.getUserId()));
+	}
 }
