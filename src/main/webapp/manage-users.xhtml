@@ -8,6 +8,30 @@
 
    <h:body>
       <h:form>
+	      <table>
+	            <tr>
+	               <td>User ID :</td>
+	               <td><h:inputText size = "20" value = "#{networkBean.userId}" /></td>
+	            </tr>
+	            
+	            <tr>
+	               <td>User name :</td>
+	               <td><h:inputText size = "20" value = "#{networkBean.username}" /></td>
+	            </tr>
+	            
+	            <tr>
+	               <td>Profile description :</td>
+	               <td><h:inputText size = "20" value = "#{networkBean.profileDescription}" /></td>
+	            </tr>
+	            
+	            <tr>
+	               <td> </td>
+	               <td><h:commandButton value = "Add user" action = "#{networkBean.addUser}" /></td>
+	            </tr>
+	         </table>
+      </h:form>
+   
+      <h:form>
          <h:dataTable value = "#{networkBean.users}" var = "user"
             styleClass = "usersTable"
             headerClass = "usersTableHeader"
