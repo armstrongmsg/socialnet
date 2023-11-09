@@ -17,7 +17,8 @@ public class ApplicationFacade {
 	private Network network;
 	
 	private ApplicationFacade() {
-		Admin admin = new Admin("admin", "admin");
+		// FIXME should load from a configuration file
+		Admin admin = new Admin("admin", "admin", "");
 		List<User> users = new ArrayList<User>();
 		List<Group> groups = new ArrayList<Group>();
 		List<Friendship> friendships = new ArrayList<Friendship>();
@@ -33,8 +34,13 @@ public class ApplicationFacade {
 		return instance;
 	}
 	
-	public void addUser(String userId, String username, String profileDescription) {
+	// FIXME to be removed
+	public void addUser(String userId, String username, String password, String profileDescription) {
 		this.network.addUser(userId, username, profileDescription);
+	}
+	
+	public void addUser(String username, String password, String profileDescription) {
+		this.network.addUser(username, password, profileDescription);
 	}
 	
 	public void removeUser(String userId) {
@@ -71,5 +77,17 @@ public class ApplicationFacade {
 
 	public List<User> getFollowedUsers(String userId) {
 		return this.network.getFollowedUsers(userId);
+	}
+
+	public User validateCredentials(String username, String password) {
+		return this.network.validateCredentials(username, password);
+	}
+
+	public boolean userIsAdmin(String userId) {
+		return this.network.userIsAdmin(userId);
+	}
+
+	public List<Post> getFriendsPosts(String userId) {
+		return this.network.getFriendsPosts(userId);
 	}
 }

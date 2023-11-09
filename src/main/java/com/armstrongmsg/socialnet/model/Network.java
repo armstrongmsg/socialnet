@@ -2,6 +2,7 @@ package com.armstrongmsg.socialnet.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class Network {
 	private Admin admin;
@@ -38,10 +39,15 @@ public class Network {
 		return follows;
 	}
 
-	public void addUser(String userId, String username, String profileDescription) {
+	public void addUser(String userId, String username, String password, String profileDescription) {
 		Profile profile = new Profile(profileDescription, new ArrayList<Post>());
-		User newUser = new User(username, userId, profile);
+		User newUser = new User(username, userId, password, profile);
 		this.users.add(newUser);
+	}
+	
+	public void addUser(String username, String password, String profileDescription) {
+		UUID uuid = UUID.randomUUID();
+		addUser(uuid.toString(), username, password, profileDescription);
 	}
 
 	public void removeUser(String userId) {
@@ -109,5 +115,44 @@ public class Network {
 		}
 		
 		return followedUsers;
+	}
+
+	public User validateCredentials(String username, String password) {
+		User user = findUserByUsername(username);
+		
+		if (user.getPassword().equals(password)) {
+			return user;
+		}
+		// TODO throw exception
+		return null;
+	}
+
+	private User findUserByUsername(String username) {
+		for (User user : this.users) {
+			if (user.getUsername().equals(username)) {
+				return user;
+			}
+		}
+		
+		if (admin.getUsername().equals(username)) {
+			return admin;
+		}
+		// FIXME
+		return null;
+	}
+
+	public boolean userIsAdmin(String userId) {
+		return this.admin.getUserId().equals(userId);
+	}
+
+	public List<Post> getFriendsPosts(String userId) {
+		List<User> friends = getFriends(userId);
+		List<Post> friendsPosts = new ArrayList<Post>();
+		
+		for (User friend : friends) {
+			friendsPosts.addAll(friend.getProfile().getPosts());
+		}
+		
+		return friendsPosts;
 	}
 }

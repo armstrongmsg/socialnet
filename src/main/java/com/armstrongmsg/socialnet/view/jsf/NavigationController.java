@@ -28,6 +28,8 @@ public class NavigationController {
 			case "manage-users": return "manage-users";
 			case "show-user": return "show-user";
 			case "user-profile": return "user-profile";
+			case "sign-up": return "sign-up";
+			case "user-home": return "user-home";
 		}
 		
 		return "";

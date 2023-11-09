@@ -7,6 +7,7 @@ import javax.faces.bean.SessionScoped;
 
 import com.armstrongmsg.socialnet.core.ApplicationFacade;
 import com.armstrongmsg.socialnet.view.jsf.model.JsfConnector;
+import com.armstrongmsg.socialnet.view.jsf.model.Post;
 import com.armstrongmsg.socialnet.view.jsf.model.User;
 
 @ManagedBean(name = "networkBean", eager = true)
@@ -14,6 +15,7 @@ import com.armstrongmsg.socialnet.view.jsf.model.User;
 public class NetworkBean {
 	private String userId;
 	private String username;
+	private String password;
 	private String profileDescription;
 
 	private User user;
@@ -66,6 +68,12 @@ public class NetworkBean {
 		users = new JsfConnector().getViewUsers(facade.getUsers());
 		return null;
 	}
+	
+	public String signUp() {
+		facade.addUser(username, getPassword(), profileDescription);
+		users = new JsfConnector().getViewUsers(facade.getUsers());
+		return null;
+	}
 
 	public String editUser() {
 		getUser().setCanEdit(true);
@@ -92,5 +100,17 @@ public class NetworkBean {
 	
 	public List<User> getFollows() {
 		return new JsfConnector().getViewUsers(facade.getFollowedUsers(user.getUserId()));
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public List<Post> getFriendsPosts() {
+		return new JsfConnector().getViewPosts(facade.getFriendsPosts(getUser().getUserId()));
 	}
 }

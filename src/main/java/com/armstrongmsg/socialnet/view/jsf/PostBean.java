@@ -82,4 +82,8 @@ public class PostBean {
 		
 		return userPosts;
 	}
+	
+	public List<Post> getFriendsPosts() {
+		return new JsfConnector().getViewPosts(facade.getFriendsPosts(getUser().getUserId()));
+	}
 }

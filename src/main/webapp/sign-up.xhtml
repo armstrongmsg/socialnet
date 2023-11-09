@@ -1,0 +1,43 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns = "http://www.w3.org/1999/xhtml"   
+xmlns:h = "http://java.sun.com/jsf/html"
+xmlns:f = "http://java.sun.com/jsf/core">
+   
+   <h:head>
+      <title>Sign up</title>		
+      <h:outputStylesheet library = "css" name = "styles.css"  /> 	
+   </h:head>
+   
+   <h:body>
+   		<h:form> 
+         <table>
+            <tr>
+               <td>User name :</td>
+               <td><h:inputText size = "20" value = "#{networkBean.username}" /></td>
+            </tr>
+            
+            <tr>
+               <td>Profile description :</td>
+               <td><h:inputText size = "20" value = "#{networkBean.profileDescription}" /></td>
+            </tr>
+            
+            <tr>
+               <td>Password:</td>
+               <td><h:inputText size = "20" value = "#{networkBean.password}" /></td>
+            </tr>
+            
+            <tr>
+               <td> </td>
+               <td><h:commandButton value = "Sign up" action = "#{networkBean.signUp}" /></td>
+            </tr>
+         </table>
+         
+         <h:commandButton action = "#{navigationController.showPage}" value = "Back" >
+	         <f:param name = "pageId" value = "home" />
+	     </h:commandButton>
+      </h:form>
+   </h:body>
+</html>

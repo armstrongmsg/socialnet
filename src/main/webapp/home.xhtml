@@ -2,24 +2,69 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html xmlns = "http://www.w3.org/1999/xhtml"
-   xmlns:f = "http://java.sun.com/jsf/core"
-   xmlns:h = "http://java.sun.com/jsf/html">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html">
 
-   <h:body>
-      <h2>Social net</h2>
-      <hr />
-      
-      <h:form>
-        Logged as <h:outputText value = "#{contextBean.user.userId}" /> - <h:outputText value = "#{contextBean.user.username}" />
-      </h:form>
-      
-      <h:form>
-         <h:commandButton action = "#{navigationController.showPage}"
-            value = "Manage users" >
-            <f:param name = "pageId" value = "manage-users" />
-         </h:commandButton>
-      </h:form>
-      <br/>
-   </h:body>
+<h:body>
+	<h2>Social net</h2>
+	<hr />
+
+	<h:form>
+		<h:outputText value="#{contextBean.user.username}"
+			rendered="#{contextBean.logged}" />
+		<h:outputText value="Please login"
+			rendered="#{not contextBean.logged}" />
+	</h:form>
+
+	<h:form rendered="#{contextBean.logged}">
+		<h:commandButton value="Logout" action="#{contextBean.logout}" />
+	</h:form>
+
+	<h:form rendered="#{not contextBean.logged}">
+		
+	</h:form>
+
+	<h:form rendered="#{not contextBean.logged}">
+		<table>
+			<tr>
+				<td>User name:</td>
+				<td><h:inputText size="20" value="#{contextBean.username}" /></td>
+			</tr>
+
+			<tr>
+				<td>Password :</td>
+				<td><h:inputSecret size="20" value="#{contextBean.password}" /></td>
+			</tr>
+
+			<tr>
+				<td></td>
+				<td>
+					<h:commandButton value="Login" action="#{contextBean.login}" >
+						<f:setPropertyActionListener target = "#{postBean.user}" value = "#{contextBean.user}" />
+					</h:commandButton>
+					<h:commandButton action="#{navigationController.showPage}"
+						value="Sign up">
+						<f:param name="pageId" value="sign-up" />
+					</h:commandButton>
+				</td>
+			</tr>
+		</table>
+	</h:form>
+
+	<h:form rendered="#{contextBean.admin}">
+		<h:commandButton action="#{navigationController.showPage}"
+			value="Manage users">
+			<f:param name="pageId" value="manage-users" />
+		</h:commandButton>
+	</h:form>
+	
+	<h:form>
+		<h:commandButton action="#{navigationController.showPage}"
+			value="Home">
+			<f:param name="pageId" value="user-home" />
+		</h:commandButton>
+	</h:form>
+	<br />
+</h:body>
 </html>
