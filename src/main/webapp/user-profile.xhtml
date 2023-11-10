@@ -25,26 +25,13 @@ xmlns:f = "http://java.sun.com/jsf/core">
       <hr />
       
       <h:form>
-        <h:commandButton value = "Set context">
-		   <f:setPropertyActionListener 
-                     target = "#{contextBean.user}" value = "#{networkBean.user}" />
-        </h:commandButton>
-      </h:form>
-      
-      <hr />
-      
-      <h:form>
         <h:commandButton value = "Add friend" action = "#{friendshipBean.addFriendship}">
 		   <f:setPropertyActionListener 
                      target = "#{friendshipBean.user1}" value = "#{contextBean.user}"/>
 		   <f:setPropertyActionListener 
                      target = "#{friendshipBean.user2}" value = "#{networkBean.user}" />
         </h:commandButton>
-      </h:form>
-      
-      <hr />
-      
-      <h:form>
+        
         <h:commandButton value = "Follow" action = "#{followBean.addFollow}">
 		   <f:setPropertyActionListener 
                      target = "#{followBean.follower}" value = "#{contextBean.user}"/>
@@ -89,7 +76,7 @@ xmlns:f = "http://java.sun.com/jsf/core">
       
       <hr />
       
-      Create post
+      Create a post
       
       <h:form>
       	Title

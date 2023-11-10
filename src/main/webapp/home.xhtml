@@ -13,8 +13,6 @@
 	<h:form>
 		<h:outputText value="#{contextBean.user.username}"
 			rendered="#{contextBean.logged}" />
-		<h:outputText value="Please login"
-			rendered="#{not contextBean.logged}" />
 	</h:form>
 
 	<h:form rendered="#{contextBean.logged}">
@@ -59,7 +57,7 @@
 		</h:commandButton>
 	</h:form>
 	
-	<h:form>
+	<h:form rendered="#{contextBean.logged}">
 		<h:commandButton action="#{navigationController.showPage}"
 			value="Home">
 			<f:param name="pageId" value="user-home" />
