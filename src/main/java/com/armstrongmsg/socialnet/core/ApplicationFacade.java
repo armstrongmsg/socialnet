@@ -1,5 +1,7 @@
 package com.armstrongmsg.socialnet.core;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,6 +12,7 @@ import com.armstrongmsg.socialnet.model.Group;
 import com.armstrongmsg.socialnet.model.Network;
 import com.armstrongmsg.socialnet.model.Post;
 import com.armstrongmsg.socialnet.model.User;
+import com.armstrongmsg.socialnet.util.PropertiesUtil;
 
 public class ApplicationFacade {
 	private static ApplicationFacade instance;
@@ -17,8 +20,24 @@ public class ApplicationFacade {
 	private Network network;
 	
 	private ApplicationFacade() {
-		// FIXME should load from a configuration file
-		Admin admin = new Admin("admin", "admin", "");
+		PropertiesUtil properties;
+		String adminUsername = "";
+		String adminPassword = "";
+		
+		try {
+			// TODO treat exceptions properly
+			properties = new PropertiesUtil();
+			adminUsername = properties.getProperty("ADMIN_USERNAME");
+			adminPassword = properties.getProperty("ADMIN_PASSWORD");
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		Admin admin = new Admin(adminUsername, adminUsername, adminPassword);
 		List<User> users = new ArrayList<User>();
 		List<Group> groups = new ArrayList<Group>();
 		List<Friendship> friendships = new ArrayList<Friendship>();
