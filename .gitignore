@@ -30,3 +30,4 @@ replay_pid*
 .settings/
 conf/properties
 src/main/resources/application.properties
+src/main/resources/logback.xml

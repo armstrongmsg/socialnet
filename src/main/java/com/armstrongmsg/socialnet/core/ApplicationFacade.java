@@ -5,6 +5,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.armstrongmsg.socialnet.model.Admin;
 import com.armstrongmsg.socialnet.model.Follow;
 import com.armstrongmsg.socialnet.model.Friendship;
@@ -15,8 +18,9 @@ import com.armstrongmsg.socialnet.model.User;
 import com.armstrongmsg.socialnet.util.PropertiesUtil;
 
 public class ApplicationFacade {
+	private static Logger logger = LoggerFactory.getLogger(ApplicationFacade.class);
 	private static ApplicationFacade instance;
-	
+
 	private Network network;
 	
 	private ApplicationFacade() {
@@ -25,9 +29,11 @@ public class ApplicationFacade {
 		String adminPassword = "";
 		
 		try {
+			logger.info("Loading admin configuration");
 			// TODO treat exceptions properly
 			properties = new PropertiesUtil();
 			adminUsername = properties.getProperty("ADMIN_USERNAME");
+			logger.info("Loaded admin: {}", adminUsername);
 			adminPassword = properties.getProperty("ADMIN_PASSWORD");
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
