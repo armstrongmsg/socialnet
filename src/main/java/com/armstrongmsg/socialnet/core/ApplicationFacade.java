@@ -8,6 +8,9 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.armstrongmsg.socialnet.constants.Messages;
+import com.armstrongmsg.socialnet.constants.PropertiesDefaults;
+import com.armstrongmsg.socialnet.constants.PropertiesNames;
 import com.armstrongmsg.socialnet.model.Admin;
 import com.armstrongmsg.socialnet.model.Follow;
 import com.armstrongmsg.socialnet.model.Friendship;
@@ -24,23 +27,19 @@ public class ApplicationFacade {
 	private Network network;
 	
 	private ApplicationFacade() {
-		PropertiesUtil properties;
-		String adminUsername = "";
-		String adminPassword = "";
+		String adminUsername = PropertiesDefaults.DEFAULT_ADMIN_USERNAME;
+		String adminPassword = PropertiesDefaults.DEFAULT_ADMIN_PASSWORD;
 		
 		try {
-			logger.info("Loading admin configuration");
-			// TODO treat exceptions properly
-			properties = new PropertiesUtil();
-			adminUsername = properties.getProperty("ADMIN_USERNAME");
-			logger.info("Loaded admin: {}", adminUsername);
-			adminPassword = properties.getProperty("ADMIN_PASSWORD");
+			logger.info(Messages.Logging.LOADING_ADMIN_CONFIGURATION);
+			PropertiesUtil properties = new PropertiesUtil();
+			adminUsername = properties.getProperty(PropertiesNames.ADMIN_USERNAME);
+			adminPassword = properties.getProperty(PropertiesNames.ADMIN_PASSWORD);
+			logger.info(Messages.Logging.LOADED_ADMIN, adminUsername);
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(Messages.Logging.COULD_NOT_LOAD_ADMIN_CONFIGURATION, e.getMessage());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(Messages.Logging.COULD_NOT_LOAD_ADMIN_CONFIGURATION, e.getMessage());
 		}
 
 		Admin admin = new Admin(adminUsername, adminUsername, adminPassword);
