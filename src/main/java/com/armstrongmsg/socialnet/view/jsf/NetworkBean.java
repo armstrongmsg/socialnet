@@ -6,6 +6,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 
 import com.armstrongmsg.socialnet.core.ApplicationFacade;
+import com.armstrongmsg.socialnet.storage.StorageManager;
 import com.armstrongmsg.socialnet.view.jsf.model.JsfConnector;
 import com.armstrongmsg.socialnet.view.jsf.model.Post;
 import com.armstrongmsg.socialnet.view.jsf.model.User;
@@ -21,7 +22,7 @@ public class NetworkBean {
 	private User user;
 	private List<User> users;
 
-	private static ApplicationFacade facade = ApplicationFacade.getInstance();
+	private static ApplicationFacade facade = ApplicationFacade.getInstance(new StorageManager());
 
 	public String getUserId() {
 		return userId;

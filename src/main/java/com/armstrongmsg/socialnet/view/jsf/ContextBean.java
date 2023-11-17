@@ -8,13 +8,14 @@ import javax.faces.bean.SessionScoped;
 
 import com.armstrongmsg.socialnet.core.ApplicationFacade;
 import com.armstrongmsg.socialnet.model.authentication.UserToken;
+import com.armstrongmsg.socialnet.storage.StorageManager;
 
 @ManagedBean(name = "contextBean", eager = true)
 @SessionScoped
 public class ContextBean {
 	private String username;
 	private String password;
-	private static ApplicationFacade facade = ApplicationFacade.getInstance();
+	private static ApplicationFacade facade = ApplicationFacade.getInstance(new StorageManager());
 	
 	public UserToken getUser() {
 		Session session = SessionManager.getCurrentSession();

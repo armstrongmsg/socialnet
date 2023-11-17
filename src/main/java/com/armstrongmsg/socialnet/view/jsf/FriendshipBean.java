@@ -4,6 +4,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 
 import com.armstrongmsg.socialnet.core.ApplicationFacade;
+import com.armstrongmsg.socialnet.storage.StorageManager;
 import com.armstrongmsg.socialnet.view.jsf.model.User;
 
 @ManagedBean(name = "friendshipBean", eager = true)
@@ -12,7 +13,7 @@ public class FriendshipBean {
 	private User user1;
 	private User user2;
 	
-	private static ApplicationFacade facade = ApplicationFacade.getInstance();
+	private static ApplicationFacade facade = ApplicationFacade.getInstance(new StorageManager());
 	
 	public User getUser1() {
 		return user1;

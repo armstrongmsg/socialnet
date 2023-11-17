@@ -2,7 +2,6 @@ package com.armstrongmsg.socialnet.core;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -25,6 +24,7 @@ import com.armstrongmsg.socialnet.model.authentication.LocalPasswordBasedAuthent
 import com.armstrongmsg.socialnet.model.authentication.UserToken;
 import com.armstrongmsg.socialnet.model.authorization.AdminAuthorizationPlugin;
 import com.armstrongmsg.socialnet.model.authorization.AuthorizationPlugin;
+import com.armstrongmsg.socialnet.storage.StorageManager;
 import com.armstrongmsg.socialnet.util.PropertiesUtil;
 
 public class ApplicationFacade {
@@ -33,7 +33,7 @@ public class ApplicationFacade {
 
 	private Network network;
 	
-	private ApplicationFacade() {
+	private ApplicationFacade(StorageManager storageManager) {
 		String adminUsername = PropertiesDefaults.DEFAULT_ADMIN_USERNAME;
 		String adminPassword = PropertiesDefaults.DEFAULT_ADMIN_PASSWORD;
 		
@@ -50,21 +50,25 @@ public class ApplicationFacade {
 		}
 
 		Admin admin = new Admin(adminUsername, adminUsername, adminPassword);
-		List<User> users = new ArrayList<User>();
-		List<Group> groups = new ArrayList<Group>();
-		List<Friendship> friendships = new ArrayList<Friendship>();
-		List<Follow> follows = new ArrayList<Follow>();
+		List<User> users = storageManager.readUsers();
+		List<Group> groups = storageManager.readGroups();
+		List<Friendship> friendships = storageManager.readFriendships();
+		List<Follow> follows = storageManager.readFollows();
 		AuthenticationPlugin authenticationPlugin = new LocalPasswordBasedAuthenticationPlugin(users, admin); 
 		AuthorizationPlugin authorizationPlugin = new AdminAuthorizationPlugin(admin);
 		this.network = new Network(admin, users, groups, friendships, follows, authenticationPlugin, authorizationPlugin);
 	}
 	
-	public static ApplicationFacade getInstance() {
+	public static ApplicationFacade getInstance(StorageManager storageManager) {
 		if (instance == null) {
-			instance = new ApplicationFacade();
+			instance = new ApplicationFacade(storageManager);
 		}
 		
 		return instance;
+	}
+	
+	public static void reset() {
+		instance = null;
 	}
 	
 	public void addUser(UserToken userToken, String username, String password, String profileDescription) {

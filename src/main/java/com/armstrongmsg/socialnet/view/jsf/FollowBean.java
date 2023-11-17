@@ -4,6 +4,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 
 import com.armstrongmsg.socialnet.core.ApplicationFacade;
+import com.armstrongmsg.socialnet.storage.StorageManager;
 import com.armstrongmsg.socialnet.view.jsf.model.User;
 
 @ManagedBean(name = "followBean", eager = true)
@@ -12,7 +13,7 @@ public class FollowBean {
 	private User follower;
 	private User followed;
 	
-	private static ApplicationFacade facade = ApplicationFacade.getInstance();
+	private static ApplicationFacade facade = ApplicationFacade.getInstance(new StorageManager());
 	
 	public User getFollower() {
 		return follower;
