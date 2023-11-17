@@ -31,6 +31,7 @@ public class FollowBean {
 	}
 	
 	public void addFollow() {
-		facade.addFollow(follower.getUserId(), followed.getUserId());
+		facade.addFollow(SessionManager.getCurrentSession().getUserToken(), 
+				SessionManager.getCurrentSession().getUserToken().getUserId(), followed.getUserId());
 	}
 }

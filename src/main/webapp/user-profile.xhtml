@@ -27,14 +27,10 @@ xmlns:f = "http://java.sun.com/jsf/core">
       <h:form>
         <h:commandButton value = "Add friend" action = "#{friendshipBean.addFriendship}">
 		   <f:setPropertyActionListener 
-                     target = "#{friendshipBean.user1}" value = "#{contextBean.user}"/>
-		   <f:setPropertyActionListener 
                      target = "#{friendshipBean.user2}" value = "#{networkBean.user}" />
         </h:commandButton>
         
         <h:commandButton value = "Follow" action = "#{followBean.addFollow}">
-		   <f:setPropertyActionListener 
-                     target = "#{followBean.follower}" value = "#{contextBean.user}"/>
 		   <f:setPropertyActionListener 
                      target = "#{followBean.followed}" value = "#{networkBean.user}" />
         </h:commandButton>

@@ -1,56 +1,69 @@
 package com.armstrongmsg.socialnet.view.jsf;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 
 import com.armstrongmsg.socialnet.core.ApplicationFacade;
-import com.armstrongmsg.socialnet.view.jsf.model.JsfConnector;
-import com.armstrongmsg.socialnet.view.jsf.model.User;
+import com.armstrongmsg.socialnet.model.authentication.UserToken;
 
 @ManagedBean(name = "contextBean", eager = true)
 @SessionScoped
 public class ContextBean {
 	private String username;
 	private String password;
-	private boolean logged;
-	private boolean admin;
 	private static ApplicationFacade facade = ApplicationFacade.getInstance();
 	
-	private User user;
-
-	public User getUser() {
-		if (user == null) {
-			return new User("no context", "no context", "no context");
+	public UserToken getUser() {
+		Session session = SessionManager.getCurrentSession();
+		
+		if (session == null) {
+			return new UserToken("no context", "no context", "no context");
 		}
 		
-		return this.user;
+		return SessionManager.getCurrentSession().getUserToken();
 	}
 
-	public void setUser(User user) {
-		this.user = user;
-	}
-	
 	public String login() {
-		this.user = new JsfConnector().getViewUser(facade.validateCredentials(username, password));
-		this.setAdmin(facade.userIsAdmin(this.user.getUserId()));
-		this.logged = true;
-		// TODO error handling
+		Map<String, String> credentials = new HashMap<String, String>();
+		// FIXME constant
+		credentials.put("USER_ID", username);
+		// FIXME constant
+		credentials.put("PASSWORD", password);
+		UserToken token = facade.login(credentials);
+		
+		
+		Session session = new Session(token);
+		session.setAdmin(facade.userIsAdmin(username));
+		session.setLogged(true);
+		SessionManager.setCurrentSession(session);
+		
 		// FIXME
 		return "user-home";
 	}
 	
 	public void logout() {
-		this.user = null;
-		this.setAdmin(false);
-		logged = false;
+		SessionManager.setCurrentSession(null);
 	}
 
 	public boolean isLogged() {
-		return logged;
+		Session session = SessionManager.getCurrentSession();
+		
+		if (session == null) {
+			return false;
+		}
+		
+		return SessionManager.getCurrentSession().isLogged();
 	}
 
 	public void setLogged(boolean logged) {
-		this.logged = logged;
+		Session session = SessionManager.getCurrentSession();
+		
+		if (session != null) {
+			SessionManager.getCurrentSession().setLogged(logged);
+		}
 	}
 
 	public String getUsername() {
@@ -70,10 +83,20 @@ public class ContextBean {
 	}
 
 	public boolean isAdmin() {
-		return admin;
+		Session session = SessionManager.getCurrentSession();
+		
+		if (session == null) {
+			return false;
+		}
+		
+		return SessionManager.getCurrentSession().isAdmin();
 	}
 
 	public void setAdmin(boolean isAdmin) {
-		this.admin = isAdmin;
+		Session session = SessionManager.getCurrentSession();
+		
+		if (session != null) {
+			SessionManager.getCurrentSession().setAdmin(isAdmin);			
+		}
 	}
 }

@@ -2,7 +2,15 @@ package com.armstrongmsg.socialnet.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+
+import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
+import com.armstrongmsg.socialnet.model.authentication.AuthenticationPlugin;
+import com.armstrongmsg.socialnet.model.authentication.UserToken;
+import com.armstrongmsg.socialnet.model.authorization.AuthorizationPlugin;
+import com.armstrongmsg.socialnet.model.authorization.Operation;
+import com.armstrongmsg.socialnet.model.authorization.OperationType;
 
 public class Network {
 	private Admin admin;
@@ -10,13 +18,18 @@ public class Network {
 	private List<Group> groups;
 	private List<Friendship> friendships;
 	private List<Follow> follows;
+	private AuthenticationPlugin authenticationPlugin;
+	private AuthorizationPlugin authorizationPlugin;
 	
-	public Network(Admin admin, List<User> users, List<Group> groups, List<Friendship> friendships, List<Follow> follows) {
+	public Network(Admin admin, List<User> users, List<Group> groups, List<Friendship> friendships, 
+			List<Follow> follows, AuthenticationPlugin authenticationPlugin, AuthorizationPlugin authorizationPlugin) {
 		this.admin = admin;
 		this.users = users;
 		this.groups = groups;
 		this.friendships = friendships;
 		this.follows = follows;
+		this.authenticationPlugin = authenticationPlugin;
+		this.authorizationPlugin = authorizationPlugin;
 	}
 
 	public Admin getAdmin() {
@@ -39,18 +52,27 @@ public class Network {
 		return follows;
 	}
 
-	public void addUser(String userId, String username, String password, String profileDescription) {
+	public void addUser(UserToken userToken, String username, String password, String profileDescription) throws UnauthorizedOperationException {
+		User requester = findUserById(userToken.getUserId());
+		this.authorizationPlugin.authorize(requester, new Operation(OperationType.ADD_USER));
+		
 		Profile profile = new Profile(profileDescription, new ArrayList<Post>());
-		User newUser = new User(username, userId, password, profile);
+		UUID uuid = UUID.randomUUID();
+		User newUser = new User(uuid.toString(), username, password, profile);
 		this.users.add(newUser);
 	}
 	
-	public void addUser(String username, String password, String profileDescription) {
+	public void addUser(String username, String password, String profileDescription) throws UnauthorizedOperationException {
 		UUID uuid = UUID.randomUUID();
-		addUser(uuid.toString(), username, password, profileDescription);
+		Profile profile = new Profile(profileDescription, new ArrayList<Post>());
+		User newUser = new User(uuid.toString(), username, password, profile);
+		this.users.add(newUser);
 	}
 
-	public void removeUser(String userId) {
+	public void removeUser(UserToken userToken, String userId) throws UnauthorizedOperationException {
+		User requester = findUserById(userToken.getUserId());
+		this.authorizationPlugin.authorize(requester, new Operation(OperationType.REMOVE_USER));
+		
 		User user = findUserById(userId);
 		this.users.remove(user);
 	}
@@ -65,23 +87,34 @@ public class Network {
 		return null;
 	}
 
-	public void createPost(String userId, String title, String content, String postVisibility) {
-		User user = findUserById(userId);
+	public void createPost(UserToken userToken, String title, String content, String postVisibility) throws UnauthorizedOperationException {
+		User requester = findUserById(userToken.getUserId());
+		this.authorizationPlugin.authorize(requester, new Operation(OperationType.CREATE_POST));
+		
+		User user = findUserById(userToken.getUserId());
 		user.getProfile().createPost(title, content, postVisibility);
 	}
 
-	public List<Post> getUserPosts(String userId) {
+	public List<Post> getUserPosts(UserToken userToken, String userId) throws UnauthorizedOperationException {
+		User requester = findUserById(userToken.getUserId());
+		this.authorizationPlugin.authorize(requester, new Operation(OperationType.GET_USER_POSTS));
+		
 		User user = findUserById(userId);
 		return user.getProfile().getPosts();
 	}
 
-	public void addFriendship(String userId1, String userId2) {
+	public void addFriendship(UserToken userToken, String userId1, String userId2) throws UnauthorizedOperationException {
+		User requester = findUserById(userToken.getUserId());
+		this.authorizationPlugin.authorize(requester, new Operation(OperationType.ADD_FRIENDSHIP));
+		
 		User user1 = findUserById(userId1);
 		User user2 = findUserById(userId2);
 		this.friendships.add(new Friendship(user1, user2));
 	}
 
-	public List<User> getFriends(String userId) {
+	public List<User> getFriends(UserToken userToken, String userId) throws UnauthorizedOperationException {
+		User requester = findUserById(userToken.getUserId());
+		this.authorizationPlugin.authorize(requester, new Operation(OperationType.GET_FRIENDS));
 		User user = findUserById(userId);
 		List<User> friends = new ArrayList<User>();
 		
@@ -98,14 +131,20 @@ public class Network {
 		return friends;
 	}
 
-	public void addFollow(String followerId, String followedId) {
+	public void addFollow(UserToken userToken, String followerId, String followedId) throws UnauthorizedOperationException {
+		User requester = findUserById(userToken.getUserId());
+		this.authorizationPlugin.authorize(requester, new Operation(OperationType.ADD_FOLLOW));
+		
 		User follower = findUserById(followerId);
 		User followed = findUserById(followedId);
 		this.follows.add(new Follow(follower, followed));
 	}
 	
-	public List<User> getFollowedUsers(String followerId) {
-		User user = findUserById(followerId);
+	public List<User> getFollowedUsers(UserToken userToken, String userId) throws UnauthorizedOperationException {
+		User requester = findUserById(userToken.getUserId());
+		this.authorizationPlugin.authorize(requester, new Operation(OperationType.GET_FOLLOWED_USERS));
+		
+		User user = findUserById(userToken.getUserId());
 		List<User> followedUsers = new ArrayList<User>();
 		
 		for (Follow follow : getFollows()) {
@@ -117,36 +156,26 @@ public class Network {
 		return followedUsers;
 	}
 
-	public User validateCredentials(String username, String password) {
-		User user = findUserByUsername(username);
-		
-		if (user.getPassword().equals(password)) {
-			return user;
-		}
-		// TODO throw exception
-		return null;
-	}
-
-	private User findUserByUsername(String username) {
-		for (User user : this.users) {
-			if (user.getUsername().equals(username)) {
-				return user;
-			}
-		}
-		
-		if (admin.getUsername().equals(username)) {
-			return admin;
-		}
-		// FIXME
-		return null;
-	}
-
 	public boolean userIsAdmin(String userId) {
 		return this.admin.getUserId().equals(userId);
 	}
 
-	public List<Post> getFriendsPosts(String userId) {
-		List<User> friends = getFriends(userId);
+	public List<Post> getFriendsPosts(UserToken token, String userId) throws UnauthorizedOperationException {
+		User requester = findUserById(token.getUserId());
+		this.authorizationPlugin.authorize(requester, new Operation(OperationType.GET_FRIENDS_POSTS));
+		User user = findUserById(userId);
+		List<User> friends = new ArrayList<User>();
+		
+		for (Friendship friendship : getFriendships()) {
+			if (friendship.getFriend1().equals(user)) {
+				friends.add(friendship.getFriend2());
+			}
+			
+			if (friendship.getFriend2().equals(user)) {
+				friends.add(friendship.getFriend1());
+			}
+		}
+		
 		List<Post> friendsPosts = new ArrayList<Post>();
 		
 		for (User friend : friends) {
@@ -154,5 +183,9 @@ public class Network {
 		}
 		
 		return friendsPosts;
+	}
+
+	public UserToken login(Map<String, String> credentials) {
+		return this.authenticationPlugin.authenticate(credentials);
 	}
 }

@@ -61,8 +61,9 @@ public class PostBean {
 	}
 	
 	public String createPost() {
-		facade.createPost(getUser().getUserId(), title, content, postVisibility);
-		userPosts = new JsfConnector().getViewPosts(facade.getUserPosts(getUser().getUserId()));
+		facade.createPost(SessionManager.getCurrentSession().getUserToken(), title, content, postVisibility);
+		userPosts = new JsfConnector().getViewPosts(facade.getUserPosts(SessionManager.getCurrentSession().getUserToken(), 
+				getUser().getUserId()));
 		return null;
 	}
 	
@@ -77,13 +78,25 @@ public class PostBean {
 	
 	public List<Post> getUserPosts() { 
 		if (userPosts == null) {
-			userPosts = new JsfConnector().getViewPosts(facade.getUserPosts(getUser().getUserId()));
+			userPosts = new JsfConnector().getViewPosts(facade.getUserPosts(
+					SessionManager.getCurrentSession().getUserToken(), 
+					getUser().getUserId()));
 		}
 		
 		return userPosts;
 	}
 	
 	public List<Post> getFriendsPosts() {
-		return new JsfConnector().getViewPosts(facade.getFriendsPosts(getUser().getUserId()));
+		User user = getUser();
+		String userId = "";
+		
+		if (user == null) {
+			userId = SessionManager.getCurrentSession().getUserToken().getUserId();
+		} else {
+			userId = user.getUserId();
+		}
+		
+		return new JsfConnector().getViewPosts(facade.getFriendsPosts(SessionManager.getCurrentSession().getUserToken(), 
+				userId));
 	}
 }

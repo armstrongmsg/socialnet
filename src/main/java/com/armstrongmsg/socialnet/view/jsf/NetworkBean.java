@@ -64,7 +64,7 @@ public class NetworkBean {
 	}
 
 	public String addUser() {
-		facade.addUser(userId, username, getProfileDescription());
+		facade.addUser(SessionManager.getCurrentSession().getUserToken(), userId, username, getProfileDescription());
 		users = new JsfConnector().getViewUsers(facade.getUsers());
 		return null;
 	}
@@ -81,7 +81,7 @@ public class NetworkBean {
 	}
 
 	public String removeUser() {
-		facade.removeUser(getUser().getUserId());
+		facade.removeUser(SessionManager.getCurrentSession().getUserToken(), getUser().getUserId());
 		users = new JsfConnector().getViewUsers(facade.getUsers());
 		return null;
 	}
@@ -95,11 +95,15 @@ public class NetworkBean {
 	}
 	
 	public List<User> getFriends() {
-		return new JsfConnector().getViewUsers(facade.getFriends(user.getUserId()));
+		return new JsfConnector().getViewUsers(
+				facade.getFriends(
+						SessionManager.getCurrentSession().getUserToken(), user.getUserId()));
 	}
 	
 	public List<User> getFollows() {
-		return new JsfConnector().getViewUsers(facade.getFollowedUsers(user.getUserId()));
+		return new JsfConnector().getViewUsers(
+				facade.getFollowedUsers(SessionManager.getCurrentSession().getUserToken(), 
+						user.getUserId()));
 	}
 
 	public String getPassword() {
@@ -111,6 +115,7 @@ public class NetworkBean {
 	}
 
 	public List<Post> getFriendsPosts() {
-		return new JsfConnector().getViewPosts(facade.getFriendsPosts(getUser().getUserId()));
+		return new JsfConnector().getViewPosts(facade.getFriendsPosts(
+				SessionManager.getCurrentSession().getUserToken(), getUser().getUserId()));
 	}
 }

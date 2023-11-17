@@ -31,6 +31,7 @@ public class FriendshipBean {
 	}
 	
 	public void addFriendship() {
-		facade.addFriendship(user1.getUserId(), user2.getUserId());
+		facade.addFriendship(SessionManager.getCurrentSession().getUserToken(), 
+				SessionManager.getCurrentSession().getUserToken().getUserId(), user2.getUserId());
 	}	
 }
