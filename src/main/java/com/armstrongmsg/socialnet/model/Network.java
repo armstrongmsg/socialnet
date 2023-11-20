@@ -5,12 +5,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.armstrongmsg.socialnet.constants.Messages;
+import com.armstrongmsg.socialnet.constants.PropertiesDefaults;
+import com.armstrongmsg.socialnet.constants.PropertiesNames;
+import com.armstrongmsg.socialnet.exceptions.FatalErrorException;
 import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
 import com.armstrongmsg.socialnet.model.authentication.AuthenticationPlugin;
 import com.armstrongmsg.socialnet.model.authentication.UserToken;
 import com.armstrongmsg.socialnet.model.authorization.AuthorizationPlugin;
 import com.armstrongmsg.socialnet.model.authorization.Operation;
 import com.armstrongmsg.socialnet.model.authorization.OperationType;
+import com.armstrongmsg.socialnet.storage.StorageManager;
+import com.armstrongmsg.socialnet.util.ClassFactory;
+import com.armstrongmsg.socialnet.util.PropertiesUtil;
 
 public class Network {
 	private Admin admin;
@@ -21,8 +31,52 @@ public class Network {
 	private AuthenticationPlugin authenticationPlugin;
 	private AuthorizationPlugin authorizationPlugin;
 	
+	private static Logger logger = LoggerFactory.getLogger(Network.class);
+	
 	public Network(Admin admin, List<User> users, List<Group> groups, List<Friendship> friendships, 
 			List<Follow> follows, AuthenticationPlugin authenticationPlugin, AuthorizationPlugin authorizationPlugin) {
+		this.admin = admin;
+		this.users = users;
+		this.groups = groups;
+		this.friendships = friendships;
+		this.follows = follows;
+		this.authenticationPlugin = authenticationPlugin;
+		this.authorizationPlugin = authorizationPlugin;
+	}
+
+	public Network(StorageManager storageManager) throws FatalErrorException {
+		String adminUsername = PropertiesDefaults.DEFAULT_ADMIN_USERNAME;
+		String adminPassword = PropertiesDefaults.DEFAULT_ADMIN_PASSWORD;
+		
+		logger.info(Messages.Logging.LOADING_ADMIN_CONFIGURATION);
+		PropertiesUtil properties = PropertiesUtil.getInstance();
+		adminUsername = properties.getProperty(PropertiesNames.ADMIN_USERNAME);
+		adminPassword = properties.getProperty(PropertiesNames.ADMIN_PASSWORD);
+		logger.info(Messages.Logging.LOADED_ADMIN, adminUsername);
+
+		Admin admin = new Admin(adminUsername, adminUsername, adminPassword);
+		List<User> users = storageManager.readUsers();
+		List<Group> groups = storageManager.readGroups();
+		List<Friendship> friendships = storageManager.readFriendships();
+		List<Follow> follows = storageManager.readFollows();
+		ClassFactory classFactory = new ClassFactory();
+		// FIXME constant
+		String authenticationPluginClassName = properties.getProperty("AUTHENTICATION_PLUGIN_CLASS_NAME");
+		// FIXME constant
+		String authorizationPluginClassName = properties.getProperty("AUTHORIZATION_PLUGIN_CLASS_NAME");
+		
+		// FIXME constant
+		logger.info("Loading authentication plugin");
+		
+		AuthenticationPlugin authenticationPlugin = (AuthenticationPlugin) classFactory.createInstance(authenticationPluginClassName);
+		authenticationPlugin.setUp(admin, users);
+		
+		// FIXME constant
+		logger.info("Loading authorization plugin");
+		
+		AuthorizationPlugin authorizationPlugin = (AuthorizationPlugin) classFactory.createInstance(authorizationPluginClassName);
+		authorizationPlugin.setUp(admin, users, groups, friendships, follows);
+		
 		this.admin = admin;
 		this.users = users;
 		this.groups = groups;

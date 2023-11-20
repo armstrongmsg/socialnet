@@ -1,62 +1,35 @@
 package com.armstrongmsg.socialnet.core;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.armstrongmsg.socialnet.constants.Messages;
-import com.armstrongmsg.socialnet.constants.PropertiesDefaults;
-import com.armstrongmsg.socialnet.constants.PropertiesNames;
+import com.armstrongmsg.socialnet.exceptions.FatalErrorException;
 import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
-import com.armstrongmsg.socialnet.model.Admin;
-import com.armstrongmsg.socialnet.model.Follow;
-import com.armstrongmsg.socialnet.model.Friendship;
-import com.armstrongmsg.socialnet.model.Group;
 import com.armstrongmsg.socialnet.model.Network;
 import com.armstrongmsg.socialnet.model.Post;
 import com.armstrongmsg.socialnet.model.User;
-import com.armstrongmsg.socialnet.model.authentication.AuthenticationPlugin;
-import com.armstrongmsg.socialnet.model.authentication.LocalPasswordBasedAuthenticationPlugin;
 import com.armstrongmsg.socialnet.model.authentication.UserToken;
-import com.armstrongmsg.socialnet.model.authorization.AdminAuthorizationPlugin;
-import com.armstrongmsg.socialnet.model.authorization.AuthorizationPlugin;
 import com.armstrongmsg.socialnet.storage.StorageManager;
-import com.armstrongmsg.socialnet.util.PropertiesUtil;
 
 public class ApplicationFacade {
 	private static Logger logger = LoggerFactory.getLogger(ApplicationFacade.class);
 	private static ApplicationFacade instance;
 
 	private Network network;
+	private StorageManager storageManager;
 	
 	private ApplicationFacade(StorageManager storageManager) {
-		String adminUsername = PropertiesDefaults.DEFAULT_ADMIN_USERNAME;
-		String adminPassword = PropertiesDefaults.DEFAULT_ADMIN_PASSWORD;
-		
-		try {
-			logger.info(Messages.Logging.LOADING_ADMIN_CONFIGURATION);
-			PropertiesUtil properties = new PropertiesUtil();
-			adminUsername = properties.getProperty(PropertiesNames.ADMIN_USERNAME);
-			adminPassword = properties.getProperty(PropertiesNames.ADMIN_PASSWORD);
-			logger.info(Messages.Logging.LOADED_ADMIN, adminUsername);
-		} catch (FileNotFoundException e) {
-			logger.error(Messages.Logging.COULD_NOT_LOAD_ADMIN_CONFIGURATION, e.getMessage());
-		} catch (IOException e) {
-			logger.error(Messages.Logging.COULD_NOT_LOAD_ADMIN_CONFIGURATION, e.getMessage());
-		}
+		this.storageManager = storageManager;
 
-		Admin admin = new Admin(adminUsername, adminUsername, adminPassword);
-		List<User> users = storageManager.readUsers();
-		List<Group> groups = storageManager.readGroups();
-		List<Friendship> friendships = storageManager.readFriendships();
-		List<Follow> follows = storageManager.readFollows();
-		AuthenticationPlugin authenticationPlugin = new LocalPasswordBasedAuthenticationPlugin(users, admin); 
-		AuthorizationPlugin authorizationPlugin = new AdminAuthorizationPlugin(admin);
-		this.network = new Network(admin, users, groups, friendships, follows, authenticationPlugin, authorizationPlugin);
+		try {
+			this.network = new Network(this.storageManager);
+		} catch (FatalErrorException e) {
+			// TODO how to handle this properly?
+			logger.error(e.getMessage());
+		}
 	}
 	
 	public static ApplicationFacade getInstance(StorageManager storageManager) {
@@ -67,6 +40,10 @@ public class ApplicationFacade {
 		return instance;
 	}
 	
+	public static ApplicationFacade getInstance() {
+		return getInstance(new StorageManager());
+	}
+		
 	public static void reset() {
 		instance = null;
 	}

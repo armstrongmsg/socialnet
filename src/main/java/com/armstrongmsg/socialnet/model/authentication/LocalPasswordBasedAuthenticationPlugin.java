@@ -10,9 +10,7 @@ public class LocalPasswordBasedAuthenticationPlugin implements AuthenticationPlu
 	private List<User> users;
 	private Admin admin;
 	
-	public LocalPasswordBasedAuthenticationPlugin(List<User> users, Admin admin) {
-		this.users = users;
-		this.admin = admin;
+	public LocalPasswordBasedAuthenticationPlugin() {
 	}
 
 	@Override
@@ -46,5 +44,11 @@ public class LocalPasswordBasedAuthenticationPlugin implements AuthenticationPlu
 		}
 		// FIXME treat this case
 		return null;
+	}
+
+	@Override
+	public void setUp(Admin admin, List<User> users) {
+		this.admin = admin;
+		this.users = users;
 	}
 }
