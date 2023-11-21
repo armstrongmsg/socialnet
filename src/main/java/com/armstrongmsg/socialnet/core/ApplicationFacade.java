@@ -6,6 +6,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.armstrongmsg.socialnet.exceptions.AuthenticationException;
 import com.armstrongmsg.socialnet.exceptions.FatalErrorException;
 import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
 import com.armstrongmsg.socialnet.model.Network;
@@ -134,7 +135,7 @@ public class ApplicationFacade {
 		return null;
 	}
 
-	public UserToken login(Map<String, String> credentials) {
+	public UserToken login(Map<String, String> credentials) throws AuthenticationException {
 		return this.network.login(credentials);
 	}
 

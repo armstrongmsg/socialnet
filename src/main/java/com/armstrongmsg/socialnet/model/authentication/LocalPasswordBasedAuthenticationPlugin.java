@@ -3,6 +3,7 @@ package com.armstrongmsg.socialnet.model.authentication;
 import java.util.List;
 import java.util.Map;
 
+import com.armstrongmsg.socialnet.exceptions.AuthenticationException;
 import com.armstrongmsg.socialnet.model.Admin;
 import com.armstrongmsg.socialnet.model.User;
 
@@ -14,7 +15,7 @@ public class LocalPasswordBasedAuthenticationPlugin implements AuthenticationPlu
 	}
 
 	@Override
-	public UserToken authenticate(Map<String, String> credentials) {
+	public UserToken authenticate(Map<String, String> credentials) throws AuthenticationException {
 		// FIXME constant
 		String userId = credentials.get("USER_ID");
 		// FIXME constant
@@ -22,17 +23,18 @@ public class LocalPasswordBasedAuthenticationPlugin implements AuthenticationPlu
 		return authenticate(userId, password);
 	}
 	
-	private UserToken authenticate(String userId, String password) {
+	private UserToken authenticate(String userId, String password) throws AuthenticationException {
 		User user = findUserByUsername(userId);
 		
 		if (user.getPassword().equals(password)) {
 			return new UserToken(user.getUserId(), user.getUsername(), user.getProfile().getDescription());
 		}
-		// FIXME treat this case
-		return null;
+		
+		// TODO add message
+		throw new AuthenticationException();
 	}
 
-	private User findUserByUsername(String username) {
+	private User findUserByUsername(String username) throws AuthenticationException {
 		for (User user : this.users) {
 			if (user.getUsername().equals(username)) {
 				return user;
@@ -42,8 +44,9 @@ public class LocalPasswordBasedAuthenticationPlugin implements AuthenticationPlu
 		if (admin.getUsername().equals(username)) {
 			return admin;
 		}
-		// FIXME treat this case
-		return null;
+
+		// TODO add message
+		throw new AuthenticationException();
 	}
 
 	@Override

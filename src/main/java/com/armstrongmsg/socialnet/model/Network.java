@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import com.armstrongmsg.socialnet.constants.Messages;
 import com.armstrongmsg.socialnet.constants.PropertiesDefaults;
 import com.armstrongmsg.socialnet.constants.PropertiesNames;
+import com.armstrongmsg.socialnet.exceptions.AuthenticationException;
 import com.armstrongmsg.socialnet.exceptions.FatalErrorException;
 import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
 import com.armstrongmsg.socialnet.model.authentication.AuthenticationPlugin;
@@ -239,7 +240,7 @@ public class Network {
 		return friendsPosts;
 	}
 
-	public UserToken login(Map<String, String> credentials) {
+	public UserToken login(Map<String, String> credentials) throws AuthenticationException {
 		return this.authenticationPlugin.authenticate(credentials);
 	}
 }

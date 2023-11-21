@@ -7,6 +7,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 
 import com.armstrongmsg.socialnet.core.ApplicationFacade;
+import com.armstrongmsg.socialnet.exceptions.AuthenticationException;
 import com.armstrongmsg.socialnet.model.authentication.UserToken;
 
 @ManagedBean(name = "contextBean", eager = true)
@@ -32,13 +33,15 @@ public class ContextBean {
 		credentials.put("USER_ID", username);
 		// FIXME constant
 		credentials.put("PASSWORD", password);
-		UserToken token = facade.login(credentials);
-		
-		
-		Session session = new Session(token);
-		session.setAdmin(facade.userIsAdmin(username));
-		session.setLogged(true);
-		SessionManager.setCurrentSession(session);
+		try {
+			UserToken token = facade.login(credentials);
+			Session session = new Session(token);
+			session.setAdmin(facade.userIsAdmin(username));
+			session.setLogged(true);
+			SessionManager.setCurrentSession(session);
+		} catch (AuthenticationException e) {
+			// FIXME treat this exception
+		}
 		
 		// FIXME
 		return "user-home";
