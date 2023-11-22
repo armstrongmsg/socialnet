@@ -20,6 +20,7 @@ import com.armstrongmsg.socialnet.model.authentication.UserToken;
 import com.armstrongmsg.socialnet.model.authorization.AuthorizationPlugin;
 import com.armstrongmsg.socialnet.model.authorization.Operation;
 import com.armstrongmsg.socialnet.model.authorization.OperationType;
+import com.armstrongmsg.socialnet.model.authorization.OperationOnUser;
 import com.armstrongmsg.socialnet.storage.StorageManager;
 import com.armstrongmsg.socialnet.util.ClassFactory;
 import com.armstrongmsg.socialnet.util.PropertiesUtil;
@@ -90,7 +91,7 @@ public class Network {
 		return admin;
 	}
 
-	public List<User> getUsers(UserToken userToken) throws UnauthorizedOperationException {
+	public List<User> getUsers(UserToken userToken) throws AuthenticationException, UnauthorizedOperationException {
 		User requester = findUserById(userToken.getUserId());
 		this.authorizationPlugin.authorize(requester, new Operation(OperationType.GET_ALL_USERS));
 		
@@ -109,7 +110,7 @@ public class Network {
 		return follows;
 	}
 
-	public void addUser(UserToken userToken, String username, String password, String profileDescription) throws UnauthorizedOperationException {
+	public void addUser(UserToken userToken, String username, String password, String profileDescription) throws UnauthorizedOperationException, AuthenticationException {
 		User requester = findUserById(userToken.getUserId());
 		this.authorizationPlugin.authorize(requester, new Operation(OperationType.ADD_USER));
 		
@@ -126,7 +127,7 @@ public class Network {
 		this.users.add(newUser);
 	}
 
-	public void removeUser(UserToken userToken, String userId) throws UnauthorizedOperationException {
+	public void removeUser(UserToken userToken, String userId) throws UnauthorizedOperationException, AuthenticationException {
 		User requester = findUserById(userToken.getUserId());
 		this.authorizationPlugin.authorize(requester, new Operation(OperationType.REMOVE_USER));
 		
@@ -134,7 +135,7 @@ public class Network {
 		this.users.remove(user);
 	}
 
-	private User findUserById(String userId) throws UnauthorizedOperationException {
+	private User findUserById(String userId) throws AuthenticationException {
 		for (User user : this.users) {
 			if (user.getUserId().equals(userId)) {
 				return user;
@@ -146,26 +147,24 @@ public class Network {
 		}
 
 		// FIXME add message
-		throw new UnauthorizedOperationException();
+		throw new AuthenticationException();
 	}
 
-	public void createPost(UserToken userToken, String title, String content, String postVisibility) throws UnauthorizedOperationException {
-		User requester = findUserById(userToken.getUserId());
-		this.authorizationPlugin.authorize(requester, new Operation(OperationType.CREATE_POST));
-		
+	public void createPost(UserToken userToken, String title, String content, PostVisibility newPostVisibility) throws AuthenticationException {
 		User user = findUserById(userToken.getUserId());
-		user.getProfile().createPost(title, content, postVisibility);
+		user.getProfile().createPost(title, content, newPostVisibility);
 	}
 
-	public List<Post> getUserPosts(UserToken userToken, String userId) throws UnauthorizedOperationException {
+	public List<Post> getUserPosts(UserToken userToken, String userId) throws UnauthorizedOperationException, AuthenticationException {
 		User requester = findUserById(userToken.getUserId());
-		this.authorizationPlugin.authorize(requester, new Operation(OperationType.GET_USER_POSTS));
+		User target = findUserById(userId);
+		this.authorizationPlugin.authorize(requester, new OperationOnUser(OperationType.GET_USER_POSTS, target));
 		
 		User user = findUserById(userId);
 		return user.getProfile().getPosts();
 	}
 
-	public void addFriendship(UserToken userToken, String userId1, String userId2) throws UnauthorizedOperationException {
+	public void addFriendship(UserToken userToken, String userId1, String userId2) throws UnauthorizedOperationException, AuthenticationException {
 		User requester = findUserById(userToken.getUserId());
 		this.authorizationPlugin.authorize(requester, new Operation(OperationType.ADD_FRIENDSHIP));
 		
@@ -174,7 +173,7 @@ public class Network {
 		this.friendships.add(new Friendship(user1, user2));
 	}
 
-	public List<User> getFriends(UserToken userToken, String userId) throws UnauthorizedOperationException {
+	public List<User> getFriends(UserToken userToken, String userId) throws UnauthorizedOperationException, AuthenticationException {
 		User requester = findUserById(userToken.getUserId());
 		this.authorizationPlugin.authorize(requester, new Operation(OperationType.GET_FRIENDS));
 		User user = findUserById(userId);
@@ -193,7 +192,7 @@ public class Network {
 		return friends;
 	}
 
-	public void addFollow(UserToken userToken, String followerId, String followedId) throws UnauthorizedOperationException {
+	public void addFollow(UserToken userToken, String followerId, String followedId) throws UnauthorizedOperationException, AuthenticationException {
 		User requester = findUserById(userToken.getUserId());
 		this.authorizationPlugin.authorize(requester, new Operation(OperationType.ADD_FOLLOW));
 		
@@ -202,7 +201,7 @@ public class Network {
 		this.follows.add(new Follow(follower, followed));
 	}
 	
-	public List<User> getFollowedUsers(UserToken userToken, String userId) throws UnauthorizedOperationException {
+	public List<User> getFollowedUsers(UserToken userToken, String userId) throws UnauthorizedOperationException, AuthenticationException {
 		User requester = findUserById(userToken.getUserId());
 		this.authorizationPlugin.authorize(requester, new Operation(OperationType.GET_FOLLOWED_USERS));
 		
@@ -222,7 +221,7 @@ public class Network {
 		return this.admin.getUserId().equals(userId);
 	}
 
-	public List<Post> getFriendsPosts(UserToken token, String userId) throws UnauthorizedOperationException {
+	public List<Post> getFriendsPosts(UserToken token, String userId) throws UnauthorizedOperationException, AuthenticationException {
 		User requester = findUserById(token.getUserId());
 		this.authorizationPlugin.authorize(requester, new Operation(OperationType.GET_FRIENDS_POSTS));
 		User user = findUserById(userId);

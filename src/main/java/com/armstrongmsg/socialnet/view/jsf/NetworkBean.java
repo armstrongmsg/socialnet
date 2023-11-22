@@ -6,6 +6,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 
 import com.armstrongmsg.socialnet.core.ApplicationFacade;
+import com.armstrongmsg.socialnet.exceptions.AuthenticationException;
 import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
 import com.armstrongmsg.socialnet.model.authentication.UserToken;
 import com.armstrongmsg.socialnet.view.jsf.model.JsfConnector;
@@ -64,6 +65,9 @@ public class NetworkBean {
 				users = new JsfConnector().getViewUsers(facade.getUsers(token));
 			} catch (UnauthorizedOperationException e) {
 				// FIXME Treat this exception
+			} catch (AuthenticationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 
@@ -77,6 +81,9 @@ public class NetworkBean {
 			users = new JsfConnector().getViewUsers(facade.getUsers(token));
 		} catch (UnauthorizedOperationException e) {
 			// FIXME Treat this exception
+		} catch (AuthenticationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		return null;
 	}
@@ -88,6 +95,9 @@ public class NetworkBean {
 			users = new JsfConnector().getViewUsers(facade.getUsers(token));
 		} catch (UnauthorizedOperationException e) {
 			// FIXME Treat this exception
+		} catch (AuthenticationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		return null;
 	}
@@ -104,6 +114,9 @@ public class NetworkBean {
 			users = new JsfConnector().getViewUsers(facade.getUsers(token));
 		} catch (UnauthorizedOperationException e) {
 			// FIXME Treat this exception
+		} catch (AuthenticationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		return null;
 	}

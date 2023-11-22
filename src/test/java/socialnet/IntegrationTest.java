@@ -21,13 +21,14 @@ import com.armstrongmsg.socialnet.core.ApplicationFacade;
 import com.armstrongmsg.socialnet.exceptions.AuthenticationException;
 import com.armstrongmsg.socialnet.exceptions.FatalErrorException;
 import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
+import com.armstrongmsg.socialnet.model.Post;
+import com.armstrongmsg.socialnet.model.PostVisibility;
 import com.armstrongmsg.socialnet.model.User;
+import com.armstrongmsg.socialnet.model.authentication.DefaultAuthenticationPlugin;
 import com.armstrongmsg.socialnet.model.authentication.UserToken;
+import com.armstrongmsg.socialnet.model.authorization.DefaultAuthorizationPlugin;
 import com.armstrongmsg.socialnet.storage.StorageManager;
 import com.armstrongmsg.socialnet.util.PropertiesUtil;
-
-import socialnet.stub.StubAuthenticationPlugin;
-import socialnet.stub.StubAuthorizationPlugin;
 
 public class IntegrationTest {
 	private static final String ADMIN_USERNAME = "admin-username";
@@ -35,8 +36,12 @@ public class IntegrationTest {
 	private static final String NEW_USERNAME_1 = "new-username-1";
 	private static final String NEW_USER_PASSWORD_1 = "new-user-password-1";
 	private static final String NEW_USER_PROFILE_DESCRIPTION_1 = "new-user-profile-description-1";
-	private static final String NOT_ADMIN_ID = "not-admin-id";
-	private static final String NOT_ADMIN_USERNAME = "not-admin-username";
+	private static final String NEW_POST_TITLE = "new-post-title";
+	private static final String NEW_POST_CONTENT = "new-post-content";
+	private static final PostVisibility NEW_POST_VISIBILITY = PostVisibility.PUBLIC;
+	private static final String NEW_USERNAME_2 = "new-username-2";
+	private static final String NEW_USER_PASSWORD_2 = "new-user-password-2";
+	private static final String NEW_USER_PROFILE_DESCRIPTION_2 = "new-user-profile-description-2";
 	private ApplicationFacade facade;
 	private StorageManager storageManager;
 	private MockedStatic<PropertiesUtil> propertiesUtilMock;
@@ -58,9 +63,9 @@ public class IntegrationTest {
 		Mockito.when(propertiesUtil.getProperty(PropertiesNames.ADMIN_PASSWORD)).
 			thenReturn(ADMIN_PASSWORD);
 		Mockito.when(propertiesUtil.getProperty(ConfigurationProperties.AUTHENTICATION_PLUGIN_CLASS_NAME)).
-			thenReturn(StubAuthenticationPlugin.class.getCanonicalName());
+			thenReturn(DefaultAuthenticationPlugin.class.getCanonicalName());
 		Mockito.when(propertiesUtil.getProperty(ConfigurationProperties.AUTHORIZATION_PLUGIN_CLASS_NAME)).
-			thenReturn(StubAuthorizationPlugin.class.getCanonicalName());
+			thenReturn(DefaultAuthorizationPlugin.class.getCanonicalName());
 		
 		propertiesUtilMock = Mockito.mockStatic(PropertiesUtil.class);
 		Mockito.when(PropertiesUtil.getInstance()).thenReturn(propertiesUtil);
@@ -101,34 +106,66 @@ public class IntegrationTest {
 		assertTrue(users.isEmpty());
 		
 		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
+		facade.addUser(adminToken, NEW_USERNAME_2, NEW_USER_PASSWORD_2, NEW_USER_PROFILE_DESCRIPTION_2);
 		
 		List<User> usersAfterCreation = facade.getUsers(adminToken);
 		
-		assertEquals(1, usersAfterCreation.size());
-		assertEquals(NEW_USERNAME_1, usersAfterCreation.get(0).getUsername());
-		assertEquals(NEW_USER_PASSWORD_1, usersAfterCreation.get(0).getPassword());
-		assertEquals(NEW_USER_PROFILE_DESCRIPTION_1, usersAfterCreation.get(0).getProfile().getDescription());
-		assertTrue(usersAfterCreation.get(0).getProfile().getPosts().isEmpty());
+		assertEquals(2, usersAfterCreation.size());
+		
+		User createdUser1 = usersAfterCreation.get(0);
+		assertEquals(NEW_USERNAME_1, createdUser1.getUsername());
+		assertEquals(NEW_USER_PASSWORD_1, createdUser1.getPassword());
+		assertEquals(NEW_USER_PROFILE_DESCRIPTION_1, createdUser1.getProfile().getDescription());
+		assertTrue(createdUser1.getProfile().getPosts().isEmpty());
+		User createdUser2 = usersAfterCreation.get(1);
+		assertEquals(NEW_USERNAME_2, createdUser2.getUsername());
+		assertEquals(NEW_USER_PASSWORD_2, createdUser2.getPassword());
+		assertEquals(NEW_USER_PROFILE_DESCRIPTION_2, createdUser2.getProfile().getDescription());
+		assertTrue(createdUser2.getProfile().getPosts().isEmpty());
 		
 		facade.removeUser(adminToken, usersAfterCreation.get(0).getUserId());
 		
 		List<User> usersAfterRemoval = facade.getUsers(adminToken);
 		
-		assertTrue(usersAfterRemoval.isEmpty());
+		assertEquals(1, usersAfterRemoval.size());
 	}
 	
 	@Test(expected = UnauthorizedOperationException.class)
-	public void testCannotGetAllUsersWithNonAdminToken() throws UnauthorizedOperationException {
-		UserToken nonAdminToken = new UserToken(NOT_ADMIN_ID, NOT_ADMIN_USERNAME, "");
+	public void testCannotGetAllUsersWithNonAdminToken() throws UnauthorizedOperationException, AuthenticationException {
+		Map<String, String> adminCredentials = new HashMap<String, String>();
+		adminCredentials.put(AuthenticationParameters.USERNAME_KEY, ADMIN_USERNAME);
+		adminCredentials.put(AuthenticationParameters.PASSWORD_KEY, ADMIN_PASSWORD);
 		
-		facade.getUsers(nonAdminToken);
+		UserToken adminToken = facade.login(adminCredentials);
+		
+		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
+
+		Map<String, String> userCredentials = new HashMap<String, String>();
+		userCredentials.put(AuthenticationParameters.USERNAME_KEY, NEW_USERNAME_1);
+		userCredentials.put(AuthenticationParameters.PASSWORD_KEY, NEW_USER_PASSWORD_1);
+		
+		UserToken userToken = facade.login(userCredentials);
+		
+		facade.getUsers(userToken);
 	}
 	
 	@Test(expected = UnauthorizedOperationException.class)
-	public void testCannotAddUserAsAdminWithNonAdminToken() throws UnauthorizedOperationException {
-		UserToken nonAdminToken = new UserToken(NOT_ADMIN_ID, NOT_ADMIN_USERNAME, "");
+	public void testCannotAddUserAsAdminWithNonAdminToken() throws UnauthorizedOperationException, AuthenticationException {
+		Map<String, String> adminCredentials = new HashMap<String, String>();
+		adminCredentials.put(AuthenticationParameters.USERNAME_KEY, ADMIN_USERNAME);
+		adminCredentials.put(AuthenticationParameters.PASSWORD_KEY, ADMIN_PASSWORD);
 		
-		facade.addUser(nonAdminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
+		UserToken adminToken = facade.login(adminCredentials);
+		
+		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
+
+		Map<String, String> userCredentials = new HashMap<String, String>();
+		userCredentials.put(AuthenticationParameters.USERNAME_KEY, NEW_USERNAME_1);
+		userCredentials.put(AuthenticationParameters.PASSWORD_KEY, NEW_USER_PASSWORD_1);
+		
+		UserToken userToken = facade.login(userCredentials);
+		
+		facade.addUser(userToken, NEW_USERNAME_2, NEW_USER_PASSWORD_2, NEW_USER_PROFILE_DESCRIPTION_2);
 	}
 	
 	@Test(expected = UnauthorizedOperationException.class)
@@ -138,13 +175,19 @@ public class IntegrationTest {
 		adminCredentials.put(AuthenticationParameters.PASSWORD_KEY, ADMIN_PASSWORD);
 		
 		UserToken adminToken = facade.login(adminCredentials);
-		UserToken nonAdminToken = new UserToken(NOT_ADMIN_ID, NOT_ADMIN_USERNAME, "");
 		
 		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
+		facade.addUser(adminToken, NEW_USERNAME_2, NEW_USER_PASSWORD_2, NEW_USER_PROFILE_DESCRIPTION_2);
+				
+		Map<String, String> userCredentials = new HashMap<String, String>();
+		userCredentials.put(AuthenticationParameters.USERNAME_KEY, NEW_USERNAME_1);
+		userCredentials.put(AuthenticationParameters.PASSWORD_KEY, NEW_USER_PASSWORD_1);
+		
+		UserToken userToken = facade.login(userCredentials);
 		
 		List<User> usersAfterCreation = facade.getUsers(adminToken);
 		
-		facade.removeUser(nonAdminToken, usersAfterCreation.get(0).getUserId());
+		facade.removeUser(userToken, usersAfterCreation.get(1).getUserId());
 	}
 	
 	@Test
@@ -164,10 +207,71 @@ public class IntegrationTest {
 		List<User> usersAfterCreation = facade.getUsers(adminToken);
 		
 		assertEquals(1, usersAfterCreation.size());
-		assertEquals(NEW_USERNAME_1, usersAfterCreation.get(0).getUsername());
-		assertEquals(NEW_USER_PASSWORD_1, usersAfterCreation.get(0).getPassword());
-		assertEquals(NEW_USER_PROFILE_DESCRIPTION_1, usersAfterCreation.get(0).getProfile().getDescription());
-		assertTrue(usersAfterCreation.get(0).getProfile().getPosts().isEmpty());
+		
+		User createdUser = usersAfterCreation.get(0);
+		assertEquals(NEW_USERNAME_1, createdUser.getUsername());
+		assertEquals(NEW_USER_PASSWORD_1, createdUser.getPassword());
+		assertEquals(NEW_USER_PROFILE_DESCRIPTION_1, createdUser.getProfile().getDescription());
+		assertTrue(createdUser.getProfile().getPosts().isEmpty());
+	}
+	
+	@Test
+	public void testCreateAndGetPost() throws AuthenticationException, UnauthorizedOperationException {
+		Map<String, String> adminCredentials = new HashMap<String, String>();
+		adminCredentials.put(AuthenticationParameters.USERNAME_KEY, ADMIN_USERNAME);
+		adminCredentials.put(AuthenticationParameters.PASSWORD_KEY, ADMIN_PASSWORD);
+		
+		UserToken adminToken = facade.login(adminCredentials);
+		
+		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
+		
+		Map<String, String> userCredentials = new HashMap<String, String>();
+		userCredentials.put(AuthenticationParameters.USERNAME_KEY, NEW_USERNAME_1);
+		userCredentials.put(AuthenticationParameters.PASSWORD_KEY, NEW_USER_PASSWORD_1);
+		
+		UserToken userToken = facade.login(userCredentials);
+		
+		List<Post> userPosts = facade.getUserPosts(userToken, userToken.getUserId());
+		assertTrue(userPosts.isEmpty());
+		
+		facade.createPost(userToken, NEW_POST_TITLE, NEW_POST_CONTENT, NEW_POST_VISIBILITY);
+		
+		List<Post> userPostsAfterCreation = facade.getUserPosts(userToken, userToken.getUserId());
+		List<Post> userPostsAfterCreationAdminVersion = facade.getUserPosts(adminToken, userToken.getUserId());
+		
+		assertEquals(1, userPostsAfterCreation.size());
+		Post createdPost = userPostsAfterCreation.get(0);
+		
+		assertEquals(NEW_POST_TITLE, createdPost.getTitle());
+		assertEquals(NEW_POST_CONTENT, createdPost.getContent());
+		assertEquals(NEW_POST_VISIBILITY, createdPost.getVisibility());
+		
+		assertEquals(1, userPostsAfterCreationAdminVersion.size());
+		createdPost = userPostsAfterCreationAdminVersion.get(0);
+		
+		assertEquals(NEW_POST_TITLE, createdPost.getTitle());
+		assertEquals(NEW_POST_CONTENT, createdPost.getContent());
+		assertEquals(NEW_POST_VISIBILITY, createdPost.getVisibility());
+	}
+	
+	@Test(expected = AuthenticationException.class)
+	public void testNonAdminUserCannotGetPostsFromOtherUser() throws AuthenticationException, UnauthorizedOperationException { 
+		Map<String, String> adminCredentials = new HashMap<String, String>();
+		adminCredentials.put(AuthenticationParameters.USERNAME_KEY, ADMIN_USERNAME);
+		adminCredentials.put(AuthenticationParameters.PASSWORD_KEY, ADMIN_PASSWORD);
+		
+		UserToken adminToken = facade.login(adminCredentials);
+		
+		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
+		facade.addUser(adminToken, NEW_USERNAME_2, NEW_USER_PASSWORD_2, NEW_USER_PROFILE_DESCRIPTION_2);
+				
+		Map<String, String> userCredentials = new HashMap<String, String>();
+		userCredentials.put(AuthenticationParameters.USERNAME_KEY, NEW_USERNAME_1);
+		userCredentials.put(AuthenticationParameters.PASSWORD_KEY, NEW_USER_PASSWORD_1);
+		
+		UserToken userToken = facade.login(userCredentials);
+		
+		facade.getUserPosts(userToken, NEW_USERNAME_2);
 	}
 	
 	@After

@@ -8,11 +8,11 @@ import com.armstrongmsg.socialnet.exceptions.AuthenticationException;
 import com.armstrongmsg.socialnet.model.Admin;
 import com.armstrongmsg.socialnet.model.User;
 
-public class LocalPasswordBasedAuthenticationPlugin implements AuthenticationPlugin {
+public class DefaultAuthenticationPlugin implements AuthenticationPlugin {
 	private List<User> users;
 	private Admin admin;
 	
-	public LocalPasswordBasedAuthenticationPlugin() {
+	public DefaultAuthenticationPlugin() {
 	}
 
 	@Override

@@ -24,11 +24,11 @@ public class Profile {
 		return posts;
 	}
 
-	public void createPost(String title, String content, String postVisibility) {
+	public void createPost(String title, String content, PostVisibility newPostVisibility) {
 		GregorianCalendar postCreationTime = new GregorianCalendar();
 		postCreationTime.setTimeInMillis(System.currentTimeMillis());
 		
-		Post newPost = new Post(title, postCreationTime, content, PostVisibility.valueOf(postVisibility));
+		Post newPost = new Post(title, postCreationTime, content, newPostVisibility);
 		posts.add(newPost);
 	}
 }

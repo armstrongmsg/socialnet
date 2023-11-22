@@ -11,6 +11,7 @@ import com.armstrongmsg.socialnet.exceptions.FatalErrorException;
 import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
 import com.armstrongmsg.socialnet.model.Network;
 import com.armstrongmsg.socialnet.model.Post;
+import com.armstrongmsg.socialnet.model.PostVisibility;
 import com.armstrongmsg.socialnet.model.User;
 import com.armstrongmsg.socialnet.model.authentication.UserToken;
 import com.armstrongmsg.socialnet.storage.StorageManager;
@@ -49,7 +50,7 @@ public class ApplicationFacade {
 		instance = null;
 	}
 	
-	public void addUser(UserToken userToken, String username, String password, String profileDescription) throws UnauthorizedOperationException {
+	public void addUser(UserToken userToken, String username, String password, String profileDescription) throws UnauthorizedOperationException, AuthenticationException {
 		this.network.addUser(userToken, username, password, profileDescription);
 	}
 	
@@ -57,29 +58,20 @@ public class ApplicationFacade {
 		this.network.addUser(username, password, profileDescription);
 	}
 	
-	public void removeUser(UserToken userToken, String userId) throws UnauthorizedOperationException {
+	public void removeUser(UserToken userToken, String userId) throws UnauthorizedOperationException, AuthenticationException {
 		this.network.removeUser(userToken, userId);
 	}
 
-	public List<User> getUsers(UserToken userToken) throws UnauthorizedOperationException {
+	public List<User> getUsers(UserToken userToken) throws UnauthorizedOperationException, AuthenticationException {
 		return this.network.getUsers(userToken);
 	}
 
-	public void createPost(UserToken userToken, String title, String content, String postVisibility) {
-		try {
-			this.network.createPost(userToken, title, content, postVisibility);
-		} catch (UnauthorizedOperationException e) {
-			// FIXME treat exception
-		}
+	public void createPost(UserToken userToken, String title, String content, PostVisibility newPostVisibility) throws AuthenticationException {
+		this.network.createPost(userToken, title, content, newPostVisibility);
 	}
 
-	public List<Post> getUserPosts(UserToken userToken, String userId) {
-		try {
-			return this.network.getUserPosts(userToken, userId);
-		} catch (UnauthorizedOperationException e) {
-			// FIXME treat exception
-		}
-		return null;
+	public List<Post> getUserPosts(UserToken userToken, String userId) throws UnauthorizedOperationException, AuthenticationException {
+		return this.network.getUserPosts(userToken, userId);
 	}
 	
 	public void addFriendship(UserToken userToken, String userId1, String userId2) {
@@ -87,6 +79,9 @@ public class ApplicationFacade {
 			this.network.addFriendship(userToken, userId1, userId2);
 		} catch (UnauthorizedOperationException e) {
 			// FIXME treat exception
+		} catch (AuthenticationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
@@ -95,6 +90,9 @@ public class ApplicationFacade {
 			return this.network.getFriends(userToken, userId);
 		} catch (UnauthorizedOperationException e) {
 			// FIXME treat exception
+		} catch (AuthenticationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		
 		return null;
@@ -105,6 +103,9 @@ public class ApplicationFacade {
 			this.network.addFollow(userToken, followerId, followedId);
 		} catch (UnauthorizedOperationException e) {
 			// FIXME treat exception
+		} catch (AuthenticationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
@@ -113,6 +114,9 @@ public class ApplicationFacade {
 			return this.network.getFollowedUsers(userToken, userId);
 		} catch (UnauthorizedOperationException e) {
 			// FIXME treat exception
+		} catch (AuthenticationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		
 		return null;
@@ -131,6 +135,9 @@ public class ApplicationFacade {
 			return this.network.getFriendsPosts(token, userId);
 		} catch (UnauthorizedOperationException e) {
 			// FIXME treat exception
+		} catch (AuthenticationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		
 		return null;

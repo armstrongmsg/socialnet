@@ -15,7 +15,8 @@ import com.armstrongmsg.socialnet.model.authorization.OperationType;
 
 public class StubAuthorizationPlugin implements AuthorizationPlugin {
 	private Admin admin;
-	private static final List<OperationType> ADMIN_ONLY_OPERATIONS = Arrays.asList(OperationType.GET_ALL_USERS);
+	private static final List<OperationType> ADMIN_ONLY_OPERATIONS = Arrays.asList(OperationType.GET_ALL_USERS,
+			OperationType.REMOVE_USER, OperationType.ADD_USER);
 	
 	@Override
 	public void authorize(User requester, Operation operation) throws UnauthorizedOperationException {

@@ -6,6 +6,10 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 
 import com.armstrongmsg.socialnet.core.ApplicationFacade;
+import com.armstrongmsg.socialnet.exceptions.AuthenticationException;
+import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
+import com.armstrongmsg.socialnet.model.PostVisibility;
+import com.armstrongmsg.socialnet.model.authentication.UserToken;
 import com.armstrongmsg.socialnet.view.jsf.model.JsfConnector;
 import com.armstrongmsg.socialnet.view.jsf.model.Post;
 import com.armstrongmsg.socialnet.view.jsf.model.User;
@@ -61,9 +65,17 @@ public class PostBean {
 	}
 	
 	public String createPost() {
-		facade.createPost(SessionManager.getCurrentSession().getUserToken(), title, content, postVisibility);
-		userPosts = new JsfConnector().getViewPosts(facade.getUserPosts(SessionManager.getCurrentSession().getUserToken(), 
-				getUser().getUserId()));
+		UserToken token = SessionManager.getCurrentSession().getUserToken();
+		try {
+			facade.createPost(token, title, content, PostVisibility.valueOf(postVisibility));
+			userPosts = new JsfConnector().getViewPosts(facade.getUserPosts(token, getUser().getUserId()));
+		} catch (AuthenticationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (UnauthorizedOperationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return null;
 	}
 	
@@ -78,9 +90,14 @@ public class PostBean {
 	
 	public List<Post> getUserPosts() { 
 		if (userPosts == null) {
-			userPosts = new JsfConnector().getViewPosts(facade.getUserPosts(
-					SessionManager.getCurrentSession().getUserToken(), 
-					getUser().getUserId()));
+			try {
+				userPosts = new JsfConnector().getViewPosts(facade.getUserPosts(
+						SessionManager.getCurrentSession().getUserToken(), 
+						getUser().getUserId()));
+			} catch (UnauthorizedOperationException | AuthenticationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		
 		return userPosts;

@@ -10,15 +10,28 @@ import com.armstrongmsg.socialnet.model.Friendship;
 import com.armstrongmsg.socialnet.model.Group;
 import com.armstrongmsg.socialnet.model.User;
 
-public class AdminAuthorizationPlugin implements AuthorizationPlugin {
+public class DefaultAuthorizationPlugin implements AuthorizationPlugin {
 	private Admin admin;
-	private static final List<OperationType> ADMIN_ONLY_OPERATIONS = Arrays.asList();
+	private static final List<OperationType> ADMIN_ONLY_OPERATIONS = Arrays.asList(OperationType.GET_ALL_USERS,
+			OperationType.REMOVE_USER, OperationType.ADD_USER);
 	
-	public AdminAuthorizationPlugin() {
+	public DefaultAuthorizationPlugin() {
 	}
 	
 	@Override
 	public void authorize(User requester, Operation operation) throws UnauthorizedOperationException {
+		if (operation.getOperation().equals(OperationType.GET_USER_POSTS)) {
+			OperationOnUser userOperation = (OperationOnUser) operation;
+			
+			if (!admin.equals(requester) &&
+					!userOperation.getTarget().equals(requester)) {
+				// FIXME constant
+				throw new UnauthorizedOperationException(
+						String.format("User {} is not authorized to perform operation {}.", requester.getUserId(), 
+								operation.getOperation().getValue()));
+			}
+		}
+		
 		if (ADMIN_ONLY_OPERATIONS.contains(operation.getOperation())) {
 			if (!admin.equals(requester)) {
 				// FIXME constant
