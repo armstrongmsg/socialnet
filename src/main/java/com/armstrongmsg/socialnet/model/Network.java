@@ -8,6 +8,7 @@ import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.armstrongmsg.socialnet.constants.ConfigurationProperties;
 import com.armstrongmsg.socialnet.constants.Messages;
 import com.armstrongmsg.socialnet.constants.PropertiesDefaults;
 import com.armstrongmsg.socialnet.constants.PropertiesNames;
@@ -56,15 +57,13 @@ public class Network {
 		logger.info(Messages.Logging.LOADED_ADMIN, adminUsername);
 
 		Admin admin = new Admin(adminUsername, adminUsername, adminPassword);
-		List<User> users = storageManager.readUsers();
-		List<Group> groups = storageManager.readGroups();
-		List<Friendship> friendships = storageManager.readFriendships();
-		List<Follow> follows = storageManager.readFollows();
+		List<User> users = new ArrayList<User>(storageManager.readUsers());
+		List<Group> groups = new ArrayList<Group>(storageManager.readGroups());
+		List<Friendship> friendships = new ArrayList<Friendship>(storageManager.readFriendships());
+		List<Follow> follows = new ArrayList<Follow>(storageManager.readFollows());
 		ClassFactory classFactory = new ClassFactory();
-		// FIXME constant
-		String authenticationPluginClassName = properties.getProperty("AUTHENTICATION_PLUGIN_CLASS_NAME");
-		// FIXME constant
-		String authorizationPluginClassName = properties.getProperty("AUTHORIZATION_PLUGIN_CLASS_NAME");
+		String authenticationPluginClassName = properties.getProperty(ConfigurationProperties.AUTHENTICATION_PLUGIN_CLASS_NAME);
+		String authorizationPluginClassName = properties.getProperty(ConfigurationProperties.AUTHORIZATION_PLUGIN_CLASS_NAME);
 		
 		// FIXME constant
 		logger.info("Loading authentication plugin");
@@ -91,7 +90,10 @@ public class Network {
 		return admin;
 	}
 
-	public List<User> getUsers() {
+	public List<User> getUsers(UserToken userToken) throws UnauthorizedOperationException {
+		User requester = findUserById(userToken.getUserId());
+		this.authorizationPlugin.authorize(requester, new Operation(OperationType.GET_ALL_USERS));
+		
 		return users;
 	}
 
@@ -117,7 +119,7 @@ public class Network {
 		this.users.add(newUser);
 	}
 	
-	public void addUser(String username, String password, String profileDescription) throws UnauthorizedOperationException {
+	public void addUser(String username, String password, String profileDescription) {
 		UUID uuid = UUID.randomUUID();
 		Profile profile = new Profile(profileDescription, new ArrayList<Post>());
 		User newUser = new User(uuid.toString(), username, password, profile);
@@ -132,14 +134,19 @@ public class Network {
 		this.users.remove(user);
 	}
 
-	private User findUserById(String userId) {
+	private User findUserById(String userId) throws UnauthorizedOperationException {
 		for (User user : this.users) {
 			if (user.getUserId().equals(userId)) {
 				return user;
 			}
 		}
-		//FIXME
-		return null;
+		
+		if (admin.getUserId().equals(userId)) {
+			return admin;
+		}
+
+		// FIXME add message
+		throw new UnauthorizedOperationException();
 	}
 
 	public void createPost(UserToken userToken, String title, String content, String postVisibility) throws UnauthorizedOperationException {

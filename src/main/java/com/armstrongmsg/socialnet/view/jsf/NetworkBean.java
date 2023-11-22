@@ -6,6 +6,8 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 
 import com.armstrongmsg.socialnet.core.ApplicationFacade;
+import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
+import com.armstrongmsg.socialnet.model.authentication.UserToken;
 import com.armstrongmsg.socialnet.view.jsf.model.JsfConnector;
 import com.armstrongmsg.socialnet.view.jsf.model.Post;
 import com.armstrongmsg.socialnet.view.jsf.model.User;
@@ -57,21 +59,36 @@ public class NetworkBean {
 
 	public List<User> getUsers() {
 		if (users == null) {
-			users = new JsfConnector().getViewUsers(facade.getUsers());
+			UserToken token = SessionManager.getCurrentSession().getUserToken();
+			try {
+				users = new JsfConnector().getViewUsers(facade.getUsers(token));
+			} catch (UnauthorizedOperationException e) {
+				// FIXME Treat this exception
+			}
 		}
 
 		return users;
 	}
 
 	public String addUser() {
-		facade.addUser(SessionManager.getCurrentSession().getUserToken(), userId, username, getProfileDescription());
-		users = new JsfConnector().getViewUsers(facade.getUsers());
+		UserToken token = SessionManager.getCurrentSession().getUserToken();
+		try {
+			facade.addUser(token, userId, username, getProfileDescription());
+			users = new JsfConnector().getViewUsers(facade.getUsers(token));
+		} catch (UnauthorizedOperationException e) {
+			// FIXME Treat this exception
+		}
 		return null;
 	}
 	
 	public String signUp() {
+		UserToken token = SessionManager.getCurrentSession().getUserToken();
 		facade.addUser(username, getPassword(), profileDescription);
-		users = new JsfConnector().getViewUsers(facade.getUsers());
+		try {
+			users = new JsfConnector().getViewUsers(facade.getUsers(token));
+		} catch (UnauthorizedOperationException e) {
+			// FIXME Treat this exception
+		}
 		return null;
 	}
 
@@ -81,8 +98,13 @@ public class NetworkBean {
 	}
 
 	public String removeUser() {
-		facade.removeUser(SessionManager.getCurrentSession().getUserToken(), getUser().getUserId());
-		users = new JsfConnector().getViewUsers(facade.getUsers());
+		UserToken token = SessionManager.getCurrentSession().getUserToken();
+		try {
+			facade.removeUser(token, getUser().getUserId());
+			users = new JsfConnector().getViewUsers(facade.getUsers(token));
+		} catch (UnauthorizedOperationException e) {
+			// FIXME Treat this exception
+		}
 		return null;
 	}
 

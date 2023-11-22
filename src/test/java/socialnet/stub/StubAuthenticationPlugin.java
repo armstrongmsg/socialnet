@@ -1,4 +1,4 @@
-package com.armstrongmsg.socialnet.model.authentication;
+package socialnet.stub;
 
 import java.util.List;
 import java.util.Map;
@@ -7,12 +7,17 @@ import com.armstrongmsg.socialnet.constants.AuthenticationParameters;
 import com.armstrongmsg.socialnet.exceptions.AuthenticationException;
 import com.armstrongmsg.socialnet.model.Admin;
 import com.armstrongmsg.socialnet.model.User;
+import com.armstrongmsg.socialnet.model.authentication.AuthenticationPlugin;
+import com.armstrongmsg.socialnet.model.authentication.UserToken;
 
-public class LocalPasswordBasedAuthenticationPlugin implements AuthenticationPlugin {
+public class StubAuthenticationPlugin implements AuthenticationPlugin {
 	private List<User> users;
 	private Admin admin;
 	
-	public LocalPasswordBasedAuthenticationPlugin() {
+	@Override
+	public void setUp(Admin admin, List<User> users) {
+		this.users = users;
+		this.admin = admin;
 	}
 
 	@Override
@@ -29,10 +34,9 @@ public class LocalPasswordBasedAuthenticationPlugin implements AuthenticationPlu
 			return new UserToken(user.getUserId(), user.getUsername(), user.getProfile().getDescription());
 		}
 		
-		// TODO add message
 		throw new AuthenticationException();
 	}
-
+	
 	private User findUserByUsername(String username) throws AuthenticationException {
 		for (User user : this.users) {
 			if (user.getUsername().equals(username)) {
@@ -44,13 +48,6 @@ public class LocalPasswordBasedAuthenticationPlugin implements AuthenticationPlu
 			return admin;
 		}
 
-		// TODO add message
 		throw new AuthenticationException();
-	}
-
-	@Override
-	public void setUp(Admin admin, List<User> users) {
-		this.admin = admin;
-		this.users = users;
 	}
 }

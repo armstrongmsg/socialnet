@@ -49,37 +49,20 @@ public class ApplicationFacade {
 		instance = null;
 	}
 	
-	public void addUser(UserToken userToken, String username, String password, String profileDescription) {
-		try {
-			this.network.addUser(userToken, username, password, profileDescription);
-		} catch (UnauthorizedOperationException e) {
-			// FIXME treat exception
-		}
+	public void addUser(UserToken userToken, String username, String password, String profileDescription) throws UnauthorizedOperationException {
+		this.network.addUser(userToken, username, password, profileDescription);
 	}
 	
 	public void addUser(String username, String password, String profileDescription) {
-		try {
-			this.network.addUser(username, password, profileDescription);
-		} catch (UnauthorizedOperationException e) {
-			// FIXME treat exception
-		}
+		this.network.addUser(username, password, profileDescription);
 	}
 	
-	public void removeUser(UserToken userToken, String userId) {
-		try {
-			this.network.removeUser(userToken, userId);
-		
-		} catch (UnauthorizedOperationException e) {
-			// FIXME treat exception
-		}
+	public void removeUser(UserToken userToken, String userId) throws UnauthorizedOperationException {
+		this.network.removeUser(userToken, userId);
 	}
-	
-	public User getAdmin() { 
-		return this.network.getAdmin();
-	}
-	
-	public List<User> getUsers() {
-		return this.network.getUsers();
+
+	public List<User> getUsers(UserToken userToken) throws UnauthorizedOperationException {
+		return this.network.getUsers(userToken);
 	}
 
 	public void createPost(UserToken userToken, String title, String content, String postVisibility) {
