@@ -141,9 +141,14 @@ public class NetworkBean {
 	}
 	
 	public List<User> getFollows() {
-		return new JsfConnector().getViewUsers(
-				facade.getFollowedUsers(SessionManager.getCurrentSession().getUserToken(), 
-						user.getUserId()));
+		try {
+			return new JsfConnector().getViewUsers(
+					facade.getFollowedUsers(SessionManager.getCurrentSession().getUserToken(), 
+							user.getUserId()));
+		} catch (UnauthorizedOperationException | AuthenticationException e) {
+			// FIXME treat exception
+		}
+		return null;
 	}
 
 	public String getPassword() {

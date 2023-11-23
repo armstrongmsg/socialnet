@@ -49,7 +49,15 @@ public class ApplicationFacade {
 	public static void reset() {
 		instance = null;
 	}
+	
+	public UserToken login(Map<String, String> credentials) throws AuthenticationException {
+		return this.network.login(credentials);
+	}
 
+	public boolean userIsAdmin(String userId) {
+		return this.network.userIsAdmin(userId);
+	}
+	
 	// ADMIN ONLY OPERATIONS
 	
 	public void addUser(UserToken userToken, String username, String password, String profileDescription) throws UnauthorizedOperationException, AuthenticationException {
@@ -74,6 +82,14 @@ public class ApplicationFacade {
 	
 	public List<User> getFriends(UserToken userToken, String userId) throws UnauthorizedOperationException, AuthenticationException {
 		return this.network.getFriends(userToken, userId);
+	}
+	
+	public void addFollowAdmin(UserToken userToken, String followerId, String followedId) throws UnauthorizedOperationException, AuthenticationException {
+		this.network.addFollowAdmin(userToken, followerId, followedId);
+	}
+	
+	public List<User> getFollowedUsers(UserToken userToken, String userId) throws UnauthorizedOperationException, AuthenticationException {
+		return this.network.getFollowedUsers(userToken, userId);
 	}
 	
 	// REGULAR USER OPERATIONS
@@ -103,37 +119,11 @@ public class ApplicationFacade {
 		return this.network.getFriendsPosts(token);
 	}
 
-	public void addFollow(UserToken userToken, String followerId, String followedId) {
-		try {
-			this.network.addFollow(userToken, followerId, followedId);
-		} catch (UnauthorizedOperationException e) {
-			// FIXME treat exception
-		} catch (AuthenticationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	public void addFollow(UserToken userToken, String followedUsername) throws AuthenticationException, UnauthorizedOperationException {
+		this.network.addFollow(userToken, followedUsername);
 	}
 
-	public List<User> getFollowedUsers(UserToken userToken, String userId) {
-		try {
-			return this.network.getFollowedUsers(userToken, userId);
-		} catch (UnauthorizedOperationException e) {
-			// FIXME treat exception
-		} catch (AuthenticationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		return null;
+	public List<User> getFollowedUsers(UserToken userToken) throws AuthenticationException, UnauthorizedOperationException {
+		return this.network.getFollowedUsers(userToken);
 	}
-
-	public UserToken login(Map<String, String> credentials) throws AuthenticationException {
-		return this.network.login(credentials);
-	}
-
-	public boolean userIsAdmin(String userId) {
-		return this.network.userIsAdmin(userId);
-	}
-
-
 }

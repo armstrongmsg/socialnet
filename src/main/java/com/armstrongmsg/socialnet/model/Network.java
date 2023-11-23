@@ -225,24 +225,47 @@ public class Network {
 		return friends;
 	}
 
-	public void addFollow(UserToken userToken, String followerId, String followedId) throws UnauthorizedOperationException, AuthenticationException {
+	public void addFollowAdmin(UserToken userToken, String followerId, String followedId) throws UnauthorizedOperationException, AuthenticationException {
 		User requester = findUserById(userToken.getUserId());
-		this.authorizationPlugin.authorize(requester, new Operation(OperationType.ADD_FOLLOW));
+		this.authorizationPlugin.authorize(requester, new Operation(OperationType.ADD_FOLLOW_ADMIN));
 		
 		User follower = findUserById(followerId);
 		User followed = findUserById(followedId);
 		this.follows.add(new Follow(follower, followed));
 	}
 	
+	public void addFollow(UserToken userToken, String followedUsername) throws AuthenticationException, UnauthorizedOperationException {
+		User requester = findUserById(userToken.getUserId());
+		this.authorizationPlugin.authorize(requester, new Operation(OperationType.ADD_FOLLOW));
+		
+		User followed = findUserByUsername(followedUsername);
+		this.follows.add(new Follow(requester, followed));
+	}
+	
 	public List<User> getFollowedUsers(UserToken userToken, String userId) throws UnauthorizedOperationException, AuthenticationException {
 		User requester = findUserById(userToken.getUserId());
-		this.authorizationPlugin.authorize(requester, new Operation(OperationType.GET_FOLLOWED_USERS));
+		this.authorizationPlugin.authorize(requester, new Operation(OperationType.GET_FOLLOWED_USERS_ADMIN));
 		
-		User user = findUserById(userToken.getUserId());
+		User user = findUserById(userId);
 		List<User> followedUsers = new ArrayList<User>();
 		
 		for (Follow follow : getFollows()) {
 			if (follow.getFollower().equals(user)) {
+				followedUsers.add(follow.getFollowed());
+			}
+		}
+		
+		return followedUsers;
+	}
+
+	public List<User> getFollowedUsers(UserToken userToken) throws AuthenticationException, UnauthorizedOperationException {
+		User requester = findUserById(userToken.getUserId());
+		this.authorizationPlugin.authorize(requester, new Operation(OperationType.GET_FOLLOWED_USERS));
+		
+		List<User> followedUsers = new ArrayList<User>();
+		
+		for (Follow follow : getFollows()) {
+			if (follow.getFollower().equals(requester)) {
 				followedUsers.add(follow.getFollowed());
 			}
 		}
@@ -296,6 +319,4 @@ public class Network {
 		// TODO add message
 		throw new AuthenticationException();
 	}
-
-	
 }

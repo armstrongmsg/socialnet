@@ -358,6 +358,85 @@ public class IntegrationTest {
 		assertEquals(NEW_POST_VISIBILITY_2, post2.getVisibility());
 	}
 	
+	@Test
+	public void testAddFollowAdmin() throws UnauthorizedOperationException, AuthenticationException {
+		UserToken adminToken = loginAsAdmin();
+		
+		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
+		facade.addUser(adminToken, NEW_USERNAME_2, NEW_USER_PASSWORD_2, NEW_USER_PROFILE_DESCRIPTION_2);
+
+		List<User> users = facade.getUsers(adminToken);
+		User user1 = users.get(0);
+		User user2 = users.get(1);
+		
+		facade.addFollowAdmin(adminToken, user1.getUserId(), user2.getUserId());
+		
+		List<User> user1Follows = facade.getFollowedUsers(adminToken, user1.getUserId());
+		List<User> user2Follows = facade.getFollowedUsers(adminToken, user2.getUserId());
+	
+		assertEquals(1, user1Follows.size());
+		assertTrue(user1Follows.contains(user2));
+		
+		assertTrue(user2Follows.isEmpty());
+	}
+	
+	@Test(expected = UnauthorizedOperationException.class)
+	public void testNonAdminCannotFollowById() throws UnauthorizedOperationException, AuthenticationException {
+		UserToken adminToken = loginAsAdmin();
+		
+		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
+		facade.addUser(adminToken, NEW_USERNAME_2, NEW_USER_PASSWORD_2, NEW_USER_PROFILE_DESCRIPTION_2);
+
+		List<User> users = facade.getUsers(adminToken);
+		User user1 = users.get(0);
+		User user2 = users.get(1);
+		
+		UserToken userToken = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
+		facade.addFollowAdmin(userToken, user1.getUserId(), user2.getUserId());
+	}
+	
+	@Test(expected = UnauthorizedOperationException.class)
+	public void testNonAdminCannotGetFollowsById() throws UnauthorizedOperationException, AuthenticationException {
+		UserToken adminToken = loginAsAdmin();
+		
+		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
+		facade.addUser(adminToken, NEW_USERNAME_2, NEW_USER_PASSWORD_2, NEW_USER_PROFILE_DESCRIPTION_2);
+
+		List<User> users = facade.getUsers(adminToken);
+		User user1 = users.get(0);
+		User user2 = users.get(1);
+		
+		facade.addFollowAdmin(adminToken, user1.getUserId(), user2.getUserId());
+		
+		UserToken userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
+		
+		facade.getFollowedUsers(userToken1, user1.getUserId());
+	}
+	
+	@Test
+	public void testAddFollow() throws UnauthorizedOperationException, AuthenticationException {
+		UserToken adminToken = loginAsAdmin();
+		
+		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
+		facade.addUser(adminToken, NEW_USERNAME_2, NEW_USER_PASSWORD_2, NEW_USER_PROFILE_DESCRIPTION_2);
+
+		List<User> users = facade.getUsers(adminToken);
+		User user2 = users.get(1);
+		
+		UserToken userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);	
+		UserToken userToken2 = loginAsUser(NEW_USERNAME_2, NEW_USER_PASSWORD_2);
+		
+		facade.addFollow(userToken1, NEW_USERNAME_2);
+		
+		List<User> followsUser1 = facade.getFollowedUsers(userToken1);
+		List<User> followsUser2 = facade.getFollowedUsers(userToken2);
+		
+		assertEquals(1, followsUser1.size());
+		assertTrue(followsUser1.contains(user2));
+		
+		assertTrue(followsUser2.isEmpty());
+	}
+	
 	private UserToken loginAsAdmin() throws AuthenticationException {
 		Map<String, String> adminCredentials = new HashMap<String, String>();
 		adminCredentials.put(AuthenticationParameters.USERNAME_KEY, ADMIN_USERNAME);
