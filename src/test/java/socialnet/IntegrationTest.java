@@ -42,6 +42,9 @@ public class IntegrationTest {
 	private static final String NEW_USERNAME_2 = "new-username-2";
 	private static final String NEW_USER_PASSWORD_2 = "new-user-password-2";
 	private static final String NEW_USER_PROFILE_DESCRIPTION_2 = "new-user-profile-description-2";
+	private static final PostVisibility NEW_POST_VISIBILITY_2 = PostVisibility.PRIVATE;
+	private static final String NEW_POST_TITLE_2 = "new-post-title-2";
+	private static final String NEW_POST_CONTENT_2 = "new-post-content-2";
 	private ApplicationFacade facade;
 	private StorageManager storageManager;
 	private MockedStatic<PropertiesUtil> propertiesUtilMock;
@@ -184,20 +187,19 @@ public class IntegrationTest {
 	}
 	
 	@Test
-	public void testCreateAndGetPost() throws AuthenticationException, UnauthorizedOperationException {
+	public void testCreateAndGetPostByAdmin() throws AuthenticationException, UnauthorizedOperationException {
 		UserToken adminToken = loginAsAdmin();
 		
 		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
 		
 		UserToken userToken = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
 		
-		List<Post> userPosts = facade.getUserPosts(userToken, userToken.getUserId());
+		List<Post> userPosts = facade.getUserPosts(adminToken, userToken.getUserId());
 		assertTrue(userPosts.isEmpty());
 		
 		facade.createPost(userToken, NEW_POST_TITLE, NEW_POST_CONTENT, NEW_POST_VISIBILITY);
 		
-		List<Post> userPostsAfterCreation = facade.getUserPosts(userToken, userToken.getUserId());
-		List<Post> userPostsAfterCreationAdminVersion = facade.getUserPosts(adminToken, userToken.getUserId());
+		List<Post> userPostsAfterCreation = facade.getUserPosts(adminToken, userToken.getUserId());
 		
 		assertEquals(1, userPostsAfterCreation.size());
 		Post createdPost = userPostsAfterCreation.get(0);
@@ -205,17 +207,10 @@ public class IntegrationTest {
 		assertEquals(NEW_POST_TITLE, createdPost.getTitle());
 		assertEquals(NEW_POST_CONTENT, createdPost.getContent());
 		assertEquals(NEW_POST_VISIBILITY, createdPost.getVisibility());
-		
-		assertEquals(1, userPostsAfterCreationAdminVersion.size());
-		createdPost = userPostsAfterCreationAdminVersion.get(0);
-		
-		assertEquals(NEW_POST_TITLE, createdPost.getTitle());
-		assertEquals(NEW_POST_CONTENT, createdPost.getContent());
-		assertEquals(NEW_POST_VISIBILITY, createdPost.getVisibility());
 	}
-	
-	@Test(expected = AuthenticationException.class)
-	public void testNonAdminUserCannotGetPostsFromOtherUser() throws AuthenticationException, UnauthorizedOperationException { 
+
+	@Test(expected = UnauthorizedOperationException.class)
+	public void testNonAdminUserCannotGetPostsByUserId() throws AuthenticationException, UnauthorizedOperationException { 
 		UserToken adminToken = loginAsAdmin();
 		
 		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
@@ -223,7 +218,144 @@ public class IntegrationTest {
 
 		UserToken userToken = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
 		
-		facade.getUserPosts(userToken, NEW_USERNAME_2);
+		facade.getUserPosts(userToken, userToken.getUserId());
+	}
+	
+	@Test(expected = UnauthorizedOperationException.class)
+	public void testNonAdminUserCannotGetPostsFromOtherUser() throws AuthenticationException, UnauthorizedOperationException { 
+		UserToken adminToken = loginAsAdmin();
+		
+		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
+		facade.addUser(adminToken, NEW_USERNAME_2, NEW_USER_PASSWORD_2, NEW_USER_PROFILE_DESCRIPTION_2);
+
+		UserToken userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
+		UserToken userToken2 = loginAsUser(NEW_USERNAME_2, NEW_USER_PASSWORD_2);
+		
+		facade.getUserPosts(userToken1, userToken2.getUserId());
+	}
+	
+	@Test
+	public void testCreateAndGetPostByNonAdmin() throws UnauthorizedOperationException, AuthenticationException {
+		UserToken adminToken = loginAsAdmin();
+		
+		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
+		
+		UserToken userToken = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
+		
+		List<Post> userPosts = facade.getSelfPosts(userToken);
+		assertTrue(userPosts.isEmpty());
+		
+		facade.createPost(userToken, NEW_POST_TITLE, NEW_POST_CONTENT, NEW_POST_VISIBILITY);
+		
+		List<Post> userPostsAfterCreation = facade.getSelfPosts(userToken);
+		
+		assertEquals(1, userPostsAfterCreation.size());
+		Post createdPost = userPostsAfterCreation.get(0);
+		
+		assertEquals(NEW_POST_TITLE, createdPost.getTitle());
+		assertEquals(NEW_POST_CONTENT, createdPost.getContent());
+		assertEquals(NEW_POST_VISIBILITY, createdPost.getVisibility());
+	}
+	
+	@Test
+	public void testAddFriendshipAdmin() throws UnauthorizedOperationException, AuthenticationException {
+		UserToken adminToken = loginAsAdmin();
+		
+		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
+		facade.addUser(adminToken, NEW_USERNAME_2, NEW_USER_PASSWORD_2, NEW_USER_PROFILE_DESCRIPTION_2);
+
+		List<User> users = facade.getUsers(adminToken);
+		User user1 = users.get(0);
+		User user2 = users.get(1);
+		
+		facade.addFriendshipAdmin(adminToken, user1.getUserId(), user2.getUserId());
+		
+		List<User> user1Friends = facade.getFriends(adminToken, user1.getUserId());
+		List<User> user2Friends = facade.getFriends(adminToken, user2.getUserId());
+		
+		assertTrue(user1Friends.contains(user2));
+		assertTrue(user2Friends.contains(user1));
+	}
+	
+	@Test(expected = UnauthorizedOperationException.class)
+	public void testNonAdminCannotAddFriendshipByUserId() throws UnauthorizedOperationException, AuthenticationException {
+		UserToken adminToken = loginAsAdmin();
+		
+		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
+		facade.addUser(adminToken, NEW_USERNAME_2, NEW_USER_PASSWORD_2, NEW_USER_PROFILE_DESCRIPTION_2);
+
+		List<User> users = facade.getUsers(adminToken);
+		User user1 = users.get(0);
+		User user2 = users.get(1);
+		
+		UserToken userToken = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
+		facade.addFriendshipAdmin(userToken, user1.getUserId(), user2.getUserId());
+	}
+	
+	@Test(expected = UnauthorizedOperationException.class)
+	public void testNonAdminCannotGetFriendsById() throws AuthenticationException, UnauthorizedOperationException {
+		UserToken adminToken = loginAsAdmin();
+		
+		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
+
+		UserToken userToken = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
+		
+		facade.getFriends(userToken, userToken.getUserId());
+	}
+	
+	@Test
+	public void testAddFriendship() throws UnauthorizedOperationException, AuthenticationException {
+		UserToken adminToken = loginAsAdmin();
+		
+		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
+		facade.addUser(adminToken, NEW_USERNAME_2, NEW_USER_PASSWORD_2, NEW_USER_PROFILE_DESCRIPTION_2);
+		
+		UserToken userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);	
+		UserToken userToken2 = loginAsUser(NEW_USERNAME_2, NEW_USER_PASSWORD_2);
+		
+		facade.addFriendship(userToken1, NEW_USERNAME_2);
+		
+		List<User> users = facade.getUsers(adminToken);
+		User user1 = users.get(0);
+		User user2 = users.get(1);
+		
+		List<User> friends1 = facade.getSelfFriends(userToken1);
+		List<User> friends2 = facade.getSelfFriends(userToken2);
+		
+		assertTrue(friends1.contains(user2));
+		assertTrue(friends2.contains(user1));
+	}
+	
+	@Test
+	public void testGetFriendsPosts() throws AuthenticationException, UnauthorizedOperationException {
+		UserToken adminToken = loginAsAdmin();
+		
+		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
+		facade.addUser(adminToken, NEW_USERNAME_2, NEW_USER_PASSWORD_2, NEW_USER_PROFILE_DESCRIPTION_2);
+		
+		UserToken userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);	
+		UserToken userToken2 = loginAsUser(NEW_USERNAME_2, NEW_USER_PASSWORD_2);
+		
+		facade.addFriendship(userToken1, NEW_USERNAME_2);
+		
+		facade.createPost(userToken1, NEW_POST_TITLE, NEW_POST_CONTENT, NEW_POST_VISIBILITY);
+		facade.createPost(userToken1, NEW_POST_TITLE_2, NEW_POST_CONTENT_2, NEW_POST_VISIBILITY_2);
+		
+		List<Post> postsFriendsUser1 = facade.getFriendsPosts(userToken1);
+		List<Post> postsFriendsUser2 = facade.getFriendsPosts(userToken2);
+		
+		assertTrue(postsFriendsUser1.isEmpty());
+		assertEquals(2, postsFriendsUser2.size());
+		Post post1 = postsFriendsUser2.get(0);
+		Post post2 = postsFriendsUser2.get(1);
+		
+		assertEquals(NEW_POST_TITLE, post1.getTitle());
+		assertEquals(NEW_POST_CONTENT, post1.getContent());
+		assertEquals(NEW_POST_VISIBILITY, post1.getVisibility());
+		
+		assertEquals(NEW_POST_TITLE_2, post2.getTitle());
+		assertEquals(NEW_POST_CONTENT_2, post2.getContent());
+		assertEquals(NEW_POST_VISIBILITY_2, post2.getVisibility());
 	}
 	
 	private UserToken loginAsAdmin() throws AuthenticationException {

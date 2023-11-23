@@ -113,7 +113,12 @@ public class PostBean {
 			userId = user.getUserId();
 		}
 		
-		return new JsfConnector().getViewPosts(facade.getFriendsPosts(SessionManager.getCurrentSession().getUserToken(), 
-				userId));
+		try {
+			return new JsfConnector().getViewPosts(facade.getFriendsPosts(SessionManager.getCurrentSession().getUserToken()));
+		} catch (UnauthorizedOperationException | AuthenticationException e) {
+			// FIXME treat exception
+		}
+		
+		return null;
 	}
 }

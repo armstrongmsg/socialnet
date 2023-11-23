@@ -130,9 +130,14 @@ public class NetworkBean {
 	}
 	
 	public List<User> getFriends() {
-		return new JsfConnector().getViewUsers(
-				facade.getFriends(
-						SessionManager.getCurrentSession().getUserToken(), user.getUserId()));
+		try {
+			return new JsfConnector().getViewUsers(
+					facade.getFriends(
+							SessionManager.getCurrentSession().getUserToken(), user.getUserId()));
+		} catch (UnauthorizedOperationException | AuthenticationException e) {
+			// FIXME treat exception
+		}
+		return null;
 	}
 	
 	public List<User> getFollows() {
@@ -150,7 +155,12 @@ public class NetworkBean {
 	}
 
 	public List<Post> getFriendsPosts() {
-		return new JsfConnector().getViewPosts(facade.getFriendsPosts(
-				SessionManager.getCurrentSession().getUserToken(), getUser().getUserId()));
+		try {
+			return new JsfConnector().getViewPosts(facade.getFriendsPosts(
+					SessionManager.getCurrentSession().getUserToken()));
+		} catch (UnauthorizedOperationException | AuthenticationException e) {
+			// FIXME treat exception
+		}
+		return null;
 	}
 }

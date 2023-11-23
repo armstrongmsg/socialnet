@@ -163,19 +163,33 @@ public class Network {
 		User user = findUserById(userId);
 		return user.getProfile().getPosts();
 	}
-
-	public void addFriendship(UserToken userToken, String userId1, String userId2) throws UnauthorizedOperationException, AuthenticationException {
+	
+	public List<Post> getSelfPosts(UserToken userToken) throws AuthenticationException, UnauthorizedOperationException {
 		User requester = findUserById(userToken.getUserId());
-		this.authorizationPlugin.authorize(requester, new Operation(OperationType.ADD_FRIENDSHIP));
+		this.authorizationPlugin.authorize(requester, new OperationOnUser(OperationType.GET_SELF_POSTS, requester));
+		return requester.getProfile().getPosts();
+	}
+
+	public void addFriendshipAdmin(UserToken userToken, String userId1, String userId2) throws UnauthorizedOperationException, AuthenticationException {
+		User requester = findUserById(userToken.getUserId());
+		this.authorizationPlugin.authorize(requester, new Operation(OperationType.ADD_FRIENDSHIP_ADMIN));
 		
 		User user1 = findUserById(userId1);
 		User user2 = findUserById(userId2);
 		this.friendships.add(new Friendship(user1, user2));
 	}
 
+	public void addFriendship(UserToken userToken, String username) throws UnauthorizedOperationException, AuthenticationException {
+		User requester = findUserById(userToken.getUserId());
+		this.authorizationPlugin.authorize(requester, new Operation(OperationType.ADD_FRIENDSHIP));
+		
+		User friend = findUserByUsername(username);
+		this.friendships.add(new Friendship(requester, friend));
+	}
+	
 	public List<User> getFriends(UserToken userToken, String userId) throws UnauthorizedOperationException, AuthenticationException {
 		User requester = findUserById(userToken.getUserId());
-		this.authorizationPlugin.authorize(requester, new Operation(OperationType.GET_FRIENDS));
+		this.authorizationPlugin.authorize(requester, new Operation(OperationType.GET_FRIENDS_ADMIN));
 		User user = findUserById(userId);
 		List<User> friends = new ArrayList<User>();
 		
@@ -185,6 +199,25 @@ public class Network {
 			}
 			
 			if (friendship.getFriend2().equals(user)) {
+				friends.add(friendship.getFriend1());
+			}
+		}
+		
+		return friends;
+	}
+	
+	public List<User> getSelfFriends(UserToken userToken) throws AuthenticationException, UnauthorizedOperationException {
+		User requester = findUserById(userToken.getUserId());
+		this.authorizationPlugin.authorize(requester, new Operation(OperationType.GET_FRIENDS));
+		
+		List<User> friends = new ArrayList<User>();
+		
+		for (Friendship friendship : getFriendships()) {
+			if (friendship.getFriend1().equals(requester)) {
+				friends.add(friendship.getFriend2());
+			}
+			
+			if (friendship.getFriend2().equals(requester)) {
 				friends.add(friendship.getFriend1());
 			}
 		}
@@ -221,18 +254,17 @@ public class Network {
 		return this.admin.getUserId().equals(userId);
 	}
 
-	public List<Post> getFriendsPosts(UserToken token, String userId) throws UnauthorizedOperationException, AuthenticationException {
+	public List<Post> getFriendsPosts(UserToken token) throws UnauthorizedOperationException, AuthenticationException {
 		User requester = findUserById(token.getUserId());
 		this.authorizationPlugin.authorize(requester, new Operation(OperationType.GET_FRIENDS_POSTS));
-		User user = findUserById(userId);
 		List<User> friends = new ArrayList<User>();
 		
 		for (Friendship friendship : getFriendships()) {
-			if (friendship.getFriend1().equals(user)) {
+			if (friendship.getFriend1().equals(requester)) {
 				friends.add(friendship.getFriend2());
 			}
 			
-			if (friendship.getFriend2().equals(user)) {
+			if (friendship.getFriend2().equals(requester)) {
 				friends.add(friendship.getFriend1());
 			}
 		}
@@ -249,4 +281,21 @@ public class Network {
 	public UserToken login(Map<String, String> credentials) throws AuthenticationException {
 		return this.authenticationPlugin.authenticate(credentials);
 	}
+
+	private User findUserByUsername(String username) throws AuthenticationException {
+		for (User user : this.users) {
+			if (user.getUsername().equals(username)) {
+				return user;
+			}
+		}
+		
+		if (admin.getUsername().equals(username)) {
+			return admin;
+		}
+
+		// TODO add message
+		throw new AuthenticationException();
+	}
+
+	
 }

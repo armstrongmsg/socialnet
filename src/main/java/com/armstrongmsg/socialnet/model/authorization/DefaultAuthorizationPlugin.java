@@ -13,7 +13,8 @@ import com.armstrongmsg.socialnet.model.User;
 public class DefaultAuthorizationPlugin implements AuthorizationPlugin {
 	private Admin admin;
 	private static final List<OperationType> ADMIN_ONLY_OPERATIONS = Arrays.asList(OperationType.GET_ALL_USERS,
-			OperationType.REMOVE_USER, OperationType.ADD_USER);
+			OperationType.REMOVE_USER, OperationType.ADD_USER, OperationType.GET_USER_POSTS, OperationType.ADD_FRIENDSHIP_ADMIN, 
+			OperationType.GET_FRIENDS_ADMIN);
 	
 	public DefaultAuthorizationPlugin() {
 	}

@@ -49,54 +49,58 @@ public class ApplicationFacade {
 	public static void reset() {
 		instance = null;
 	}
+
+	// ADMIN ONLY OPERATIONS
 	
 	public void addUser(UserToken userToken, String username, String password, String profileDescription) throws UnauthorizedOperationException, AuthenticationException {
 		this.network.addUser(userToken, username, password, profileDescription);
 	}
 	
-	public void addUser(String username, String password, String profileDescription) {
-		this.network.addUser(username, password, profileDescription);
-	}
-	
 	public void removeUser(UserToken userToken, String userId) throws UnauthorizedOperationException, AuthenticationException {
 		this.network.removeUser(userToken, userId);
 	}
-
+	
 	public List<User> getUsers(UserToken userToken) throws UnauthorizedOperationException, AuthenticationException {
 		return this.network.getUsers(userToken);
-	}
-
-	public void createPost(UserToken userToken, String title, String content, PostVisibility newPostVisibility) throws AuthenticationException {
-		this.network.createPost(userToken, title, content, newPostVisibility);
 	}
 
 	public List<Post> getUserPosts(UserToken userToken, String userId) throws UnauthorizedOperationException, AuthenticationException {
 		return this.network.getUserPosts(userToken, userId);
 	}
 	
-	// TODO should use a more complete approach, with friendship request, etc
-	public void addFriendship(UserToken userToken, String userId1, String userId2) {
-		try {
-			this.network.addFriendship(userToken, userId1, userId2);
-		} catch (UnauthorizedOperationException e) {
-			// FIXME treat exception
-		} catch (AuthenticationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	public void addFriendshipAdmin(UserToken userToken, String userId1, String userId2) throws UnauthorizedOperationException, AuthenticationException {
+		this.network.addFriendshipAdmin(userToken, userId1, userId2);
+	}
+	
+	public List<User> getFriends(UserToken userToken, String userId) throws UnauthorizedOperationException, AuthenticationException {
+		return this.network.getFriends(userToken, userId);
+	}
+	
+	// REGULAR USER OPERATIONS
+	
+	public void addUser(String username, String password, String profileDescription) {
+		this.network.addUser(username, password, profileDescription);
 	}
 
-	public List<User> getFriends(UserToken userToken, String userId) {
-		try {
-			return this.network.getFriends(userToken, userId);
-		} catch (UnauthorizedOperationException e) {
-			// FIXME treat exception
-		} catch (AuthenticationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		return null;
+	public void createPost(UserToken userToken, String title, String content, PostVisibility newPostVisibility) throws AuthenticationException {
+		this.network.createPost(userToken, title, content, newPostVisibility);
+	}
+
+	public List<Post> getSelfPosts(UserToken userToken) throws UnauthorizedOperationException, AuthenticationException {
+		return this.network.getSelfPosts(userToken);
+	}
+	
+	// TODO should use a more complete approach, with friendship request, etc
+	public void addFriendship(UserToken userToken, String username) throws UnauthorizedOperationException, AuthenticationException {
+		this.network.addFriendship(userToken, username);
+	}
+	
+	public List<User> getSelfFriends(UserToken userToken) throws AuthenticationException, UnauthorizedOperationException {
+		return this.network.getSelfFriends(userToken);
+	}
+
+	public List<Post> getFriendsPosts(UserToken token) throws UnauthorizedOperationException, AuthenticationException {
+		return this.network.getFriendsPosts(token);
 	}
 
 	public void addFollow(UserToken userToken, String followerId, String followedId) {
@@ -131,16 +135,5 @@ public class ApplicationFacade {
 		return this.network.userIsAdmin(userId);
 	}
 
-	public List<Post> getFriendsPosts(UserToken token, String userId) {
-		try {
-			return this.network.getFriendsPosts(token, userId);
-		} catch (UnauthorizedOperationException e) {
-			// FIXME treat exception
-		} catch (AuthenticationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		return null;
-	}
+
 }
