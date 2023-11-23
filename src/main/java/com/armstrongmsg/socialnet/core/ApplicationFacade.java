@@ -74,6 +74,7 @@ public class ApplicationFacade {
 		return this.network.getUserPosts(userToken, userId);
 	}
 	
+	// TODO should use a more complete approach, with friendship request, etc
 	public void addFriendship(UserToken userToken, String userId1, String userId2) {
 		try {
 			this.network.addFriendship(userToken, userId1, userId2);

@@ -95,11 +95,7 @@ public class IntegrationTest {
 	
 	@Test
 	public void testGetCreateRemoveUserByAdmin() throws AuthenticationException, UnauthorizedOperationException {
-		Map<String, String> adminCredentials = new HashMap<String, String>();
-		adminCredentials.put(AuthenticationParameters.USERNAME_KEY, ADMIN_USERNAME);
-		adminCredentials.put(AuthenticationParameters.PASSWORD_KEY, ADMIN_PASSWORD);
-		
-		UserToken adminToken = facade.login(adminCredentials);
+		UserToken adminToken = loginAsAdmin();
 		
 		List<User> users = facade.getUsers(adminToken);
 		
@@ -131,59 +127,35 @@ public class IntegrationTest {
 	}
 	
 	@Test(expected = UnauthorizedOperationException.class)
-	public void testCannotGetAllUsersWithNonAdminToken() throws UnauthorizedOperationException, AuthenticationException {
-		Map<String, String> adminCredentials = new HashMap<String, String>();
-		adminCredentials.put(AuthenticationParameters.USERNAME_KEY, ADMIN_USERNAME);
-		adminCredentials.put(AuthenticationParameters.PASSWORD_KEY, ADMIN_PASSWORD);
-		
-		UserToken adminToken = facade.login(adminCredentials);
+	public void testCannotGetAllUsersWithNonAdminToken() throws UnauthorizedOperationException, AuthenticationException {	
+		UserToken adminToken = loginAsAdmin();
 		
 		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
 
-		Map<String, String> userCredentials = new HashMap<String, String>();
-		userCredentials.put(AuthenticationParameters.USERNAME_KEY, NEW_USERNAME_1);
-		userCredentials.put(AuthenticationParameters.PASSWORD_KEY, NEW_USER_PASSWORD_1);
-		
-		UserToken userToken = facade.login(userCredentials);
+		UserToken userToken = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
 		
 		facade.getUsers(userToken);
 	}
 	
 	@Test(expected = UnauthorizedOperationException.class)
 	public void testCannotAddUserAsAdminWithNonAdminToken() throws UnauthorizedOperationException, AuthenticationException {
-		Map<String, String> adminCredentials = new HashMap<String, String>();
-		adminCredentials.put(AuthenticationParameters.USERNAME_KEY, ADMIN_USERNAME);
-		adminCredentials.put(AuthenticationParameters.PASSWORD_KEY, ADMIN_PASSWORD);
-		
-		UserToken adminToken = facade.login(adminCredentials);
+		UserToken adminToken = loginAsAdmin();
 		
 		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
 
-		Map<String, String> userCredentials = new HashMap<String, String>();
-		userCredentials.put(AuthenticationParameters.USERNAME_KEY, NEW_USERNAME_1);
-		userCredentials.put(AuthenticationParameters.PASSWORD_KEY, NEW_USER_PASSWORD_1);
-		
-		UserToken userToken = facade.login(userCredentials);
+		UserToken userToken = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
 		
 		facade.addUser(userToken, NEW_USERNAME_2, NEW_USER_PASSWORD_2, NEW_USER_PROFILE_DESCRIPTION_2);
 	}
 	
 	@Test(expected = UnauthorizedOperationException.class)
-	public void testNonAdminCannotRemoveUser() throws AuthenticationException, UnauthorizedOperationException {
-		Map<String, String> adminCredentials = new HashMap<String, String>();
-		adminCredentials.put(AuthenticationParameters.USERNAME_KEY, ADMIN_USERNAME);
-		adminCredentials.put(AuthenticationParameters.PASSWORD_KEY, ADMIN_PASSWORD);
-		
-		UserToken adminToken = facade.login(adminCredentials);
+	public void testNonAdminCannotRemoveUser() throws AuthenticationException, UnauthorizedOperationException {		
+		UserToken adminToken = loginAsAdmin();
 		
 		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
 		facade.addUser(adminToken, NEW_USERNAME_2, NEW_USER_PASSWORD_2, NEW_USER_PROFILE_DESCRIPTION_2);
-				
-		Map<String, String> userCredentials = new HashMap<String, String>();
-		userCredentials.put(AuthenticationParameters.USERNAME_KEY, NEW_USERNAME_1);
-		userCredentials.put(AuthenticationParameters.PASSWORD_KEY, NEW_USER_PASSWORD_1);
 		
-		UserToken userToken = facade.login(userCredentials);
+		UserToken userToken = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
 		
 		List<User> usersAfterCreation = facade.getUsers(adminToken);
 		
@@ -192,11 +164,7 @@ public class IntegrationTest {
 	
 	@Test
 	public void testGetAndCreateUserBySelf() throws UnauthorizedOperationException, AuthenticationException {
-		Map<String, String> adminCredentials = new HashMap<String, String>();
-		adminCredentials.put(AuthenticationParameters.USERNAME_KEY, ADMIN_USERNAME);
-		adminCredentials.put(AuthenticationParameters.PASSWORD_KEY, ADMIN_PASSWORD);
-		
-		UserToken adminToken = facade.login(adminCredentials);
+		UserToken adminToken = loginAsAdmin();
 		
 		List<User> users = facade.getUsers(adminToken);
 		
@@ -217,19 +185,11 @@ public class IntegrationTest {
 	
 	@Test
 	public void testCreateAndGetPost() throws AuthenticationException, UnauthorizedOperationException {
-		Map<String, String> adminCredentials = new HashMap<String, String>();
-		adminCredentials.put(AuthenticationParameters.USERNAME_KEY, ADMIN_USERNAME);
-		adminCredentials.put(AuthenticationParameters.PASSWORD_KEY, ADMIN_PASSWORD);
-		
-		UserToken adminToken = facade.login(adminCredentials);
+		UserToken adminToken = loginAsAdmin();
 		
 		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
 		
-		Map<String, String> userCredentials = new HashMap<String, String>();
-		userCredentials.put(AuthenticationParameters.USERNAME_KEY, NEW_USERNAME_1);
-		userCredentials.put(AuthenticationParameters.PASSWORD_KEY, NEW_USER_PASSWORD_1);
-		
-		UserToken userToken = facade.login(userCredentials);
+		UserToken userToken = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
 		
 		List<Post> userPosts = facade.getUserPosts(userToken, userToken.getUserId());
 		assertTrue(userPosts.isEmpty());
@@ -256,22 +216,30 @@ public class IntegrationTest {
 	
 	@Test(expected = AuthenticationException.class)
 	public void testNonAdminUserCannotGetPostsFromOtherUser() throws AuthenticationException, UnauthorizedOperationException { 
+		UserToken adminToken = loginAsAdmin();
+		
+		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
+		facade.addUser(adminToken, NEW_USERNAME_2, NEW_USER_PASSWORD_2, NEW_USER_PROFILE_DESCRIPTION_2);
+
+		UserToken userToken = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
+		
+		facade.getUserPosts(userToken, NEW_USERNAME_2);
+	}
+	
+	private UserToken loginAsAdmin() throws AuthenticationException {
 		Map<String, String> adminCredentials = new HashMap<String, String>();
 		adminCredentials.put(AuthenticationParameters.USERNAME_KEY, ADMIN_USERNAME);
 		adminCredentials.put(AuthenticationParameters.PASSWORD_KEY, ADMIN_PASSWORD);
 		
-		UserToken adminToken = facade.login(adminCredentials);
-		
-		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
-		facade.addUser(adminToken, NEW_USERNAME_2, NEW_USER_PASSWORD_2, NEW_USER_PROFILE_DESCRIPTION_2);
-				
+		return facade.login(adminCredentials);
+	}
+	
+	private UserToken loginAsUser(String username, String password) throws AuthenticationException {
 		Map<String, String> userCredentials = new HashMap<String, String>();
-		userCredentials.put(AuthenticationParameters.USERNAME_KEY, NEW_USERNAME_1);
-		userCredentials.put(AuthenticationParameters.PASSWORD_KEY, NEW_USER_PASSWORD_1);
+		userCredentials.put(AuthenticationParameters.USERNAME_KEY, username);
+		userCredentials.put(AuthenticationParameters.PASSWORD_KEY, password);
 		
-		UserToken userToken = facade.login(userCredentials);
-		
-		facade.getUserPosts(userToken, NEW_USERNAME_2);
+		return facade.login(userCredentials);
 	}
 	
 	@After
