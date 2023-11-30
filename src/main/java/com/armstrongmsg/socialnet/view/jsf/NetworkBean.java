@@ -105,7 +105,8 @@ public class NetworkBean {
 	
 	public String signUp() {
 		facade.addUser(username, getPassword(), profileDescription);
-		return null;
+		// FIXME constant
+		return new NavigationController().showPageById("home");
 	}
 
 	public String editUser() {

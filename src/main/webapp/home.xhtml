@@ -11,19 +11,6 @@
 	<hr />
 
 	<h:form>
-		<h:outputText value="#{contextBean.user.username}"
-			rendered="#{contextBean.logged}" />
-	</h:form>
-
-	<h:form rendered="#{contextBean.logged}">
-		<h:commandButton value="Logout" action="#{contextBean.logout}" />
-	</h:form>
-
-	<h:form rendered="#{not contextBean.logged}">
-		
-	</h:form>
-
-	<h:form rendered="#{not contextBean.logged}">
 		<table>
 			<tr>
 				<td>User name:</td>
@@ -48,20 +35,5 @@
 			</tr>
 		</table>
 	</h:form>
-
-	<h:form rendered="#{contextBean.admin}">
-		<h:commandButton action="#{navigationController.showPage}"
-			value="Manage users">
-			<f:param name="pageId" value="manage-users" />
-		</h:commandButton>
-	</h:form>
-	
-	<h:form rendered="#{contextBean.logged}">
-		<h:commandButton action="#{navigationController.showPage}"
-			value="Home">
-			<f:param name="pageId" value="user-home" />
-		</h:commandButton>
-	</h:form>
-	<br />
 </h:body>
 </html>
