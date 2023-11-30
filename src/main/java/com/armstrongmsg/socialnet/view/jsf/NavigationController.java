@@ -27,16 +27,11 @@ public class NavigationController {
 		
 		switch(pageId) {
 			case "home": return "home";
-			case "list-users": return "list-users";
-			case "add-user": return "add-user";
-			case "manage-users": return "manage-users";
-			case "show-user": return "show-user";
 			case "user-profile": return "user-profile";
 			case "sign-up": return "sign-up";
 			case "user-home": return "user-home";
 			case "admin-home": return "admin-home";
+			default: return "home";
 		}
-		
-		return "";
 	}
 }
