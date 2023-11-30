@@ -14,6 +14,8 @@ public class FollowBean {
 	private User follower;
 	private User followed;
 	
+	private String username;
+	
 	private static ApplicationFacade facade = ApplicationFacade.getInstance();
 	
 	public User getFollower() {
@@ -32,12 +34,28 @@ public class FollowBean {
 		this.followed = followed;
 	}
 	
-	public void addFollow() {
+	public String getUsername() {
+		return username;
+	}
+	
+	public void setUsername(String username) {
+		this.username = username;
+	}
+	
+	public void addFollowAdmin() {
 		try {
 			facade.addFollowAdmin(SessionManager.getCurrentSession().getUserToken(), 
 					SessionManager.getCurrentSession().getUserToken().getUserId(), followed.getUserId());
 		} catch (UnauthorizedOperationException | AuthenticationException e) {
 			// FIXME treat exception
+		}
+	}
+	
+	public void addFollow() {
+		try {
+			facade.addFollow(SessionManager.getCurrentSession().getUserToken(), getUsername());
+		} catch (AuthenticationException | UnauthorizedOperationException e) {
+			//FIXME treat exception
 		}
 	}
 }

@@ -13,6 +13,7 @@ import com.armstrongmsg.socialnet.model.Network;
 import com.armstrongmsg.socialnet.model.Post;
 import com.armstrongmsg.socialnet.model.PostVisibility;
 import com.armstrongmsg.socialnet.model.User;
+import com.armstrongmsg.socialnet.model.UserSummary;
 import com.armstrongmsg.socialnet.model.authentication.UserToken;
 import com.armstrongmsg.socialnet.storage.StorageManager;
 
@@ -125,5 +126,9 @@ public class ApplicationFacade {
 
 	public List<User> getFollowedUsers(UserToken userToken) throws AuthenticationException, UnauthorizedOperationException {
 		return this.network.getFollowedUsers(userToken);
+	}
+
+	public List<UserSummary> getUserSummaries(UserToken userToken) throws UnauthorizedOperationException, AuthenticationException {
+		return this.network.getUserSummaries(userToken);
 	}
 }

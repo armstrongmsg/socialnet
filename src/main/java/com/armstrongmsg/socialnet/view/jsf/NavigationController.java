@@ -17,11 +17,15 @@ public class NavigationController {
 	}
 	
 	public String showPage() {
+		return this.showPageById(this.pageId);
+	}
+	
+	public String showPageById(String pageId) {
 		if (pageId == null) {
 			return "home";
 		}
 		
-		switch(getPageId()) {
+		switch(pageId) {
 			case "home": return "home";
 			case "list-users": return "list-users";
 			case "add-user": return "add-user";
@@ -30,6 +34,7 @@ public class NavigationController {
 			case "user-profile": return "user-profile";
 			case "sign-up": return "sign-up";
 			case "user-home": return "user-home";
+			case "admin-home": return "admin-home";
 		}
 		
 		return "";

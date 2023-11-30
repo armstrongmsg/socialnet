@@ -14,6 +14,8 @@ public class FriendshipBean {
 	private User user1;
 	private User user2;
 	
+	private String username;
+	
 	private static ApplicationFacade facade = ApplicationFacade.getInstance();
 	
 	public User getUser1() {
@@ -32,12 +34,28 @@ public class FriendshipBean {
 		this.user2 = user2;
 	}
 	
-	public void addFriendship() {
+	public String getUsername() {
+		return username;
+	}
+	
+	public void setUsername(String username) {
+		this.username = username;
+	}
+	
+	public void addFriendshipAdmin() {
 		try {
 			facade.addFriendshipAdmin(SessionManager.getCurrentSession().getUserToken(), 
 					SessionManager.getCurrentSession().getUserToken().getUserId(), user2.getUserId());
 		} catch (UnauthorizedOperationException | AuthenticationException e) {
 			// FIXME handle this exception
 		}
-	}	
+	}
+	
+	public void addFriendship() {
+		try {
+			facade.addFriendship(SessionManager.getCurrentSession().getUserToken(), username);
+		} catch (UnauthorizedOperationException | AuthenticationException e) {
+			// FIXME handle this exception
+		}
+	}
 }

@@ -68,14 +68,10 @@ public class PostBean {
 		UserToken token = SessionManager.getCurrentSession().getUserToken();
 		try {
 			facade.createPost(token, title, content, PostVisibility.valueOf(postVisibility));
-			userPosts = new JsfConnector().getViewPosts(facade.getUserPosts(token, getUser().getUserId()));
 		} catch (AuthenticationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (UnauthorizedOperationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			// FIXME treat exception
 		}
+		
 		return null;
 	}
 	
@@ -95,24 +91,25 @@ public class PostBean {
 						SessionManager.getCurrentSession().getUserToken(), 
 						getUser().getUserId()));
 			} catch (UnauthorizedOperationException | AuthenticationException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				// FIXME treat exception
 			}
 		}
 		
 		return userPosts;
 	}
 	
-	public List<Post> getFriendsPosts() {
-		User user = getUser();
-		String userId = "";
-		
-		if (user == null) {
-			userId = SessionManager.getCurrentSession().getUserToken().getUserId();
-		} else {
-			userId = user.getUserId();
+	public List<Post> getSelfPosts() {
+		try {
+			return new JsfConnector().getViewPosts(facade.getSelfPosts(
+					SessionManager.getCurrentSession().getUserToken()));
+		} catch (UnauthorizedOperationException | AuthenticationException e) {
+			// FIXME treat exception
 		}
 		
+		return null;
+	}
+	
+	public List<Post> getFriendsPosts() {
 		try {
 			return new JsfConnector().getViewPosts(facade.getFriendsPosts(SessionManager.getCurrentSession().getUserToken()));
 		} catch (UnauthorizedOperationException | AuthenticationException e) {

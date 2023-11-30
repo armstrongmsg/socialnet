@@ -13,13 +13,13 @@ xmlns:f = "http://java.sun.com/jsf/core">
    
    <h:body> 
       <h:form>
-        <td><h:outputText value = "#{networkBean.user.username}" /></td>
+        <td><h:outputText value = "#{profileBean.summary.username}" /></td>
       </h:form>
       
       <hr />
       
       <h:form>
-        <td><h:outputText value = "#{networkBean.user.profileDescription}" /></td>
+        <td><h:outputText value = "#{profileBean.summary.profileDescription}" /></td>
       </h:form>
       
       <hr />
@@ -27,97 +27,13 @@ xmlns:f = "http://java.sun.com/jsf/core">
       <h:form>
         <h:commandButton value = "Add friend" action = "#{friendshipBean.addFriendship}">
 		   <f:setPropertyActionListener 
-                     target = "#{friendshipBean.user2}" value = "#{networkBean.user}" />
+                     target = "#{friendshipBean.username}" value = "#{profileBean.summary.username}" />
         </h:commandButton>
         
         <h:commandButton value = "Follow" action = "#{followBean.addFollow}">
-		   <f:setPropertyActionListener 
-                     target = "#{followBean.followed}" value = "#{networkBean.user}" />
+		   <f:setPropertyActionListener
+                     target = "#{followBean.username}" value = "#{profileBean.summary.username}" />
         </h:commandButton>
-      </h:form>
-      
-      <hr />
-      
-      Friends
-      
-      <h:form>
-         <h:dataTable value = "#{networkBean.friends}" var = "friend"
-            styleClass = "usersTable"
-            headerClass = "usersTableHeader"
-            rowClasses = "usersTableOddRow,usersTableEvenRow">
-            
-            <h:column>    				
-               <f:facet name = "header">Name</f:facet>
-               <h:outputText value = "#{friend.username}" />
-            </h:column>
-         </h:dataTable>
-      </h:form>
-      
-      <hr />
-      
-      Followed
-      
-      <h:form>
-         <h:dataTable value = "#{networkBean.follows}" var = "follow"
-            styleClass = "usersTable"
-            headerClass = "usersTableHeader"
-            rowClasses = "usersTableOddRow,usersTableEvenRow">
-            
-            <h:column>    				
-               <f:facet name = "header">Name</f:facet>
-               <h:outputText value = "#{follow.username}" />
-            </h:column>
-         </h:dataTable>
-      </h:form>
-      
-      <hr />
-      
-      Create a post
-      
-      <h:form>
-      	Title
-      	<br/>
-      	<h:inputText value = "#{postBean.title}" size = "20"/>
-      	<br/>
-        <h:inputTextarea row = "10" col = "10" value = "#{postBean.content}" />
-        <br/>  
-        <h:selectOneMenu value = "#{postBean.postVisibility}"> 
-           <f:selectItem itemValue = "PRIVATE" itemLabel = "Private" /> 
-           <f:selectItem itemValue = "PUBLIC" itemLabel = "Public" /> 
-        </h:selectOneMenu> 
-        
-        <br/>
-                     
-        <h:commandButton value = "Create post" action = "#{postBean.createPost}" />
-      </h:form>
-      
-      <hr />
-      
-      Posts
-      
-      <h:form>
-         <h:dataTable value = "#{postBean.userPosts}" var = "post"
-            styleClass = "usersTable"
-            headerClass = "usersTableHeader"
-            rowClasses = "usersTableOddRow,usersTableEvenRow">
-            
-            <h:outputText value = "#{post.title}"/>
-            
-            <h:column>    				
-               <f:facet name = "header">title</f:facet>    				
-               <h:outputText value = "#{post.title}" />
-            </h:column>
-            
-            <h:column>
-               <f:facet name = "header">creation time</f:facet>
-               <h:outputText value = "#{post.date}" />
-            </h:column>
-            
-            <h:column>
-               <f:facet name = "header">content</f:facet>
-               <h:outputText value = "#{post.content}" />
-            </h:column>
-         </h:dataTable>
       </h:form>
       
       <hr />

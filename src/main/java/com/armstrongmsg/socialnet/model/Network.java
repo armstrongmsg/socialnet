@@ -319,4 +319,19 @@ public class Network {
 		// TODO add message
 		throw new AuthenticationException();
 	}
+
+	public List<UserSummary> getUserSummaries(UserToken token) throws UnauthorizedOperationException, AuthenticationException {
+		User requester = findUserById(token.getUserId());
+		this.authorizationPlugin.authorize(requester, new Operation(OperationType.GET_USER_SUMMARIES));
+		
+		List<UserSummary> userSummaries = new ArrayList<UserSummary>();
+		
+		for (User user : this.users) {
+			if (!user.equals(requester)) {
+				userSummaries.add(new UserSummary(user.getUsername(), user.getProfile().getDescription()));
+			}
+		}
+
+		return userSummaries;
+	}
 }

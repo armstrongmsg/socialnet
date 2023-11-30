@@ -13,7 +13,7 @@
 	Users
 
 	<h:form>
-		<h:dataTable value="#{networkBean.users}" var="user"
+		<h:dataTable value="#{networkBean.userSummaries}" var="user"
 			styleClass="usersTable" headerClass="usersTableHeader"
 			rowClasses="usersTableOddRow,usersTableEvenRow">
 
@@ -32,10 +32,8 @@
 				<h:commandButton value="Profile"
 					action="#{navigationController.showPage}">
 					<f:param name="pageId" value="user-profile" />
-					<f:setPropertyActionListener target="#{networkBean.user}"
-						value="#{user}" />
-					<f:setPropertyActionListener target="#{postBean.user}"
-						value="#{user}" />
+					<f:setPropertyActionListener target="#{profileBean.summary}" 
+					    value="#{user}" />
 				</h:commandButton>
 			</h:column>
 		</h:dataTable>
@@ -43,7 +41,41 @@
 
 	<hr />
       
-    Feed
+      Friends
+      
+      <h:form>
+         <h:dataTable value = "#{networkBean.selfFriends}" var = "friend"
+            styleClass = "usersTable"
+            headerClass = "usersTableHeader"
+            rowClasses = "usersTableOddRow,usersTableEvenRow">
+            
+            <h:column>    				
+               <f:facet name = "header">Name</f:facet>
+               <h:outputText value = "#{friend.username}" />
+            </h:column>
+         </h:dataTable>
+      </h:form>
+      
+      <hr />
+      
+      Followed
+      
+      <h:form>
+         <h:dataTable value = "#{networkBean.selfFollows}" var = "follow"
+            styleClass = "usersTable"
+            headerClass = "usersTableHeader"
+            rowClasses = "usersTableOddRow,usersTableEvenRow">
+            
+            <h:column>    				
+               <f:facet name = "header">Name</f:facet>
+               <h:outputText value = "#{follow.username}" />
+            </h:column>
+         </h:dataTable>
+      </h:form>
+      
+      <hr />
+  
+      Feed
       
       <h:form>
 		<h:dataTable value="#{postBean.friendsPosts}" var="post"
@@ -69,12 +101,59 @@
 		</h:dataTable>
 	</h:form>
 
+      Create a post
+      
+      <h:form>
+      	Title
+      	<br/>
+      	<h:inputText value = "#{postBean.title}" size = "20"/>
+      	<br/>
+        <h:inputTextarea row = "10" col = "10" value = "#{postBean.content}" />
+        <br/>  
+        <h:selectOneMenu value = "#{postBean.postVisibility}"> 
+           <f:selectItem itemValue = "PRIVATE" itemLabel = "Private" /> 
+           <f:selectItem itemValue = "PUBLIC" itemLabel = "Public" /> 
+        </h:selectOneMenu> 
+        
+        <br/>
+                     
+        <h:commandButton value = "Create post" action = "#{postBean.createPost}" />
+      </h:form>
+      
+      <hr />
+      
+	 Posts
+      
+      <h:form>
+         <h:dataTable value = "#{postBean.selfPosts}" var = "post"
+            styleClass = "usersTable"
+            headerClass = "usersTableHeader"
+            rowClasses = "usersTableOddRow,usersTableEvenRow">
+            
+            <h:outputText value = "#{post.title}"/>
+            
+            <h:column>    				
+               <f:facet name = "header">title</f:facet>    				
+               <h:outputText value = "#{post.title}" />
+            </h:column>
+            
+            <h:column>
+               <f:facet name = "header">creation time</f:facet>
+               <h:outputText value = "#{post.date}" />
+            </h:column>
+            
+            <h:column>
+               <f:facet name = "header">content</f:facet>
+               <h:outputText value = "#{post.content}" />
+            </h:column>
+         </h:dataTable>
+      </h:form>
+      
+	<hr />
+
 	<h:form>
-		<h:commandButton action="#{navigationController.showPage}"
-			value="Back">
-			<f:param name="pageId" value="home" />
-		</h:commandButton>
-	</h:form>
+		<h:commandButton value="Logout" action="#{contextBean.logout}" />
+	  </h:form>
 	<br />
 </h:body>
 </html>

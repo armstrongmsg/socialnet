@@ -39,16 +39,26 @@ public class ContextBean {
 			session.setAdmin(facade.userIsAdmin(username));
 			session.setLogged(true);
 			SessionManager.setCurrentSession(session);
+			if (session.isAdmin()) {
+				// FIXME constant
+				return new NavigationController().showPageById("admin-home");
+			} else {
+				// FIXME constant
+				return new NavigationController().showPageById("user-home");
+			}
+					
 		} catch (AuthenticationException e) {
 			// FIXME treat this exception
 		}
 		
-		// FIXME
+		// FIXME constant
 		return "user-home";
 	}
 	
-	public void logout() {
+	public String logout() {
 		SessionManager.setCurrentSession(null);
+		// FIXME constant
+		return new NavigationController().showPageById("home");
 	}
 
 	public boolean isLogged() {

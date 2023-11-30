@@ -46,4 +46,14 @@ public class JsfConnector {
 		
 		return newViewPosts;
 	}
+
+	public List<UserSummary> getViewUserSummaries(List<com.armstrongmsg.socialnet.model.UserSummary> modelUserSummaries) {
+		List<UserSummary> viewUserSummaries = new ArrayList<UserSummary>();
+		
+		for (com.armstrongmsg.socialnet.model.UserSummary modelUserSummary : modelUserSummaries) {
+			viewUserSummaries.add(new UserSummary(modelUserSummary.getUsername(), modelUserSummary.getProfileDescription()));
+		}
+		
+		return viewUserSummaries;
+	}
 }

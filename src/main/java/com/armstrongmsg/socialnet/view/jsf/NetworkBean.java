@@ -12,6 +12,7 @@ import com.armstrongmsg.socialnet.model.authentication.UserToken;
 import com.armstrongmsg.socialnet.view.jsf.model.JsfConnector;
 import com.armstrongmsg.socialnet.view.jsf.model.Post;
 import com.armstrongmsg.socialnet.view.jsf.model.User;
+import com.armstrongmsg.socialnet.view.jsf.model.UserSummary;
 
 @ManagedBean(name = "networkBean", eager = true)
 @SessionScoped
@@ -23,6 +24,8 @@ public class NetworkBean {
 
 	private User user;
 	private List<User> users;
+	
+	private UserSummary userSummary;
 
 	private static ApplicationFacade facade = ApplicationFacade.getInstance();
 
@@ -73,6 +76,18 @@ public class NetworkBean {
 
 		return users;
 	}
+	
+	public List<UserSummary> getUserSummaries() {
+		try {
+			UserToken token = SessionManager.getCurrentSession().getUserToken();
+			return new JsfConnector().getViewUserSummaries(facade.getUserSummaries(token));
+		} catch (UnauthorizedOperationException | AuthenticationException e) {
+			// FIXME treat exception
+		}
+	
+		//FIXME
+		return null;
+	}
 
 	public String addUser() {
 		UserToken token = SessionManager.getCurrentSession().getUserToken();
@@ -82,23 +97,14 @@ public class NetworkBean {
 		} catch (UnauthorizedOperationException e) {
 			// FIXME Treat this exception
 		} catch (AuthenticationException e) {
-			// TODO Auto-generated catch block
+			// FIXME Treat this exception
 			e.printStackTrace();
 		}
 		return null;
 	}
 	
 	public String signUp() {
-		UserToken token = SessionManager.getCurrentSession().getUserToken();
 		facade.addUser(username, getPassword(), profileDescription);
-		try {
-			users = new JsfConnector().getViewUsers(facade.getUsers(token));
-		} catch (UnauthorizedOperationException e) {
-			// FIXME Treat this exception
-		} catch (AuthenticationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		return null;
 	}
 
@@ -140,6 +146,17 @@ public class NetworkBean {
 		return null;
 	}
 	
+	public List<User> getSelfFriends() {
+		try {
+			return new JsfConnector().getViewUsers(
+					facade.getSelfFriends(SessionManager.getCurrentSession().getUserToken()));
+		} catch (AuthenticationException | UnauthorizedOperationException e) {
+			// FIXME treat exception
+		}
+		
+		return null;
+	}
+	
 	public List<User> getFollows() {
 		try {
 			return new JsfConnector().getViewUsers(
@@ -148,6 +165,18 @@ public class NetworkBean {
 		} catch (UnauthorizedOperationException | AuthenticationException e) {
 			// FIXME treat exception
 		}
+		
+		return null;
+	}
+	
+	public List<User> getSelfFollows() {
+		try {
+			return new JsfConnector().getViewUsers(
+					facade.getFollowedUsers(SessionManager.getCurrentSession().getUserToken()));
+		} catch (AuthenticationException | UnauthorizedOperationException e) {
+			// FIXME treat exception
+		}
+		
 		return null;
 	}
 
@@ -167,5 +196,13 @@ public class NetworkBean {
 			// FIXME treat exception
 		}
 		return null;
+	}
+
+	public UserSummary getUserSummary() {
+		return userSummary;
+	}
+
+	public void setUserSummary(UserSummary userSummary) {
+		this.userSummary = userSummary;
 	}
 }
