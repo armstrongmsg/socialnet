@@ -5,10 +5,8 @@ import java.util.List;
 
 import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
 import com.armstrongmsg.socialnet.model.Admin;
-import com.armstrongmsg.socialnet.model.Follow;
-import com.armstrongmsg.socialnet.model.Friendship;
-import com.armstrongmsg.socialnet.model.Group;
 import com.armstrongmsg.socialnet.model.User;
+import com.armstrongmsg.socialnet.storage.StorageFacade;
 
 public class DefaultAuthorizationPlugin implements AuthorizationPlugin {
 	private Admin admin;
@@ -16,7 +14,7 @@ public class DefaultAuthorizationPlugin implements AuthorizationPlugin {
 			OperationType.REMOVE_USER, OperationType.ADD_USER, OperationType.GET_USER_POSTS, OperationType.ADD_FRIENDSHIP_ADMIN, 
 			OperationType.GET_FRIENDS_ADMIN, OperationType.ADD_FOLLOW_ADMIN, OperationType.GET_FOLLOWED_USERS_ADMIN);
 	
-	public DefaultAuthorizationPlugin() {
+	public DefaultAuthorizationPlugin(StorageFacade storageFacade) {
 	}
 	
 	@Override
@@ -44,8 +42,7 @@ public class DefaultAuthorizationPlugin implements AuthorizationPlugin {
 	}
 
 	@Override
-	public void setUp(Admin admin, List<User> users, List<Group> groups, List<Friendship> friendships,
-			List<Follow> follows) {
+	public void setUp(Admin admin) {
 		this.admin = admin;
 	}	
 }

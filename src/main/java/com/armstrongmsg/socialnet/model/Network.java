@@ -19,35 +19,30 @@ import com.armstrongmsg.socialnet.model.authentication.AuthenticationPlugin;
 import com.armstrongmsg.socialnet.model.authentication.UserToken;
 import com.armstrongmsg.socialnet.model.authorization.AuthorizationPlugin;
 import com.armstrongmsg.socialnet.model.authorization.Operation;
-import com.armstrongmsg.socialnet.model.authorization.OperationType;
 import com.armstrongmsg.socialnet.model.authorization.OperationOnUser;
-import com.armstrongmsg.socialnet.storage.StorageManager;
+import com.armstrongmsg.socialnet.model.authorization.OperationType;
+import com.armstrongmsg.socialnet.storage.StorageFacade;
 import com.armstrongmsg.socialnet.util.ClassFactory;
 import com.armstrongmsg.socialnet.util.PropertiesUtil;
 
 public class Network {
 	private Admin admin;
-	private List<User> users;
-	private List<Group> groups;
-	private List<Friendship> friendships;
-	private List<Follow> follows;
 	private AuthenticationPlugin authenticationPlugin;
 	private AuthorizationPlugin authorizationPlugin;
+	private StorageFacade storageFacade;
 	
 	private static Logger logger = LoggerFactory.getLogger(Network.class);
 	
 	public Network(Admin admin, List<User> users, List<Group> groups, List<Friendship> friendships, 
 			List<Follow> follows, AuthenticationPlugin authenticationPlugin, AuthorizationPlugin authorizationPlugin) {
 		this.admin = admin;
-		this.users = users;
-		this.groups = groups;
-		this.friendships = friendships;
-		this.follows = follows;
 		this.authenticationPlugin = authenticationPlugin;
 		this.authorizationPlugin = authorizationPlugin;
 	}
 
-	public Network(StorageManager storageManager) throws FatalErrorException {
+	public Network(StorageFacade storageManager) throws FatalErrorException {
+		this.storageFacade = storageManager;
+		
 		String adminUsername = PropertiesDefaults.DEFAULT_ADMIN_USERNAME;
 		String adminPassword = PropertiesDefaults.DEFAULT_ADMIN_PASSWORD;
 		
@@ -58,10 +53,6 @@ public class Network {
 		logger.info(Messages.Logging.LOADED_ADMIN, adminUsername);
 
 		Admin admin = new Admin(adminUsername, adminUsername, adminPassword);
-		List<User> users = new ArrayList<User>(storageManager.readUsers());
-		List<Group> groups = new ArrayList<Group>(storageManager.readGroups());
-		List<Friendship> friendships = new ArrayList<Friendship>(storageManager.readFriendships());
-		List<Follow> follows = new ArrayList<Follow>(storageManager.readFollows());
 		ClassFactory classFactory = new ClassFactory();
 		String authenticationPluginClassName = properties.getProperty(ConfigurationProperties.AUTHENTICATION_PLUGIN_CLASS_NAME);
 		String authorizationPluginClassName = properties.getProperty(ConfigurationProperties.AUTHORIZATION_PLUGIN_CLASS_NAME);
@@ -69,20 +60,18 @@ public class Network {
 		// FIXME constant
 		logger.info("Loading authentication plugin");
 		
-		AuthenticationPlugin authenticationPlugin = (AuthenticationPlugin) classFactory.createInstance(authenticationPluginClassName);
-		authenticationPlugin.setUp(admin, users);
+		AuthenticationPlugin authenticationPlugin = (AuthenticationPlugin) 
+				classFactory.createInstance(authenticationPluginClassName, this.storageFacade);
+		authenticationPlugin.setUp(admin);
 		
 		// FIXME constant
 		logger.info("Loading authorization plugin");
 		
-		AuthorizationPlugin authorizationPlugin = (AuthorizationPlugin) classFactory.createInstance(authorizationPluginClassName);
-		authorizationPlugin.setUp(admin, users, groups, friendships, follows);
+		AuthorizationPlugin authorizationPlugin = (AuthorizationPlugin) 
+				classFactory.createInstance(authorizationPluginClassName, this.storageFacade);
+		authorizationPlugin.setUp(admin);
 		
 		this.admin = admin;
-		this.users = users;
-		this.groups = groups;
-		this.friendships = friendships;
-		this.follows = follows;
 		this.authenticationPlugin = authenticationPlugin;
 		this.authorizationPlugin = authorizationPlugin;
 	}
@@ -95,19 +84,7 @@ public class Network {
 		User requester = findUserById(userToken.getUserId());
 		this.authorizationPlugin.authorize(requester, new Operation(OperationType.GET_ALL_USERS));
 		
-		return users;
-	}
-
-	public List<Group> getGroups() {
-		return groups;
-	}
-
-	public List<Friendship> getFriendships() {
-		return friendships;
-	}
-
-	public List<Follow> getFollows() {
-		return follows;
+		return this.storageFacade.getAllUsers();
 	}
 
 	public void addUser(UserToken userToken, String username, String password, String profileDescription) throws UnauthorizedOperationException, AuthenticationException {
@@ -117,35 +94,33 @@ public class Network {
 		Profile profile = new Profile(profileDescription, new ArrayList<Post>());
 		UUID uuid = UUID.randomUUID();
 		User newUser = new User(uuid.toString(), username, password, profile);
-		this.users.add(newUser);
+		this.storageFacade.saveUser(newUser);
 	}
 	
 	public void addUser(String username, String password, String profileDescription) {
 		UUID uuid = UUID.randomUUID();
 		Profile profile = new Profile(profileDescription, new ArrayList<Post>());
 		User newUser = new User(uuid.toString(), username, password, profile);
-		this.users.add(newUser);
+		this.storageFacade.saveUser(newUser);
 	}
 
 	public void removeUser(UserToken userToken, String userId) throws UnauthorizedOperationException, AuthenticationException {
 		User requester = findUserById(userToken.getUserId());
 		this.authorizationPlugin.authorize(requester, new Operation(OperationType.REMOVE_USER));
-		
-		User user = findUserById(userId);
-		this.users.remove(user);
+		this.storageFacade.removeUserById(userId);
 	}
 
 	private User findUserById(String userId) throws AuthenticationException {
-		for (User user : this.users) {
-			if (user.getUserId().equals(userId)) {
-				return user;
-			}
-		}
-		
 		if (admin.getUserId().equals(userId)) {
 			return admin;
 		}
-
+		
+		User user = this.storageFacade.getUserById(userId);
+		
+		if (user != null) {
+			return user;
+		}
+		
 		// FIXME add message
 		throw new AuthenticationException();
 	}
@@ -176,7 +151,7 @@ public class Network {
 		
 		User user1 = findUserById(userId1);
 		User user2 = findUserById(userId2);
-		this.friendships.add(new Friendship(user1, user2));
+		this.storageFacade.saveFriendship(new Friendship(user1, user2));
 	}
 
 	public void addFriendship(UserToken userToken, String username) throws UnauthorizedOperationException, AuthenticationException {
@@ -184,16 +159,18 @@ public class Network {
 		this.authorizationPlugin.authorize(requester, new Operation(OperationType.ADD_FRIENDSHIP));
 		
 		User friend = findUserByUsername(username);
-		this.friendships.add(new Friendship(requester, friend));
+		this.storageFacade.saveFriendship(new Friendship(requester, friend));
 	}
 	
 	public List<User> getFriends(UserToken userToken, String userId) throws UnauthorizedOperationException, AuthenticationException {
 		User requester = findUserById(userToken.getUserId());
 		this.authorizationPlugin.authorize(requester, new Operation(OperationType.GET_FRIENDS_ADMIN));
 		User user = findUserById(userId);
+		
+		List<Friendship> userFriendships = this.storageFacade.getFriendshipsByUserId(userId);
 		List<User> friends = new ArrayList<User>();
 		
-		for (Friendship friendship : getFriendships()) {
+		for (Friendship friendship : userFriendships) {
 			if (friendship.getFriend1().equals(user)) {
 				friends.add(friendship.getFriend2());
 			}
@@ -210,9 +187,10 @@ public class Network {
 		User requester = findUserById(userToken.getUserId());
 		this.authorizationPlugin.authorize(requester, new Operation(OperationType.GET_FRIENDS));
 		
+		List<Friendship> userFriendships = this.storageFacade.getFriendshipsByUserId(requester.getUserId());
 		List<User> friends = new ArrayList<User>();
 		
-		for (Friendship friendship : getFriendships()) {
+		for (Friendship friendship : userFriendships) {
 			if (friendship.getFriend1().equals(requester)) {
 				friends.add(friendship.getFriend2());
 			}
@@ -231,7 +209,7 @@ public class Network {
 		
 		User follower = findUserById(followerId);
 		User followed = findUserById(followedId);
-		this.follows.add(new Follow(follower, followed));
+		this.storageFacade.saveFollow(new Follow(follower, followed));
 	}
 	
 	public void addFollow(UserToken userToken, String followedUsername) throws AuthenticationException, UnauthorizedOperationException {
@@ -239,7 +217,7 @@ public class Network {
 		this.authorizationPlugin.authorize(requester, new Operation(OperationType.ADD_FOLLOW));
 		
 		User followed = findUserByUsername(followedUsername);
-		this.follows.add(new Follow(requester, followed));
+		this.storageFacade.saveFollow(new Follow(requester, followed));
 	}
 	
 	public List<User> getFollowedUsers(UserToken userToken, String userId) throws UnauthorizedOperationException, AuthenticationException {
@@ -247,9 +225,10 @@ public class Network {
 		this.authorizationPlugin.authorize(requester, new Operation(OperationType.GET_FOLLOWED_USERS_ADMIN));
 		
 		User user = findUserById(userId);
+		List<Follow> userFollows = this.storageFacade.getFollowsByUserId(userId);
 		List<User> followedUsers = new ArrayList<User>();
 		
-		for (Follow follow : getFollows()) {
+		for (Follow follow : userFollows) {
 			if (follow.getFollower().equals(user)) {
 				followedUsers.add(follow.getFollowed());
 			}
@@ -262,9 +241,10 @@ public class Network {
 		User requester = findUserById(userToken.getUserId());
 		this.authorizationPlugin.authorize(requester, new Operation(OperationType.GET_FOLLOWED_USERS));
 		
+		List<Follow> userFollows = this.storageFacade.getFollowsByUserId(requester.getUserId());
 		List<User> followedUsers = new ArrayList<User>();
 		
-		for (Follow follow : getFollows()) {
+		for (Follow follow : userFollows) {
 			if (follow.getFollower().equals(requester)) {
 				followedUsers.add(follow.getFollowed());
 			}
@@ -280,9 +260,10 @@ public class Network {
 	public List<Post> getFriendsPosts(UserToken token) throws UnauthorizedOperationException, AuthenticationException {
 		User requester = findUserById(token.getUserId());
 		this.authorizationPlugin.authorize(requester, new Operation(OperationType.GET_FRIENDS_POSTS));
+		List<Friendship> userFriendships = this.storageFacade.getFriendshipsByUserId(requester.getUserId());
 		List<User> friends = new ArrayList<User>();
 		
-		for (Friendship friendship : getFriendships()) {
+		for (Friendship friendship : userFriendships) {
 			if (friendship.getFriend1().equals(requester)) {
 				friends.add(friendship.getFriend2());
 			}
@@ -306,14 +287,14 @@ public class Network {
 	}
 
 	private User findUserByUsername(String username) throws AuthenticationException {
-		for (User user : this.users) {
-			if (user.getUsername().equals(username)) {
-				return user;
-			}
-		}
-		
 		if (admin.getUsername().equals(username)) {
 			return admin;
+		}
+		
+		User user = this.storageFacade.getUserByUsername(username);
+		
+		if (user != null) {
+			return user;
 		}
 
 		// TODO add message
@@ -326,7 +307,7 @@ public class Network {
 		
 		List<UserSummary> userSummaries = new ArrayList<UserSummary>();
 		
-		for (User user : this.users) {
+		for (User user : this.storageFacade.getAllUsers()) {
 			if (!user.equals(requester)) {
 				userSummaries.add(new UserSummary(user.getUsername(), user.getProfile().getDescription()));
 			}

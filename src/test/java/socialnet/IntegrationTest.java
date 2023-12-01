@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,7 +28,10 @@ import com.armstrongmsg.socialnet.model.UserSummary;
 import com.armstrongmsg.socialnet.model.authentication.DefaultAuthenticationPlugin;
 import com.armstrongmsg.socialnet.model.authentication.UserToken;
 import com.armstrongmsg.socialnet.model.authorization.DefaultAuthorizationPlugin;
-import com.armstrongmsg.socialnet.storage.StorageManager;
+import com.armstrongmsg.socialnet.storage.StorageFacade;
+import com.armstrongmsg.socialnet.storage.cache.DefaultCache;
+import com.armstrongmsg.socialnet.storage.database.DatabaseManager;
+import com.armstrongmsg.socialnet.storage.database.DefaultDatabaseManager;
 import com.armstrongmsg.socialnet.util.PropertiesUtil;
 
 public class IntegrationTest {
@@ -48,18 +50,19 @@ public class IntegrationTest {
 	private static final String NEW_POST_TITLE_2 = "new-post-title-2";
 	private static final String NEW_POST_CONTENT_2 = "new-post-content-2";
 	private ApplicationFacade facade;
-	private StorageManager storageManager;
+	private StorageFacade storageFacade;
+	private DefaultCache cache;
+	private DatabaseManager databaseManager;
 	private MockedStatic<PropertiesUtil> propertiesUtilMock;
 	
 	@Before
 	public void setUp() throws FatalErrorException {
 		ApplicationFacade.reset();
 		
-		storageManager = Mockito.mock(StorageManager.class);
-		Mockito.when(storageManager.readUsers()).thenReturn(Arrays.asList());
-		Mockito.when(storageManager.readGroups()).thenReturn(Arrays.asList());
-		Mockito.when(storageManager.readFriendships()).thenReturn(Arrays.asList());
-		Mockito.when(storageManager.readFollows()).thenReturn(Arrays.asList());
+		this.cache = new DefaultCache();
+		this.databaseManager = new DefaultDatabaseManager();
+				
+		storageFacade = new StorageFacade(this.cache, this.databaseManager);
 		
 		PropertiesUtil propertiesUtil = Mockito.mock(PropertiesUtil.class);
 
@@ -75,7 +78,7 @@ public class IntegrationTest {
 		propertiesUtilMock = Mockito.mockStatic(PropertiesUtil.class);
 		Mockito.when(PropertiesUtil.getInstance()).thenReturn(propertiesUtil);
 		
-		facade = ApplicationFacade.getInstance(storageManager);
+		facade = ApplicationFacade.getInstance(storageFacade);
 	}
 	
 	@Test

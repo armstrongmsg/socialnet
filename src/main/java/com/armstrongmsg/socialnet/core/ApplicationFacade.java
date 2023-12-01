@@ -15,16 +15,18 @@ import com.armstrongmsg.socialnet.model.PostVisibility;
 import com.armstrongmsg.socialnet.model.User;
 import com.armstrongmsg.socialnet.model.UserSummary;
 import com.armstrongmsg.socialnet.model.authentication.UserToken;
-import com.armstrongmsg.socialnet.storage.StorageManager;
+import com.armstrongmsg.socialnet.storage.StorageFacade;
+import com.armstrongmsg.socialnet.storage.cache.DefaultCache;
+import com.armstrongmsg.socialnet.storage.database.DefaultDatabaseManager;
 
 public class ApplicationFacade {
 	private static Logger logger = LoggerFactory.getLogger(ApplicationFacade.class);
 	private static ApplicationFacade instance;
 
 	private Network network;
-	private StorageManager storageManager;
+	private StorageFacade storageManager;
 	
-	private ApplicationFacade(StorageManager storageManager) {
+	private ApplicationFacade(StorageFacade storageManager) {
 		this.storageManager = storageManager;
 
 		try {
@@ -35,7 +37,7 @@ public class ApplicationFacade {
 		}
 	}
 	
-	public static ApplicationFacade getInstance(StorageManager storageManager) {
+	public static ApplicationFacade getInstance(StorageFacade storageManager) {
 		if (instance == null) {
 			instance = new ApplicationFacade(storageManager);
 		}
@@ -44,7 +46,8 @@ public class ApplicationFacade {
 	}
 	
 	public static ApplicationFacade getInstance() {
-		return getInstance(new StorageManager());
+		// FIXME load cache policy and database manager from configuration
+		return getInstance(new StorageFacade(new DefaultCache(), new DefaultDatabaseManager()));
 	}
 		
 	public static void reset() {

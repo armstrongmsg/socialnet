@@ -5,9 +5,6 @@ import java.util.List;
 
 import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
 import com.armstrongmsg.socialnet.model.Admin;
-import com.armstrongmsg.socialnet.model.Follow;
-import com.armstrongmsg.socialnet.model.Friendship;
-import com.armstrongmsg.socialnet.model.Group;
 import com.armstrongmsg.socialnet.model.User;
 import com.armstrongmsg.socialnet.model.authorization.AuthorizationPlugin;
 import com.armstrongmsg.socialnet.model.authorization.Operation;
@@ -30,8 +27,7 @@ public class StubAuthorizationPlugin implements AuthorizationPlugin {
 	}
 
 	@Override
-	public void setUp(Admin admin, List<User> users, List<Group> groups, List<Friendship> friendships,
-			List<Follow> follows) {
+	public void setUp(Admin admin) {
 		this.admin = admin;
-	}	
+	}
 }

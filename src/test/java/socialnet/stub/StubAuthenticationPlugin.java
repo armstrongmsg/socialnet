@@ -15,8 +15,7 @@ public class StubAuthenticationPlugin implements AuthenticationPlugin {
 	private Admin admin;
 	
 	@Override
-	public void setUp(Admin admin, List<User> users) {
-		this.users = users;
+	public void setUp(Admin admin) {
 		this.admin = admin;
 	}
 

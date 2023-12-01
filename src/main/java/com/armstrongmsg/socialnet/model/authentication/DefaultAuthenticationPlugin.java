@@ -1,18 +1,20 @@
 package com.armstrongmsg.socialnet.model.authentication;
 
-import java.util.List;
 import java.util.Map;
 
 import com.armstrongmsg.socialnet.constants.AuthenticationParameters;
 import com.armstrongmsg.socialnet.exceptions.AuthenticationException;
 import com.armstrongmsg.socialnet.model.Admin;
 import com.armstrongmsg.socialnet.model.User;
+import com.armstrongmsg.socialnet.storage.StorageFacade;
 
 public class DefaultAuthenticationPlugin implements AuthenticationPlugin {
-	private List<User> users;
 	private Admin admin;
 	
-	public DefaultAuthenticationPlugin() {
+	private StorageFacade storageFacade;
+	
+	public DefaultAuthenticationPlugin(StorageFacade storageFacade) {
+		this.storageFacade = storageFacade;
 	}
 
 	@Override
@@ -23,9 +25,15 @@ public class DefaultAuthenticationPlugin implements AuthenticationPlugin {
 	}
 	
 	private UserToken authenticate(String userId, String password) throws AuthenticationException {
-		User user = findUserByUsername(userId);
+		User user = null;
 		
-		if (user.getPassword().equals(password)) {
+		if (admin.getUsername().equals(userId)) {
+			user = admin;
+		} else {
+			user = this.storageFacade.getUserByUsername(userId);
+		}
+
+		if (user != null && user.getPassword().equals(password)) {
 			return new UserToken(user.getUserId(), user.getUsername(), user.getProfile().getDescription());
 		}
 		
@@ -33,24 +41,8 @@ public class DefaultAuthenticationPlugin implements AuthenticationPlugin {
 		throw new AuthenticationException();
 	}
 
-	private User findUserByUsername(String username) throws AuthenticationException {
-		for (User user : this.users) {
-			if (user.getUsername().equals(username)) {
-				return user;
-			}
-		}
-		
-		if (admin.getUsername().equals(username)) {
-			return admin;
-		}
-
-		// TODO add message
-		throw new AuthenticationException();
-	}
-
 	@Override
-	public void setUp(Admin admin, List<User> users) {
+	public void setUp(Admin admin) {
 		this.admin = admin;
-		this.users = users;
 	}
 }
