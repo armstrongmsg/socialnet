@@ -1,6 +1,7 @@
 package socialnet;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
@@ -24,6 +25,7 @@ import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
 import com.armstrongmsg.socialnet.model.Post;
 import com.armstrongmsg.socialnet.model.PostVisibility;
 import com.armstrongmsg.socialnet.model.User;
+import com.armstrongmsg.socialnet.model.UserSummary;
 import com.armstrongmsg.socialnet.model.authentication.DefaultAuthenticationPlugin;
 import com.armstrongmsg.socialnet.model.authentication.UserToken;
 import com.armstrongmsg.socialnet.model.authorization.DefaultAuthorizationPlugin;
@@ -163,6 +165,21 @@ public class IntegrationTest {
 		List<User> usersAfterCreation = facade.getUsers(adminToken);
 		
 		facade.removeUser(userToken, usersAfterCreation.get(1).getUserId());
+	}
+	
+	@Test
+	public void testIsAdmin() throws AuthenticationException, UnauthorizedOperationException {
+		UserToken adminToken = loginAsAdmin();
+		
+		assertTrue(facade.userIsAdmin(adminToken.getUserId()));
+		
+		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
+		facade.addUser(adminToken, NEW_USERNAME_2, NEW_USER_PASSWORD_2, NEW_USER_PROFILE_DESCRIPTION_2);
+		
+		List<User> usersAfterCreation = facade.getUsers(adminToken);
+		
+		assertFalse(facade.userIsAdmin(usersAfterCreation.get(0).getUserId()));
+		assertFalse(facade.userIsAdmin(usersAfterCreation.get(1).getUserId()));
 	}
 	
 	@Test
@@ -435,6 +452,28 @@ public class IntegrationTest {
 		assertTrue(followsUser1.contains(user2));
 		
 		assertTrue(followsUser2.isEmpty());
+	}
+	
+	@Test
+	public void testGetUserSummaries() throws UnauthorizedOperationException, AuthenticationException {
+		UserToken adminToken = loginAsAdmin();
+		
+		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
+		facade.addUser(adminToken, NEW_USERNAME_2, NEW_USER_PASSWORD_2, NEW_USER_PROFILE_DESCRIPTION_2);
+		
+		UserToken userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);	
+		UserToken userToken2 = loginAsUser(NEW_USERNAME_2, NEW_USER_PASSWORD_2);
+		
+		List<UserSummary> summariesUser1 = facade.getUserSummaries(userToken1);
+		List<UserSummary> summariesUser2 = facade.getUserSummaries(userToken2);
+		
+		assertEquals(1, summariesUser1.size());
+		assertEquals(NEW_USERNAME_2, summariesUser1.get(0).getUsername());
+		assertEquals(NEW_USER_PROFILE_DESCRIPTION_2, summariesUser1.get(0).getProfileDescription());
+		
+		assertEquals(1, summariesUser2.size());
+		assertEquals(NEW_USERNAME_1, summariesUser2.get(0).getUsername());
+		assertEquals(NEW_USER_PROFILE_DESCRIPTION_1, summariesUser2.get(0).getProfileDescription());
 	}
 	
 	private UserToken loginAsAdmin() throws AuthenticationException {
