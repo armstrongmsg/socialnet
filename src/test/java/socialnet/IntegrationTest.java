@@ -74,7 +74,9 @@ public class IntegrationTest {
 			thenReturn(DefaultAuthenticationPlugin.class.getCanonicalName());
 		Mockito.when(propertiesUtil.getProperty(ConfigurationProperties.AUTHORIZATION_PLUGIN_CLASS_NAME)).
 			thenReturn(DefaultAuthorizationPlugin.class.getCanonicalName());
-		
+		Mockito.when(propertiesUtil.getProperty("BOOTSTRAP")).
+			thenReturn("false");
+	
 		propertiesUtilMock = Mockito.mockStatic(PropertiesUtil.class);
 		Mockito.when(PropertiesUtil.getInstance()).thenReturn(propertiesUtil);
 		

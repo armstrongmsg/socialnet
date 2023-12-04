@@ -18,6 +18,7 @@ import com.armstrongmsg.socialnet.model.authentication.UserToken;
 import com.armstrongmsg.socialnet.storage.StorageFacade;
 import com.armstrongmsg.socialnet.storage.cache.DefaultCache;
 import com.armstrongmsg.socialnet.storage.database.DefaultDatabaseManager;
+import com.armstrongmsg.socialnet.util.PropertiesUtil;
 
 public class ApplicationFacade {
 	private static Logger logger = LoggerFactory.getLogger(ApplicationFacade.class);
@@ -31,6 +32,11 @@ public class ApplicationFacade {
 
 		try {
 			this.network = new Network(this.storageManager);
+			// FIXME constant
+			PropertiesUtil properties = PropertiesUtil.getInstance();
+			if (properties.getProperty("BOOTSTRAP").equals("true")) {
+				new Bootstrap().startNetwork(network);
+			}
 		} catch (FatalErrorException e) {
 			// TODO how to handle this properly?
 			logger.error(e.getMessage());
