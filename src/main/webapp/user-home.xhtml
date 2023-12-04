@@ -10,19 +10,28 @@
 	<h2>Social net</h2>
 	<hr />
 
-	<h:form>
-		<h:dataTable value="#{networkBean.userRecommendations}" var="user"
+      Posts from your friends
+      
+     <h:form>
+		<h:dataTable value="#{postBean.friendsPosts}" var="post"
 			styleClass="usersTable" headerClass="usersTableHeader"
 			rowClasses="usersTableOddRow,usersTableEvenRow">
 
+			<h:outputText value="#{post.title}" />
+
 			<h:column>
-				<f:facet name="header">Recommended users</f:facet>
-				<h:commandButton value="#{user.username}"
-					action="#{navigationController.showPage}">
-					<f:param name="pageId" value="user-profile" />
-					<f:setPropertyActionListener target="#{profileBean.user}" 
-					    value="#{user}" />
-				</h:commandButton>
+				<f:facet name="header">title</f:facet>
+				<h:outputText value="#{post.title}" />
+			</h:column>
+
+			<h:column>
+				<f:facet name="header">creation time</f:facet>
+				<h:outputText value="#{post.date}" />
+			</h:column>
+
+			<h:column>
+				<f:facet name="header">content</f:facet>
+				<h:outputText value="#{post.content}" />
 			</h:column>
 		</h:dataTable>
 	</h:form>
@@ -60,41 +69,12 @@
             </h:column>
          </h:dataTable>
       </h:form>
-      
-      <hr />
-  
-      Feed
-      
+
+	<hr />
+	
       <h:form>
-		<h:dataTable value="#{postBean.friendsPosts}" var="post"
-			styleClass="usersTable" headerClass="usersTableHeader"
-			rowClasses="usersTableOddRow,usersTableEvenRow">
-
-			<h:outputText value="#{post.title}" />
-
-			<h:column>
-				<f:facet name="header">title</f:facet>
-				<h:outputText value="#{post.title}" />
-			</h:column>
-
-			<h:column>
-				<f:facet name="header">creation time</f:facet>
-				<h:outputText value="#{post.date}" />
-			</h:column>
-
-			<h:column>
-				<f:facet name="header">content</f:facet>
-				<h:outputText value="#{post.content}" />
-			</h:column>
-		</h:dataTable>
-	</h:form>
-
-      Create a post
-      
-      <h:form>
-      	Title
-      	<br/>
       	<h:inputText value = "#{postBean.title}" size = "20"/>
+      	<br/>
       	<br/>
         <h:inputTextarea row = "10" col = "10" value = "#{postBean.content}" />
         <br/>  
@@ -102,15 +82,14 @@
            <f:selectItem itemValue = "PRIVATE" itemLabel = "Private" /> 
            <f:selectItem itemValue = "PUBLIC" itemLabel = "Public" /> 
         </h:selectOneMenu> 
-        
         <br/>
-                     
-        <h:commandButton value = "Create post" action = "#{postBean.createPost}" />
+        <br/>
+        <h:commandButton value = "Post" action = "#{postBean.createPost}" />
       </h:form>
       
       <hr />
       
-	 Posts
+	 Your post history
       
       <h:form>
          <h:dataTable value = "#{postBean.selfPosts}" var = "post"
@@ -137,6 +116,25 @@
          </h:dataTable>
       </h:form>
       
+	<hr />
+	
+	<h:form>
+		<h:dataTable value="#{networkBean.userRecommendations}" var="user"
+			styleClass="usersTable" headerClass="usersTableHeader"
+			rowClasses="usersTableOddRow,usersTableEvenRow">
+
+			<h:column>
+				<f:facet name="header">Recommended users</f:facet>
+				<h:commandButton value="#{user.username}"
+					action="#{navigationController.showPage}">
+					<f:param name="pageId" value="user-profile" />
+					<f:setPropertyActionListener target="#{profileBean.user}" 
+					    value="#{user}" />
+				</h:commandButton>
+			</h:column>
+		</h:dataTable>
+	</h:form>
+	
 	<hr />
 
 	<h:form>

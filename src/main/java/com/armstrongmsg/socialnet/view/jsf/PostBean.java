@@ -18,8 +18,8 @@ import com.armstrongmsg.socialnet.view.jsf.model.User;
 @SessionScoped
 public class PostBean {
 	private User user;
-	private String title;
-	private String content;
+	private String title = "title";
+	private String content = "write something";
 	private String postVisibility;
 	
 	private Post post;
