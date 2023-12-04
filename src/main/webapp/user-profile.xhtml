@@ -13,13 +13,13 @@ xmlns:f = "http://java.sun.com/jsf/core">
    
    <h:body> 
       <h:form>
-        <td><h:outputText value = "#{profileBean.summary.username}" /></td>
+        <td><h:outputText value = "#{profileBean.username}" /></td>
       </h:form>
       
       <hr />
       
       <h:form>
-        <td><h:outputText value = "#{profileBean.summary.profileDescription}" /></td>
+        <td><h:outputText value = "#{profileBean.profileDescription}" /></td>
       </h:form>
       
       <hr />
@@ -27,12 +27,12 @@ xmlns:f = "http://java.sun.com/jsf/core">
       <h:form>
         <h:commandButton value = "Add friend" action = "#{friendshipBean.addFriendship}">
 		   <f:setPropertyActionListener 
-                     target = "#{friendshipBean.username}" value = "#{profileBean.summary.username}" />
+                     target = "#{friendshipBean.username}" value = "#{profileBean.username}" />
         </h:commandButton>
         
         <h:commandButton value = "Follow" action = "#{followBean.addFollow}">
 		   <f:setPropertyActionListener
-                     target = "#{followBean.username}" value = "#{profileBean.summary.username}" />
+                     target = "#{followBean.username}" value = "#{profileBean.username}" />
         </h:commandButton>
       </h:form>
       

@@ -11,7 +11,7 @@
 	<hr />
 
 	<h:form>
-		<h:dataTable value="#{networkBean.userSummaries}" var="user"
+		<h:dataTable value="#{networkBean.userRecommendations}" var="user"
 			styleClass="usersTable" headerClass="usersTableHeader"
 			rowClasses="usersTableOddRow,usersTableEvenRow">
 
@@ -20,7 +20,7 @@
 				<h:commandButton value="#{user.username}"
 					action="#{navigationController.showPage}">
 					<f:param name="pageId" value="user-profile" />
-					<f:setPropertyActionListener target="#{profileBean.summary}" 
+					<f:setPropertyActionListener target="#{profileBean.user}" 
 					    value="#{user}" />
 				</h:commandButton>
 			</h:column>

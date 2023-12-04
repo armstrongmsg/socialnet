@@ -10,11 +10,15 @@ import com.armstrongmsg.socialnet.view.jsf.model.UserSummary;
 public class ProfileBean {
 	private UserSummary summary;
 
-	public UserSummary getSummary() {
-		return summary;
+	public String getUsername() {
+		return summary.getUsername();
 	}
-
-	public void setSummary(UserSummary summary) {
+	
+	public String getProfileDescription() {
+		return summary.getProfileDescription();
+	}
+	
+	public void setUser(UserSummary summary) {
 		this.summary = summary;
 	}
 }

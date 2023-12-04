@@ -77,6 +77,10 @@ public class NetworkBean {
 		return users;
 	}
 	
+	public List<UserSummary> getUserRecommendations() {
+		return getUserSummaries();
+	}
+	
 	public List<UserSummary> getUserSummaries() {
 		try {
 			UserToken token = SessionManager.getCurrentSession().getUserToken();
