@@ -18,18 +18,18 @@ xmlns:f = "http://java.sun.com/jsf/core">
    		<h:form> 
    		  Choose a username:
 	      <br/>
-   		  <h:inputText size = "20" value = "#{networkBean.username}" />
+   		  <h:inputText size = "20" value = "#{signUpBean.username}" />
    		  <br/>
    		  Write something about yourself:
    		  <br/>
-   		  <h:inputTextarea row = "20" col = "20" value = "#{networkBean.profileDescription}" />
+   		  <h:inputTextarea row = "20" col = "20" value = "#{signUpBean.profileDescription}" />
    		  <br/>
    		  Choose a password:
    		  <br/>
-   		  <h:inputSecret size = "20" value = "#{networkBean.password}" />
+   		  <h:inputSecret size = "20" value = "#{signUpBean.password}" />
    		  <br/>
           <br/>
-          <h:commandButton value = "Sign up" action = "#{networkBean.signUp}" />
+          <h:commandButton value = "Sign up" action = "#{signUpBean.signUp}" />
           
          <h:commandButton action = "#{navigationController.showPage}" value = "Back" >
 	         <f:param name = "pageId" value = "home" />

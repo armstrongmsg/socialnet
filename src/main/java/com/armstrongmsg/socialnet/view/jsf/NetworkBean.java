@@ -102,12 +102,6 @@ public class NetworkBean {
 		}
 		return null;
 	}
-	
-	public String signUp() {
-		facade.addUser(username, getPassword(), profileDescription);
-		// FIXME constant
-		return new NavigationController().showPageById("home");
-	}
 
 	public String editUser() {
 		getUser().setCanEdit(true);
