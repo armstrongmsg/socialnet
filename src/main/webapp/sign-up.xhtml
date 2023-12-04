@@ -12,29 +12,25 @@ xmlns:f = "http://java.sun.com/jsf/core">
    </h:head>
    
    <h:body>
+   	    <h2>Social net</h2>
+	    <hr />
+	    
    		<h:form> 
-         <table>
-            <tr>
-               <td>User name :</td>
-               <td><h:inputText size = "20" value = "#{networkBean.username}" /></td>
-            </tr>
-            
-            <tr>
-               <td>Profile description :</td>
-               <td><h:inputText size = "20" value = "#{networkBean.profileDescription}" /></td>
-            </tr>
-            
-            <tr>
-               <td>Password:</td>
-               <td><h:inputSecret size = "20" value = "#{networkBean.password}" /></td>
-            </tr>
-            
-            <tr>
-               <td> </td>
-               <td><h:commandButton value = "Sign up" action = "#{networkBean.signUp}" /></td>
-            </tr>
-         </table>
-         
+   		  Choose a username:
+	      <br/>
+   		  <h:inputText size = "20" value = "#{networkBean.username}" />
+   		  <br/>
+   		  Write something about yourself:
+   		  <br/>
+   		  <h:inputTextarea row = "20" col = "20" value = "#{networkBean.profileDescription}" />
+   		  <br/>
+   		  Choose a password:
+   		  <br/>
+   		  <h:inputSecret size = "20" value = "#{networkBean.password}" />
+   		  <br/>
+          <br/>
+          <h:commandButton value = "Sign up" action = "#{networkBean.signUp}" />
+          
          <h:commandButton action = "#{navigationController.showPage}" value = "Back" >
 	         <f:param name = "pageId" value = "home" />
 	     </h:commandButton>
