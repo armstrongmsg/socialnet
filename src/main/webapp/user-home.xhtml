@@ -10,26 +10,14 @@
 	<h2>Social net</h2>
 	<hr />
 
-	Users
-
 	<h:form>
 		<h:dataTable value="#{networkBean.userSummaries}" var="user"
 			styleClass="usersTable" headerClass="usersTableHeader"
 			rowClasses="usersTableOddRow,usersTableEvenRow">
 
 			<h:column>
-				<f:facet name="header">Name</f:facet>
-				<h:outputText value="#{user.username}" />
-			</h:column>
-
-			<h:column>
-				<f:facet name="header">Profile description</f:facet>
-				<h:outputText value="#{user.profileDescription}" />
-			</h:column>
-
-			<h:column>
-				<f:facet name="header">Profile</f:facet>
-				<h:commandButton value="Profile"
+				<f:facet name="header">Recommended users</f:facet>
+				<h:commandButton value="#{user.username}"
 					action="#{navigationController.showPage}">
 					<f:param name="pageId" value="user-profile" />
 					<f:setPropertyActionListener target="#{profileBean.summary}" 
