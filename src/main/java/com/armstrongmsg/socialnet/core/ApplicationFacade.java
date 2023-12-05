@@ -121,7 +121,7 @@ public class ApplicationFacade {
 		this.network.addFriendship(userToken, username);
 	}
 	
-	public List<User> getSelfFriends(UserToken userToken) throws AuthenticationException, UnauthorizedOperationException {
+	public List<UserSummary> getSelfFriends(UserToken userToken) throws AuthenticationException, UnauthorizedOperationException {
 		return this.network.getSelfFriends(userToken);
 	}
 
@@ -133,7 +133,7 @@ public class ApplicationFacade {
 		this.network.addFollow(userToken, followedUsername);
 	}
 
-	public List<User> getFollowedUsers(UserToken userToken) throws AuthenticationException, UnauthorizedOperationException {
+	public List<UserSummary> getFollowedUsers(UserToken userToken) throws AuthenticationException, UnauthorizedOperationException {
 		return this.network.getFollowedUsers(userToken);
 	}
 

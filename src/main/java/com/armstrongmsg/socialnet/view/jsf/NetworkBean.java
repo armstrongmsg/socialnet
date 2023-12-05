@@ -145,9 +145,9 @@ public class NetworkBean {
 		return null;
 	}
 	
-	public List<User> getSelfFriends() {
+	public List<UserSummary> getSelfFriends() {
 		try {
-			return new JsfConnector().getViewUsers(
+			return new JsfConnector().getViewUserSummaries(
 					facade.getSelfFriends(SessionManager.getCurrentSession().getUserToken()));
 		} catch (AuthenticationException | UnauthorizedOperationException e) {
 			// FIXME treat exception
@@ -168,9 +168,9 @@ public class NetworkBean {
 		return null;
 	}
 	
-	public List<User> getSelfFollows() {
+	public List<UserSummary> getSelfFollows() {
 		try {
-			return new JsfConnector().getViewUsers(
+			return new JsfConnector().getViewUserSummaries(
 					facade.getFollowedUsers(SessionManager.getCurrentSession().getUserToken()));
 		} catch (AuthenticationException | UnauthorizedOperationException e) {
 			// FIXME treat exception

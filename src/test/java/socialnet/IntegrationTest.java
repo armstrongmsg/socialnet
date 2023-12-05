@@ -337,15 +337,14 @@ public class IntegrationTest {
 		
 		facade.addFriendship(userToken1, NEW_USERNAME_2);
 		
-		List<User> users = facade.getUsers(adminToken);
-		User user1 = users.get(0);
-		User user2 = users.get(1);
+		List<UserSummary> friends1 = facade.getSelfFriends(userToken1);
+		List<UserSummary> friends2 = facade.getSelfFriends(userToken2);
 		
-		List<User> friends1 = facade.getSelfFriends(userToken1);
-		List<User> friends2 = facade.getSelfFriends(userToken2);
+		UserSummary user1Summary = new UserSummary(NEW_USERNAME_1, NEW_USER_PROFILE_DESCRIPTION_1);
+		UserSummary user2Summary = new UserSummary(NEW_USERNAME_2, NEW_USER_PROFILE_DESCRIPTION_2);
 		
-		assertTrue(friends1.contains(user2));
-		assertTrue(friends2.contains(user1));
+		assertTrue(friends1.contains(user2Summary));
+		assertTrue(friends2.contains(user1Summary));
 	}
 	
 	@Test
@@ -442,19 +441,18 @@ public class IntegrationTest {
 		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
 		facade.addUser(adminToken, NEW_USERNAME_2, NEW_USER_PASSWORD_2, NEW_USER_PROFILE_DESCRIPTION_2);
 
-		List<User> users = facade.getUsers(adminToken);
-		User user2 = users.get(1);
-		
 		UserToken userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);	
 		UserToken userToken2 = loginAsUser(NEW_USERNAME_2, NEW_USER_PASSWORD_2);
 		
 		facade.addFollow(userToken1, NEW_USERNAME_2);
 		
-		List<User> followsUser1 = facade.getFollowedUsers(userToken1);
-		List<User> followsUser2 = facade.getFollowedUsers(userToken2);
+		List<UserSummary> followsUser1 = facade.getFollowedUsers(userToken1);
+		List<UserSummary> followsUser2 = facade.getFollowedUsers(userToken2);
 		
+		UserSummary user2Summary = new UserSummary(NEW_USERNAME_2, NEW_USER_PROFILE_DESCRIPTION_2);
+				
 		assertEquals(1, followsUser1.size());
-		assertTrue(followsUser1.contains(user2));
+		assertTrue(followsUser1.contains(user2Summary));
 		
 		assertTrue(followsUser2.isEmpty());
 	}

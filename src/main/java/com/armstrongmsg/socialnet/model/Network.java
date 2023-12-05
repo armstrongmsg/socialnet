@@ -183,20 +183,24 @@ public class Network {
 		return friends;
 	}
 	
-	public List<User> getSelfFriends(UserToken userToken) throws AuthenticationException, UnauthorizedOperationException {
+	public List<UserSummary> getSelfFriends(UserToken userToken) throws AuthenticationException, UnauthorizedOperationException {
 		User requester = findUserById(userToken.getUserId());
 		this.authorizationPlugin.authorize(requester, new Operation(OperationType.GET_FRIENDS));
 		
 		List<Friendship> userFriendships = this.storageFacade.getFriendshipsByUserId(requester.getUserId());
-		List<User> friends = new ArrayList<User>();
+		List<UserSummary> friends = new ArrayList<UserSummary>();
 		
 		for (Friendship friendship : userFriendships) {
 			if (friendship.getFriend1().equals(requester)) {
-				friends.add(friendship.getFriend2());
+				User friend = friendship.getFriend2();
+				UserSummary summary = new UserSummary(friend.getUsername(), friend.getProfile().getDescription());
+				friends.add(summary);
 			}
 			
 			if (friendship.getFriend2().equals(requester)) {
-				friends.add(friendship.getFriend1());
+				User friend = friendship.getFriend1();
+				UserSummary summary = new UserSummary(friend.getUsername(), friend.getProfile().getDescription());
+				friends.add(summary);
 			}
 		}
 		
@@ -237,16 +241,17 @@ public class Network {
 		return followedUsers;
 	}
 
-	public List<User> getFollowedUsers(UserToken userToken) throws AuthenticationException, UnauthorizedOperationException {
+	public List<UserSummary> getFollowedUsers(UserToken userToken) throws AuthenticationException, UnauthorizedOperationException {
 		User requester = findUserById(userToken.getUserId());
 		this.authorizationPlugin.authorize(requester, new Operation(OperationType.GET_FOLLOWED_USERS));
 		
 		List<Follow> userFollows = this.storageFacade.getFollowsByUserId(requester.getUserId());
-		List<User> followedUsers = new ArrayList<User>();
+		List<UserSummary> followedUsers = new ArrayList<UserSummary>();
 		
 		for (Follow follow : userFollows) {
 			if (follow.getFollower().equals(requester)) {
-				followedUsers.add(follow.getFollowed());
+				User followed = follow.getFollowed();
+				followedUsers.add(new UserSummary(followed.getUsername(), followed.getProfile().getDescription()));
 			}
 		}
 		

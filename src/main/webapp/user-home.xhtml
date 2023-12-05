@@ -37,9 +37,7 @@
 	</h:form>
 
 	<hr />
-      
-      Friends
-      
+
       <h:form>
          <h:dataTable value = "#{networkBean.selfFriends}" var = "friend"
             styleClass = "usersTable"
@@ -47,15 +45,16 @@
             rowClasses = "usersTableOddRow,usersTableEvenRow">
             
             <h:column>    				
-               <f:facet name = "header">Name</f:facet>
-               <h:outputText value = "#{friend.username}" />
+               <f:facet name = "header">Friends</f:facet>
+               <h:commandButton value="#{friend.username}"
+					action="#{navigationController.showPage}">
+					<f:param name="pageId" value="user-profile" />
+					<f:setPropertyActionListener target="#{profileBean.user}" 
+					    value="#{friend}" />
+				</h:commandButton>
             </h:column>
          </h:dataTable>
       </h:form>
-      
-      <hr />
-      
-      Followed
       
       <h:form>
          <h:dataTable value = "#{networkBean.selfFollows}" var = "follow"
@@ -64,8 +63,13 @@
             rowClasses = "usersTableOddRow,usersTableEvenRow">
             
             <h:column>    				
-               <f:facet name = "header">Name</f:facet>
-               <h:outputText value = "#{follow.username}" />
+               <f:facet name = "header">Followed</f:facet>
+               <h:commandButton value="#{follow.username}"
+					action="#{navigationController.showPage}">
+					<f:param name="pageId" value="user-profile" />
+					<f:setPropertyActionListener target="#{profileBean.user}" 
+					    value="#{follow}" />
+				</h:commandButton>
             </h:column>
          </h:dataTable>
       </h:form>
