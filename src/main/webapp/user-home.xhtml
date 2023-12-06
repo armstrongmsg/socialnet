@@ -6,25 +6,64 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html">
 
+<h:head>
+      <title>Home</title>		
+      <h:outputStylesheet library = "css" name = "styles.css"  /> 	
+ </h:head>
+
 <h:body>
-	<h2>Social net</h2>
-	<hr />
-
-     <h:form>
-		<h:commandButton action="#{navigationController.showPage}"
-			value="Friends">
-			<f:param name="pageId" value="friends-list" />
-		</h:commandButton>
-	</h:form>	
-
 	<h:form>
-		<h:commandButton action="#{navigationController.showPage}"
-			value="Follows">
-			<f:param name="pageId" value="follows-list" />
-		</h:commandButton>
+		<table>
+			<tr>
+				<td>
+					<h:commandButton action = "#{navigationController.showPage}"
+            			value = "Home" >
+            			<f:param name = "pageId" value = "user-home" />
+        			</h:commandButton>
+				</td>
+				<td>
+					<h:commandButton action="#{navigationController.showPage}"
+						value="Profile" >
+						<f:param name="pageId" value="user-profile" />
+					</h:commandButton>
+				</td>
+				<td>
+					<h:commandButton action="#{navigationController.showPage}"
+						value="Friends">
+						<f:param name="pageId" value="friends-list" />
+					</h:commandButton>
+				</td>
+				<td>
+					<h:commandButton action="#{navigationController.showPage}"
+						value="Follows">
+						<f:param name="pageId" value="follows-list" />
+					</h:commandButton>
+				</td>
+				<td>
+					<h:commandButton value="Logout" action="#{contextBean.logout}" />
+				</td>
+			</tr>
+		</table>
 	</h:form>
 
 	<hr />
+
+	<h:form>
+      	<h:inputText value = "#{postBean.title}" size = "20"/>
+      	<br/>
+      	<br/>
+        <h:inputTextarea row = "10" col = "10" value = "#{postBean.content}" />
+        <br/>  
+        <h:selectOneMenu value = "#{postBean.postVisibility}"> 
+           <f:selectItem itemValue = "PRIVATE" itemLabel = "Private" /> 
+           <f:selectItem itemValue = "PUBLIC" itemLabel = "Public" /> 
+        </h:selectOneMenu> 
+        <br/>
+        <br/>
+        <h:commandButton value = "Post" action = "#{postBean.createPost}" />
+      </h:form>
+      
+      <hr />
 
       Posts from your friends
       
@@ -53,23 +92,6 @@
 	</h:form>
 
 	<hr />
-	
-      <h:form>
-      	<h:inputText value = "#{postBean.title}" size = "20"/>
-      	<br/>
-      	<br/>
-        <h:inputTextarea row = "10" col = "10" value = "#{postBean.content}" />
-        <br/>  
-        <h:selectOneMenu value = "#{postBean.postVisibility}"> 
-           <f:selectItem itemValue = "PRIVATE" itemLabel = "Private" /> 
-           <f:selectItem itemValue = "PUBLIC" itemLabel = "Public" /> 
-        </h:selectOneMenu> 
-        <br/>
-        <br/>
-        <h:commandButton value = "Post" action = "#{postBean.createPost}" />
-      </h:form>
-      
-      <hr />
       
 	 Your post history
       
@@ -99,10 +121,5 @@
       </h:form>
       
 	<hr />
-	
-	<h:form>
-		<h:commandButton value="Logout" action="#{contextBean.logout}" />
-	  </h:form>
-	<br />
 </h:body>
 </html>
