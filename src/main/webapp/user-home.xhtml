@@ -17,6 +17,13 @@
 		</h:commandButton>
 	</h:form>	
 
+	<h:form>
+		<h:commandButton action="#{navigationController.showPage}"
+			value="Follows">
+			<f:param name="pageId" value="follows-list" />
+		</h:commandButton>
+	</h:form>
+
 	<hr />
 
       Posts from your friends
@@ -44,26 +51,6 @@
 			</h:column>
 		</h:dataTable>
 	</h:form>
-
-	<hr />
-  
-      <h:form>
-         <h:dataTable value = "#{networkBean.selfFollows}" var = "follow"
-            styleClass = "usersTable"
-            headerClass = "usersTableHeader"
-            rowClasses = "usersTableOddRow,usersTableEvenRow">
-            
-            <h:column>    				
-               <f:facet name = "header">Followed</f:facet>
-               <h:commandButton value="#{follow.username}"
-					action="#{navigationController.showPage}">
-					<f:param name="pageId" value="user-profile" />
-					<f:setPropertyActionListener target="#{profileBean.user}" 
-					    value="#{follow}" />
-				</h:commandButton>
-            </h:column>
-         </h:dataTable>
-      </h:form>
 
 	<hr />
 	

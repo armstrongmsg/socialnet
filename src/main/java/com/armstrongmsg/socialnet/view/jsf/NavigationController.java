@@ -32,6 +32,7 @@ public class NavigationController {
 			case "user-home": return "user-home";
 			case "admin-home": return "admin-home";
 			case "friends-list": return "friends-list";
+			case "follows-list": return "follows-list";
 			default: return "home";
 		}
 	}
