@@ -77,21 +77,8 @@
 			styleClass="usersTable" headerClass="usersTableHeader"
 			rowClasses="usersTableOddRow,usersTableEvenRow">
 
-			<h:outputText value="#{post.title}" />
-
 			<h:column>
-				<f:facet name="header">title</f:facet>
-				<h:outputText value="#{post.title}" />
-			</h:column>
-
-			<h:column>
-				<f:facet name="header">creation time</f:facet>
-				<h:outputText value="#{post.date}" />
-			</h:column>
-
-			<h:column>
-				<f:facet name="header">content</f:facet>
-				<h:outputText value="#{post.content}" />
+				<h:outputText value="Posted on #{post.date} -> #{post.title} - #{post.content}" />
 			</h:column>
 		</h:dataTable>
 	</h:form>
@@ -100,29 +87,17 @@
       
 	 Your post history
       
+      <br/>
+      
       <h:form>
-         <h:dataTable value = "#{postBean.selfPosts}" var = "post"
-            styleClass = "usersTable"
-            headerClass = "usersTableHeader"
-            rowClasses = "usersTableOddRow,usersTableEvenRow">
-            
-            <h:outputText value = "#{post.title}"/>
-            
-            <h:column>    				
-               <f:facet name = "header">title</f:facet>    				
-               <h:outputText value = "#{post.title}" />
-            </h:column>
-            
-            <h:column>
-               <f:facet name = "header">creation time</f:facet>
-               <h:outputText value = "#{post.date}" />
-            </h:column>
-            
-            <h:column>
-               <f:facet name = "header">content</f:facet>
-               <h:outputText value = "#{post.content}" />
-            </h:column>
-         </h:dataTable>
+      	<h:dataTable value="#{postBean.selfPosts}" var="post"
+			styleClass="usersTable" headerClass="usersTableHeader"
+			rowClasses="usersTableOddRow,usersTableEvenRow">
+
+			<h:column>
+				<h:outputText value="Posted on #{post.date} -> #{post.title} - #{post.content}" />
+			</h:column>
+		</h:dataTable>
       </h:form>
       
 	<hr />
