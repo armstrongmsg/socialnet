@@ -11,8 +11,35 @@ xmlns:f = "http://java.sun.com/jsf/core">
       <h:outputStylesheet library = "css" name = "styles.css"  /> 	
    </h:head>
    
-   <h:body> 
-      <h:form>
+   <h:body>
+	<h:form>
+		<table>
+			<tr>
+				<td><h:commandButton action="#{navigationController.showPage}"
+						value="Home">
+						<f:param name="pageId" value="user-home" />
+					</h:commandButton></td>
+				<td><h:commandButton action="#{navigationController.showPage}"
+						value="Profile">
+						<f:param name="pageId" value="user-profile" />
+					</h:commandButton></td>
+				<td><h:commandButton action="#{navigationController.showPage}"
+						value="Friends">
+						<f:param name="pageId" value="friends-list" />
+					</h:commandButton></td>
+				<td><h:commandButton action="#{navigationController.showPage}"
+						value="Follows">
+						<f:param name="pageId" value="follows-list" />
+					</h:commandButton></td>
+				<td><h:commandButton value="Logout"
+						action="#{contextBean.logout}" /></td>
+			</tr>
+		</table>
+	</h:form>
+
+	<hr />
+
+	<h:form>
         <td><h:outputText value = "#{profileBean.username}" /></td>
       </h:form>
       
