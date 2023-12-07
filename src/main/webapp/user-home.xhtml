@@ -51,21 +51,26 @@
 	<h:form>
       	<h:inputText value = "#{postBean.title}" size = "20"/>
       	<br/>
-      	<br/>
-        <h:inputTextarea row = "10" col = "10" value = "#{postBean.content}" />
-        <br/>  
-        <h:selectOneMenu value = "#{postBean.postVisibility}"> 
-           <f:selectItem itemValue = "PRIVATE" itemLabel = "Private" /> 
-           <f:selectItem itemValue = "PUBLIC" itemLabel = "Public" /> 
-        </h:selectOneMenu> 
+        <h:inputTextarea row = "30" col = "10" value = "#{postBean.content}" />
         <br/>
-        <br/>
-        <h:commandButton value = "Post" action = "#{postBean.createPost}" />
+        <table>
+			<tr>
+				<td>
+					<h:selectOneMenu value = "#{postBean.postVisibility}"> 
+           				<f:selectItem itemValue = "PRIVATE" itemLabel = "Private" /> 
+           				<f:selectItem itemValue = "PUBLIC" itemLabel = "Public" /> 
+        			</h:selectOneMenu> 					
+				</td>
+				<td>
+					<h:commandButton value = "Post" action = "#{postBean.createPost}" />					
+				</td>
+			</tr>
+		</table>
       </h:form>
-      
-      <hr />
 
-      Posts from your friends
+	  <br/>
+
+      Your feed
       
      <h:form>
 		<h:dataTable value="#{postBean.friendsPosts}" var="post"
