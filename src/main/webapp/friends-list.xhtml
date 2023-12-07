@@ -12,8 +12,41 @@
    </h:head>
 
 <h:body>
-	<h2>Social net</h2>
-	<hr />
+	<h:form>
+		<table>
+			<tr>
+				<td>
+					<h:commandButton action = "#{navigationController.showPage}"
+            			value = "Home" >
+            			<f:param name = "pageId" value = "user-home" />
+        			</h:commandButton>
+				</td>
+				<td>
+					<h:commandButton action="#{navigationController.showPage}"
+						value="Profile" >
+						<f:param name="pageId" value="user-profile" />
+					</h:commandButton>
+				</td>
+				<td>
+					<h:commandButton action="#{navigationController.showPage}"
+						value="Friends">
+						<f:param name="pageId" value="friends-list" />
+					</h:commandButton>
+				</td>
+				<td>
+					<h:commandButton action="#{navigationController.showPage}"
+						value="Follows">
+						<f:param name="pageId" value="follows-list" />
+					</h:commandButton>
+				</td>
+				<td>
+					<h:commandButton value="Logout" action="#{contextBean.logout}" />
+				</td>
+			</tr>
+		</table>
+	</h:form>
+
+  	<hr />
 
       <h:form>
          <h:dataTable value = "#{networkBean.selfFriends}" var = "friend"
@@ -35,13 +68,15 @@
       
       <hr />
 	
+	Recommended users
+	
 	<h:form>
 		<h:dataTable value="#{networkBean.userRecommendations}" var="user"
 			styleClass="usersTable" headerClass="usersTableHeader"
 			rowClasses="usersTableOddRow,usersTableEvenRow">
 
 			<h:column>
-				<f:facet name="header">Recommended users</f:facet>
+				<f:facet name="header"></f:facet>
 				<h:commandButton value="#{user.username}"
 					action="#{navigationController.showPage}">
 					<f:param name="pageId" value="user-profile" />
