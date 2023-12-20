@@ -6,6 +6,7 @@ import javax.faces.bean.SessionScoped;
 import com.armstrongmsg.socialnet.model.authentication.UserToken;
 import com.armstrongmsg.socialnet.view.jsf.model.UserSummary;
 
+// TODO should be request scoped
 @ManagedBean(name = "profileBean", eager = true)
 @SessionScoped
 public class ProfileBean {

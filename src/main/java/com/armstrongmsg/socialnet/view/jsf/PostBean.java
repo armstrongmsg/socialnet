@@ -3,7 +3,7 @@ package com.armstrongmsg.socialnet.view.jsf;
 import java.util.List;
 
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.SessionScoped;
+import javax.faces.bean.RequestScoped;
 
 import com.armstrongmsg.socialnet.core.ApplicationFacade;
 import com.armstrongmsg.socialnet.exceptions.AuthenticationException;
@@ -15,7 +15,7 @@ import com.armstrongmsg.socialnet.view.jsf.model.Post;
 import com.armstrongmsg.socialnet.view.jsf.model.User;
 
 @ManagedBean(name = "postBean", eager = true)
-@SessionScoped
+@RequestScoped
 public class PostBean {
 	private User user;
 	private String title = "title";

@@ -1,7 +1,7 @@
 package com.armstrongmsg.socialnet.view.jsf;
 
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.SessionScoped;
+import javax.faces.bean.RequestScoped;
 
 import com.armstrongmsg.socialnet.core.ApplicationFacade;
 import com.armstrongmsg.socialnet.exceptions.AuthenticationException;
@@ -9,7 +9,7 @@ import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
 import com.armstrongmsg.socialnet.view.jsf.model.User;
 
 @ManagedBean(name = "friendshipBean", eager = true)
-@SessionScoped
+@RequestScoped
 public class FriendshipBean {
 	private User user1;
 	private User user2;
