@@ -43,6 +43,7 @@ public class ApplicationFacade {
 		}
 	}
 	
+	// TODO should be synchronized
 	public static ApplicationFacade getInstance(StorageFacade storageManager) {
 		if (instance == null) {
 			instance = new ApplicationFacade(storageManager);
@@ -51,11 +52,13 @@ public class ApplicationFacade {
 		return instance;
 	}
 	
+	// TODO should be synchronized
 	public static ApplicationFacade getInstance() {
 		// FIXME load cache policy and database manager from configuration
 		return getInstance(new StorageFacade(new DefaultCache(), new DefaultDatabaseManager()));
 	}
 		
+	// TODO should be synchronized
 	public static void reset() {
 		instance = null;
 	}
