@@ -29,5 +29,6 @@ replay_pid*
 .project
 .settings/
 conf/properties
+cloud/cloud-properties
 src/main/resources/application.properties
 src/main/resources/logback.xml
