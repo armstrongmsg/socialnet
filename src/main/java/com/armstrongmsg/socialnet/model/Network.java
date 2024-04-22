@@ -186,7 +186,10 @@ public class Network {
 	public List<UserSummary> getSelfFriends(UserToken userToken) throws AuthenticationException, UnauthorizedOperationException {
 		User requester = findUserById(userToken.getUserId());
 		this.authorizationPlugin.authorize(requester, new Operation(OperationType.GET_FRIENDS));
-		
+		return this.doGetSelfFriends(requester);
+	}
+	
+	private List<UserSummary> doGetSelfFriends(User requester) {
 		List<Friendship> userFriendships = this.storageFacade.getFriendshipsByUserId(requester.getUserId());
 		List<UserSummary> friends = new ArrayList<UserSummary>();
 		
@@ -318,6 +321,24 @@ public class Network {
 			}
 		}
 
+		return userSummaries;
+	}
+
+	public List<UserSummary> getUserRecommendations(UserToken token) throws UnauthorizedOperationException, AuthenticationException {
+		User requester = findUserById(token.getUserId());
+		this.authorizationPlugin.authorize(requester, new Operation(OperationType.GET_USER_RECOMMENDATIONS));
+		
+		List<UserSummary> friends = doGetSelfFriends(requester);
+		List<UserSummary> userSummaries = new ArrayList<UserSummary>();
+		
+		for (User user : this.storageFacade.getAllUsers()) {
+			UserSummary userSummary = new UserSummary(user.getUsername(), user.getProfile().getDescription()); 
+			
+			if (!user.equals(requester) && !friends.contains(userSummary)) {
+				userSummaries.add(userSummary);
+			}
+		}
+		
 		return userSummaries;
 	}
 }

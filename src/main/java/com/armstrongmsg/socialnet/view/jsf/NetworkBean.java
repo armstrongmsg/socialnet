@@ -78,7 +78,15 @@ public class NetworkBean {
 	}
 	
 	public List<UserSummary> getUserRecommendations() {
-		return getUserSummaries();
+		try {
+			UserToken token = SessionManager.getCurrentSession().getUserToken();
+			return new JsfConnector().getViewUserSummaries(facade.getUserRecommendations(token));
+		} catch (UnauthorizedOperationException | AuthenticationException e) {
+			// FIXME treat exception
+		}
+		
+		// FIXME
+		return null;
 	}
 	
 	public List<UserSummary> getUserSummaries() {

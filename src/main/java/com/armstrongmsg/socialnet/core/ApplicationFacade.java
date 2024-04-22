@@ -143,4 +143,8 @@ public class ApplicationFacade {
 	public List<UserSummary> getUserSummaries(UserToken userToken) throws UnauthorizedOperationException, AuthenticationException {
 		return this.network.getUserSummaries(userToken);
 	}
+
+	public List<UserSummary> getUserRecommendations(UserToken userToken) throws UnauthorizedOperationException, AuthenticationException {
+		return this.network.getUserRecommendations(userToken);
+	}
 }

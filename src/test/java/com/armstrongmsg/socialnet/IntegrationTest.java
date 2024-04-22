@@ -479,6 +479,34 @@ public class IntegrationTest {
 		assertEquals(NEW_USER_PROFILE_DESCRIPTION_1, summariesUser2.get(0).getProfileDescription());
 	}
 	
+	@Test
+	public void testGetUserRecommendations() throws AuthenticationException, UnauthorizedOperationException {
+		UserToken adminToken = loginAsAdmin();
+		
+		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
+		facade.addUser(adminToken, NEW_USERNAME_2, NEW_USER_PASSWORD_2, NEW_USER_PROFILE_DESCRIPTION_2);
+		
+		UserToken userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);	
+		UserToken userToken2 = loginAsUser(NEW_USERNAME_2, NEW_USER_PASSWORD_2);
+		
+		List<UserSummary> recommendationsUser1 = facade.getUserRecommendations(userToken1);
+		List<UserSummary> recommendationsUser2 = facade.getUserRecommendations(userToken2);
+		
+		assertEquals(1, recommendationsUser1.size());
+		assertEquals(NEW_USERNAME_2, recommendationsUser1.get(0).getUsername());
+		
+		assertEquals(1, recommendationsUser2.size());
+		assertEquals(NEW_USERNAME_1, recommendationsUser2.get(0).getUsername());
+		
+		facade.addFriendshipAdmin(adminToken, userToken1.getUserId(), userToken2.getUserId());
+		
+		List<UserSummary> recommendationsUser1AfterFriendship = facade.getUserRecommendations(userToken1);
+		List<UserSummary> recommendationsUser2AfterFriendship = facade.getUserRecommendations(userToken2);
+		
+		assertTrue(recommendationsUser1AfterFriendship.isEmpty());
+		assertTrue(recommendationsUser2AfterFriendship.isEmpty());
+	}
+	
 	private UserToken loginAsAdmin() throws AuthenticationException {
 		Map<String, String> adminCredentials = new HashMap<String, String>();
 		adminCredentials.put(AuthenticationParameters.USERNAME_KEY, ADMIN_USERNAME);
