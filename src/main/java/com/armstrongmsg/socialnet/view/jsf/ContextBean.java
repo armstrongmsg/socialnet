@@ -9,6 +9,7 @@ import javax.faces.bean.SessionScoped;
 import com.armstrongmsg.socialnet.core.ApplicationFacade;
 import com.armstrongmsg.socialnet.exceptions.AuthenticationException;
 import com.armstrongmsg.socialnet.model.authentication.UserToken;
+import com.armstrongmsg.socialnet.view.jsf.model.UserSummary;
 
 @ManagedBean(name = "contextBean", eager = true)
 @SessionScoped
@@ -16,6 +17,8 @@ public class ContextBean {
 	private String username;
 	private String password;
 	private static ApplicationFacade facade = ApplicationFacade.getInstance();
+	
+	private UserSummary viewUser; 
 	
 	public UserToken getUser() {
 		Session session = SessionManager.getCurrentSession();
@@ -111,5 +114,20 @@ public class ContextBean {
 		if (session != null) {
 			SessionManager.getCurrentSession().setAdmin(isAdmin);			
 		}
+	}
+
+	public UserSummary getViewUser() {
+		if (viewUser == null) {
+			// FIXME should not depend on token structure
+			UserToken currentUserToken = SessionManager.getCurrentSession().getUserToken();
+			this.viewUser = new UserSummary(currentUserToken.getUsername(),
+					currentUserToken.getProfileDescription());
+		}
+		
+		return viewUser;
+	}
+
+	public void setViewUser(UserSummary viewUser) {
+		this.viewUser = viewUser;
 	}
 }

@@ -1,14 +1,14 @@
 package com.armstrongmsg.socialnet.view.jsf;
 
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.SessionScoped;
+import javax.faces.bean.RequestScoped;
 
 import com.armstrongmsg.socialnet.model.authentication.UserToken;
 import com.armstrongmsg.socialnet.view.jsf.model.UserSummary;
 
 // TODO should be request scoped
 @ManagedBean(name = "profileBean", eager = true)
-@SessionScoped
+@RequestScoped
 public class ProfileBean {
 	private UserSummary summary;
 

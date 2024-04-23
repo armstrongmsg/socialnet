@@ -22,6 +22,8 @@ xmlns:f = "http://java.sun.com/jsf/core">
 				<td><h:commandButton action="#{navigationController.showPage}"
 						value="Profile">
 						<f:param name="pageId" value="user-profile" />
+						<f:setPropertyActionListener target="#{contextBean.viewUser}" 
+					    value="" />
 					</h:commandButton></td>
 				<td><h:commandButton action="#{navigationController.showPage}"
 						value="Friends">
@@ -40,13 +42,13 @@ xmlns:f = "http://java.sun.com/jsf/core">
 	<hr />
 
 	<h:form>
-        <td><h:outputText value = "#{profileBean.username}" /></td>
+        <td><h:outputText value = "#{contextBean.viewUser.username}" /></td>
       </h:form>
       
       <hr />
       
       <h:form>
-        <td><h:outputText value = "#{profileBean.profileDescription}" /></td>
+        <td><h:outputText value = "#{contextBean.viewUser.profileDescription}" /></td>
       </h:form>
       
       <hr />
@@ -54,7 +56,7 @@ xmlns:f = "http://java.sun.com/jsf/core">
       <h:form>
         <h:commandButton value = "Add friend" action = "#{friendshipBean.addFriendship}">
 		   <f:setPropertyActionListener 
-                     target = "#{friendshipBean.username}" value = "#{profileBean.username}" />
+                     target = "#{friendshipBean.username}" value = "#{contextBean.viewUser.username}" />
         </h:commandButton>
         
         <br/>
@@ -62,7 +64,7 @@ xmlns:f = "http://java.sun.com/jsf/core">
         
         <h:commandButton value = "Follow" action = "#{followBean.addFollow}">
 		   <f:setPropertyActionListener
-                     target = "#{followBean.username}" value = "#{profileBean.username}" />
+                     target = "#{followBean.username}" value = "#{contextBean.viewUser.username}" />
         </h:commandButton>
       </h:form>
       

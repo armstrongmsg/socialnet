@@ -59,7 +59,7 @@
                <h:commandButton value="#{friend.username}"
 					action="#{navigationController.showPage}">
 					<f:param name="pageId" value="user-profile" />
-					<f:setPropertyActionListener target="#{profileBean.user}" 
+					<f:setPropertyActionListener target="#{contextBean.viewUser}" 
 					    value="#{friend}" />
 				</h:commandButton>
             </h:column>
@@ -80,7 +80,7 @@
 				<h:commandButton value="#{user.username}"
 					action="#{navigationController.showPage}">
 					<f:param name="pageId" value="user-profile" />
-					<f:setPropertyActionListener target="#{profileBean.user}" 
+					<f:setPropertyActionListener target="#{contextBean.viewUser}" 
 					    value="#{user}" />
 				</h:commandButton>
 			</h:column>
