@@ -54,26 +54,14 @@ xmlns:f = "http://java.sun.com/jsf/core">
       <hr />
       
       <h:form>
-        <h:commandButton value = "Add friend" action = "#{friendshipBean.addFriendship}">
+        <h:commandButton value = "Add friend" action = "#{friendshipBean.addFriendship}" rendered = "#{contextBean.canAddAsFriend}">
 		   <f:setPropertyActionListener 
                      target = "#{friendshipBean.username}" value = "#{contextBean.viewUser.username}" />
         </h:commandButton>
         
-        <br/>
-        <br/>
-        
         <h:commandButton value = "Follow" action = "#{followBean.addFollow}">
 		   <f:setPropertyActionListener
                      target = "#{followBean.username}" value = "#{contextBean.viewUser.username}" />
-        </h:commandButton>
-      </h:form>
-      
-      <hr />
-      
-      <h:form>
-      	<h:commandButton action = "#{navigationController.showPage}"
-            value = "Back" >
-            <f:param name = "pageId" value = "user-home" />
         </h:commandButton>
       </h:form>
    </h:body>

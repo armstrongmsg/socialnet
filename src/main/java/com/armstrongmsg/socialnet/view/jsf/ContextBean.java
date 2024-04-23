@@ -8,6 +8,7 @@ import javax.faces.bean.SessionScoped;
 
 import com.armstrongmsg.socialnet.core.ApplicationFacade;
 import com.armstrongmsg.socialnet.exceptions.AuthenticationException;
+import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
 import com.armstrongmsg.socialnet.model.authentication.UserToken;
 import com.armstrongmsg.socialnet.view.jsf.model.UserSummary;
 
@@ -129,5 +130,23 @@ public class ContextBean {
 
 	public void setViewUser(UserSummary viewUser) {
 		this.viewUser = viewUser;
+	}
+	
+	public boolean getCanAddAsFriend() {
+		if (viewUser == null) { 
+			return false;
+		} else if (
+				SessionManager.getCurrentSession().getUserToken().getUsername().equals(
+						this.viewUser.getUsername())) {
+			return false;
+		} else {
+			try {
+				UserToken token = SessionManager.getCurrentSession().getUserToken();
+				return !facade.isFriend(token, this.viewUser.getUsername());
+			} catch (AuthenticationException | UnauthorizedOperationException e) {
+				// TODO treat this exception
+				return false;
+			}
+		}
 	}
 }

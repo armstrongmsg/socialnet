@@ -507,6 +507,28 @@ public class IntegrationTest {
 		assertTrue(recommendationsUser2AfterFriendship.isEmpty());
 	}
 	
+	@Test
+	public void testIsFriend() throws AuthenticationException, UnauthorizedOperationException {
+		UserToken adminToken = loginAsAdmin();
+		
+		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
+		facade.addUser(adminToken, NEW_USERNAME_2, NEW_USER_PASSWORD_2, NEW_USER_PROFILE_DESCRIPTION_2);
+		
+		UserToken userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);	
+		UserToken userToken2 = loginAsUser(NEW_USERNAME_2, NEW_USER_PASSWORD_2);
+		
+		assertFalse(facade.isFriend(userToken1, NEW_USERNAME_2));
+		assertFalse(facade.isFriend(userToken2, NEW_USERNAME_1));
+		
+		assertFalse(facade.isFriend(userToken1, NEW_USERNAME_1));
+		assertFalse(facade.isFriend(userToken2, NEW_USERNAME_2));
+		
+		facade.addFriendshipAdmin(adminToken, userToken1.getUserId(), userToken2.getUserId());
+		
+		assertTrue(facade.isFriend(userToken1, NEW_USERNAME_2));
+		assertTrue(facade.isFriend(userToken2, NEW_USERNAME_1));
+	}
+	
 	private UserToken loginAsAdmin() throws AuthenticationException {
 		Map<String, String> adminCredentials = new HashMap<String, String>();
 		adminCredentials.put(AuthenticationParameters.USERNAME_KEY, ADMIN_USERNAME);

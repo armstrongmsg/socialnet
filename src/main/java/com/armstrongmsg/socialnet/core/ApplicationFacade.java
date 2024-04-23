@@ -147,4 +147,8 @@ public class ApplicationFacade {
 	public List<UserSummary> getUserRecommendations(UserToken userToken) throws UnauthorizedOperationException, AuthenticationException {
 		return this.network.getUserRecommendations(userToken);
 	}
+
+	public boolean isFriend(UserToken userToken, String username) throws AuthenticationException, UnauthorizedOperationException {
+		return this.network.isFriend(userToken, username);
+	}
 }

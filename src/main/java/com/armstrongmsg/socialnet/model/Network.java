@@ -341,4 +341,19 @@ public class Network {
 		
 		return userSummaries;
 	}
+
+	public boolean isFriend(UserToken userToken, String username) throws AuthenticationException, UnauthorizedOperationException {
+		User requester = findUserById(userToken.getUserId());
+		this.authorizationPlugin.authorize(requester, new Operation(OperationType.IS_FRIEND));
+		
+		List<UserSummary> friends = doGetSelfFriends(requester);
+		
+		for (UserSummary friend : friends) {
+			if (friend.getUsername().equals(username)) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
 }
