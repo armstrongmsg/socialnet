@@ -10,8 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import com.armstrongmsg.socialnet.constants.ConfigurationProperties;
 import com.armstrongmsg.socialnet.constants.Messages;
-import com.armstrongmsg.socialnet.constants.PropertiesDefaults;
-import com.armstrongmsg.socialnet.constants.PropertiesNames;
+import com.armstrongmsg.socialnet.constants.ConfigurationPropertiesDefaults;
 import com.armstrongmsg.socialnet.exceptions.AuthenticationException;
 import com.armstrongmsg.socialnet.exceptions.FatalErrorException;
 import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
@@ -43,13 +42,13 @@ public class Network {
 	public Network(StorageFacade storageManager) throws FatalErrorException {
 		this.storageFacade = storageManager;
 		
-		String adminUsername = PropertiesDefaults.DEFAULT_ADMIN_USERNAME;
-		String adminPassword = PropertiesDefaults.DEFAULT_ADMIN_PASSWORD;
+		String adminUsername = ConfigurationPropertiesDefaults.DEFAULT_ADMIN_USERNAME;
+		String adminPassword = ConfigurationPropertiesDefaults.DEFAULT_ADMIN_PASSWORD;
 		
 		logger.info(Messages.Logging.LOADING_ADMIN_CONFIGURATION);
 		PropertiesUtil properties = PropertiesUtil.getInstance();
-		adminUsername = properties.getProperty(PropertiesNames.ADMIN_USERNAME);
-		adminPassword = properties.getProperty(PropertiesNames.ADMIN_PASSWORD);
+		adminUsername = properties.getProperty(ConfigurationProperties.ADMIN_USERNAME);
+		adminPassword = properties.getProperty(ConfigurationProperties.ADMIN_PASSWORD);
 		logger.info(Messages.Logging.LOADED_ADMIN, adminUsername);
 
 		Admin admin = new Admin(adminUsername, adminUsername, adminPassword);

@@ -16,7 +16,6 @@ import org.mockito.Mockito;
 
 import com.armstrongmsg.socialnet.constants.AuthenticationParameters;
 import com.armstrongmsg.socialnet.constants.ConfigurationProperties;
-import com.armstrongmsg.socialnet.constants.PropertiesNames;
 import com.armstrongmsg.socialnet.core.ApplicationFacade;
 import com.armstrongmsg.socialnet.exceptions.AuthenticationException;
 import com.armstrongmsg.socialnet.exceptions.FatalErrorException;
@@ -66,9 +65,9 @@ public class IntegrationTest {
 		
 		PropertiesUtil propertiesUtil = Mockito.mock(PropertiesUtil.class);
 
-		Mockito.when(propertiesUtil.getProperty(PropertiesNames.ADMIN_USERNAME)).
+		Mockito.when(propertiesUtil.getProperty(ConfigurationProperties.ADMIN_USERNAME)).
 			thenReturn(ADMIN_USERNAME);
-		Mockito.when(propertiesUtil.getProperty(PropertiesNames.ADMIN_PASSWORD)).
+		Mockito.when(propertiesUtil.getProperty(ConfigurationProperties.ADMIN_PASSWORD)).
 			thenReturn(ADMIN_PASSWORD);
 		Mockito.when(propertiesUtil.getProperty(ConfigurationProperties.AUTHENTICATION_PLUGIN_CLASS_NAME)).
 			thenReturn(DefaultAuthenticationPlugin.class.getCanonicalName());
