@@ -356,4 +356,11 @@ public class Network {
 		
 		return false;
 	}
+	
+	public UserSummary getSelf(UserToken userToken) throws AuthenticationException, UnauthorizedOperationException {
+		User requester = findUserById(userToken.getUserId());
+		this.authorizationPlugin.authorize(requester, new Operation(OperationType.GET_SELF));
+		UserSummary summary = new UserSummary(requester.getUsername(), requester.getProfile().getDescription());
+		return summary;
+	}
 }

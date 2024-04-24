@@ -56,4 +56,8 @@ public class JsfConnector {
 		
 		return viewUserSummaries;
 	}
+
+	public UserSummary getViewUserSummary(com.armstrongmsg.socialnet.model.UserSummary modelUserSummary) {
+		return new UserSummary(modelUserSummary.getUsername(), modelUserSummary.getProfileDescription());
+	}
 }

@@ -151,4 +151,8 @@ public class ApplicationFacade {
 	public boolean isFriend(UserToken userToken, String username) throws AuthenticationException, UnauthorizedOperationException {
 		return this.network.isFriend(userToken, username);
 	}
+
+	public UserSummary getSelf(UserToken userToken) throws AuthenticationException, UnauthorizedOperationException {
+		return this.network.getSelf(userToken);
+	}
 }

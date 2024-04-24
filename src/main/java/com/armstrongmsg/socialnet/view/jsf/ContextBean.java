@@ -6,10 +6,12 @@ import java.util.Map;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 
+import com.armstrongmsg.socialnet.constants.AuthenticationParameters;
 import com.armstrongmsg.socialnet.core.ApplicationFacade;
 import com.armstrongmsg.socialnet.exceptions.AuthenticationException;
 import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
 import com.armstrongmsg.socialnet.model.authentication.UserToken;
+import com.armstrongmsg.socialnet.view.jsf.model.JsfConnector;
 import com.armstrongmsg.socialnet.view.jsf.model.UserSummary;
 
 @ManagedBean(name = "contextBean", eager = true)
@@ -39,10 +41,16 @@ public class ContextBean {
 	
 	public UserSummary getViewUser() {
 		if (viewUser == null) {
-			// FIXME should not depend on token structure
-			UserToken currentUserToken = SessionManager.getCurrentSession().getUserToken();
-			this.viewUser = new UserSummary(currentUserToken.getUsername(),
-					currentUserToken.getProfileDescription());
+			try {
+				UserToken currentUserToken = SessionManager.getCurrentSession().getUserToken();
+				this.viewUser = new JsfConnector().getViewUserSummary(facade.getSelf(currentUserToken));
+			} catch (AuthenticationException e) {
+				// TODO treat this exception
+				e.printStackTrace();
+			} catch (UnauthorizedOperationException e) {
+				// TODO treat this exception
+				e.printStackTrace();
+			}
 		}
 		
 		return viewUser;
@@ -63,41 +71,36 @@ public class ContextBean {
 	}
 
 	public String login() {
-		Map<String, String> credentials = new HashMap<String, String>();
-		// FIXME constant
-		credentials.put("USER_ID", username);
-		// FIXME constant
-		credentials.put("PASSWORD", password);
 		try {
+			Map<String, String> credentials = new HashMap<String, String>();
+			credentials.put(AuthenticationParameters.USERNAME_KEY, username);
+			credentials.put(AuthenticationParameters.PASSWORD_KEY, password);
+			
 			UserToken token = facade.login(credentials);
 			Session session = new Session(token);
 			session.setAdmin(facade.userIsAdmin(username));
 			session.setLogged(true);
 			SessionManager.setCurrentSession(session);
+			
+			username = null;
+			password = null;
+			
 			if (session.isAdmin()) {
-				// FIXME constant
-				return new NavigationController().showPageById("admin-home");
+				return new NavigationController().showAdminHome();
 			} else {
-				// FIXME constant
-				return new NavigationController().showPageById("user-home");
+				return new NavigationController().showUserHome();
 			}
-					
 		} catch (AuthenticationException e) {
 			// FIXME treat this exception
 		}
 		
-		username = null;
-		password = null;
-		
-		// FIXME constant
-		return "user-home";
+		return new NavigationController().showUserHome();
 	}
 	
 	public String logout() {
 		SessionManager.setCurrentSession(null);
 		this.viewUser = null;
-		// FIXME constant
-		return new NavigationController().showPageById("home");
+		return new NavigationController().showHome();
 	}
 
 	public boolean isLogged() {
@@ -139,9 +142,7 @@ public class ContextBean {
 	public boolean getCanAddAsFriend() {
 		if (viewUser == null) { 
 			return false;
-		} else if (
-				SessionManager.getCurrentSession().getUserToken().getUsername().equals(
-						this.viewUser.getUsername())) {
+		} else if (viewUserIsLoggedUser()) {
 			return false;
 		} else {
 			try {
@@ -151,6 +152,21 @@ public class ContextBean {
 				// TODO treat this exception
 				return false;
 			}
+		}
+	}
+	
+	private boolean viewUserIsLoggedUser() {
+		try {
+			UserToken loggedUser = SessionManager.getCurrentSession().getUserToken();
+			UserSummary loggedUserSummary;
+			loggedUserSummary = new JsfConnector().getViewUserSummary(facade.getSelf(loggedUser));
+			return loggedUserSummary.equals(this.viewUser);
+		} catch (AuthenticationException e) {
+			// TODO treat this exception
+			return false;
+		} catch (UnauthorizedOperationException e) {
+			// TODO treat this exception
+			return false;
 		}
 	}
 }

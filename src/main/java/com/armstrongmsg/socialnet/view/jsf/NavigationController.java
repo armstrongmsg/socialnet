@@ -20,6 +20,18 @@ public class NavigationController {
 		return this.showPageById(this.pageId);
 	}
 	
+	public String showAdminHome() {
+		return showPageById("admin-home");
+	}
+
+	public String showUserHome() {
+		return showPageById("user-home");
+	}
+	
+	public String showHome() {
+		return showPageById("home");
+	}
+	
 	public String showPageById(String pageId) {
 		if (pageId == null) {
 			return "home";
