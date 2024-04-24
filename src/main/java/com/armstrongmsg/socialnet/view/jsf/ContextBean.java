@@ -55,12 +55,16 @@ public class ContextBean {
 			// FIXME treat this exception
 		}
 		
+		username = null;
+		password = null;
+		
 		// FIXME constant
 		return "user-home";
 	}
 	
 	public String logout() {
 		SessionManager.setCurrentSession(null);
+		this.viewUser = null;
 		// FIXME constant
 		return new NavigationController().showPageById("home");
 	}
