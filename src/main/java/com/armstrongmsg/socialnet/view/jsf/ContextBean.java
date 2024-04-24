@@ -21,6 +21,37 @@ public class ContextBean {
 	
 	private UserSummary viewUser; 
 	
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+	
+	public UserSummary getViewUser() {
+		if (viewUser == null) {
+			// FIXME should not depend on token structure
+			UserToken currentUserToken = SessionManager.getCurrentSession().getUserToken();
+			this.viewUser = new UserSummary(currentUserToken.getUsername(),
+					currentUserToken.getProfileDescription());
+		}
+		
+		return viewUser;
+	}
+
+	public void setViewUser(UserSummary viewUser) {
+		this.viewUser = viewUser;
+	}
+	
 	public UserToken getUser() {
 		Session session = SessionManager.getCurrentSession();
 		
@@ -87,22 +118,6 @@ public class ContextBean {
 		}
 	}
 
-	public String getUsername() {
-		return username;
-	}
-
-	public void setUsername(String username) {
-		this.username = username;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
 	public boolean isAdmin() {
 		Session session = SessionManager.getCurrentSession();
 		
@@ -119,21 +134,6 @@ public class ContextBean {
 		if (session != null) {
 			SessionManager.getCurrentSession().setAdmin(isAdmin);			
 		}
-	}
-
-	public UserSummary getViewUser() {
-		if (viewUser == null) {
-			// FIXME should not depend on token structure
-			UserToken currentUserToken = SessionManager.getCurrentSession().getUserToken();
-			this.viewUser = new UserSummary(currentUserToken.getUsername(),
-					currentUserToken.getProfileDescription());
-		}
-		
-		return viewUser;
-	}
-
-	public void setViewUser(UserSummary viewUser) {
-		this.viewUser = viewUser;
 	}
 	
 	public boolean getCanAddAsFriend() {
