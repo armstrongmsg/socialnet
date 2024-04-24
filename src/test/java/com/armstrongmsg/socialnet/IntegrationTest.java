@@ -528,6 +528,48 @@ public class IntegrationTest {
 		assertTrue(facade.isFriend(userToken2, NEW_USERNAME_1));
 	}
 	
+	@Test
+	public void testGetSelf() throws AuthenticationException, UnauthorizedOperationException {
+		UserToken adminToken = loginAsAdmin();
+		
+		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
+		facade.addUser(adminToken, NEW_USERNAME_2, NEW_USER_PASSWORD_2, NEW_USER_PROFILE_DESCRIPTION_2);
+		
+		UserToken userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);	
+		UserToken userToken2 = loginAsUser(NEW_USERNAME_2, NEW_USER_PASSWORD_2);
+		
+		UserSummary self1 = facade.getSelf(userToken1);
+		UserSummary self2 = facade.getSelf(userToken2);
+		
+		assertEquals(NEW_USERNAME_1, self1.getUsername());
+		assertEquals(NEW_USER_PROFILE_DESCRIPTION_1, self1.getProfileDescription());
+		assertEquals(NEW_USERNAME_2, self2.getUsername());
+		assertEquals(NEW_USER_PROFILE_DESCRIPTION_2, self2.getProfileDescription());
+	}
+	
+	@Test
+	public void testFollows() throws UnauthorizedOperationException, AuthenticationException {
+		UserToken adminToken = loginAsAdmin();
+		
+		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
+		facade.addUser(adminToken, NEW_USERNAME_2, NEW_USER_PASSWORD_2, NEW_USER_PROFILE_DESCRIPTION_2);
+		
+		UserToken userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);	
+		UserToken userToken2 = loginAsUser(NEW_USERNAME_2, NEW_USER_PASSWORD_2);
+		
+		assertFalse(facade.follows(userToken1, NEW_USERNAME_1));
+		assertFalse(facade.follows(userToken1, NEW_USERNAME_2));
+		assertFalse(facade.follows(userToken2, NEW_USERNAME_1));
+		assertFalse(facade.follows(userToken2, NEW_USERNAME_2));
+		
+		facade.addFollowAdmin(adminToken, userToken1.getUserId(), userToken2.getUserId());
+		
+		assertFalse(facade.follows(userToken1, NEW_USERNAME_1));
+		assertTrue(facade.follows(userToken1, NEW_USERNAME_2));
+		assertFalse(facade.follows(userToken2, NEW_USERNAME_1));
+		assertFalse(facade.follows(userToken2, NEW_USERNAME_2));
+	}
+	
 	private UserToken loginAsAdmin() throws AuthenticationException {
 		Map<String, String> adminCredentials = new HashMap<String, String>();
 		adminCredentials.put(AuthenticationParameters.USERNAME_KEY, ADMIN_USERNAME);

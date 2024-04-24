@@ -243,7 +243,10 @@ public class Network {
 	public List<UserSummary> getFollowedUsers(UserToken userToken) throws AuthenticationException, UnauthorizedOperationException {
 		User requester = findUserById(userToken.getUserId());
 		this.authorizationPlugin.authorize(requester, new Operation(OperationType.GET_FOLLOWED_USERS));
-		
+		return doGetFollowedUsers(requester);
+	}
+	
+	private List<UserSummary> doGetFollowedUsers(User requester) {
 		List<Follow> userFollows = this.storageFacade.getFollowsByUserId(requester.getUserId());
 		List<UserSummary> followedUsers = new ArrayList<UserSummary>();
 		
@@ -358,5 +361,19 @@ public class Network {
 		this.authorizationPlugin.authorize(requester, new Operation(OperationType.GET_SELF));
 		UserSummary summary = new UserSummary(requester.getUsername(), requester.getProfile().getDescription());
 		return summary;
+	}
+
+	public boolean follows(UserToken userToken, String username) throws UnauthorizedOperationException, AuthenticationException {
+		User requester = findUserById(userToken.getUserId());
+		this.authorizationPlugin.authorize(requester, new Operation(OperationType.FOLLOWS));
+		List<UserSummary> follows = doGetFollowedUsers(requester);
+		
+		for (UserSummary summary : follows) {
+			if (summary.getUsername().equals(username)) {
+				return true;
+			}
+		}
+		
+		return false;
 	}
 }

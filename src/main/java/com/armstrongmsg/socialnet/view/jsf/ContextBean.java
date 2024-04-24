@@ -169,4 +169,20 @@ public class ContextBean {
 			return false;
 		}
 	}
+	
+	public boolean getCanFollow() {
+		if (viewUser == null) { 
+			return false;
+		} else if (viewUserIsLoggedUser()) {
+			return false;
+		} else {
+			try {
+				UserToken token = SessionManager.getCurrentSession().getUserToken();
+				return !facade.follows(token, this.viewUser.getUsername());
+			} catch (AuthenticationException | UnauthorizedOperationException e) {
+				// FIXME treat this exception
+				return false;
+			}
+		}
+	}
 }

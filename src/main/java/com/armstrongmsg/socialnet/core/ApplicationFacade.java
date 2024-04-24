@@ -153,4 +153,8 @@ public class ApplicationFacade {
 	public UserSummary getSelf(UserToken userToken) throws AuthenticationException, UnauthorizedOperationException {
 		return this.network.getSelf(userToken);
 	}
+
+	public boolean follows(UserToken userToken, String username) throws UnauthorizedOperationException, AuthenticationException {
+		return this.network.follows(userToken, username);
+	}
 }
