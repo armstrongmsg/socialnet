@@ -1,5 +1,6 @@
 package com.armstrongmsg.socialnet.view.jsf;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.faces.bean.ManagedBean;
@@ -47,21 +48,11 @@ public class FriendshipBean {
 		this.username = username;
 	}
 	
-	// TODO remove
-	public void addFriendshipAdmin() {
-		try {
-			facade.addFriendshipAdmin(SessionManager.getCurrentSession().getUserToken(), 
-					SessionManager.getCurrentSession().getUserToken().getUserId(), user2.getUserId());
-		} catch (UnauthorizedOperationException | AuthenticationException e) {
-			// FIXME handle this exception
-		}
-	}
-	
 	public void addFriendship() {
 		try {
 			facade.addFriendship(SessionManager.getCurrentSession().getUserToken(), username);
 		} catch (UnauthorizedOperationException | AuthenticationException e) {
-			// FIXME handle this exception
+			// FIXME treat this exception
 		}
 	}
 	
@@ -71,9 +62,8 @@ public class FriendshipBean {
 					facade.getSelfFriends(SessionManager.getCurrentSession().getUserToken()));
 		} catch (AuthenticationException | UnauthorizedOperationException e) {
 			// FIXME treat exception
+			return new ArrayList<UserSummary>();
 		}
-		
-		return null;
 	}
 	
 	public List<UserSummary> getFriendRecommendations() {
@@ -82,9 +72,7 @@ public class FriendshipBean {
 			return new JsfConnector().getViewUserSummaries(facade.getUserRecommendations(token));
 		} catch (UnauthorizedOperationException | AuthenticationException e) {
 			// FIXME treat exception
+			return new ArrayList<UserSummary>();
 		}
-		
-		// FIXME
-		return null;
 	}
 }

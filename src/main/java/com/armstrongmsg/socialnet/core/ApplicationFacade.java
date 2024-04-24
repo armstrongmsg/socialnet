@@ -6,6 +6,8 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.armstrongmsg.socialnet.constants.ConfigurationProperties;
+import com.armstrongmsg.socialnet.constants.SystemConstants;
 import com.armstrongmsg.socialnet.exceptions.AuthenticationException;
 import com.armstrongmsg.socialnet.exceptions.FatalErrorException;
 import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
@@ -32,9 +34,8 @@ public class ApplicationFacade {
 
 		try {
 			this.network = new Network(this.storageManager);
-			// FIXME constant
 			PropertiesUtil properties = PropertiesUtil.getInstance();
-			if (properties.getProperty("BOOTSTRAP").equals("true")) {
+			if (properties.getProperty(ConfigurationProperties.BOOTSTRAP).equals(SystemConstants.PROPERTY_VALUE_TRUE)) {
 				new Bootstrap().startNetwork(network);
 			}
 		} catch (FatalErrorException e) {
@@ -43,8 +44,7 @@ public class ApplicationFacade {
 		}
 	}
 	
-	// TODO should be synchronized
-	public static ApplicationFacade getInstance(StorageFacade storageManager) {
+	public synchronized static ApplicationFacade getInstance(StorageFacade storageManager) {
 		if (instance == null) {
 			instance = new ApplicationFacade(storageManager);
 		}
@@ -52,14 +52,12 @@ public class ApplicationFacade {
 		return instance;
 	}
 	
-	// TODO should be synchronized
-	public static ApplicationFacade getInstance() {
+	public synchronized static ApplicationFacade getInstance() {
 		// FIXME load cache policy and database manager from configuration
 		return getInstance(new StorageFacade(new DefaultCache(), new DefaultDatabaseManager()));
 	}
 		
-	// TODO should be synchronized
-	public static void reset() {
+	public synchronized static void reset() {
 		instance = null;
 	}
 	

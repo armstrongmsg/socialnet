@@ -40,7 +40,6 @@ public class SignUpBean {
 	
 	public String signUp() {
 		facade.addUser(username, getPassword(), profileDescription);
-		// FIXME constant
-		return new NavigationController().showPageById("home");
+		return new NavigationController().showHome();
 	}
 }

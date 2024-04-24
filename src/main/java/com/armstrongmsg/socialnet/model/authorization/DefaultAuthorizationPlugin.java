@@ -3,6 +3,7 @@ package com.armstrongmsg.socialnet.model.authorization;
 import java.util.Arrays;
 import java.util.List;
 
+import com.armstrongmsg.socialnet.constants.Messages;
 import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
 import com.armstrongmsg.socialnet.model.Admin;
 import com.armstrongmsg.socialnet.model.User;
@@ -24,18 +25,16 @@ public class DefaultAuthorizationPlugin implements AuthorizationPlugin {
 			
 			if (!admin.equals(requester) &&
 					!userOperation.getTarget().equals(requester)) {
-				// FIXME constant
 				throw new UnauthorizedOperationException(
-						String.format("User {} is not authorized to perform operation {}.", requester.getUserId(), 
+						String.format(Messages.Exception.USER_IS_NOT_AUTHORIZED, requester.getUserId(), 
 								operation.getOperation().getValue()));
 			}
 		}
 		
 		if (ADMIN_ONLY_OPERATIONS.contains(operation.getOperation())) {
 			if (!admin.equals(requester)) {
-				// FIXME constant
 				throw new UnauthorizedOperationException(
-						String.format("User {} is not authorized to perform operation {}.", requester.getUserId(), 
+						String.format(Messages.Exception.USER_IS_NOT_AUTHORIZED, requester.getUserId(), 
 								operation.getOperation().getValue()));
 			}
 		}

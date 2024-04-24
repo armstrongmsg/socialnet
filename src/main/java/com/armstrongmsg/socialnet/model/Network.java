@@ -56,15 +56,13 @@ public class Network {
 		String authenticationPluginClassName = properties.getProperty(ConfigurationProperties.AUTHENTICATION_PLUGIN_CLASS_NAME);
 		String authorizationPluginClassName = properties.getProperty(ConfigurationProperties.AUTHORIZATION_PLUGIN_CLASS_NAME);
 		
-		// FIXME constant
-		logger.info("Loading authentication plugin");
+		logger.info(Messages.Logging.LOADING_AUTHENTICATION_PLUGIN);
 		
 		AuthenticationPlugin authenticationPlugin = (AuthenticationPlugin) 
 				classFactory.createInstance(authenticationPluginClassName, this.storageFacade);
 		authenticationPlugin.setUp(admin);
 		
-		// FIXME constant
-		logger.info("Loading authorization plugin");
+		logger.info(Messages.Logging.LOADING_AUTHORIZATION_PLUGIN);
 		
 		AuthorizationPlugin authorizationPlugin = (AuthorizationPlugin) 
 				classFactory.createInstance(authorizationPluginClassName, this.storageFacade);
@@ -120,8 +118,7 @@ public class Network {
 			return user;
 		}
 		
-		// FIXME add message
-		throw new AuthenticationException();
+		throw new AuthenticationException(String.format(Messages.Exception.COULD_NOT_FIND_USER, userId));
 	}
 
 	public void createPost(UserToken userToken, String title, String content, PostVisibility newPostVisibility) throws AuthenticationException {

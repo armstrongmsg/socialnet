@@ -1,5 +1,6 @@
 package com.armstrongmsg.socialnet.view.jsf;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.faces.bean.ManagedBean;
@@ -70,9 +71,8 @@ public class FollowBean {
 					facade.getFollowedUsers(SessionManager.getCurrentSession().getUserToken()));
 		} catch (AuthenticationException | UnauthorizedOperationException e) {
 			// FIXME treat exception
+			return new ArrayList<UserSummary>();
 		}
-		
-		return null;
 	}
 	
 	public List<UserSummary> getFollowRecommendations() {
@@ -81,9 +81,7 @@ public class FollowBean {
 			return new JsfConnector().getViewUserSummaries(facade.getUserRecommendations(token));
 		} catch (UnauthorizedOperationException | AuthenticationException e) {
 			// FIXME treat exception
+			return new ArrayList<UserSummary>();
 		}
-		
-		// FIXME
-		return null;
 	}
 }

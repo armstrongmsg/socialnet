@@ -24,13 +24,13 @@ public class ClassFactory {
 			
 			return constructor.newInstance(constructorParams);
 		} catch (ClassNotFoundException e) {
-			// FIXME message
+			// TODO add message
 			throw new FatalErrorException(e.getMessage());
 		} catch (NoSuchMethodException e) {
-			// FIXME message
+			// TODO add message
 			throw new FatalErrorException(e.getMessage());
 		} catch (Exception e) {
-			// FIXME message
+			// TODO add message
 			throw new FatalErrorException(e.getMessage());
 		}
 	}

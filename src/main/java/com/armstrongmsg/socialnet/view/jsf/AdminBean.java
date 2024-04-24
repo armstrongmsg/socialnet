@@ -1,5 +1,6 @@
 package com.armstrongmsg.socialnet.view.jsf;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.faces.bean.ManagedBean;
@@ -84,7 +85,7 @@ public class AdminBean {
 			} catch (UnauthorizedOperationException e) {
 				// FIXME Treat this exception
 			} catch (AuthenticationException e) {
-				// TODO Auto-generated catch block
+				// FIXME Treat this exception
 				e.printStackTrace();
 			}
 		}
@@ -98,10 +99,8 @@ public class AdminBean {
 			return new JsfConnector().getViewUserSummaries(facade.getUserSummaries(token));
 		} catch (UnauthorizedOperationException | AuthenticationException e) {
 			// FIXME treat exception
+			return new ArrayList<UserSummary>();
 		}
-	
-		//FIXME
-		return null;
 	}
 
 	public String addUser() {
@@ -131,7 +130,7 @@ public class AdminBean {
 		} catch (UnauthorizedOperationException e) {
 			// FIXME Treat this exception
 		} catch (AuthenticationException e) {
-			// TODO Auto-generated catch block
+			// FIXME Treat this exception
 			e.printStackTrace();
 		}
 		return null;
@@ -163,8 +162,7 @@ public class AdminBean {
 							user.getUserId()));
 		} catch (UnauthorizedOperationException | AuthenticationException e) {
 			// FIXME treat exception
+			return new ArrayList<User>();
 		}
-		
-		return null;
 	}
 }

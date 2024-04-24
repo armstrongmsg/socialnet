@@ -20,7 +20,7 @@ public enum PostVisibility {
 				return instance;
 			}
 		}
-		//FIXME
+		// FIXME treat this case
 		return null;
 	}
 }

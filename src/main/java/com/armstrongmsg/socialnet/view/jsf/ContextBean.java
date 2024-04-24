@@ -45,10 +45,10 @@ public class ContextBean {
 				UserToken currentUserToken = SessionManager.getCurrentSession().getUserToken();
 				this.viewUser = new JsfConnector().getViewUserSummary(facade.getSelf(currentUserToken));
 			} catch (AuthenticationException e) {
-				// TODO treat this exception
+				// FIXME treat this exception
 				e.printStackTrace();
 			} catch (UnauthorizedOperationException e) {
-				// TODO treat this exception
+				// FIXME treat this exception
 				e.printStackTrace();
 			}
 		}
@@ -149,7 +149,7 @@ public class ContextBean {
 				UserToken token = SessionManager.getCurrentSession().getUserToken();
 				return !facade.isFriend(token, this.viewUser.getUsername());
 			} catch (AuthenticationException | UnauthorizedOperationException e) {
-				// TODO treat this exception
+				// FIXME treat this exception
 				return false;
 			}
 		}
@@ -162,10 +162,10 @@ public class ContextBean {
 			loggedUserSummary = new JsfConnector().getViewUserSummary(facade.getSelf(loggedUser));
 			return loggedUserSummary.equals(this.viewUser);
 		} catch (AuthenticationException e) {
-			// TODO treat this exception
+			// FIXME treat this exception
 			return false;
 		} catch (UnauthorizedOperationException e) {
-			// TODO treat this exception
+			// FIXME treat this exception
 			return false;
 		}
 	}
