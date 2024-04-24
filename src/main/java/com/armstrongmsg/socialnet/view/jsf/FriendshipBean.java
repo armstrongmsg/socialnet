@@ -1,12 +1,17 @@
 package com.armstrongmsg.socialnet.view.jsf;
 
+import java.util.List;
+
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
 
 import com.armstrongmsg.socialnet.core.ApplicationFacade;
 import com.armstrongmsg.socialnet.exceptions.AuthenticationException;
 import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
+import com.armstrongmsg.socialnet.model.authentication.UserToken;
+import com.armstrongmsg.socialnet.view.jsf.model.JsfConnector;
 import com.armstrongmsg.socialnet.view.jsf.model.User;
+import com.armstrongmsg.socialnet.view.jsf.model.UserSummary;
 
 @ManagedBean(name = "friendshipBean", eager = true)
 @RequestScoped
@@ -42,6 +47,7 @@ public class FriendshipBean {
 		this.username = username;
 	}
 	
+	// TODO remove
 	public void addFriendshipAdmin() {
 		try {
 			facade.addFriendshipAdmin(SessionManager.getCurrentSession().getUserToken(), 
@@ -57,5 +63,28 @@ public class FriendshipBean {
 		} catch (UnauthorizedOperationException | AuthenticationException e) {
 			// FIXME handle this exception
 		}
+	}
+	
+	public List<UserSummary> getSelfFriends() {
+		try {
+			return new JsfConnector().getViewUserSummaries(
+					facade.getSelfFriends(SessionManager.getCurrentSession().getUserToken()));
+		} catch (AuthenticationException | UnauthorizedOperationException e) {
+			// FIXME treat exception
+		}
+		
+		return null;
+	}
+	
+	public List<UserSummary> getFriendRecommendations() {
+		try {
+			UserToken token = SessionManager.getCurrentSession().getUserToken();
+			return new JsfConnector().getViewUserSummaries(facade.getUserRecommendations(token));
+		} catch (UnauthorizedOperationException | AuthenticationException e) {
+			// FIXME treat exception
+		}
+		
+		// FIXME
+		return null;
 	}
 }

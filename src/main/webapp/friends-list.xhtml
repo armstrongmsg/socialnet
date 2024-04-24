@@ -49,7 +49,7 @@
   	<hr />
 
       <h:form>
-         <h:dataTable value = "#{networkBean.selfFriends}" var = "friend"
+         <h:dataTable value = "#{friendshipBean.selfFriends}" var = "friend"
             styleClass = "usersTable"
             headerClass = "usersTableHeader"
             rowClasses = "usersTableOddRow,usersTableEvenRow">
@@ -71,7 +71,7 @@
 	Recommended users
 	
 	<h:form>
-		<h:dataTable value="#{networkBean.userRecommendations}" var="user"
+		<h:dataTable value="#{friendshipBean.friendRecommendations}" var="user"
 			styleClass="usersTable" headerClass="usersTableHeader"
 			rowClasses="usersTableOddRow,usersTableEvenRow">
 

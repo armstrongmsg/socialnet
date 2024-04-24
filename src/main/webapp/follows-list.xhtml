@@ -49,7 +49,7 @@
 	<hr />
   
       <h:form>
-         <h:dataTable value = "#{networkBean.selfFollows}" var = "follow"
+         <h:dataTable value = "#{followBean.selfFollows}" var = "follow"
             styleClass = "usersTable"
             headerClass = "usersTableHeader"
             rowClasses = "usersTableOddRow,usersTableEvenRow">
@@ -71,7 +71,7 @@
 	Recommended users
 
 	<h:form>
-		<h:dataTable value="#{networkBean.userRecommendations}" var="user"
+		<h:dataTable value="#{followBean.followRecommendations}" var="user"
 			styleClass="usersTable" headerClass="usersTableHeader"
 			rowClasses="usersTableOddRow,usersTableEvenRow">
 
