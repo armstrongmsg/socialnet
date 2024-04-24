@@ -2,6 +2,7 @@ package com.armstrongmsg.socialnet.util;
 
 import java.lang.reflect.Constructor;
 
+import com.armstrongmsg.socialnet.constants.Messages;
 import com.armstrongmsg.socialnet.exceptions.FatalErrorException;
 
 public class ClassFactory {
@@ -24,14 +25,14 @@ public class ClassFactory {
 			
 			return constructor.newInstance(constructorParams);
 		} catch (ClassNotFoundException e) {
-			// TODO add message
-			throw new FatalErrorException(e.getMessage());
+			throw new FatalErrorException(String.format(Messages.Exception.CLASS_NOT_FOUND_ON_INSTANTIATION, 
+					className, e.getMessage()));
 		} catch (NoSuchMethodException e) {
-			// TODO add message
-			throw new FatalErrorException(e.getMessage());
+			throw new FatalErrorException(String.format(Messages.Exception.CONSTRUCTOR_NOT_FOUND_ON_INSTANTIATION, 
+					className, e.getMessage()));
 		} catch (Exception e) {
-			// TODO add message
-			throw new FatalErrorException(e.getMessage());
+			throw new FatalErrorException(String.format(Messages.Exception.ERROR_ON_INSTANTIATION, 
+					className, e.getMessage()));
 		}
 	}
 }

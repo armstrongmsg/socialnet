@@ -3,6 +3,7 @@ package com.armstrongmsg.socialnet.model.authentication;
 import java.util.Map;
 
 import com.armstrongmsg.socialnet.constants.AuthenticationParameters;
+import com.armstrongmsg.socialnet.constants.Messages;
 import com.armstrongmsg.socialnet.exceptions.AuthenticationException;
 import com.armstrongmsg.socialnet.model.Admin;
 import com.armstrongmsg.socialnet.model.User;
@@ -37,8 +38,7 @@ public class DefaultAuthenticationPlugin implements AuthenticationPlugin {
 			return new UserToken(user.getUserId(), user.getUsername(), user.getProfile().getDescription());
 		}
 		
-		// TODO add message
-		throw new AuthenticationException();
+		throw new AuthenticationException(String.format(Messages.Exception.INVALID_CREDENTIALS, userId));
 	}
 
 	@Override

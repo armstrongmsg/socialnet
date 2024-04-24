@@ -304,8 +304,7 @@ public class Network {
 			return user;
 		}
 
-		// TODO add message
-		throw new AuthenticationException();
+		throw new AuthenticationException(String.format(Messages.Exception.COULD_NOT_FIND_USER, username));
 	}
 
 	public List<UserSummary> getUserSummaries(UserToken token) throws UnauthorizedOperationException, AuthenticationException {

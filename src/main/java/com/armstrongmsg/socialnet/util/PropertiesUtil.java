@@ -26,12 +26,12 @@ public class PropertiesUtil {
 				instance = new PropertiesUtil();
 			} catch (FileNotFoundException e) {
 				logger.error(Messages.Logging.COULD_NOT_LOAD_ADMIN_CONFIGURATION, e.getMessage());
-				// TODO add message
-				throw new FatalErrorException();
+				throw new FatalErrorException(
+						String.format(Messages.Exception.COULD_NOT_LOAD_ADMIN_CONFIGURATION, e.getMessage()));
 			} catch (IOException e) {
 				logger.error(Messages.Logging.COULD_NOT_LOAD_ADMIN_CONFIGURATION, e.getMessage());
-				// TODO add message
-				throw new FatalErrorException();
+				throw new FatalErrorException(
+						String.format(Messages.Exception.COULD_NOT_LOAD_ADMIN_CONFIGURATION, e.getMessage()));
 			}
 		}
 		

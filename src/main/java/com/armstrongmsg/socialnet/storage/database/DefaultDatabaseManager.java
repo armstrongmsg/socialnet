@@ -48,19 +48,16 @@ public class DefaultDatabaseManager implements DatabaseManager {
 
 	@Override
 	public Group getGroupById(String id) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Group getGroupByName(String name) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public void saveGroup(Group group) {
-		// TODO Auto-generated method stub
 	}
 
 	@Override
