@@ -11,28 +11,28 @@
 	      <table>
 	            <tr>
 	               <td>User ID :</td>
-	               <td><h:inputText size = "20" value = "#{networkBean.userId}" /></td>
+	               <td><h:inputText size = "20" value = "#{adminBean.userId}" /></td>
 	            </tr>
 	            
 	            <tr>
 	               <td>User name :</td>
-	               <td><h:inputText size = "20" value = "#{networkBean.username}" /></td>
+	               <td><h:inputText size = "20" value = "#{adminBean.username}" /></td>
 	            </tr>
 	            
 	            <tr>
 	               <td>Profile description :</td>
-	               <td><h:inputText size = "20" value = "#{networkBean.profileDescription}" /></td>
+	               <td><h:inputText size = "20" value = "#{adminBean.profileDescription}" /></td>
 	            </tr>
 	            
 	            <tr>
 	               <td> </td>
-	               <td><h:commandButton value = "Add user" action = "#{networkBean.addUser}" /></td>
+	               <td><h:commandButton value = "Add user" action = "#{adminBean.addUser}" /></td>
 	            </tr>
 	         </table>
       </h:form>
    
       <h:form>
-         <h:dataTable value = "#{networkBean.users}" var = "user"
+         <h:dataTable value = "#{adminBean.users}" var = "user"
             styleClass = "usersTable"
             headerClass = "usersTableHeader"
             rowClasses = "usersTableOddRow,usersTableEvenRow">
@@ -64,26 +64,26 @@
             <h:column>
                <f:facet name = "header">Edit</f:facet>
                <h:commandButton value = "Edit" 
-                  action = "#{networkBean.editUser}" 
+                  action = "#{adminBean.editUser}" 
                   rendered = "#{not user.canEdit}">        
                   <f:setPropertyActionListener 
-                  target = "#{networkBean.user}" value = "#{user}" />
+                  target = "#{adminBean.user}" value = "#{user}" />
                </h:commandButton>
             </h:column>
             
             <h:column>
             <f:facet name = "header">Delete</f:facet>
                <h:commandButton value = "Delete" 
-                  action = "#{networkBean.removeUser}"  >                
+                  action = "#{adminBean.removeUser}"  >                
                   <f:setPropertyActionListener 
-                     target = "#{networkBean.user}" value = "#{user}" />
+                     target = "#{adminBean.user}" value = "#{user}" />
                </h:commandButton>
             </h:column>
             
          </h:dataTable> 
      
          <h:commandButton value = "Save users"
-            action = "#{networkBean.saveUsers}" />
+            action = "#{adminBean.saveUsers}" />
       </h:form>
       
       <h:form>

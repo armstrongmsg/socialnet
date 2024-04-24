@@ -13,9 +13,9 @@ import com.armstrongmsg.socialnet.view.jsf.model.JsfConnector;
 import com.armstrongmsg.socialnet.view.jsf.model.User;
 import com.armstrongmsg.socialnet.view.jsf.model.UserSummary;
 
-@ManagedBean(name = "networkBean", eager = true)
+@ManagedBean(name = "adminBean", eager = true)
 @SessionScoped
-public class NetworkBean {
+public class AdminBean {
 	private String userId;
 	private String username;
 	private String password;
