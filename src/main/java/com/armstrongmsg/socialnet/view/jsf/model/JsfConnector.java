@@ -5,6 +5,7 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+// TODO test
 public class JsfConnector {
 
 	public User getViewUser(com.armstrongmsg.socialnet.model.User modelUser) {

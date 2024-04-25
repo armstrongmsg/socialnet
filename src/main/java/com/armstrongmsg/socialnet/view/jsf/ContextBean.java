@@ -141,6 +141,7 @@ public class ContextBean {
 		}
 	}
 	
+	// TODO test
 	public boolean getCanAddAsFriend() {
 		if (viewUser == null) { 
 			return false;
@@ -157,6 +158,7 @@ public class ContextBean {
 		}
 	}
 	
+	// TODO test
 	public boolean getCanFollow() {
 		if (viewUser == null) { 
 			return false;
