@@ -21,6 +21,8 @@ public class FriendshipBean {
 	private User user2;
 	
 	private String username;
+	private List<UserSummary> friends;
+	private List<UserSummary> friendRecommendations;
 	
 	private static ApplicationFacade facade = ApplicationFacade.getInstance();
 	
@@ -58,8 +60,12 @@ public class FriendshipBean {
 	
 	public List<UserSummary> getSelfFriends() {
 		try {
-			return new JsfConnector().getViewUserSummaries(
-					facade.getSelfFriends(SessionManager.getCurrentSession().getUserToken()));
+			if (friends == null) {
+				friends = new JsfConnector().getViewUserSummaries(
+						facade.getSelfFriends(SessionManager.getCurrentSession().getUserToken()));
+			}
+			
+			return friends;
 		} catch (AuthenticationException | UnauthorizedOperationException e) {
 			// FIXME treat exception
 			return new ArrayList<UserSummary>();
@@ -68,8 +74,11 @@ public class FriendshipBean {
 	
 	public List<UserSummary> getFriendRecommendations() {
 		try {
-			UserToken token = SessionManager.getCurrentSession().getUserToken();
-			return new JsfConnector().getViewUserSummaries(facade.getUserRecommendations(token));
+			if (friendRecommendations == null) {
+				UserToken token = SessionManager.getCurrentSession().getUserToken();
+				friendRecommendations = new JsfConnector().getViewUserSummaries(facade.getUserRecommendations(token));
+			}
+			return friendRecommendations;
 		} catch (UnauthorizedOperationException | AuthenticationException e) {
 			// FIXME treat exception
 			return new ArrayList<UserSummary>();

@@ -25,6 +25,9 @@ public class PostBean {
 	private Post post;
 	private List<Post> userPosts;
 	
+	private List<Post> selfPosts;
+	private List<Post> friendsPosts;
+	
 	private static ApplicationFacade facade = ApplicationFacade.getInstance();
 	
 	public User getUser() {
@@ -39,26 +42,21 @@ public class PostBean {
 		return title;
 	}
 
-
 	public void setTitle(String title) {
 		this.title = title;
 	}
-
 
 	public String getContent() {
 		return content;
 	}
 
-
 	public void setContent(String content) {
 		this.content = content;
 	}
 
-
 	public String getPostVisibility() {
 		return postVisibility;
 	}
-
 
 	public void setPostVisibility(String postVisibility) {
 		this.postVisibility = postVisibility;
@@ -78,7 +76,6 @@ public class PostBean {
 	public Post getPost() {
 		return post;
 	}
-	
 	
 	public void setPost(Post post) {
 		this.post = post;
@@ -100,22 +97,27 @@ public class PostBean {
 	
 	public List<Post> getSelfPosts() {
 		try {
-			return new JsfConnector().getViewPosts(facade.getSelfPosts(
-					SessionManager.getCurrentSession().getUserToken()));
+			if (selfPosts == null) {
+				selfPosts = new JsfConnector().getViewPosts(facade.getSelfPosts(
+						SessionManager.getCurrentSession().getUserToken()));
+			}
 		} catch (UnauthorizedOperationException | AuthenticationException e) {
 			// FIXME treat exception
 		}
 		
-		return null;
+		return selfPosts;
 	}
 	
 	public List<Post> getFriendsPosts() {
 		try {
-			return new JsfConnector().getViewPosts(facade.getFriendsPosts(SessionManager.getCurrentSession().getUserToken()));
+			if (friendsPosts == null) {
+				friendsPosts = new JsfConnector().getViewPosts(
+						facade.getFriendsPosts(SessionManager.getCurrentSession().getUserToken()));
+			}
 		} catch (UnauthorizedOperationException | AuthenticationException e) {
 			// FIXME treat exception
 		}
 		
-		return null;
+		return friendsPosts;
 	}
 }

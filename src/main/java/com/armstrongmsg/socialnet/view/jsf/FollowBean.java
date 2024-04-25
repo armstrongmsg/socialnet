@@ -22,6 +22,9 @@ public class FollowBean {
 	
 	private String username;
 	
+	private List<UserSummary> follows;
+	private List<UserSummary> followRecommendations;
+	
 	private static ApplicationFacade facade = ApplicationFacade.getInstance();
 	
 	public User getFollower() {
@@ -67,8 +70,12 @@ public class FollowBean {
 	
 	public List<UserSummary> getSelfFollows() {
 		try {
-			return new JsfConnector().getViewUserSummaries(
-					facade.getFollowedUsers(SessionManager.getCurrentSession().getUserToken()));
+			if (follows == null) {
+				follows = new JsfConnector().getViewUserSummaries(
+						facade.getFollowedUsers(SessionManager.getCurrentSession().getUserToken()));
+			}
+			
+			return follows;
 		} catch (AuthenticationException | UnauthorizedOperationException e) {
 			// FIXME treat exception
 			return new ArrayList<UserSummary>();
@@ -77,8 +84,12 @@ public class FollowBean {
 	
 	public List<UserSummary> getFollowRecommendations() {
 		try {
-			UserToken token = SessionManager.getCurrentSession().getUserToken();
-			return new JsfConnector().getViewUserSummaries(facade.getUserRecommendations(token));
+			if (followRecommendations == null) {
+				UserToken token = SessionManager.getCurrentSession().getUserToken();
+				followRecommendations = new JsfConnector().getViewUserSummaries(facade.getUserRecommendations(token));
+			}
+			
+			return followRecommendations;
 		} catch (UnauthorizedOperationException | AuthenticationException e) {
 			// FIXME treat exception
 			return new ArrayList<UserSummary>();

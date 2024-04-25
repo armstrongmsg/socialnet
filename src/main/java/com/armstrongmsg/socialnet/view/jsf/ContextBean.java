@@ -21,7 +21,8 @@ public class ContextBean {
 	private String password;
 	private static ApplicationFacade facade = ApplicationFacade.getInstance();
 	
-	private UserSummary viewUser; 
+	private UserSummary loggedUserSummary;
+	private UserSummary viewUser;
 	
 	public String getUsername() {
 		return username;
@@ -100,6 +101,7 @@ public class ContextBean {
 	public String logout() {
 		SessionManager.setCurrentSession(null);
 		this.viewUser = null;
+		this.loggedUserSummary = null;
 		return new NavigationController().showHome();
 	}
 
@@ -155,21 +157,6 @@ public class ContextBean {
 		}
 	}
 	
-	private boolean viewUserIsLoggedUser() {
-		try {
-			UserToken loggedUser = SessionManager.getCurrentSession().getUserToken();
-			UserSummary loggedUserSummary;
-			loggedUserSummary = new JsfConnector().getViewUserSummary(facade.getSelf(loggedUser));
-			return loggedUserSummary.equals(this.viewUser);
-		} catch (AuthenticationException e) {
-			// FIXME treat this exception
-			return false;
-		} catch (UnauthorizedOperationException e) {
-			// FIXME treat this exception
-			return false;
-		}
-	}
-	
 	public boolean getCanFollow() {
 		if (viewUser == null) { 
 			return false;
@@ -183,6 +170,22 @@ public class ContextBean {
 				// FIXME treat this exception
 				return false;
 			}
+		}
+	}
+
+	private boolean viewUserIsLoggedUser() {
+		try {
+			if (loggedUserSummary == null) {
+				UserToken loggedUser = SessionManager.getCurrentSession().getUserToken();
+				loggedUserSummary = new JsfConnector().getViewUserSummary(facade.getSelf(loggedUser));
+			}
+			return loggedUserSummary.equals(this.viewUser);
+		} catch (AuthenticationException e) {
+			// FIXME treat this exception
+			return false;
+		} catch (UnauthorizedOperationException e) {
+			// FIXME treat this exception
+			return false;
 		}
 	}
 }
