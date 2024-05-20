@@ -19,8 +19,8 @@ import com.armstrongmsg.socialnet.model.User;
 import com.armstrongmsg.socialnet.model.UserSummary;
 import com.armstrongmsg.socialnet.model.authentication.UserToken;
 import com.armstrongmsg.socialnet.storage.StorageFacade;
-import com.armstrongmsg.socialnet.storage.cache.DefaultCache;
-import com.armstrongmsg.socialnet.storage.database.DefaultDatabaseManager;
+import com.armstrongmsg.socialnet.storage.cache.CacheFactory;
+import com.armstrongmsg.socialnet.storage.database.DatabaseManagerFactory;
 import com.armstrongmsg.socialnet.util.PropertiesUtil;
 
 public class ApplicationFacade {
@@ -45,17 +45,18 @@ public class ApplicationFacade {
 		}
 	}
 	
-	public synchronized static ApplicationFacade getInstance(StorageFacade storageManager) {
+	public synchronized static ApplicationFacade getInstance(StorageFacade storageFacade) {
 		if (instance == null) {
-			instance = new ApplicationFacade(storageManager);
+			instance = new ApplicationFacade(storageFacade);
 		}
 		
 		return instance;
 	}
 	
 	public synchronized static ApplicationFacade getInstance() {
-		// FIXME load cache policy and database manager from configuration
-		return getInstance(new StorageFacade(new DefaultCache(), new DefaultDatabaseManager()));
+		return getInstance(new StorageFacade(
+				new CacheFactory().loadCacheFromConfiguration(),
+				new DatabaseManagerFactory().loadDatabaseManagerFromConfiguration()));
 	}
 		
 	public synchronized static void reset() {
