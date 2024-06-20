@@ -64,5 +64,39 @@ xmlns:f = "http://java.sun.com/jsf/core">
                      target = "#{followBean.username}" value = "#{contextBean.viewUser.username}" />
         </h:commandButton>
       </h:form>
+      
+      <h:form rendered = "#{contextBean.isSelfProfile}">
+      	<hr />
+      	<h:inputText value = "#{postBean.title}" size = "20"/>
+      	<br/>
+        <h:inputTextarea row = "30" col = "10" value = "#{postBean.content}" />
+        <br/>
+        <table>
+			<tr>
+				<td>
+					<h:selectOneMenu value = "#{postBean.postVisibility}"> 
+           				<f:selectItem itemValue = "PRIVATE" itemLabel = "Private" /> 
+           				<f:selectItem itemValue = "PUBLIC" itemLabel = "Public" /> 
+        			</h:selectOneMenu> 					
+				</td>
+				<td>
+					<h:commandButton value = "Post" action = "#{postBean.createPost}" />					
+				</td>
+			</tr>
+		</table>
+      </h:form>
+      
+      <hr />
+      
+      <h:form>
+      	<h:dataTable value="#{postBean.posts}" var="post"
+			styleClass="usersTable" headerClass="usersTableHeader"
+			rowClasses="usersTableOddRow,usersTableEvenRow">
+
+			<h:column>
+				<h:outputText value="Posted on #{post.date} -> #{post.title} - #{post.content}" />
+			</h:column>
+		</h:dataTable>
+      </h:form>
    </h:body>
 </html>

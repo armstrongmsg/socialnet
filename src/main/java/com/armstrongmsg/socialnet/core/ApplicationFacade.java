@@ -90,9 +90,9 @@ public class ApplicationFacade {
 		return this.network.getUsers(userToken);
 	}
 
-	public List<Post> getUserPosts(UserToken userToken, String userId) throws UnauthorizedOperationException, AuthenticationException {
+	public List<Post> getUserPostsAdmin(UserToken userToken, String userId) throws UnauthorizedOperationException, AuthenticationException {
 		logger.debug(Messages.Logging.RECEIVED_GET_USERS_POSTS_ADMIN_REQUEST, userToken, userId);
-		return this.network.getUserPosts(userToken, userId);
+		return this.network.getUserPostsAdmin(userToken, userId);
 	}
 	
 	public void addFriendshipAdmin(UserToken userToken, String userId1, String userId2) throws UnauthorizedOperationException, AuthenticationException {
@@ -138,6 +138,20 @@ public class ApplicationFacade {
 		
 		try {
 			return this.network.getSelfPosts(userToken);
+		} catch (AuthenticationException e) {
+			logger.debug(Messages.Logging.AUTHENTICATION_EXCEPTION, e.getMessage());
+			throw e;
+		} catch (UnauthorizedOperationException e) {
+			logger.debug(Messages.Logging.AUTHORIZATION_EXCEPTION, e.getMessage());
+			throw e;
+		}
+	}
+
+	public List<Post> getUserPosts(UserToken userToken, String username) throws UnauthorizedOperationException, AuthenticationException {
+		logger.debug(Messages.Logging.RECEIVED_GET_USER_POSTS_REQUEST, userToken, username);
+		
+		try {
+			return this.network.getUserPosts(userToken, username);
 		} catch (AuthenticationException e) {
 			logger.debug(Messages.Logging.AUTHENTICATION_EXCEPTION, e.getMessage());
 			throw e;

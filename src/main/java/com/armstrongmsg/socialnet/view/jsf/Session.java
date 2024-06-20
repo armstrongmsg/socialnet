@@ -3,11 +3,13 @@ package com.armstrongmsg.socialnet.view.jsf;
 import java.util.Objects;
 
 import com.armstrongmsg.socialnet.model.authentication.UserToken;
+import com.armstrongmsg.socialnet.view.jsf.model.UserSummary;
 
 public class Session {
 	private boolean admin;
 	private boolean logged;
 	private UserToken userToken;
+	private UserSummary viewUser;
 
 	public Session(UserToken userToken) {
 		this.userToken = userToken;
@@ -39,9 +41,17 @@ public class Session {
 		this.logged = logged;
 	}
 
+	public UserSummary getCurrentViewUser() {
+		return viewUser;
+	}
+
+	public void setCurrentViewUser(UserSummary viewUser) {
+		this.viewUser = viewUser;
+	}
+
 	@Override
 	public int hashCode() {
-		return Objects.hash(admin, logged, userToken);
+		return Objects.hash(admin, logged, userToken, viewUser);
 	}
 
 	@Override
@@ -53,6 +63,7 @@ public class Session {
 		if (getClass() != obj.getClass())
 			return false;
 		Session other = (Session) obj;
-		return admin == other.admin && logged == other.logged && Objects.equals(userToken, other.userToken);
+		return admin == other.admin && logged == other.logged && Objects.equals(userToken, other.userToken)
+				&& Objects.equals(viewUser, other.viewUser);
 	}
 }

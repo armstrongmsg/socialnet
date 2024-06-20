@@ -23,10 +23,13 @@ public class PostBean {
 	private String postVisibility;
 	
 	private Post post;
-	private List<Post> userPosts;
+	private List<Post> userPostsAdmin;
 	
 	private List<Post> selfPosts;
 	private List<Post> friendsPosts;
+	
+	private String username;
+	private List<Post> userPosts;
 	
 	private static ApplicationFacade facade = ApplicationFacade.getInstance();
 	
@@ -61,6 +64,14 @@ public class PostBean {
 	public void setPostVisibility(String postVisibility) {
 		this.postVisibility = postVisibility;
 	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
 	
 	public String createPost() {
 		UserToken token = SessionManager.getCurrentSession().getUserToken();
@@ -82,9 +93,9 @@ public class PostBean {
 	}
 	
 	public List<Post> getUserPosts() { 
-		if (userPosts == null) {
+		if (userPostsAdmin == null) {
 			try {
-				userPosts = new JsfConnector().getViewPosts(facade.getUserPosts(
+				userPostsAdmin = new JsfConnector().getViewPosts(facade.getUserPostsAdmin(
 						SessionManager.getCurrentSession().getUserToken(), 
 						getUser().getUserId()));
 			} catch (UnauthorizedOperationException | AuthenticationException e) {
@@ -92,7 +103,7 @@ public class PostBean {
 			}
 		}
 		
-		return userPosts;
+		return userPostsAdmin;
 	}
 	
 	public List<Post> getSelfPosts() {
@@ -119,5 +130,24 @@ public class PostBean {
 		}
 		
 		return friendsPosts;
+	}
+	
+	public List<Post> getPosts() {
+		try {
+			if (userPosts == null) {
+				String username = SessionManager.getCurrentSession().getCurrentViewUser().getUsername();
+				
+				if (username.isEmpty()) {
+					username = SessionManager.getCurrentSession().getUserToken().getUsername();
+				}
+				
+				userPosts = new JsfConnector().getViewPosts(
+						facade.getUserPosts(SessionManager.getCurrentSession().getUserToken(), username));
+			}
+		} catch (UnauthorizedOperationException | AuthenticationException e) {
+			// FIXME treat exception
+		}
+		
+		return userPosts;
 	}
 }

@@ -25,6 +25,8 @@
 					<h:commandButton action="#{navigationController.showPage}"
 						value="Profile" >
 						<f:param name="pageId" value="user-profile" />
+						<f:setPropertyActionListener target="#{contextBean.viewUser}" 
+					    value="" />
 					</h:commandButton>
 				</td>
 				<td>
@@ -70,7 +72,7 @@
 
 	  <br/>
 
-      Your feed
+      Feed
       
      <h:form>
 		<h:dataTable value="#{postBean.friendsPosts}" var="post"
@@ -82,24 +84,6 @@
 			</h:column>
 		</h:dataTable>
 	</h:form>
-
-	<hr />
-      
-	 Your post history
-      
-      <br/>
-      
-      <h:form>
-      	<h:dataTable value="#{postBean.selfPosts}" var="post"
-			styleClass="usersTable" headerClass="usersTableHeader"
-			rowClasses="usersTableOddRow,usersTableEvenRow">
-
-			<h:column>
-				<h:outputText value="Posted on #{post.date} -> #{post.title} - #{post.content}" />
-			</h:column>
-		</h:dataTable>
-      </h:form>
-      
 	<hr />
 </h:body>
 </html>

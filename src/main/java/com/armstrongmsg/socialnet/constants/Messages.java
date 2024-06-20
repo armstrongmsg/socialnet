@@ -35,6 +35,7 @@ public class Messages {
 		public static final String RECEIVED_GET_SELF_FRIENDS_REQUEST = "Received Get self friends. Token:{}.";
 		public static final String RECEIVED_GET_SELF_POSTS_REQUEST = "Received Get self posts request. Token:{}.";
 		public static final String RECEIVED_GET_SELF_REQUEST = "Received Get self request. Token:{}.";
+		public static final String RECEIVED_GET_USER_POSTS_REQUEST = "Received Get user posts request. Token: {}, username: {}.";
 		public static final String RECEIVED_GET_USER_RECOMMENDATIONS_REQUEST = "Received Get user recommendations request. Token:{}.";
 		public static final String RECEIVED_GET_USER_SUMMARIES_REQUEST = "Received Get user summaries request. Token:{}.";
 		public static final String RECEIVED_GET_USERS_ADMIN_REQUEST = "Received Get users admin request. Token: {}.";

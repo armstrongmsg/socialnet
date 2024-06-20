@@ -19,10 +19,9 @@ import com.armstrongmsg.socialnet.view.jsf.model.UserSummary;
 public class ContextBean {
 	private String username;
 	private String password;
-	private ApplicationFacade facade = ApplicationFacade.getInstance();
-	
 	private UserSummary loggedUserSummary;
-	private UserSummary viewUser;
+	
+	private ApplicationFacade facade = ApplicationFacade.getInstance();
 	
 	public String getUsername() {
 		return username;
@@ -41,10 +40,13 @@ public class ContextBean {
 	}
 	
 	public UserSummary getViewUser() {
-		if (viewUser == null) {
+		UserSummary currentViewUser = SessionManager.getCurrentSession().getCurrentViewUser();
+		
+		if (currentViewUser == null) {
 			try {
 				UserToken currentUserToken = SessionManager.getCurrentSession().getUserToken();
-				this.viewUser = new JsfConnector().getViewUserSummary(facade.getSelf(currentUserToken));
+				currentViewUser = new JsfConnector().getViewUserSummary(facade.getSelf(currentUserToken));
+				SessionManager.getCurrentSession().setCurrentViewUser(currentViewUser);
 			} catch (AuthenticationException e) {
 				// FIXME treat this exception
 				e.printStackTrace();
@@ -54,11 +56,11 @@ public class ContextBean {
 			}
 		}
 		
-		return viewUser;
+		return currentViewUser;
 	}
 
 	public void setViewUser(UserSummary viewUser) {
-		this.viewUser = viewUser;
+		SessionManager.getCurrentSession().setCurrentViewUser(viewUser);
 	}
 	
 	public UserToken getUser() {
@@ -98,7 +100,6 @@ public class ContextBean {
 	
 	public String logout() {
 		SessionManager.setCurrentSession(null);
-		this.viewUser = null;
 		this.loggedUserSummary = null;
 		return new NavigationController().showHome();
 	}
@@ -140,13 +141,14 @@ public class ContextBean {
 	}
 	
 	public boolean getCanAddAsFriend() {
-		return !viewUserIsLoggedUser() && !viewUserIsFriend();
+		return !getIsSelfProfile() && !viewUserIsFriend();
 	}
 	
 	private boolean viewUserIsFriend() {
 		try {
 			UserToken token = SessionManager.getCurrentSession().getUserToken();
-			return facade.isFriend(token, this.viewUser.getUsername());
+			return facade.isFriend(token, SessionManager.getCurrentSession().getCurrentViewUser()
+					.getUsername());
 		} catch (AuthenticationException | UnauthorizedOperationException e) {
 			// FIXME treat this exception
 			return false;
@@ -154,26 +156,27 @@ public class ContextBean {
 	}
 	
 	public boolean getCanFollow() {
-		return !viewUserIsLoggedUser() && !viewUserIsFollowed();
+		return !getIsSelfProfile() && !viewUserIsFollowed();
 	}
 
 	private boolean viewUserIsFollowed() {
 		try {
 			UserToken token = SessionManager.getCurrentSession().getUserToken();
-			return facade.follows(token, this.viewUser.getUsername());
+			return facade.follows(token, SessionManager.getCurrentSession().getCurrentViewUser()
+					.getUsername());
 		} catch (AuthenticationException | UnauthorizedOperationException e) {
 			// FIXME treat this exception
 			return false;
 		}
 	}
 
-	private boolean viewUserIsLoggedUser() {
+	public boolean getIsSelfProfile() {
 		try {
 			if (loggedUserSummary == null) {
 				UserToken loggedUser = SessionManager.getCurrentSession().getUserToken();
 				loggedUserSummary = new JsfConnector().getViewUserSummary(facade.getSelf(loggedUser));
 			}
-			return loggedUserSummary.equals(this.viewUser);
+			return loggedUserSummary.equals(SessionManager.getCurrentSession().getCurrentViewUser());
 		} catch (AuthenticationException e) {
 			// FIXME treat this exception
 			return false;

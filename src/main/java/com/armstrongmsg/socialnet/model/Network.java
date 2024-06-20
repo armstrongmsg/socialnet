@@ -126,10 +126,10 @@ public class Network {
 		user.getProfile().createPost(title, content, newPostVisibility);
 	}
 
-	public List<Post> getUserPosts(UserToken userToken, String userId) throws UnauthorizedOperationException, AuthenticationException {
+	public List<Post> getUserPostsAdmin(UserToken userToken, String userId) throws UnauthorizedOperationException, AuthenticationException {
 		User requester = findUserById(userToken.getUserId());
 		User target = findUserById(userId);
-		this.authorizationPlugin.authorize(requester, new OperationOnUser(OperationType.GET_USER_POSTS, target));
+		this.authorizationPlugin.authorize(requester, new OperationOnUser(OperationType.GET_USER_POSTS_ADMIN, target));
 		
 		User user = findUserById(userId);
 		return user.getProfile().getPosts();
@@ -289,6 +289,18 @@ public class Network {
 		return friendsPosts;
 	}
 
+	public List<Post> getUserPosts(UserToken token, String username) throws UnauthorizedOperationException, AuthenticationException {
+		User requester = findUserById(token.getUserId());
+		this.authorizationPlugin.authorize(requester, new Operation(OperationType.GET_USER_POSTS));
+		
+		if (doIsFriend(requester, username) || requester.getUsername().equals(username)) {
+			User user = findUserByUsername(username);
+			return user.getProfile().getPosts();
+		}
+		
+		return new ArrayList<Post>();
+	}
+	
 	public UserToken login(Map<String, String> credentials) throws AuthenticationException {
 		return this.authenticationPlugin.authenticate(credentials);
 	}
@@ -343,7 +355,10 @@ public class Network {
 	public boolean isFriend(UserToken userToken, String username) throws AuthenticationException, UnauthorizedOperationException {
 		User requester = findUserById(userToken.getUserId());
 		this.authorizationPlugin.authorize(requester, new Operation(OperationType.IS_FRIEND));
-		
+		return doIsFriend(requester, username);
+	}
+	
+	private boolean doIsFriend(User requester, String username) {
 		List<UserSummary> friends = doGetSelfFriends(requester);
 		
 		for (UserSummary friend : friends) {

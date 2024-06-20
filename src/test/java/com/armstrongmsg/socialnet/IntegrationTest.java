@@ -215,12 +215,12 @@ public class IntegrationTest {
 		
 		UserToken userToken = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
 		
-		List<Post> userPosts = facade.getUserPosts(adminToken, userToken.getUserId());
+		List<Post> userPosts = facade.getUserPostsAdmin(adminToken, userToken.getUserId());
 		assertTrue(userPosts.isEmpty());
 		
 		facade.createPost(userToken, NEW_POST_TITLE, NEW_POST_CONTENT, NEW_POST_VISIBILITY);
 		
-		List<Post> userPostsAfterCreation = facade.getUserPosts(adminToken, userToken.getUserId());
+		List<Post> userPostsAfterCreation = facade.getUserPostsAdmin(adminToken, userToken.getUserId());
 		
 		assertEquals(1, userPostsAfterCreation.size());
 		Post createdPost = userPostsAfterCreation.get(0);
@@ -239,7 +239,7 @@ public class IntegrationTest {
 
 		UserToken userToken = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
 		
-		facade.getUserPosts(userToken, userToken.getUserId());
+		facade.getUserPostsAdmin(userToken, userToken.getUserId());
 	}
 	
 	@Test(expected = UnauthorizedOperationException.class)
@@ -252,7 +252,7 @@ public class IntegrationTest {
 		UserToken userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
 		UserToken userToken2 = loginAsUser(NEW_USERNAME_2, NEW_USER_PASSWORD_2);
 		
-		facade.getUserPosts(userToken1, userToken2.getUserId());
+		facade.getUserPostsAdmin(userToken1, userToken2.getUserId());
 	}
 	
 	@Test
@@ -276,6 +276,73 @@ public class IntegrationTest {
 		assertEquals(NEW_POST_TITLE, createdPost.getTitle());
 		assertEquals(NEW_POST_CONTENT, createdPost.getContent());
 		assertEquals(NEW_POST_VISIBILITY, createdPost.getVisibility());
+	}
+	
+	@Test
+	public void testGetOtherUserPostsByNonAdmin() throws AuthenticationException, UnauthorizedOperationException {
+		UserToken adminToken = loginAsAdmin();
+		
+		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
+		facade.addUser(adminToken, NEW_USERNAME_2, NEW_USER_PASSWORD_2, NEW_USER_PROFILE_DESCRIPTION_2);
+		
+		UserToken user1Token = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
+		UserToken user2Token = loginAsUser(NEW_USERNAME_2, NEW_USER_PASSWORD_2);
+		
+		List<Post> user1Posts = facade.getUserPosts(user1Token, NEW_USERNAME_1);
+		List<Post> user2PostsForUser1 = facade.getUserPosts(user1Token, NEW_USERNAME_2);
+		List<Post> user2Posts = facade.getUserPosts(user2Token, NEW_USERNAME_2);
+		List<Post> user1PostsForUser2 = facade.getUserPosts(user2Token, NEW_USERNAME_1);
+		
+		// no posts in the beginning
+		assertTrue(user1Posts.isEmpty());
+		assertTrue(user2Posts.isEmpty());
+		assertTrue(user2PostsForUser1.isEmpty());
+		assertTrue(user1PostsForUser2.isEmpty());
+		
+		facade.createPost(user1Token, NEW_POST_TITLE, NEW_POST_CONTENT, NEW_POST_VISIBILITY);
+		facade.createPost(user2Token, NEW_POST_TITLE_2, NEW_POST_CONTENT_2, NEW_POST_VISIBILITY_2);
+		
+		List<Post> user1PostsAfter = facade.getUserPosts(user1Token, NEW_USERNAME_1);
+		
+		// since they are not friends, each user can see their own posts, but not the other user's
+		assertEquals(1, user1PostsAfter.size());
+		assertEquals(NEW_POST_TITLE, user1PostsAfter.get(0).getTitle());
+		assertEquals(NEW_POST_CONTENT, user1PostsAfter.get(0).getContent());
+		assertEquals(NEW_POST_VISIBILITY, user1PostsAfter.get(0).getVisibility());
+		
+		List<Post> user2PostsAfter = facade.getUserPosts(user2Token, NEW_USERNAME_2);
+		
+		assertEquals(1, user2PostsAfter.size());
+		assertEquals(NEW_POST_TITLE_2, user2PostsAfter.get(0).getTitle());
+		assertEquals(NEW_POST_CONTENT_2, user2PostsAfter.get(0).getContent());
+		assertEquals(NEW_POST_VISIBILITY_2, user2PostsAfter.get(0).getVisibility());
+		
+		List<Post> user2PostsForUser1After = facade.getUserPosts(user1Token, NEW_USERNAME_2);
+		List<Post> user1PostsForUser2After = facade.getUserPosts(user2Token, NEW_USERNAME_1);
+		
+		assertTrue(user2PostsForUser1After.isEmpty());
+		assertTrue(user1PostsForUser2After.isEmpty());
+		
+		List<User> users = facade.getUsers(adminToken);
+		User user1 = users.get(0);
+		User user2 = users.get(1);
+		
+		facade.addFriendshipAdmin(adminToken, user1.getUserId(), user2.getUserId());
+
+		// after adding friendship, each user can see the other user's posts
+		List<Post> user2PostsForUser1AfterFriendship = facade.getUserPosts(user1Token, NEW_USERNAME_2);
+		
+		assertEquals(1, user2PostsForUser1AfterFriendship.size());
+		assertEquals(NEW_POST_TITLE_2, user2PostsForUser1AfterFriendship.get(0).getTitle());
+		assertEquals(NEW_POST_CONTENT_2, user2PostsForUser1AfterFriendship.get(0).getContent());
+		assertEquals(NEW_POST_VISIBILITY_2, user2PostsForUser1AfterFriendship.get(0).getVisibility());
+		
+		List<Post> user1PostsForUser2AfterFriendship = facade.getUserPosts(user2Token, NEW_USERNAME_1);
+
+		assertEquals(1, user1PostsForUser2AfterFriendship.size());
+		assertEquals(NEW_POST_TITLE, user1PostsForUser2AfterFriendship.get(0).getTitle());
+		assertEquals(NEW_POST_CONTENT, user1PostsForUser2AfterFriendship.get(0).getContent());
+		assertEquals(NEW_POST_VISIBILITY, user1PostsForUser2AfterFriendship.get(0).getVisibility());
 	}
 	
 	@Test
