@@ -19,7 +19,7 @@ import com.armstrongmsg.socialnet.view.jsf.model.UserSummary;
 public class ContextBean {
 	private String username;
 	private String password;
-	private static ApplicationFacade facade = ApplicationFacade.getInstance();
+	private ApplicationFacade facade = ApplicationFacade.getInstance();
 	
 	private UserSummary loggedUserSummary;
 	private UserSummary viewUser;
@@ -78,21 +78,19 @@ public class ContextBean {
 			credentials.put(AuthenticationParameters.PASSWORD_KEY, password);
 			
 			UserToken token = facade.login(credentials);
-			Session session = new Session(token);
-			session.setAdmin(facade.userIsAdmin(username));
-			session.setLogged(true);
-			SessionManager.setCurrentSession(session);
+			boolean userIsAdmin = facade.userIsAdmin(username);
+			SessionManager.startSession(token, userIsAdmin);
 			
-			username = null;
-			password = null;
-			
-			if (session.isAdmin()) {
+			if (userIsAdmin) {
 				return new NavigationController().showAdminHome();
 			} else {
 				return new NavigationController().showUserHome();
 			}
 		} catch (AuthenticationException e) {
 			// FIXME treat this exception
+		} finally {
+			username = null;
+			password = null;
 		}
 		
 		return new NavigationController().showUserHome();
@@ -141,37 +139,31 @@ public class ContextBean {
 		}
 	}
 	
-	// TODO test
 	public boolean getCanAddAsFriend() {
-		if (viewUser == null) { 
+		return !viewUserIsLoggedUser() && !viewUserIsFriend();
+	}
+	
+	private boolean viewUserIsFriend() {
+		try {
+			UserToken token = SessionManager.getCurrentSession().getUserToken();
+			return facade.isFriend(token, this.viewUser.getUsername());
+		} catch (AuthenticationException | UnauthorizedOperationException e) {
+			// FIXME treat this exception
 			return false;
-		} else if (viewUserIsLoggedUser()) {
-			return false;
-		} else {
-			try {
-				UserToken token = SessionManager.getCurrentSession().getUserToken();
-				return !facade.isFriend(token, this.viewUser.getUsername());
-			} catch (AuthenticationException | UnauthorizedOperationException e) {
-				// FIXME treat this exception
-				return false;
-			}
 		}
 	}
 	
-	// TODO test
 	public boolean getCanFollow() {
-		if (viewUser == null) { 
+		return !viewUserIsLoggedUser() && !viewUserIsFollowed();
+	}
+
+	private boolean viewUserIsFollowed() {
+		try {
+			UserToken token = SessionManager.getCurrentSession().getUserToken();
+			return facade.follows(token, this.viewUser.getUsername());
+		} catch (AuthenticationException | UnauthorizedOperationException e) {
+			// FIXME treat this exception
 			return false;
-		} else if (viewUserIsLoggedUser()) {
-			return false;
-		} else {
-			try {
-				UserToken token = SessionManager.getCurrentSession().getUserToken();
-				return !facade.follows(token, this.viewUser.getUsername());
-			} catch (AuthenticationException | UnauthorizedOperationException e) {
-				// FIXME treat this exception
-				return false;
-			}
 		}
 	}
 

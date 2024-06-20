@@ -1,5 +1,7 @@
 package com.armstrongmsg.socialnet.view.jsf.model;
 
+import java.util.Objects;
+
 public class UserSummary {
 	private String username;
 	private String profileDescription;
@@ -23,5 +25,22 @@ public class UserSummary {
 	
 	public void setProfileDescription(String profileDescription) {
 		this.profileDescription = profileDescription;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(profileDescription, username);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		UserSummary other = (UserSummary) obj;
+		return Objects.equals(profileDescription, other.profileDescription) && Objects.equals(username, other.username);
 	}
 }

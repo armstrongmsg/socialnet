@@ -1,5 +1,7 @@
 package com.armstrongmsg.socialnet.view.jsf;
 
+import java.util.Objects;
+
 import com.armstrongmsg.socialnet.model.authentication.UserToken;
 
 public class Session {
@@ -35,5 +37,22 @@ public class Session {
 
 	public void setLogged(boolean logged) {
 		this.logged = logged;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(admin, logged, userToken);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Session other = (Session) obj;
+		return admin == other.admin && logged == other.logged && Objects.equals(userToken, other.userToken);
 	}
 }
