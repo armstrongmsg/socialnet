@@ -38,6 +38,12 @@
 					</h:commandButton>
 				</td>
 			</tr>
+			<tr>
+				<td></td>
+				<td>
+					<h:outputText value="Invalid credentials. Try again." rendered="#{contextBean.loginError}"/>
+				</td>
+			</tr>
 		</table>
 	</h:form>
 </h:body>

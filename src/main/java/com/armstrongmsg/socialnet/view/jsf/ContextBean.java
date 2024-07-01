@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.SessionScoped;
+import javax.faces.bean.RequestScoped;
 
 import com.armstrongmsg.socialnet.constants.AuthenticationParameters;
 import com.armstrongmsg.socialnet.core.ApplicationFacade;
@@ -15,11 +15,12 @@ import com.armstrongmsg.socialnet.view.jsf.model.JsfConnector;
 import com.armstrongmsg.socialnet.view.jsf.model.UserSummary;
 
 @ManagedBean(name = "contextBean", eager = true)
-@SessionScoped
+@RequestScoped
 public class ContextBean {
 	private String username;
 	private String password;
 	private UserSummary loggedUserSummary;
+	private boolean loginError;
 	
 	private ApplicationFacade facade = ApplicationFacade.getInstance();
 	
@@ -37,6 +38,14 @@ public class ContextBean {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	public boolean isLoginError() {
+		return loginError;
+	}
+
+	public void setLoginError(boolean loginError) {
+		this.loginError = loginError;
 	}
 	
 	public UserSummary getViewUser() {
@@ -89,13 +98,13 @@ public class ContextBean {
 				return new NavigationController().showUserHome();
 			}
 		} catch (AuthenticationException e) {
+			setLoginError(true);
+			return new NavigationController().showHome();
 			// FIXME treat this exception
 		} finally {
 			username = null;
 			password = null;
 		}
-		
-		return new NavigationController().showUserHome();
 	}
 	
 	public String logout() {
