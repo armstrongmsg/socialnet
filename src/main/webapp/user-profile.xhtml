@@ -54,7 +54,7 @@ xmlns:f = "http://java.sun.com/jsf/core">
       <hr />
       
       <h:form>
-        <h:commandButton value = "Add friend" action = "#{friendshipBean.addFriendship}" rendered = "#{contextBean.canAddAsFriend}">
+        <h:commandButton value = "Add as friend" action = "#{friendshipBean.addFriendshipRequest}" rendered = "#{contextBean.canAddAsFriend}">
 		   <f:setPropertyActionListener 
                      target = "#{friendshipBean.username}" value = "#{contextBean.viewUser.username}" />
         </h:commandButton>
@@ -64,6 +64,10 @@ xmlns:f = "http://java.sun.com/jsf/core">
                      target = "#{followBean.username}" value = "#{contextBean.viewUser.username}" />
         </h:commandButton>
       </h:form>
+
+	  <h:form>
+        <h:outputText value = "Friend request sent" rendered = "#{contextBean.friendRequestIsSent}"/>
+	  </h:form>        
       
       <h:form rendered = "#{contextBean.isSelfProfile}">
       	<hr />

@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.armstrongmsg.socialnet.model.Follow;
 import com.armstrongmsg.socialnet.model.Friendship;
+import com.armstrongmsg.socialnet.model.FriendshipRequest;
 import com.armstrongmsg.socialnet.model.Group;
 import com.armstrongmsg.socialnet.model.User;
 import com.armstrongmsg.socialnet.storage.cache.Cache;
@@ -94,7 +95,8 @@ public class StorageFacade {
 		
 		return friendships;
 	}
-	
+
+	// FIXME should save to database before putting on the cache
 	public void saveFriendship(Friendship friendship) {
 		cache.putFriendship(friendship);
 		databaseManager.saveFriendship(friendship);
@@ -134,5 +136,49 @@ public class StorageFacade {
 	public void removeUserById(String userId) {
 		cache.removeUserById(userId);
 		databaseManager.removeUserById(userId);
+	}
+
+	public void saveFriendshipRequest(FriendshipRequest friendshipRequest) {
+		databaseManager.saveFriendshipRequest(friendshipRequest);
+		cache.putFriendshipRequest(friendshipRequest);
+	}
+
+	public List<FriendshipRequest> getSentFrienshipRequestsById(String userId) {
+		List<FriendshipRequest> requests = cache.getSentFriendshipRequestsById(userId);
+		
+		// FIXME Should catch an exception and treat this case
+		if (requests == null) {
+			requests = databaseManager.getSentFriendshipRequestsById(userId);
+			cache.putFriendshipRequests(requests);
+		}
+		
+		return requests;
+	}
+
+	public List<FriendshipRequest> getReceivedFrienshipRequestsById(String userId) {
+		List<FriendshipRequest> requests = cache.getReceivedFriendshipRequestsById(userId);
+		
+		if (requests == null) {
+			requests = databaseManager.getReceivedFriendshipRequestsById(userId);
+			cache.putFriendshipRequests(requests);
+		}
+		
+		return requests;
+	}
+
+	public FriendshipRequest getReceivedFrienshipRequestsById(String userId, String username) {
+		FriendshipRequest request = cache.getReceivedFriendshipRequestById(userId, username);
+		
+		if (request == null) {
+			request = databaseManager.getReceivedFriendshipRequestById(userId, username);
+			cache.putFriendshipRequest(request);
+		}
+		
+		return request;
+	}
+
+	public void removeFriendshipRequest(String userId, String username) {
+		cache.removeFriendshipRequestById(userId, username);
+		databaseManager.removeFriendshipRequestById(userId, username);
 	}
 }

@@ -50,6 +50,48 @@
 
 	<hr />
 
+	  Sent friendship requests waiting approval
+
+	     <h:form>
+			<h:dataTable value="#{friendshipBean.sentFriendshipRequests}" var="username"
+				styleClass="usersTable" headerClass="usersTableHeader"
+				rowClasses="usersTableOddRow,usersTableEvenRow">
+	
+				<h:column>
+					<h:outputText value="#{username}" />
+				</h:column>
+			</h:dataTable>
+		</h:form>
+
+	  <br/>
+
+	  Received friendship requests waiting approval
+	  
+	     <h:form>
+			<h:dataTable value="#{friendshipBean.receivedFriendshipRequests}" var="username"
+				styleClass="usersTable" headerClass="usersTableHeader"
+				rowClasses="usersTableOddRow,usersTableEvenRow">
+	
+				<h:column>
+					<h:outputText value="#{username}" />
+					
+					<h:commandButton action="#{friendshipBean.accceptFriendshipRequest}"
+						value="Accept">
+						<f:setPropertyActionListener
+                     		target = "#{friendshipBean.username}" value = "#{username}" />
+					</h:commandButton>
+					
+					<h:commandButton action="#{friendshipBean.rejectFriendshipRequest}"
+						value="Reject">
+						<f:setPropertyActionListener
+                     		target = "#{friendshipBean.username}" value = "#{username}" />
+					</h:commandButton>
+				</h:column>
+			</h:dataTable>
+		</h:form>
+
+	  <br/>
+
 	<h:form>
       	<h:inputText value = "#{postBean.title}" size = "20"/>
       	<br/>

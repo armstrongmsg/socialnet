@@ -150,6 +150,58 @@ public class Network {
 		this.storageFacade.saveFriendship(new Friendship(user1, user2));
 	}
 
+	public void addFriendshipRequest(UserToken userToken, String username) throws AuthenticationException, UnauthorizedOperationException {
+		User requester = findUserById(userToken.getUserId());
+		this.authorizationPlugin.authorize(requester, new Operation(OperationType.ADD_FRIENDSHIP_REQUEST));
+		
+		User friend = findUserByUsername(username);
+		this.storageFacade.saveFriendshipRequest(new FriendshipRequest(requester, friend));
+	}
+	
+	public List<FriendshipRequest> getSentFriendshipRequests(UserToken userToken) throws AuthenticationException, UnauthorizedOperationException {
+		User requester = findUserById(userToken.getUserId());
+		this.authorizationPlugin.authorize(requester, new Operation(OperationType.GET_SENT_FRIENDSHIP_REQUESTS));
+		
+		return this.storageFacade.getSentFrienshipRequestsById(requester.getUserId());
+	}
+	
+	public List<FriendshipRequest> getReceivedFriendshipRequests(UserToken userToken) throws AuthenticationException, UnauthorizedOperationException {
+		User requester = findUserById(userToken.getUserId());
+		this.authorizationPlugin.authorize(requester, new Operation(OperationType.GET_RECEIVED_FRIENDSHIP_REQUESTS));
+		
+		return this.storageFacade.getReceivedFrienshipRequestsById(requester.getUserId());
+	}
+	
+	public void acceptFriendshipRequest(UserToken userToken, String username) throws AuthenticationException, UnauthorizedOperationException {
+		User requester = findUserById(userToken.getUserId());
+		this.authorizationPlugin.authorize(requester, new Operation(OperationType.ACCEPT_FRIENDSHIP_REQUEST));
+		
+		FriendshipRequest request = this.storageFacade.getReceivedFrienshipRequestsById(requester.getUserId(), username);
+		
+		if (request == null) {
+			throw new UnauthorizedOperationException(
+					String.format(Messages.Exception.FRIENDSHIP_REQUEST_NOT_FOUND, userToken, username));
+		}
+		
+		User friend = findUserByUsername(username);
+		this.storageFacade.saveFriendship(new Friendship(requester, friend));
+		this.storageFacade.removeFriendshipRequest(requester.getUserId(), username);
+	}
+	
+	public void rejectFriendshipRequest(UserToken userToken, String username) throws AuthenticationException, UnauthorizedOperationException {
+		User requester = findUserById(userToken.getUserId());
+		this.authorizationPlugin.authorize(requester, new Operation(OperationType.REJECT_FRIENDSHIP_REQUEST));
+		
+		FriendshipRequest request = this.storageFacade.getReceivedFrienshipRequestsById(requester.getUserId(), username);
+		
+		if (request == null) {
+			throw new UnauthorizedOperationException(
+					String.format(Messages.Exception.FRIENDSHIP_REQUEST_NOT_FOUND, userToken, username));
+		}
+		
+		this.storageFacade.removeFriendshipRequest(requester.getUserId(), username);
+	}
+	
 	public void addFriendship(UserToken userToken, String username) throws UnauthorizedOperationException, AuthenticationException {
 		User requester = findUserById(userToken.getUserId());
 		this.authorizationPlugin.authorize(requester, new Operation(OperationType.ADD_FRIENDSHIP));

@@ -1,6 +1,7 @@
 package com.armstrongmsg.socialnet.view.jsf;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.faces.bean.ManagedBean;
@@ -10,6 +11,7 @@ import com.armstrongmsg.socialnet.constants.AuthenticationParameters;
 import com.armstrongmsg.socialnet.core.ApplicationFacade;
 import com.armstrongmsg.socialnet.exceptions.AuthenticationException;
 import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
+import com.armstrongmsg.socialnet.model.FriendshipRequest;
 import com.armstrongmsg.socialnet.model.authentication.UserToken;
 import com.armstrongmsg.socialnet.view.jsf.model.JsfConnector;
 import com.armstrongmsg.socialnet.view.jsf.model.UserSummary;
@@ -150,7 +152,7 @@ public class ContextBean {
 	}
 	
 	public boolean getCanAddAsFriend() {
-		return !getIsSelfProfile() && !viewUserIsFriend();
+		return !getIsSelfProfile() && !viewUserIsFriend() && !getFriendRequestIsSent();
 	}
 	
 	private boolean viewUserIsFriend() {
@@ -193,5 +195,24 @@ public class ContextBean {
 			// FIXME treat this exception
 			return false;
 		}
+	}
+
+	public boolean getFriendRequestIsSent() {
+		try {
+			List<FriendshipRequest> requests = facade.getSentFriendshipRequests(SessionManager.getCurrentSession().getUserToken());
+			String viewedUsername = SessionManager.getCurrentSession().getCurrentViewUser().getUsername(); 
+			
+			for (FriendshipRequest request : requests) {
+				if (request.getRequested().getUsername().equals(viewedUsername)) {
+					return true;
+				}
+			}
+		} catch (AuthenticationException e) {
+			// FIXME treat this exception
+		} catch (UnauthorizedOperationException e) {
+			// FIXME treat this exception
+		}
+		
+		return false;
 	}
 }

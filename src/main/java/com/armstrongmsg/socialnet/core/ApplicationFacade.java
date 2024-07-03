@@ -12,6 +12,7 @@ import com.armstrongmsg.socialnet.constants.SystemConstants;
 import com.armstrongmsg.socialnet.exceptions.AuthenticationException;
 import com.armstrongmsg.socialnet.exceptions.FatalErrorException;
 import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
+import com.armstrongmsg.socialnet.model.FriendshipRequest;
 import com.armstrongmsg.socialnet.model.Network;
 import com.armstrongmsg.socialnet.model.Post;
 import com.armstrongmsg.socialnet.model.PostVisibility;
@@ -40,7 +41,6 @@ public class ApplicationFacade {
 				new Bootstrap().startNetwork(network);
 			}
 		} catch (FatalErrorException e) {
-			// TODO how to handle this properly?
 			logger.error(e.getMessage());
 		}
 	}
@@ -161,7 +161,76 @@ public class ApplicationFacade {
 		}
 	}
 	
-	// TODO should use a more complete approach, with friendship request, etc
+	public void addFriendshipRequest(UserToken userToken, String username) throws AuthenticationException, UnauthorizedOperationException {
+		logger.debug(Messages.Logging.RECEIVED_ADD_FRIENDSHIP_REQUEST, userToken, username);
+		
+		try {
+			this.network.addFriendshipRequest(userToken, username);
+		} catch (AuthenticationException e) {
+			logger.debug(Messages.Logging.AUTHENTICATION_EXCEPTION, e.getMessage());
+			throw e;
+		} catch (UnauthorizedOperationException e) {
+			logger.debug(Messages.Logging.AUTHORIZATION_EXCEPTION, e.getMessage());
+			throw e;
+		}
+	}
+	
+	public List<FriendshipRequest> getSentFriendshipRequests(UserToken userToken) throws AuthenticationException, UnauthorizedOperationException {
+		logger.debug(Messages.Logging.RECEIVED_GET_SENT_FRIENDSHIP_REQUESTS_REQUEST, userToken);
+		
+		try {
+			return this.network.getSentFriendshipRequests(userToken);
+		} catch (AuthenticationException e) {
+			logger.debug(Messages.Logging.AUTHENTICATION_EXCEPTION, e.getMessage());
+			throw e;
+		} catch (UnauthorizedOperationException e) {
+			logger.debug(Messages.Logging.AUTHORIZATION_EXCEPTION, e.getMessage());
+			throw e;
+		}
+	}
+	
+	public List<FriendshipRequest> getReceivedFriendshipRequests(UserToken userToken) throws AuthenticationException, UnauthorizedOperationException {
+		logger.debug(Messages.Logging.RECEIVED_GET_RECEIVED_FRIENDSHIP_REQUESTS_REQUEST, userToken);
+		
+		try {
+			return this.network.getReceivedFriendshipRequests(userToken);
+		} catch (AuthenticationException e) {
+			logger.debug(Messages.Logging.AUTHENTICATION_EXCEPTION, e.getMessage());
+			throw e;
+		} catch (UnauthorizedOperationException e) {
+			logger.debug(Messages.Logging.AUTHORIZATION_EXCEPTION, e.getMessage());
+			throw e;
+		}
+	}
+	
+	public void acceptFriendshipRequest(UserToken userToken, String username) throws AuthenticationException, UnauthorizedOperationException {
+		logger.debug(Messages.Logging.RECEIVED_ACCEPT_FRIENDSHIP_REQUEST, userToken, username);
+		
+		try {
+			this.network.acceptFriendshipRequest(userToken, username);
+		} catch (AuthenticationException e) {
+			logger.debug(Messages.Logging.AUTHENTICATION_EXCEPTION, e.getMessage());
+			throw e;
+		} catch (UnauthorizedOperationException e) {
+			logger.debug(Messages.Logging.AUTHORIZATION_EXCEPTION, e.getMessage());
+			throw e;
+		}
+	}
+	
+	public void rejectFriendshipRequest(UserToken userToken, String username) throws AuthenticationException, UnauthorizedOperationException {
+		logger.debug(Messages.Logging.RECEIVED_REJECT_FRIENDSHIP_REQUEST, userToken, username);
+		
+		try {
+			this.network.rejectFriendshipRequest(userToken, username);
+		} catch (AuthenticationException e) {
+			logger.debug(Messages.Logging.AUTHENTICATION_EXCEPTION, e.getMessage());
+			throw e;
+		} catch (UnauthorizedOperationException e) {
+			logger.debug(Messages.Logging.AUTHORIZATION_EXCEPTION, e.getMessage());
+			throw e;
+		}
+	}
+	
 	public void addFriendship(UserToken userToken, String username) throws UnauthorizedOperationException, AuthenticationException {
 		logger.debug(Messages.Logging.RECEIVED_ADD_FRIENDSHIP_REQUEST, userToken, username);
 		

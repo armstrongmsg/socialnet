@@ -20,6 +20,7 @@ import com.armstrongmsg.socialnet.core.ApplicationFacade;
 import com.armstrongmsg.socialnet.exceptions.AuthenticationException;
 import com.armstrongmsg.socialnet.exceptions.FatalErrorException;
 import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
+import com.armstrongmsg.socialnet.model.FriendshipRequest;
 import com.armstrongmsg.socialnet.model.Post;
 import com.armstrongmsg.socialnet.model.PostVisibility;
 import com.armstrongmsg.socialnet.model.User;
@@ -389,6 +390,86 @@ public class IntegrationTest {
 		UserToken userToken = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
 		
 		facade.getFriends(userToken, userToken.getUserId());
+	}
+	
+	@Test
+	public void testAddFriendshipRequestAndReject() throws UnauthorizedOperationException, AuthenticationException {
+		UserToken adminToken = loginAsAdmin();
+		
+		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
+		facade.addUser(adminToken, NEW_USERNAME_2, NEW_USER_PASSWORD_2, NEW_USER_PROFILE_DESCRIPTION_2);
+		
+		UserToken userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
+		UserToken userToken2 = loginAsUser(NEW_USERNAME_2, NEW_USER_PASSWORD_2);
+		
+		assertTrue(facade.getSelfFriends(userToken1).isEmpty());
+		assertTrue(facade.getSelfFriends(userToken2).isEmpty());
+		
+		List<FriendshipRequest> requestsSentBefore = facade.getSentFriendshipRequests(userToken1);
+		List<FriendshipRequest> requestsReceivedBefore = facade.getReceivedFriendshipRequests(userToken2);
+		assertTrue(requestsSentBefore.isEmpty());
+		assertTrue(requestsReceivedBefore.isEmpty());
+		
+		facade.addFriendshipRequest(userToken1, NEW_USERNAME_2);
+		
+		List<FriendshipRequest> requestsSentAfter = facade.getSentFriendshipRequests(userToken1);
+		List<FriendshipRequest> requestsReceivedAfter = facade.getReceivedFriendshipRequests(userToken2);
+		assertEquals(1, requestsSentAfter.size());
+		assertEquals(NEW_USERNAME_1, requestsSentAfter.get(0).getRequester().getUsername());
+		assertEquals(NEW_USERNAME_2, requestsSentAfter.get(0).getRequested().getUsername());
+		assertEquals(1, requestsReceivedAfter.size());
+		assertEquals(NEW_USERNAME_1, requestsReceivedAfter.get(0).getRequester().getUsername());
+		assertEquals(NEW_USERNAME_2, requestsReceivedAfter.get(0).getRequested().getUsername());
+		
+		facade.rejectFriendshipRequest(userToken2, NEW_USERNAME_1);
+		
+		List<FriendshipRequest> requestsSentAfterReject = facade.getSentFriendshipRequests(userToken1);
+		List<FriendshipRequest> requestsReceivedAfterReject = facade.getReceivedFriendshipRequests(userToken2);
+		assertTrue(facade.getSelfFriends(userToken1).isEmpty());
+		assertTrue(facade.getSelfFriends(userToken2).isEmpty());
+		assertTrue(requestsSentAfterReject.isEmpty());
+		assertTrue(requestsReceivedAfterReject.isEmpty());
+	}
+	
+	@Test
+	public void testAddFriendshipRequestAndAccept() throws UnauthorizedOperationException, AuthenticationException {
+		UserToken adminToken = loginAsAdmin();
+		
+		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
+		facade.addUser(adminToken, NEW_USERNAME_2, NEW_USER_PASSWORD_2, NEW_USER_PROFILE_DESCRIPTION_2);
+		
+		UserToken userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
+		UserToken userToken2 = loginAsUser(NEW_USERNAME_2, NEW_USER_PASSWORD_2);
+		
+		assertTrue(facade.getSelfFriends(userToken1).isEmpty());
+		assertTrue(facade.getSelfFriends(userToken2).isEmpty());
+		
+		List<FriendshipRequest> requestsSentBefore = facade.getSentFriendshipRequests(userToken1);
+		List<FriendshipRequest> requestsReceivedBefore = facade.getReceivedFriendshipRequests(userToken2);
+		assertTrue(requestsSentBefore.isEmpty());
+		assertTrue(requestsReceivedBefore.isEmpty());
+		
+		facade.addFriendshipRequest(userToken1, NEW_USERNAME_2);
+		
+		List<FriendshipRequest> requestsSentAfter = facade.getSentFriendshipRequests(userToken1);
+		List<FriendshipRequest> requestsReceivedAfter = facade.getReceivedFriendshipRequests(userToken2);
+		assertEquals(1, requestsSentAfter.size());
+		assertEquals(NEW_USERNAME_1, requestsSentAfter.get(0).getRequester().getUsername());
+		assertEquals(NEW_USERNAME_2, requestsSentAfter.get(0).getRequested().getUsername());
+		assertEquals(1, requestsReceivedAfter.size());
+		assertEquals(NEW_USERNAME_1, requestsReceivedAfter.get(0).getRequester().getUsername());
+		assertEquals(NEW_USERNAME_2, requestsReceivedAfter.get(0).getRequested().getUsername());
+		
+		facade.acceptFriendshipRequest(userToken2, NEW_USERNAME_1);
+		
+		List<FriendshipRequest> requestsSentAfterAccept = facade.getSentFriendshipRequests(userToken1);
+		List<FriendshipRequest> requestsReceivedAfterAccept = facade.getReceivedFriendshipRequests(userToken2);
+		assertEquals(1, facade.getSelfFriends(userToken1).size());
+		assertEquals(NEW_USERNAME_2, facade.getSelfFriends(userToken1).get(0).getUsername());
+		assertEquals(1, facade.getSelfFriends(userToken2).size());
+		assertEquals(NEW_USERNAME_1, facade.getSelfFriends(userToken2).get(0).getUsername());
+		assertTrue(requestsSentAfterAccept.isEmpty());
+		assertTrue(requestsReceivedAfterAccept.isEmpty());
 	}
 	
 	@Test

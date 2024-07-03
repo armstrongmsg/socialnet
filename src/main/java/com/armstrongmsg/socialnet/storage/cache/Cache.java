@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.armstrongmsg.socialnet.model.Follow;
 import com.armstrongmsg.socialnet.model.Friendship;
+import com.armstrongmsg.socialnet.model.FriendshipRequest;
 import com.armstrongmsg.socialnet.model.Group;
 import com.armstrongmsg.socialnet.model.User;
 
@@ -26,4 +27,11 @@ public interface Cache {
 	List<Follow> getFollowsByUsername(String username);
 	void putFollow(Follow follow);
 	void putFollows(List<Follow> follows);
+	
+	void putFriendshipRequest(FriendshipRequest friendshipRequest);
+	void putFriendshipRequests(List<FriendshipRequest> requests);
+	List<FriendshipRequest> getSentFriendshipRequestsById(String userId);
+	List<FriendshipRequest> getReceivedFriendshipRequestsById(String userId);
+	FriendshipRequest getReceivedFriendshipRequestById(String userId, String username);
+	void removeFriendshipRequestById(String userId, String username);
 }

@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.armstrongmsg.socialnet.model.Follow;
 import com.armstrongmsg.socialnet.model.Friendship;
+import com.armstrongmsg.socialnet.model.FriendshipRequest;
 import com.armstrongmsg.socialnet.model.Group;
 import com.armstrongmsg.socialnet.model.User;
 
@@ -12,11 +13,13 @@ public class DefaultDatabaseManager implements DatabaseManager {
 	private List<User> users;
 	private List<Friendship> friendships;
 	private List<Follow> follows;
-
+	private List<FriendshipRequest> friendshipRequests;
+	
 	public DefaultDatabaseManager() {
 		this.users = new ArrayList<User>();
 		this.friendships = new ArrayList<Friendship>();
 		this.follows = new ArrayList<Follow>();
+		this.friendshipRequests = new ArrayList<FriendshipRequest>();
 	}
 
 	@Override
@@ -147,5 +150,54 @@ public class DefaultDatabaseManager implements DatabaseManager {
 	public void removeUserById(String userId) {
 		User userToRemove = getUserById(userId);
 		this.users.remove(userToRemove);
+	}
+
+	@Override
+	public void saveFriendshipRequest(FriendshipRequest friendshipRequest) {
+		this.friendshipRequests.add(friendshipRequest);
+	}
+
+	@Override
+	public List<FriendshipRequest> getSentFriendshipRequestsById(String userId) {
+		List<FriendshipRequest> requests = new ArrayList<FriendshipRequest>();
+		
+		for (FriendshipRequest request : this.friendshipRequests) {
+			if (request.getRequester().getUserId().equals(userId)) {
+				requests.add(request);
+			}
+		}
+		
+		return requests;
+	}
+
+	@Override
+	public List<FriendshipRequest> getReceivedFriendshipRequestsById(String userId) {
+		List<FriendshipRequest> requests = new ArrayList<FriendshipRequest>();
+		
+		for (FriendshipRequest request : this.friendshipRequests) {
+			if (request.getRequested().getUserId().equals(userId)) {
+				requests.add(request);
+			}
+		}
+		
+		return requests;
+	}
+
+	@Override
+	public FriendshipRequest getReceivedFriendshipRequestById(String userId, String username) {
+		for (FriendshipRequest request : this.friendshipRequests) {
+			if (request.getRequested().getUserId().equals(userId) && 
+					request.getRequester().getUsername().equals(username)) {
+				return request;
+			}
+		}
+		
+		return null;
+	}
+
+	@Override
+	public void removeFriendshipRequestById(String userId, String username) {
+		FriendshipRequest request = getReceivedFriendshipRequestById(userId, username);
+		this.friendshipRequests.remove(request);
 	}
 }

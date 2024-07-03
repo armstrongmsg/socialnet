@@ -9,6 +9,7 @@ import javax.faces.bean.RequestScoped;
 import com.armstrongmsg.socialnet.core.ApplicationFacade;
 import com.armstrongmsg.socialnet.exceptions.AuthenticationException;
 import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
+import com.armstrongmsg.socialnet.model.FriendshipRequest;
 import com.armstrongmsg.socialnet.model.authentication.UserToken;
 import com.armstrongmsg.socialnet.view.jsf.model.JsfConnector;
 import com.armstrongmsg.socialnet.view.jsf.model.User;
@@ -54,6 +55,76 @@ public class FriendshipBean {
 		try {
 			facade.addFriendship(SessionManager.getCurrentSession().getUserToken(), username);
 		} catch (UnauthorizedOperationException | AuthenticationException e) {
+			// FIXME treat this exception
+		}
+	}
+	
+	public void addFriendshipRequest() {
+		try {
+			facade.addFriendshipRequest(SessionManager.getCurrentSession().getUserToken(), username);
+		} catch (AuthenticationException e) {
+			// FIXME treat this exception
+		} catch (UnauthorizedOperationException e) {
+			// FIXME treat this exception
+		}
+	}
+	
+	public List<String> getSentFriendshipRequests() {
+		try {
+			List<FriendshipRequest> requests = 
+					facade.getSentFriendshipRequests(SessionManager.getCurrentSession().getUserToken());
+			List<String> usernames = new ArrayList<String>();
+			
+			for (FriendshipRequest request : requests) {
+				usernames.add(request.getRequested().getUsername());
+			}
+			
+			return usernames;
+		} catch (AuthenticationException e) {
+			// FIXME treat this exception
+		} catch (UnauthorizedOperationException e) {
+			// FIXME treat this exception
+		}
+		
+		return null;
+	}
+	
+	public List<String> getReceivedFriendshipRequests() {
+		try {
+			List<FriendshipRequest> requests = 
+					facade.getReceivedFriendshipRequests(SessionManager.getCurrentSession().getUserToken());
+			List<String> usernames = new ArrayList<String>();
+			
+			for (FriendshipRequest request : requests) {
+				usernames.add(request.getRequester().getUsername());
+			}
+			
+			return usernames;
+		} catch (AuthenticationException e) {
+			// FIXME treat this exception
+		} catch (UnauthorizedOperationException e) {
+			// FIXME treat this exception
+		}
+		
+		return null;
+	}
+	
+	public void accceptFriendshipRequest() {
+		try {
+			facade.acceptFriendshipRequest(SessionManager.getCurrentSession().getUserToken(), username);
+		} catch (AuthenticationException e) {
+			// FIXME treat this exception
+		} catch (UnauthorizedOperationException e) {
+			// FIXME treat this exception
+		}
+	}
+	
+	public void rejectFriendshipRequest() {
+		try {
+			facade.rejectFriendshipRequest(SessionManager.getCurrentSession().getUserToken(), username);
+		} catch (AuthenticationException e) {
+			// FIXME treat this exception
+		} catch (UnauthorizedOperationException e) {
 			// FIXME treat this exception
 		}
 	}
