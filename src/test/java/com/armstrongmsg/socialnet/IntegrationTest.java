@@ -527,6 +527,47 @@ public class IntegrationTest {
 	}
 	
 	@Test
+	public void testGetFeedPosts() throws AuthenticationException, UnauthorizedOperationException {
+		UserToken adminToken = loginAsAdmin();
+		
+		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
+		facade.addUser(adminToken, NEW_USERNAME_2, NEW_USER_PASSWORD_2, NEW_USER_PROFILE_DESCRIPTION_2);
+		
+		List<User> users = facade.getUsers(adminToken);
+		User user1 = users.get(0);
+		User user2 = users.get(1);
+		
+		UserToken userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);	
+		UserToken userToken2 = loginAsUser(NEW_USERNAME_2, NEW_USER_PASSWORD_2);
+		
+		facade.createPost(userToken2, NEW_POST_TITLE, NEW_POST_CONTENT, PostVisibility.PRIVATE);
+		facade.createPost(userToken2, NEW_POST_TITLE_2, NEW_POST_CONTENT_2, PostVisibility.PUBLIC);
+		
+		List<Post> posts = facade.getSelfPosts(userToken2);
+		
+		List<Post> postsBeforeFollow = facade.getFeedPosts(userToken1);
+		
+		assertTrue(postsBeforeFollow.isEmpty());
+		
+		facade.addFollowAdmin(adminToken, user1.getUserId(), user2.getUserId());
+		
+		List<Post> postsAfterFollow = facade.getFeedPosts(userToken1);
+		
+		assertEquals(1, postsAfterFollow.size());
+		assertTrue(postsAfterFollow.contains(posts.get(1)));
+		
+		assertEquals(NEW_POST_TITLE_2, postsAfterFollow.get(0).getTitle());
+		
+		facade.addFriendshipAdmin(adminToken, user1.getUserId(), user2.getUserId());
+		
+		List<Post> postsAfterFriendship = facade.getFeedPosts(userToken1);
+		
+		assertEquals(2, postsAfterFriendship.size());
+		assertTrue(postsAfterFriendship.contains(posts.get(0)));
+		assertTrue(postsAfterFriendship.contains(posts.get(1)));
+	}
+	
+	@Test
 	public void testAddFollowAdmin() throws UnauthorizedOperationException, AuthenticationException {
 		UserToken adminToken = loginAsAdmin();
 		

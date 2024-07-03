@@ -1,8 +1,10 @@
 package com.armstrongmsg.socialnet.model;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import org.slf4j.Logger;
@@ -319,6 +321,11 @@ public class Network {
 	public List<Post> getFriendsPosts(UserToken token) throws UnauthorizedOperationException, AuthenticationException {
 		User requester = findUserById(token.getUserId());
 		this.authorizationPlugin.authorize(requester, new Operation(OperationType.GET_FRIENDS_POSTS));
+		return doGetFriendsPosts(requester);
+	}
+	
+	// TODO refactor
+	private List<Post> doGetFriendsPosts(User requester) {
 		List<Friendship> userFriendships = this.storageFacade.getFriendshipsByUserId(requester.getUserId());
 		List<User> friends = new ArrayList<User>();
 		
@@ -339,6 +346,43 @@ public class Network {
 		}
 		
 		return friendsPosts;
+	}
+	
+	// TODO refactor
+	private List<Post> doGetFollowedPosts(User requester) {
+		List<Follow> follows = this.storageFacade.getFollowsByUserId(requester.getUserId());
+		List<User> followedUsers = new ArrayList<User>();
+		
+		for (Follow follow : follows) {
+			if (follow.getFollower().equals(requester)) {
+				followedUsers.add(follow.getFollowed());
+			}
+		}
+		
+		List<Post> followedUsersPublicPosts = new ArrayList<Post>();
+		
+		for (User followedUser : followedUsers) {
+			List<Post> followedUserPosts = followedUser.getProfile().getPosts();
+			
+			for (Post post : followedUserPosts) {
+				if (post.getVisibility().equals(PostVisibility.PUBLIC)) {
+					followedUsersPublicPosts.add(post);
+				}
+			}
+		}
+		
+		return followedUsersPublicPosts;
+	}
+	
+	public List<Post> getFeedPosts(UserToken token) throws AuthenticationException, UnauthorizedOperationException {
+		User requester = findUserById(token.getUserId());
+		this.authorizationPlugin.authorize(requester, new Operation(OperationType.GET_FEED_POSTS));
+		List<Post> friendsPosts = doGetFriendsPosts(requester);
+		List<Post> followedUsersPosts = doGetFollowedPosts(requester);
+		Set<Post> feedPosts = new HashSet<Post>();
+		feedPosts.addAll(friendsPosts);
+		feedPosts.addAll(followedUsersPosts);
+		return new ArrayList<Post>(feedPosts);
 	}
 
 	public List<Post> getUserPosts(UserToken token, String username) throws UnauthorizedOperationException, AuthenticationException {

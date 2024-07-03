@@ -27,6 +27,7 @@ public class PostBean {
 	
 	private List<Post> selfPosts;
 	private List<Post> friendsPosts;
+	private List<Post> feedPosts;
 	
 	private String username;
 	private List<Post> userPosts;
@@ -117,6 +118,21 @@ public class PostBean {
 		}
 		
 		return selfPosts;
+	}
+	
+	public List<Post> getFeedPosts() {
+		if (feedPosts == null) {
+			try {
+				feedPosts = new JsfConnector().getViewPosts(
+						facade.getFeedPosts(SessionManager.getCurrentSession().getUserToken()));
+			} catch (UnauthorizedOperationException e) {
+				// FIXME treat exception
+			} catch (AuthenticationException e) {
+				// FIXME treat exception
+			}
+		}
+		
+		return feedPosts;
 	}
 	
 	public List<Post> getFriendsPosts() {
