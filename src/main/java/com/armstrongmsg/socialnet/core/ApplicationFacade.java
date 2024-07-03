@@ -287,6 +287,20 @@ public class ApplicationFacade {
 		}
 	}
 
+	public void deletePost(UserToken token, String postId) throws AuthenticationException, UnauthorizedOperationException {
+		logger.debug(Messages.Logging.RECEIVED_DELETE_POST_REQUEST, token, postId);
+		
+		try {
+			this.network.deletePost(token, postId);
+		} catch (AuthenticationException e) {
+			logger.debug(Messages.Logging.AUTHENTICATION_EXCEPTION, e.getMessage());
+			throw e;
+		} catch (UnauthorizedOperationException e) {
+			logger.debug(Messages.Logging.AUTHORIZATION_EXCEPTION, e.getMessage());
+			throw e;
+		}
+	}
+
 	public void addFollow(UserToken userToken, String followedUsername) throws AuthenticationException, UnauthorizedOperationException {
 		logger.debug(Messages.Logging.RECEIVED_ADD_FOLLOW_REQUEST, userToken, followedUsername);
 		

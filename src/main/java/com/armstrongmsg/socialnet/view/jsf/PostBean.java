@@ -166,4 +166,16 @@ public class PostBean {
 		
 		return userPosts;
 	}
+	
+	public void deletePost() {
+		try {
+			facade.deletePost(SessionManager.getCurrentSession().getUserToken(), post.getId());
+			userPosts = new JsfConnector().getViewPosts(facade.getSelfPosts(
+					SessionManager.getCurrentSession().getUserToken()));
+		} catch (AuthenticationException e) {
+			// FIXME treat exception
+		} catch (UnauthorizedOperationException e) {
+			// FIXME treat exception
+		}
+	}
 }

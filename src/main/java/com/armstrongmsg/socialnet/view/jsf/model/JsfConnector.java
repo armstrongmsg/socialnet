@@ -34,7 +34,7 @@ public class JsfConnector {
 	}
 	
 	public Post getViewPost(com.armstrongmsg.socialnet.model.Post modelPost) {
-		return new Post(modelPost.getTitle(), toViewDate(modelPost.getDate()), 
+		return new Post(modelPost.getId(), modelPost.getTitle(), toViewDate(modelPost.getDate()), 
 				modelPost.getContent(), modelPost.getVisibility().getValue());
 	}
 	

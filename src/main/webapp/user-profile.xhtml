@@ -114,6 +114,12 @@ xmlns:f = "http://java.sun.com/jsf/core">
 				<br/>
 				<h:outputText value="#{post.content}" />
 			</h:column>
+			<h:column>
+				<h:commandButton value = "Delete" action = "#{postBean.deletePost}" rendered = "#{contextBean.isSelfProfile}">
+		   			<f:setPropertyActionListener 
+                     target = "#{postBean.post}" value = "#{post}" />
+        		</h:commandButton>
+			</h:column>
 		</h:dataTable>
       </h:form>
    </h:body>

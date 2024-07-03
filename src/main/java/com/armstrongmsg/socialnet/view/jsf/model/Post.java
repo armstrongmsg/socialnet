@@ -1,16 +1,26 @@
 package com.armstrongmsg.socialnet.view.jsf.model;
 
 public class Post {
+	private String id;
 	private String title;
 	private String date;
 	private String content;
 	private String visibility;
 	
-	public Post(String title, String date, String content, String visibility) {
+	public Post(String id, String title, String date, String content, String visibility) {
+		this.setId(id);
 		this.setTitle(title);
 		this.setDate(date);
 		this.setContent(content);
 		this.setVisibility(visibility);
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public String getTitle() {

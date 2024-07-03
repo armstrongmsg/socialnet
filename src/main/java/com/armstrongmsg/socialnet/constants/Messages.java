@@ -28,6 +28,7 @@ public class Messages {
 				"Received Add user admin request. Token: {}, username: {}, password: {}, profile desc:{}.";
 		public static final String RECEIVED_CREATE_POST_REQUEST = 
 				"Received Create post request. Token:{}, title:{}, content:{}, visibility:{}.";
+		public static final String RECEIVED_DELETE_POST_REQUEST = "Received delete post request. Token: {}, postId: {}.";
 		public static final String RECEIVED_FOLLOWS_REQUEST = "Received Follows request. Token:{}, User ID:{}.";
 		public static final String RECEIVED_GET_FEED_POSTS_REQUEST = "Received get feed posts request. Token: {}.";
 		public static final String RECEIVED_GET_FOLLOWED_USERS_REQUEST = "Received Get followed users request. Token:{}.";

@@ -126,6 +126,7 @@ public class Network {
 	public void createPost(UserToken userToken, String title, String content, PostVisibility newPostVisibility) throws AuthenticationException {
 		User user = findUserById(userToken.getUserId());
 		user.getProfile().createPost(title, content, newPostVisibility);
+		// FIXME should save the user
 	}
 
 	public List<Post> getUserPostsAdmin(UserToken userToken, String userId) throws UnauthorizedOperationException, AuthenticationException {
@@ -395,6 +396,23 @@ public class Network {
 		}
 		
 		return new ArrayList<Post>();
+	}
+	
+	public void deletePost(UserToken token, String postId) throws AuthenticationException, UnauthorizedOperationException {
+		User requester = findUserById(token.getUserId());
+		this.authorizationPlugin.authorize(requester, new Operation(OperationType.DELETE_POST));
+		
+		List<Post> posts = requester.getProfile().getPosts();
+		Post postToDelete = null;
+		
+		for (Post post : posts) {
+			if (post.getId().equals(postId)) {
+				postToDelete = post;
+			}
+		}
+		
+		posts.remove(postToDelete);
+		this.storageFacade.saveUser(requester);
 	}
 	
 	public UserToken login(Map<String, String> credentials) throws AuthenticationException {

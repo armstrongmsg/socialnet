@@ -568,6 +568,27 @@ public class IntegrationTest {
 	}
 	
 	@Test
+	public void testDeletePost() throws AuthenticationException, UnauthorizedOperationException {
+		UserToken adminToken = loginAsAdmin();
+		
+		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
+		
+		UserToken userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
+		facade.createPost(userToken1, NEW_POST_TITLE, NEW_POST_CONTENT, PostVisibility.PRIVATE);
+		
+		List<Post> postsBeforeDelete = facade.getSelfPosts(userToken1);
+		
+		assertEquals(1, postsBeforeDelete.size());
+		assertEquals(NEW_POST_TITLE, postsBeforeDelete.get(0).getTitle());
+		
+		facade.deletePost(userToken1, postsBeforeDelete.get(0).getId());
+		
+		List<Post> postsAfterDelete = facade.getSelfPosts(userToken1);
+		
+		assertTrue(postsAfterDelete.isEmpty());
+	}
+	
+	@Test
 	public void testAddFollowAdmin() throws UnauthorizedOperationException, AuthenticationException {
 		UserToken adminToken = loginAsAdmin();
 		
