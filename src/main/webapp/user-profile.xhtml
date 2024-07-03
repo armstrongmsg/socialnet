@@ -98,7 +98,11 @@ xmlns:f = "http://java.sun.com/jsf/core">
 			rowClasses="usersTableOddRow,usersTableEvenRow">
 
 			<h:column>
-				<h:outputText value="Posted on #{post.date} -> #{post.title} - #{post.content}" />
+				<h:outputText value="Posted on #{post.date}" />
+				<br/>
+				<h:outputText value="#{post.title}" />
+				<br/>
+				<h:outputText value="#{post.content}" />
 			</h:column>
 		</h:dataTable>
       </h:form>
