@@ -499,4 +499,21 @@ public class Network {
 			}
 		}
 	}
+
+	public void unfriend(UserToken userToken, String username) throws AuthenticationException, UnauthorizedOperationException {
+		User requester = findUserById(userToken.getUserId());
+		this.authorizationPlugin.authorize(requester, new Operation(OperationType.UNFRIEND));
+		
+		List<Friendship> friendships = this.storageFacade.getFriendshipsByUserId(requester.getUserId());
+		
+		for (Friendship friendship : friendships) {
+			if (friendship.getFriend1().getUsername().equals(username)) {
+				this.storageFacade.removeFriendship(friendship);
+			}
+			
+			if (friendship.getFriend2().getUsername().equals(username)) {
+				this.storageFacade.removeFriendship(friendship);
+			}
+		}
+	}
 }

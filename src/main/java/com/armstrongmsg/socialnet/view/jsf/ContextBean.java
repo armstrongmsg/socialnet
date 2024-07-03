@@ -230,4 +230,19 @@ public class ContextBean {
 		
 		return false;
 	}
+	
+	public boolean getIsFriend() {
+		try {
+			UserToken loggedUserToken = SessionManager.getCurrentSession().getUserToken();
+			List<UserSummary> friends = new JsfConnector().getViewUserSummaries(
+					facade.getSelfFriends(loggedUserToken));
+			return friends.contains(SessionManager.getCurrentSession().getCurrentViewUser());
+		} catch (AuthenticationException e) {
+			// FIXME treat this exception
+		} catch (UnauthorizedOperationException e) {
+			// FIXME treat this exception
+		}
+		
+		return false;
+	}
 }

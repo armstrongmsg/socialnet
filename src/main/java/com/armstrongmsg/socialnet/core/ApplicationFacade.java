@@ -398,4 +398,18 @@ public class ApplicationFacade {
 			throw e;
 		}
 	}
+
+	public void unfriend(UserToken userToken, String username) throws AuthenticationException, UnauthorizedOperationException {
+		logger.debug(Messages.Logging.RECEIVED_UNFRIEND_REQUEST, userToken, username);
+		
+		try {
+			this.network.unfriend(userToken, username);
+		} catch (AuthenticationException e) {
+			logger.debug(Messages.Logging.AUTHENTICATION_EXCEPTION, e.getMessage());
+			throw e;
+		} catch (UnauthorizedOperationException e) {
+			logger.debug(Messages.Logging.AUTHORIZATION_EXCEPTION, e.getMessage());
+			throw e;
+		}
+	}
 }

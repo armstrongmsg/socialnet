@@ -155,4 +155,15 @@ public class FriendshipBean {
 			return new ArrayList<UserSummary>();
 		}
 	}
+	
+	public void unfriend() {
+		try {
+			UserToken token = SessionManager.getCurrentSession().getUserToken();
+			facade.unfriend(token, username);
+		} catch (AuthenticationException e) {
+			// FIXME treat exception
+		} catch (UnauthorizedOperationException e) {
+			// FIXME treat exception
+		}
+	}
 }

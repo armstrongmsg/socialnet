@@ -48,6 +48,7 @@ public class Messages {
 		public static final String RECEIVED_REJECT_FRIENDSHIP_REQUEST = "Received reject friendship request. Token:{}, userId:{}.";
 		public static final String RECEIVED_REMOVE_USER_ADMIN_REQUEST = "Received Remove user admin request. Token: {}, userId: {}.";
 		public static final String RECEIVED_UNFOLLOW_REQUEST = "Received unfollow request. Token: {}, username: {}.";
+		public static final String RECEIVED_UNFRIEND_REQUEST = "Received unfriend request. Token:{}, username: {}.";
 		public static final String RECEIVED_USER_IS_ADMIN_REQUEST = "Received User is Admin request. User ID: {}.";
 	}
 	

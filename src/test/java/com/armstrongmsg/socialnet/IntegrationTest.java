@@ -786,6 +786,33 @@ public class IntegrationTest {
 		assertTrue(followsAfter.isEmpty());
 	}
 	
+	@Test
+	public void testUnfriend() throws AuthenticationException, UnauthorizedOperationException {
+		UserToken adminToken = loginAsAdmin();
+		
+		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
+		facade.addUser(adminToken, NEW_USERNAME_2, NEW_USER_PASSWORD_2, NEW_USER_PROFILE_DESCRIPTION_2);
+		
+		List<User> users = facade.getUsers(adminToken);
+		User user1 = users.get(0);
+		User user2 = users.get(1);
+		
+		UserToken userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
+		
+		facade.addFriendshipAdmin(adminToken, user1.getUserId(), user2.getUserId());
+		
+		List<UserSummary> friendsBefore = facade.getSelfFriends(userToken1);
+		
+		assertEquals(1, friendsBefore.size());
+		assertEquals(NEW_USERNAME_2, friendsBefore.get(0).getUsername());
+		
+		facade.unfriend(userToken1, NEW_USERNAME_2);
+		
+		List<UserSummary> friendsAfter = facade.getSelfFriends(userToken1);
+		
+		assertTrue(friendsAfter.isEmpty());		
+	}
+	
 	private UserToken loginAsAdmin() throws AuthenticationException {
 		Map<String, String> adminCredentials = new HashMap<String, String>();
 		adminCredentials.put(AuthenticationParameters.USERNAME_KEY, ADMIN_USERNAME);

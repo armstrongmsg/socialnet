@@ -109,6 +109,11 @@ public class DefaultCache implements Cache {
 	}
 
 	@Override
+	public void removeFriendship(Friendship friendship) {
+		this.friendships.remove(friendship);
+	}
+
+	@Override
 	public List<Follow> getFollowsByUserId(String userId) {
 		List<Follow> follows = new ArrayList<Follow>();
 		

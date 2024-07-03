@@ -59,6 +59,11 @@ xmlns:f = "http://java.sun.com/jsf/core">
                      target = "#{friendshipBean.username}" value = "#{contextBean.viewUser.username}" />
         </h:commandButton>
         
+        <h:commandButton value = "Unfriend" action = "#{friendshipBean.unfriend}" rendered = "#{contextBean.isFriend}">
+		   <f:setPropertyActionListener 
+                     target = "#{friendshipBean.username}" value = "#{contextBean.viewUser.username}" />
+        </h:commandButton>
+        
         <h:commandButton value = "Follow" action = "#{followBean.addFollow}" rendered = "#{contextBean.canFollow}">
 		   <f:setPropertyActionListener
                      target = "#{followBean.username}" value = "#{contextBean.viewUser.username}" />

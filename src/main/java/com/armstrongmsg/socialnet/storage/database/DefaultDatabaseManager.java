@@ -101,6 +101,11 @@ public class DefaultDatabaseManager implements DatabaseManager {
 	public void saveFriendship(Friendship friendship) {
 		this.friendships.add(friendship);
 	}
+	
+	@Override
+	public void removeFriendship(Friendship friendship) {
+		this.friendships.remove(friendship);
+	}
 
 	@Override
 	public List<Follow> getFollowsByUserId(String userId) {

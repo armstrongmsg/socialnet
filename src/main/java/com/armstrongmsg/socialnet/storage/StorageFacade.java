@@ -186,4 +186,9 @@ public class StorageFacade {
 		cache.removeFollow(follow);
 		databaseManager.removeFollow(follow);
 	}
+
+	public void removeFriendship(Friendship friendship) {
+		cache.removeFriendship(friendship);
+		databaseManager.removeFriendship(friendship);
+	}
 }
