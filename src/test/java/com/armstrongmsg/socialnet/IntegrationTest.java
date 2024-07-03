@@ -759,6 +759,33 @@ public class IntegrationTest {
 		assertFalse(facade.follows(userToken2, NEW_USERNAME_2));
 	}
 	
+	@Test
+	public void testUnfollow() throws AuthenticationException, UnauthorizedOperationException {
+		UserToken adminToken = loginAsAdmin();
+		
+		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
+		facade.addUser(adminToken, NEW_USERNAME_2, NEW_USER_PASSWORD_2, NEW_USER_PROFILE_DESCRIPTION_2);
+		
+		List<User> users = facade.getUsers(adminToken);
+		User user1 = users.get(0);
+		User user2 = users.get(1);
+		
+		UserToken userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
+		
+		facade.addFollowAdmin(adminToken, user1.getUserId(), user2.getUserId());
+		
+		List<UserSummary> followsBefore = facade.getFollowedUsers(userToken1);
+		
+		assertEquals(1, followsBefore.size());
+		assertEquals(NEW_USERNAME_2, followsBefore.get(0).getUsername());
+		
+		facade.unfollow(userToken1, NEW_USERNAME_2);
+		
+		List<UserSummary> followsAfter = facade.getFollowedUsers(userToken1);
+		
+		assertTrue(followsAfter.isEmpty());
+	}
+	
 	private UserToken loginAsAdmin() throws AuthenticationException {
 		Map<String, String> adminCredentials = new HashMap<String, String>();
 		adminCredentials.put(AuthenticationParameters.USERNAME_KEY, ADMIN_USERNAME);

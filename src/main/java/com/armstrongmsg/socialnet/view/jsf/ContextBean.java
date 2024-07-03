@@ -215,4 +215,19 @@ public class ContextBean {
 		
 		return false;
 	}
+	
+	public boolean getIsFollowed() {
+		try {
+			UserToken loggedUserToken = SessionManager.getCurrentSession().getUserToken();
+			List<UserSummary> followedUsers = new JsfConnector().getViewUserSummaries(
+					facade.getFollowedUsers(loggedUserToken));
+			return followedUsers.contains(SessionManager.getCurrentSession().getCurrentViewUser());
+		} catch (AuthenticationException e) {
+			// FIXME treat this exception
+		} catch (UnauthorizedOperationException e) {
+			// FIXME treat this exception
+		}
+		
+		return false;
+	}
 }

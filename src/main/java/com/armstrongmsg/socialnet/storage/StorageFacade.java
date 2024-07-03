@@ -181,4 +181,9 @@ public class StorageFacade {
 		cache.removeFriendshipRequestById(userId, username);
 		databaseManager.removeFriendshipRequestById(userId, username);
 	}
+
+	public void removeFollow(Follow follow) {
+		cache.removeFollow(follow);
+		databaseManager.removeFollow(follow);
+	}
 }

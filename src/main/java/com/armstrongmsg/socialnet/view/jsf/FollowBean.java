@@ -95,4 +95,15 @@ public class FollowBean {
 			return new ArrayList<UserSummary>();
 		}
 	}
+	
+	public void unfollow() {
+		try {
+			UserToken token = SessionManager.getCurrentSession().getUserToken();
+			facade.unfollow(token, username);
+		} catch (AuthenticationException e) {
+			// FIXME treat exception
+		} catch (UnauthorizedOperationException e) {
+			// FIXME treat exception
+		}
+	}
 }

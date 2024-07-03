@@ -486,4 +486,17 @@ public class Network {
 		
 		return false;
 	}
+
+	public void unfollow(UserToken userToken, String username) throws AuthenticationException, UnauthorizedOperationException {
+		User requester = findUserById(userToken.getUserId());
+		this.authorizationPlugin.authorize(requester, new Operation(OperationType.UNFOLLOW));
+		
+		List<Follow> follows = this.storageFacade.getFollowsByUserId(requester.getUserId());
+		
+		for (Follow follow : follows) {
+			if (follow.getFollowed().getUsername().equals(username)) {
+				this.storageFacade.removeFollow(follow);
+			}
+		}
+	}
 }

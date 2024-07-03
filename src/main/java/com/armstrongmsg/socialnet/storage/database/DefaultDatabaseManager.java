@@ -142,6 +142,11 @@ public class DefaultDatabaseManager implements DatabaseManager {
 	}
 
 	@Override
+	public void removeFollow(Follow follow) {
+		this.follows.remove(follow);
+	}
+	
+	@Override
 	public List<User> getAllUsers() {
 		return this.users;
 	}

@@ -26,6 +26,7 @@ public interface DatabaseManager {
 	List<Follow> getFollowsByUsername(String username);
 	void saveFollow(Follow follow);
 	List<User> getAllUsers();
+	void removeFollow(Follow follow);
 	
 	void saveFriendshipRequest(FriendshipRequest friendshipRequest);
 	List<FriendshipRequest> getSentFriendshipRequestsById(String userId);

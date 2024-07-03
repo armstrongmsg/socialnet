@@ -63,6 +63,11 @@ xmlns:f = "http://java.sun.com/jsf/core">
 		   <f:setPropertyActionListener
                      target = "#{followBean.username}" value = "#{contextBean.viewUser.username}" />
         </h:commandButton>
+        
+        <h:commandButton value = "Unfollow" action = "#{followBean.unfollow}" rendered = "#{contextBean.isFollowed}">
+		   <f:setPropertyActionListener
+                     target = "#{followBean.username}" value = "#{contextBean.viewUser.username}" />
+        </h:commandButton>
       </h:form>
 
 	  <h:form>

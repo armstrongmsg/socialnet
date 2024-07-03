@@ -152,6 +152,11 @@ public class DefaultCache implements Cache {
 		this.follows.addAll(follows);
 	}
 
+	@Override
+	public void removeFollow(Follow follow) {
+		this.follows.remove(follow);
+	}
+	
 	public List<User> getUsers() {
 		return users;
 	}

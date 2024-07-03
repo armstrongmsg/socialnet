@@ -27,6 +27,7 @@ public interface Cache {
 	List<Follow> getFollowsByUsername(String username);
 	void putFollow(Follow follow);
 	void putFollows(List<Follow> follows);
+	void removeFollow(Follow follow);
 	
 	void putFriendshipRequest(FriendshipRequest friendshipRequest);
 	void putFriendshipRequests(List<FriendshipRequest> requests);
