@@ -28,6 +28,7 @@ import com.armstrongmsg.socialnet.model.UserSummary;
 import com.armstrongmsg.socialnet.model.authentication.DefaultAuthenticationPlugin;
 import com.armstrongmsg.socialnet.model.authentication.UserToken;
 import com.armstrongmsg.socialnet.model.authorization.DefaultAuthorizationPlugin;
+import com.armstrongmsg.socialnet.model.feed.DefaultFeedPolicy;
 import com.armstrongmsg.socialnet.storage.StorageFacade;
 import com.armstrongmsg.socialnet.storage.cache.DefaultCache;
 import com.armstrongmsg.socialnet.storage.database.DatabaseManager;
@@ -49,6 +50,11 @@ public class IntegrationTest {
 	private static final PostVisibility NEW_POST_VISIBILITY_2 = PostVisibility.PRIVATE;
 	private static final String NEW_POST_TITLE_2 = "new-post-title-2";
 	private static final String NEW_POST_CONTENT_2 = "new-post-content-2";
+	private static final String NEW_POST_TITLE_3 = "new-post-title-3";
+	private static final String NEW_POST_CONTENT_3 = "new-post-content-3";
+	private static final String NEW_POST_TITLE_4 = "new-post-title-4";
+	private static final String NEW_POST_CONTENT_4 = "new-post-content-4";
+	private static final String MAX_NUMBER_OF_POSTS = "2";
 	private ApplicationFacade facade;
 	private StorageFacade storageFacade;
 	private DefaultCache cache;
@@ -74,11 +80,15 @@ public class IntegrationTest {
 			thenReturn(DefaultAuthenticationPlugin.class.getCanonicalName());
 		Mockito.when(propertiesUtil.getProperty(ConfigurationProperties.AUTHORIZATION_PLUGIN_CLASS_NAME)).
 			thenReturn(DefaultAuthorizationPlugin.class.getCanonicalName());
+		Mockito.when(propertiesUtil.getProperty(ConfigurationProperties.FEED_POLICY_CLASS_NAME)).
+			thenReturn(DefaultFeedPolicy.class.getCanonicalName());
+		Mockito.when(propertiesUtil.getProperty(ConfigurationProperties.MAX_NUMBER_OF_POSTS)).
+			thenReturn(MAX_NUMBER_OF_POSTS);
 		Mockito.when(propertiesUtil.getProperty("BOOTSTRAP")).
 			thenReturn("false");
 	
 		propertiesUtilMock = Mockito.mockStatic(PropertiesUtil.class);
-		Mockito.when(PropertiesUtil.getInstance()).thenReturn(propertiesUtil);
+		Mockito.when(PropertiesUtil.getInstance()).thenReturn(propertiesUtil).thenReturn(propertiesUtil);
 		
 		facade = ApplicationFacade.getInstance(storageFacade);
 	}
@@ -527,7 +537,7 @@ public class IntegrationTest {
 	}
 	
 	@Test
-	public void testGetFeedPosts() throws AuthenticationException, UnauthorizedOperationException {
+	public void testGetFeedPosts() throws AuthenticationException, UnauthorizedOperationException, InterruptedException {
 		UserToken adminToken = loginAsAdmin();
 		
 		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
@@ -540,10 +550,16 @@ public class IntegrationTest {
 		UserToken userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);	
 		UserToken userToken2 = loginAsUser(NEW_USERNAME_2, NEW_USER_PASSWORD_2);
 		
-		facade.createPost(userToken2, NEW_POST_TITLE, NEW_POST_CONTENT, PostVisibility.PRIVATE);
+		facade.createPost(userToken2, NEW_POST_TITLE, NEW_POST_CONTENT, PostVisibility.PUBLIC);
+		
+		Thread.sleep(5);
 		facade.createPost(userToken2, NEW_POST_TITLE_2, NEW_POST_CONTENT_2, PostVisibility.PUBLIC);
 		
-		List<Post> posts = facade.getSelfPosts(userToken2);
+		Thread.sleep(5);
+		facade.createPost(userToken2, NEW_POST_TITLE_3, NEW_POST_CONTENT_3, PostVisibility.PUBLIC);
+		
+		Thread.sleep(5);
+		facade.createPost(userToken2, NEW_POST_TITLE_4, NEW_POST_CONTENT_4, PostVisibility.PRIVATE);
 		
 		List<Post> postsBeforeFollow = facade.getFeedPosts(userToken1);
 		
@@ -553,18 +569,19 @@ public class IntegrationTest {
 		
 		List<Post> postsAfterFollow = facade.getFeedPosts(userToken1);
 		
-		assertEquals(1, postsAfterFollow.size());
-		assertTrue(postsAfterFollow.contains(posts.get(1)));
+		assertEquals(2, postsAfterFollow.size());
 		
-		assertEquals(NEW_POST_TITLE_2, postsAfterFollow.get(0).getTitle());
+		assertEquals(NEW_POST_TITLE_3, postsAfterFollow.get(0).getTitle());
+		assertEquals(NEW_POST_TITLE_2, postsAfterFollow.get(1).getTitle());
 		
 		facade.addFriendshipAdmin(adminToken, user1.getUserId(), user2.getUserId());
 		
 		List<Post> postsAfterFriendship = facade.getFeedPosts(userToken1);
 		
 		assertEquals(2, postsAfterFriendship.size());
-		assertTrue(postsAfterFriendship.contains(posts.get(0)));
-		assertTrue(postsAfterFriendship.contains(posts.get(1)));
+		
+		assertEquals(NEW_POST_TITLE_4, postsAfterFriendship.get(0).getTitle());
+		assertEquals(NEW_POST_TITLE_3, postsAfterFriendship.get(1).getTitle());
 	}
 	
 	@Test

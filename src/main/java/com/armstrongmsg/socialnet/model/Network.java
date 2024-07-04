@@ -1,18 +1,16 @@
 package com.armstrongmsg.socialnet.model;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.armstrongmsg.socialnet.constants.ConfigurationProperties;
-import com.armstrongmsg.socialnet.constants.Messages;
 import com.armstrongmsg.socialnet.constants.ConfigurationPropertiesDefaults;
+import com.armstrongmsg.socialnet.constants.Messages;
 import com.armstrongmsg.socialnet.exceptions.AuthenticationException;
 import com.armstrongmsg.socialnet.exceptions.FatalErrorException;
 import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
@@ -22,6 +20,7 @@ import com.armstrongmsg.socialnet.model.authorization.AuthorizationPlugin;
 import com.armstrongmsg.socialnet.model.authorization.Operation;
 import com.armstrongmsg.socialnet.model.authorization.OperationOnUser;
 import com.armstrongmsg.socialnet.model.authorization.OperationType;
+import com.armstrongmsg.socialnet.model.feed.FeedPolicy;
 import com.armstrongmsg.socialnet.storage.StorageFacade;
 import com.armstrongmsg.socialnet.util.ClassFactory;
 import com.armstrongmsg.socialnet.util.PropertiesUtil;
@@ -30,6 +29,7 @@ public class Network {
 	private Admin admin;
 	private AuthenticationPlugin authenticationPlugin;
 	private AuthorizationPlugin authorizationPlugin;
+	private FeedPolicy feedPolicy;
 	private StorageFacade storageFacade;
 	
 	private static Logger logger = LoggerFactory.getLogger(Network.class);
@@ -57,6 +57,7 @@ public class Network {
 		ClassFactory classFactory = new ClassFactory();
 		String authenticationPluginClassName = properties.getProperty(ConfigurationProperties.AUTHENTICATION_PLUGIN_CLASS_NAME);
 		String authorizationPluginClassName = properties.getProperty(ConfigurationProperties.AUTHORIZATION_PLUGIN_CLASS_NAME);
+		String feedPolicyClassName = properties.getProperty(ConfigurationProperties.FEED_POLICY_CLASS_NAME);
 		
 		logger.info(Messages.Logging.LOADING_AUTHENTICATION_PLUGIN);
 		
@@ -69,6 +70,10 @@ public class Network {
 		AuthorizationPlugin authorizationPlugin = (AuthorizationPlugin) 
 				classFactory.createInstance(authorizationPluginClassName, this.storageFacade);
 		authorizationPlugin.setUp(admin);
+		
+		logger.info(Messages.Logging.LOADING_FEED_POLICY);
+		
+		this.feedPolicy = (FeedPolicy) classFactory.createInstance(feedPolicyClassName);
 		
 		this.admin = admin;
 		this.authenticationPlugin = authenticationPlugin;
@@ -380,10 +385,10 @@ public class Network {
 		this.authorizationPlugin.authorize(requester, new Operation(OperationType.GET_FEED_POSTS));
 		List<Post> friendsPosts = doGetFriendsPosts(requester);
 		List<Post> followedUsersPosts = doGetFollowedPosts(requester);
-		Set<Post> feedPosts = new HashSet<Post>();
-		feedPosts.addAll(friendsPosts);
-		feedPosts.addAll(followedUsersPosts);
-		return new ArrayList<Post>(feedPosts);
+		List<Post> feedCandidatePosts = new ArrayList<Post>();
+		feedCandidatePosts.addAll(friendsPosts);
+		feedCandidatePosts.addAll(followedUsersPosts);
+		return this.feedPolicy.filter(feedCandidatePosts);
 	}
 
 	public List<Post> getUserPosts(UserToken token, String username) throws UnauthorizedOperationException, AuthenticationException {

@@ -14,6 +14,7 @@ public class Messages {
 		public static final String LOADING_AUTHORIZATION_PLUGIN = "Loading authorization plugin";
 		public static final String LOADING_CACHE_CONFIGURATION = "Loading cache configuration {}.";
 		public static final String LOADING_DATABASE_MANAGER_CONFIGURATION = "Loading database manager configuration {}";
+		public static final String LOADING_FEED_POLICY = "Loading feed policy.";
 		public static final String NO_CACHE_CONFIGURATION = "No cache configuration. Using default.";
 		public static final String NO_DATABASE_MANAGER_CONFIGURATION = "No database manager configuration. Using default.";
 		public static final String RECEIVED_LOGIN_REQUEST = "Received login request.";
