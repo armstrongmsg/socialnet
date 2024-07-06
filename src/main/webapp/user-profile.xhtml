@@ -41,28 +41,24 @@ xmlns:f = "http://java.sun.com/jsf/core">
 
 	<hr />
 
-	<h:form>
+	  <h:form>
         <td><h:outputText value = "#{contextBean.viewUser.username}" /></td>
-      </h:form>
-      
-      <hr />
-      
-      <h:form>
-        <td><h:outputText value = "#{contextBean.viewUser.profileDescription}" /></td>
-      </h:form>
-      
-      <hr />
-      
-      <h:form>
+        
+        <br/>
+        
         <h:commandButton value = "Add as friend" action = "#{friendshipBean.addFriendshipRequest}" rendered = "#{contextBean.canAddAsFriend}">
 		   <f:setPropertyActionListener 
                      target = "#{friendshipBean.username}" value = "#{contextBean.viewUser.username}" />
         </h:commandButton>
         
+        <h:outputText value = "Friend request sent" rendered = "#{contextBean.friendRequestIsSent}"/>
+        
         <h:commandButton value = "Unfriend" action = "#{friendshipBean.unfriend}" rendered = "#{contextBean.isFriend}">
 		   <f:setPropertyActionListener 
                      target = "#{friendshipBean.username}" value = "#{contextBean.viewUser.username}" />
         </h:commandButton>
+        
+        <br/>
         
         <h:commandButton value = "Follow" action = "#{followBean.addFollow}" rendered = "#{contextBean.canFollow}">
 		   <f:setPropertyActionListener
@@ -73,17 +69,22 @@ xmlns:f = "http://java.sun.com/jsf/core">
 		   <f:setPropertyActionListener
                      target = "#{followBean.username}" value = "#{contextBean.viewUser.username}" />
         </h:commandButton>
+        
       </h:form>
-
-	  <h:form>
-        <h:outputText value = "Friend request sent" rendered = "#{contextBean.friendRequestIsSent}"/>
-	  </h:form>        
+      
+      <hr />
+      
+      <h:form>
+      	<h:outputText value = "Bio" />
+      	<br/>
+        <h:outputText value = "#{contextBean.viewUser.profileDescription}" />
+      </h:form>
       
       <h:form rendered = "#{contextBean.isSelfProfile}">
       	<hr />
-      	<h:inputText value = "#{postBean.title}" size = "20"/>
+      	<h:inputText value = "#{postBean.title}" size = "100"/>
       	<br/>
-        <h:inputTextarea row = "30" col = "10" value = "#{postBean.content}" />
+        <h:inputTextarea rows = "10" cols = "100" value = "#{postBean.content}" />
         <br/>
         <table>
 			<tr>

@@ -50,7 +50,7 @@
 
 	<hr />
 
-	  Sent friendship requests waiting approval
+	 Sent friendship requests waiting approval
 
 	     <h:form>
 			<h:dataTable value="#{friendshipBean.sentFriendshipRequests}" var="username"
@@ -65,7 +65,7 @@
 
 	  <br/>
 
-	  Received friendship requests waiting approval
+	 Received friendship requests waiting approval
 	  
 	     <h:form>
 			<h:dataTable value="#{friendshipBean.receivedFriendshipRequests}" var="username"
@@ -78,24 +78,26 @@
 					<h:commandButton action="#{friendshipBean.accceptFriendshipRequest}"
 						value="Accept">
 						<f:setPropertyActionListener
-                     		target = "#{friendshipBean.username}" value = "#{username}" />
+	                    		target = "#{friendshipBean.username}" value = "#{username}" />
 					</h:commandButton>
 					
 					<h:commandButton action="#{friendshipBean.rejectFriendshipRequest}"
 						value="Reject">
 						<f:setPropertyActionListener
-                     		target = "#{friendshipBean.username}" value = "#{username}" />
+	                    		target = "#{friendshipBean.username}" value = "#{username}" />
 					</h:commandButton>
 				</h:column>
 			</h:dataTable>
 		</h:form>
 
-	  <br/>
+	<hr />
+
+	<br/>
 
 	<h:form>
-      	<h:inputText value = "#{postBean.title}" size = "20"/>
+      	<h:inputText value = "#{postBean.title}" size = "100"/>
       	<br/>
-        <h:inputTextarea row = "30" col = "10" value = "#{postBean.content}" />
+        <h:inputTextarea rows = "10" cols = "100" value = "#{postBean.content}" />
         <br/>
         <table>
 			<tr>
@@ -112,7 +114,7 @@
 		</table>
       </h:form>
 
-	  <br/>
+	  <hr />
 
       Feed
       
