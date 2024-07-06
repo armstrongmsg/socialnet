@@ -5,6 +5,7 @@ import java.util.Map;
 import com.armstrongmsg.socialnet.constants.AuthenticationParameters;
 import com.armstrongmsg.socialnet.constants.Messages;
 import com.armstrongmsg.socialnet.exceptions.AuthenticationException;
+import com.armstrongmsg.socialnet.exceptions.UserNotFoundException;
 import com.armstrongmsg.socialnet.model.Admin;
 import com.armstrongmsg.socialnet.model.User;
 import com.armstrongmsg.socialnet.storage.StorageFacade;
@@ -31,7 +32,11 @@ public class DefaultAuthenticationPlugin implements AuthenticationPlugin {
 		if (admin.getUsername().equals(userId)) {
 			user = admin;
 		} else {
-			user = this.storageFacade.getUserByUsername(userId);
+			try {
+				user = this.storageFacade.getUserByUsername(userId);
+			} catch (UserNotFoundException e) {
+				throw new AuthenticationException(String.format(Messages.Exception.COULD_NOT_FIND_USER, userId));
+			}
 		}
 
 		if (user != null && user.getPassword().equals(password)) {

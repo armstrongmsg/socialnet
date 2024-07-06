@@ -14,6 +14,7 @@ import com.armstrongmsg.socialnet.constants.Messages;
 import com.armstrongmsg.socialnet.exceptions.AuthenticationException;
 import com.armstrongmsg.socialnet.exceptions.FatalErrorException;
 import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
+import com.armstrongmsg.socialnet.exceptions.UserNotFoundException;
 import com.armstrongmsg.socialnet.model.authentication.AuthenticationPlugin;
 import com.armstrongmsg.socialnet.model.authentication.UserToken;
 import com.armstrongmsg.socialnet.model.authorization.AuthorizationPlugin;
@@ -111,21 +112,24 @@ public class Network {
 	public void removeUser(UserToken userToken, String userId) throws UnauthorizedOperationException, AuthenticationException {
 		User requester = findUserById(userToken.getUserId());
 		this.authorizationPlugin.authorize(requester, new Operation(OperationType.REMOVE_USER));
-		this.storageFacade.removeUserById(userId);
+		try {
+			this.storageFacade.removeUserById(userId);
+		} catch (UserNotFoundException e) {
+			// TODO treat this exception
+		}
 	}
 
+	// FIXME at this point it should throw UserNotFoundException
 	private User findUserById(String userId) throws AuthenticationException {
 		if (admin.getUserId().equals(userId)) {
 			return admin;
 		}
-		
-		User user = this.storageFacade.getUserById(userId);
-		
-		if (user != null) {
-			return user;
+
+		try {
+			return this.storageFacade.getUserById(userId);
+		} catch (UserNotFoundException e) {
+			throw new AuthenticationException(String.format(Messages.Exception.COULD_NOT_FIND_USER, userId));
 		}
-		
-		throw new AuthenticationException(String.format(Messages.Exception.COULD_NOT_FIND_USER, userId));
 	}
 
 	public void createPost(UserToken userToken, String title, String content, PostVisibility newPostVisibility) throws AuthenticationException {
@@ -424,18 +428,17 @@ public class Network {
 		return this.authenticationPlugin.authenticate(credentials);
 	}
 
+	// FIXME at this point it should throw UserNotFoundException
 	private User findUserByUsername(String username) throws AuthenticationException {
 		if (admin.getUsername().equals(username)) {
 			return admin;
 		}
 		
-		User user = this.storageFacade.getUserByUsername(username);
-		
-		if (user != null) {
-			return user;
+		try {
+			return this.storageFacade.getUserByUsername(username);
+		} catch (UserNotFoundException e) {
+			throw new AuthenticationException(String.format(Messages.Exception.COULD_NOT_FIND_USER, username)); 
 		}
-
-		throw new AuthenticationException(String.format(Messages.Exception.COULD_NOT_FIND_USER, username));
 	}
 
 	public List<UserSummary> getUserSummaries(UserToken token) throws UnauthorizedOperationException, AuthenticationException {

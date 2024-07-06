@@ -3,6 +3,7 @@ package com.armstrongmsg.socialnet.storage.database;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.armstrongmsg.socialnet.exceptions.UserNotFoundException;
 import com.armstrongmsg.socialnet.model.Follow;
 import com.armstrongmsg.socialnet.model.Friendship;
 import com.armstrongmsg.socialnet.model.FriendshipRequest;
@@ -23,25 +24,25 @@ public class DefaultDatabaseManager implements DatabaseManager {
 	}
 
 	@Override
-	public User getUserById(String id) {
+	public User getUserById(String id) throws UserNotFoundException {
 		for (User user : this.users) {
 			if (user.getUserId().equals(id)) {
 				return user;
 			}
 		}
 
-		return null;
+		throw new UserNotFoundException(id);
 	}
 
 	@Override
-	public User getUserByUsername(String username) {
+	public User getUserByUsername(String username) throws UserNotFoundException {
 		for (User user : this.users) {
 			if (user.getUsername().equals(username)) {
 				return user;
 			}
 		}
 		
-		return null;
+		throw new UserNotFoundException(username);
 	}
 
 	@Override
@@ -157,7 +158,7 @@ public class DefaultDatabaseManager implements DatabaseManager {
 	}
 
 	@Override
-	public void removeUserById(String userId) {
+	public void removeUserById(String userId) throws UserNotFoundException {
 		User userToRemove = getUserById(userId);
 		this.users.remove(userToRemove);
 	}

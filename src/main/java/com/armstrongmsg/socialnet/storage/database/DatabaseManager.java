@@ -2,6 +2,7 @@ package com.armstrongmsg.socialnet.storage.database;
 
 import java.util.List;
 
+import com.armstrongmsg.socialnet.exceptions.UserNotFoundException;
 import com.armstrongmsg.socialnet.model.Follow;
 import com.armstrongmsg.socialnet.model.Friendship;
 import com.armstrongmsg.socialnet.model.FriendshipRequest;
@@ -10,9 +11,9 @@ import com.armstrongmsg.socialnet.model.User;
 
 public interface DatabaseManager {
 	void saveUser(User user);
-	User getUserById(String userId);
-	User getUserByUsername(String username);
-	void removeUserById(String userId);
+	User getUserById(String userId) throws UserNotFoundException;
+	User getUserByUsername(String username) throws UserNotFoundException;
+	void removeUserById(String userId) throws UserNotFoundException;
 
 	Group getGroupById(String groupId);
 	Group getGroupByName(String groupName);

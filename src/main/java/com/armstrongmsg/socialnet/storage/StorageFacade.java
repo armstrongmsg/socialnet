@@ -2,6 +2,7 @@ package com.armstrongmsg.socialnet.storage;
 
 import java.util.List;
 
+import com.armstrongmsg.socialnet.exceptions.UserNotFoundException;
 import com.armstrongmsg.socialnet.model.Follow;
 import com.armstrongmsg.socialnet.model.Friendship;
 import com.armstrongmsg.socialnet.model.FriendshipRequest;
@@ -24,7 +25,7 @@ public class StorageFacade {
 		databaseManager.saveUser(user);
 	}
 
-	public User getUserById(String userId) {
+	public User getUserById(String userId) throws UserNotFoundException {
 		User user = cache.getUserById(userId);
 		
 		if (user == null) {
@@ -35,7 +36,7 @@ public class StorageFacade {
 		return user;
 	}
 	
-	public User getUserByUsername(String username) {
+	public User getUserByUsername(String username) throws UserNotFoundException {
 		User user = cache.getUserByUsername(username);
 		
 		if (user == null) {
@@ -133,7 +134,7 @@ public class StorageFacade {
 		return databaseManager.getAllUsers();
 	}
 
-	public void removeUserById(String userId) {
+	public void removeUserById(String userId) throws UserNotFoundException {
 		cache.removeUserById(userId);
 		databaseManager.removeUserById(userId);
 	}

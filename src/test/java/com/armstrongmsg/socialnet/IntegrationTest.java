@@ -2,6 +2,7 @@ package com.armstrongmsg.socialnet;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.HashMap;
@@ -9,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.MockedStatic;
@@ -113,6 +115,14 @@ public class IntegrationTest {
 		facade.login(adminIncorrectCredentials);
 	}
 	
+	@Test(expected = AuthenticationException.class)
+	public void testLoginAsInvalidUser() throws AuthenticationException {
+		Map<String, String> invalidUserCredentials = new HashMap<String, String>();
+		invalidUserCredentials.put(AuthenticationParameters.USERNAME_KEY, "invalid_user");
+		invalidUserCredentials.put(AuthenticationParameters.PASSWORD_KEY, "incorrect password");
+		facade.login(invalidUserCredentials);
+	}
+	
 	@Test
 	public void testGetCreateRemoveUserByAdmin() throws AuthenticationException, UnauthorizedOperationException {
 		UserToken adminToken = loginAsAdmin();
@@ -144,6 +154,30 @@ public class IntegrationTest {
 		List<User> usersAfterRemoval = facade.getUsers(adminToken);
 		
 		assertEquals(1, usersAfterRemoval.size());
+	}
+	
+	@Test
+	public void testLoginWorksCorrectlyAfterAttemptLoginWithInvalidUser() throws AuthenticationException, UnauthorizedOperationException {
+		UserToken adminToken = loginAsAdmin();
+		
+		List<User> users = facade.getUsers(adminToken);
+		
+		assertTrue(users.isEmpty());
+		
+		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
+		
+		Map<String, String> invalidUserCredentials = new HashMap<String, String>();
+		invalidUserCredentials.put(AuthenticationParameters.USERNAME_KEY, "invalid_user");
+		invalidUserCredentials.put(AuthenticationParameters.PASSWORD_KEY, "incorrect password");
+		
+		try {
+			facade.login(invalidUserCredentials);
+			Assert.fail("Expected exception.");
+		} catch (AuthenticationException e) {
+
+		}
+		
+		assertNotNull(loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1));
 	}
 	
 	@Test(expected = UnauthorizedOperationException.class)
