@@ -1,5 +1,6 @@
 package com.armstrongmsg.socialnet.model;
 
+import java.util.Objects;
 import java.util.UUID;
 
 import javax.persistence.Column;
@@ -88,5 +89,22 @@ public class Post implements Comparable<Post> {
 		} else {
 			return 0;
 		}
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Post other = (Post) obj;
+		return Objects.equals(id, other.id);
 	}
 }

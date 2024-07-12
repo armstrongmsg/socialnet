@@ -114,23 +114,6 @@ public class InMemoryDatabaseManager implements DatabaseManager {
 	}
 
 	@Override
-	public List<Follow> getFollowsByUsername(String username) {
-		List<Follow> follows = new ArrayList<Follow>();
-
-		for (Follow follow : this.follows) {
-			if (follow.getFollowed().getUsername().equals(username)) {
-				follows.add(follow);
-			}
-
-			if (follow.getFollower().getUsername().equals(username)) {
-				follows.add(follow);
-			}
-		}
-
-		return follows;
-	}
-
-	@Override
 	public void saveFollow(Follow follow) {
 		this.follows.add(follow);
 	}

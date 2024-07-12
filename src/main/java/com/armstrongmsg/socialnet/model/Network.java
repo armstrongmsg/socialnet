@@ -421,7 +421,7 @@ public class Network {
 		}
 		
 		posts.remove(postToDelete);
-		this.storageFacade.saveUser(requester);
+		this.storageFacade.updateUser(requester);
 	}
 	
 	public UserToken login(Map<String, String> credentials) throws AuthenticationException {

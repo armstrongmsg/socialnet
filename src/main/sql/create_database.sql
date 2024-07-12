@@ -24,3 +24,10 @@ create table friendships (
 	);
 alter table friendships add constraint "friendships_friend1_fk" foreign key ("friend1_userid") references "users" ("userid");
 alter table friendships add constraint "friendships_friend2_fk" foreign key ("friend2_userid") references "users" ("userid");
+create table follows (
+	id VARCHAR(100) PRIMARY KEY,
+	follower_userid VARCHAR(100),
+	followed_userid VARCHAR(100)
+	);
+alter table follows add constraint "follows_follower_fk" foreign key ("follower_userid") references "users" ("userid");
+alter table follows add constraint "follows_followed_fk" foreign key ("followed_userid") references "users" ("userid");

@@ -9,23 +9,25 @@ import com.armstrongmsg.socialnet.model.Friendship;
 import com.armstrongmsg.socialnet.model.FriendshipRequest;
 import com.armstrongmsg.socialnet.model.Group;
 import com.armstrongmsg.socialnet.model.User;
+import com.armstrongmsg.socialnet.storage.database.repository.DefaultFollowRepository;
 import com.armstrongmsg.socialnet.storage.database.repository.DefaultFriendshipRepository;
 import com.armstrongmsg.socialnet.storage.database.repository.DefaultUserRepository;
+import com.armstrongmsg.socialnet.storage.database.repository.FollowRepository;
 import com.armstrongmsg.socialnet.storage.database.repository.FriendshipRepository;
 import com.armstrongmsg.socialnet.storage.database.repository.UserRepository;
 
 public class DefaultDatabaseManager implements DatabaseManager {
 	private List<Friendship> friendships;
-	private List<Follow> follows;
 	private List<FriendshipRequest> friendshipRequests;
 	private UserRepository userRepository;
 	private FriendshipRepository friendshipRepository;
+	private FollowRepository followRepository;
 	
 	public DefaultDatabaseManager() {
 		this.userRepository = new DefaultUserRepository();
 		this.friendshipRepository = new DefaultFriendshipRepository();
+		this.followRepository = new DefaultFollowRepository();
 		this.friendships = new ArrayList<Friendship>();
-		this.follows = new ArrayList<Follow>();
 		this.friendshipRequests = new ArrayList<FriendshipRequest>();
 	}
 
@@ -102,46 +104,17 @@ public class DefaultDatabaseManager implements DatabaseManager {
 
 	@Override
 	public List<Follow> getFollowsByUserId(String userId) {
-		List<Follow> follows = new ArrayList<Follow>();
-		
-		for (Follow follow : this.follows) {
-			if (follow.getFollowed().getUserId().equals(userId)) {
-				follows.add(follow);
-			}
-			
-			if (follow.getFollower().getUserId().equals(userId)) {
-				follows.add(follow);
-			}
-		}
-		
-		return follows;
-	}
-
-	@Override
-	public List<Follow> getFollowsByUsername(String username) {
-		List<Follow> follows = new ArrayList<Follow>();
-		
-		for (Follow follow : this.follows) {
-			if (follow.getFollowed().getUsername().equals(username)) {
-				follows.add(follow);
-			}
-			
-			if (follow.getFollower().getUsername().equals(username)) {
-				follows.add(follow);
-			}
-		}
-		
-		return follows;
+		return this.followRepository.getFollowsByUserId(userId);
 	}
 
 	@Override
 	public void saveFollow(Follow follow) {
-		this.follows.add(follow);
+		this.followRepository.saveFollow(follow);
 	}
 
 	@Override
 	public void removeFollow(Follow follow) {
-		this.follows.remove(follow);
+		this.followRepository.removeFollow(follow);
 	}
 
 	@Override

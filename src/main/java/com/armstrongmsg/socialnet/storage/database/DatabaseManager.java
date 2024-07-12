@@ -23,7 +23,6 @@ public interface DatabaseManager {
 	void saveFriendship(Friendship friendship);
 	
 	List<Follow> getFollowsByUserId(String userId);
-	List<Follow> getFollowsByUsername(String username);
 	void saveFollow(Follow follow);
 	List<User> getAllUsers();
 	void removeFollow(Follow follow);
