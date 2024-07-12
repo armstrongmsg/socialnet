@@ -1,12 +1,10 @@
 package com.armstrongmsg.socialnet.model;
 
-import java.util.GregorianCalendar;
-
 public class GroupPost extends Post {
 	private User author;
 	
-	public GroupPost(User author, String title, GregorianCalendar date, String content, PostVisibility visibility) {
-		super(title, date, content, visibility);
+	public GroupPost(User author, String title, long timestamp, String content, PostVisibility visibility) {
+		super(title, timestamp, content, visibility);
 		this.author = author;
 	}
 

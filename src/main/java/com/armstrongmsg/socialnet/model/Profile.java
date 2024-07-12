@@ -1,11 +1,22 @@
 package com.armstrongmsg.socialnet.model;
 
-import java.util.GregorianCalendar;
 import java.util.List;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+import javax.persistence.OneToMany;
+
+@Embeddable
 public class Profile {
+	@Column
 	private String description;
+	@OneToMany(cascade={CascadeType.ALL})
 	private List<Post> posts;
+	
+	public Profile() {
+		
+	}
 	
 	public Profile(String description, List<Post> posts) {
 		this.description = description;
@@ -25,10 +36,7 @@ public class Profile {
 	}
 
 	public void createPost(String title, String content, PostVisibility newPostVisibility) {
-		GregorianCalendar postCreationTime = new GregorianCalendar();
-		postCreationTime.setTimeInMillis(System.currentTimeMillis());
-		
-		Post newPost = new Post(title, postCreationTime, content, newPostVisibility);
+		Post newPost = new Post(title, System.currentTimeMillis(), content, newPostVisibility);
 		posts.add(newPost);
 	}
 }

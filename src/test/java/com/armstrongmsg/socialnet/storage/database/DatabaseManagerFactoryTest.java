@@ -25,18 +25,18 @@ public class DatabaseManagerFactoryTest {
 	public void testLoadCacheFromConfiguration() throws FatalErrorException {
 		PropertiesUtil propertiesUtil = Mockito.mock(PropertiesUtil.class);
 		Mockito.when(propertiesUtil.getProperty(ConfigurationProperties.DATABASE_MANAGER_CLASS_NAME)).
-			thenReturn(DefaultDatabaseManager.class.getCanonicalName());
+			thenReturn(InMemoryDatabaseManager.class.getCanonicalName());
 	
 		propertiesUtilMock = Mockito.mockStatic(PropertiesUtil.class);
 		Mockito.when(PropertiesUtil.getInstance()).thenReturn(propertiesUtil);
 		
 		DatabaseManager returnedInstance = dbManagerFactory.loadDatabaseManagerFromConfiguration();
 		
-		assertTrue(returnedInstance instanceof DefaultDatabaseManager);
+		assertTrue(returnedInstance instanceof InMemoryDatabaseManager);
 	}
 	
 	@After
-	public void TearDown() {
+	public void tearDown() {
 		propertiesUtilMock.close();
 	}
 }

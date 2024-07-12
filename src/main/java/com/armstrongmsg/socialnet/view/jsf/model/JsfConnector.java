@@ -23,7 +23,9 @@ public class JsfConnector {
 		return newViewUsers;
 	}
 	
-	private String toViewDate(GregorianCalendar calendar) {
+	private String toViewDate(long timestamp) {
+		GregorianCalendar calendar = new GregorianCalendar();
+		calendar.setTimeInMillis(timestamp);
 		return String.format("%02d/%02d/%04d - %02d:%02d:%02d", 
 				calendar.get(Calendar.DAY_OF_MONTH),
 				calendar.get(Calendar.MONTH), 
@@ -34,7 +36,7 @@ public class JsfConnector {
 	}
 	
 	public Post getViewPost(com.armstrongmsg.socialnet.model.Post modelPost) {
-		return new Post(modelPost.getId(), modelPost.getTitle(), toViewDate(modelPost.getDate()), 
+		return new Post(modelPost.getId(), modelPost.getTitle(), toViewDate(modelPost.getTimestamp()), 
 				modelPost.getContent(), modelPost.getVisibility().getValue());
 	}
 	

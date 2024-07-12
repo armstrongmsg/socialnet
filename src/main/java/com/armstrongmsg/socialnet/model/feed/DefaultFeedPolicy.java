@@ -26,6 +26,6 @@ public class DefaultFeedPolicy implements FeedPolicy {
 		NavigableSet<Post> postsWithNoDuplicates = new TreeSet<Post>(posts);
 		NavigableSet<Post> postsInReverseOrder = postsWithNoDuplicates.descendingSet();
 		return new ArrayList<Post>(postsInReverseOrder).
-				subList(0, Math.min(maxNumberOfPosts, posts.size()));
+				subList(0, Math.min(maxNumberOfPosts, postsInReverseOrder.size()));
 	}
 }

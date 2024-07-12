@@ -1,19 +1,38 @@
 package com.armstrongmsg.socialnet.model;
 
-import java.util.GregorianCalendar;
 import java.util.UUID;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "Posts")
 public class Post implements Comparable<Post> {
+	@Id
+	@Column(name = "id")
 	private String id;
+	@Column
 	private String title;
-	private GregorianCalendar date;
+	@Column
+	private long timestamp;
+	@Column
 	private String content;
+	@Column
+	@Enumerated(EnumType.STRING)
 	private PostVisibility visibility;
 	
-	public Post(String title, GregorianCalendar date, String content, PostVisibility visibility) {
-		this.setId(UUID.randomUUID().toString());
+	public Post() {
+		
+	}
+	
+	public Post(String title, long timestamp, String content, PostVisibility visibility) {
+		this.id = UUID.randomUUID().toString();
 		this.title = title;
-		this.date = date;
+		this.timestamp = timestamp;
 		this.content = content;
 		this.visibility = visibility;
 	}
@@ -34,14 +53,14 @@ public class Post implements Comparable<Post> {
 		this.title = title;
 	}
 
-	public GregorianCalendar getDate() {
-		return date;
+	public long getTimestamp() {
+		return timestamp;
 	}
 
-	public void setDate(GregorianCalendar date) {
-		this.date = date;
+	public void setTimestamp(long timestamp) {
+		this.timestamp = timestamp;
 	}
-
+	
 	public String getContent() {
 		return content;
 	}
@@ -60,7 +79,7 @@ public class Post implements Comparable<Post> {
 
 	@Override
 	public int compareTo(Post o) {
-		long diff = this.getDate().getTimeInMillis() - o.getDate().getTimeInMillis();
+		long diff = this.getTimestamp() - o.getTimestamp();
 		
 		if (diff < 0) {
 			return -1;

@@ -34,7 +34,7 @@ import com.armstrongmsg.socialnet.model.feed.DefaultFeedPolicy;
 import com.armstrongmsg.socialnet.storage.StorageFacade;
 import com.armstrongmsg.socialnet.storage.cache.DefaultCache;
 import com.armstrongmsg.socialnet.storage.database.DatabaseManager;
-import com.armstrongmsg.socialnet.storage.database.DefaultDatabaseManager;
+import com.armstrongmsg.socialnet.storage.database.InMemoryDatabaseManager;
 import com.armstrongmsg.socialnet.util.PropertiesUtil;
 
 public class IntegrationTest {
@@ -68,7 +68,7 @@ public class IntegrationTest {
 		ApplicationFacade.reset();
 		
 		this.cache = new DefaultCache();
-		this.databaseManager = new DefaultDatabaseManager();
+		this.databaseManager = new InMemoryDatabaseManager();
 				
 		storageFacade = new StorageFacade(this.cache, this.databaseManager);
 		
