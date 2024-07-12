@@ -66,6 +66,28 @@ public class DefaultUserRepository implements UserRepository {
 			emf.close();
 		}
 	}
+	
+	@Override
+	public void updateUser(User user) {
+		EntityManagerFactory emf = Persistence.createEntityManagerFactory("default");
+		EntityManager em = emf.createEntityManager();
+		
+		try {
+			em.getTransaction().begin();
+			boolean committed = false;
+			try {
+				em.merge(user);
+				em.getTransaction().commit();
+				committed = true;
+			} finally {
+				if (!committed)
+					em.getTransaction().rollback();
+			}
+		} finally {
+			em.close();
+			emf.close();
+		}
+	}
 
 	@Override
 	public List<User> getAllUsers() {

@@ -53,6 +53,11 @@ public class DefaultDatabaseManager implements DatabaseManager {
 	}
 	
 	@Override
+	public void updateUser(User user) {
+		this.userRepository.updateUser(user);
+	}
+	
+	@Override
 	public List<User> getAllUsers() {
 		return this.userRepository.getAllUsers();
 	}

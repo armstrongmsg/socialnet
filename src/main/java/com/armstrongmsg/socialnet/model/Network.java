@@ -135,7 +135,7 @@ public class Network {
 	public void createPost(UserToken userToken, String title, String content, PostVisibility newPostVisibility) throws AuthenticationException {
 		User user = findUserById(userToken.getUserId());
 		user.getProfile().createPost(title, content, newPostVisibility);
-		this.storageFacade.saveUser(user);
+		this.storageFacade.updateUser(user);
 	}
 
 	public List<Post> getUserPostsAdmin(UserToken userToken, String userId) throws UnauthorizedOperationException, AuthenticationException {

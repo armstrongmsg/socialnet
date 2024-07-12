@@ -49,6 +49,11 @@ public class InMemoryDatabaseManager implements DatabaseManager {
 	public void saveUser(User user) {
 		this.users.add(user);
 	}
+	
+	@Override
+	public void updateUser(User user) {
+		
+	}
 
 	@Override
 	public Group getGroupById(String id) {
