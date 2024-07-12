@@ -87,23 +87,6 @@ public class InMemoryDatabaseManager implements DatabaseManager {
 	}
 
 	@Override
-	public List<Friendship> getFriendshipsByUsername(String username) {
-		List<Friendship> friendships = new ArrayList<Friendship>();
-
-		for (Friendship friendship : this.friendships) {
-			if (friendship.getFriend1().getUsername().equals(username)) {
-				friendships.add(friendship);
-			}
-
-			if (friendship.getFriend2().getUsername().equals(username)) {
-				friendships.add(friendship);
-			}
-		}
-
-		return friendships;
-	}
-
-	@Override
 	public void saveFriendship(Friendship friendship) {
 		this.friendships.add(friendship);
 	}

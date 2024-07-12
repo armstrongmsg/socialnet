@@ -9,7 +9,9 @@ import com.armstrongmsg.socialnet.model.Friendship;
 import com.armstrongmsg.socialnet.model.FriendshipRequest;
 import com.armstrongmsg.socialnet.model.Group;
 import com.armstrongmsg.socialnet.model.User;
+import com.armstrongmsg.socialnet.storage.database.repository.DefaultFriendshipRepository;
 import com.armstrongmsg.socialnet.storage.database.repository.DefaultUserRepository;
+import com.armstrongmsg.socialnet.storage.database.repository.FriendshipRepository;
 import com.armstrongmsg.socialnet.storage.database.repository.UserRepository;
 
 public class DefaultDatabaseManager implements DatabaseManager {
@@ -17,9 +19,11 @@ public class DefaultDatabaseManager implements DatabaseManager {
 	private List<Follow> follows;
 	private List<FriendshipRequest> friendshipRequests;
 	private UserRepository userRepository;
+	private FriendshipRepository friendshipRepository;
 	
 	public DefaultDatabaseManager() {
 		this.userRepository = new DefaultUserRepository();
+		this.friendshipRepository = new DefaultFriendshipRepository();
 		this.friendships = new ArrayList<Friendship>();
 		this.follows = new ArrayList<Follow>();
 		this.friendshipRequests = new ArrayList<FriendshipRequest>();
@@ -83,41 +87,12 @@ public class DefaultDatabaseManager implements DatabaseManager {
 
 	@Override
 	public List<Friendship> getFriendshipsByUserId(String userId) {
-		List<Friendship> friendships = new ArrayList<Friendship>();
-		
-		for (Friendship friendship : this.friendships) {
-			if (friendship.getFriend1().getUserId().equals(userId)) {
-				friendships.add(friendship);
-			}
-			
-			if (friendship.getFriend2().getUserId().equals(userId)) {
-				friendships.add(friendship);
-			}
-		}
-		
-		return friendships;
-	}
-
-	@Override
-	public List<Friendship> getFriendshipsByUsername(String username) {
-		List<Friendship> friendships = new ArrayList<Friendship>();
-		
-		for (Friendship friendship : this.friendships) {
-			if (friendship.getFriend1().getUsername().equals(username)) {
-				friendships.add(friendship);
-			}
-			
-			if (friendship.getFriend2().getUsername().equals(username)) {
-				friendships.add(friendship);
-			}
-		}
-		
-		return friendships;
+		return this.friendshipRepository.getFriendshipsByUserId(userId);
 	}
 
 	@Override
 	public void saveFriendship(Friendship friendship) {
-		this.friendships.add(friendship);
+		this.friendshipRepository.saveFriendship(friendship);
 	}
 	
 	@Override

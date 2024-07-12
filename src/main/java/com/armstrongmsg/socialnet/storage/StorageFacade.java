@@ -90,17 +90,6 @@ public class StorageFacade {
 		
 		return friendships;
 	}
-	
-	public List<Friendship> getFriendshipsByUsername(String username) {
-		List<Friendship> friendships = cache.getFriendshipsByUserId(username);
-		
-		if (friendships == null) {
-			friendships = databaseManager.getFriendshipsByUsername(username);
-			cache.putFriendships(friendships);
-		}
-		
-		return friendships;
-	}
 
 	// FIXME should save to database before putting on the cache
 	public void saveFriendship(Friendship friendship) {

@@ -1,10 +1,26 @@
 package com.armstrongmsg.socialnet.model;
 
+import java.util.UUID;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "Friendships")
 public class Friendship extends Relationship {
+	@Column
+	@Id
+	private String id;
+	@OneToOne
 	private User friend1;
+	@OneToOne
 	private User friend2;
 	
 	public Friendship(User friend1, User friend2) {
+		this.id = UUID.randomUUID().toString();
 		this.friend1 = friend1;
 		this.friend2 = friend2;
 	}

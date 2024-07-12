@@ -20,7 +20,6 @@ public interface DatabaseManager {
 	void saveGroup(Group group);
 
 	List<Friendship> getFriendshipsByUserId(String userId);
-	List<Friendship> getFriendshipsByUsername(String username);
 	void saveFriendship(Friendship friendship);
 	
 	List<Follow> getFollowsByUserId(String userId);
