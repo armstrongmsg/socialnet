@@ -1,3 +1,5 @@
+#!/bin/bash
+
 source conf/properties
 
 echo "Creating docker network."

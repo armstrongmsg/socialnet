@@ -9,7 +9,7 @@ docker rm socialnet &>> $BUILD_LOG_FILE
 echo "Removing socialnet image."
 docker rmi socialnet:$VERSION &>> $BUILD_LOG_FILE
 
-bash reset_db.sh
+source deploy/reset_db.sh
 
 echo "Removing docker network."
 docker network rm socialnet-net &>> $BUILD_LOG_FILE
