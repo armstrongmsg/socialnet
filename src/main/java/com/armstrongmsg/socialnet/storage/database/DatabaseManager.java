@@ -31,7 +31,7 @@ public interface DatabaseManager {
 	List<FriendshipRequest> getSentFriendshipRequestsById(String userId);
 	List<FriendshipRequest> getReceivedFriendshipRequestsById(String userId);
 	FriendshipRequest getReceivedFriendshipRequestById(String userId, String username);
-	void removeFriendshipRequestById(String userId, String username);
+	void removeFriendshipRequestById(FriendshipRequest friendshipRequest);
 	void removeFriendship(Friendship friendship);
 	void updateUser(User user);
 }

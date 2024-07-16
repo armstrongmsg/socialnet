@@ -106,10 +106,10 @@ public class NoOperationCache implements Cache {
 	}
 
 	@Override
-	public void removeFriendshipRequestById(String userId, String username) {
+	public void removeFriendship(Friendship friendship) {
 	}
 
 	@Override
-	public void removeFriendship(Friendship friendship) {
+	public void removeFriendshipRequestById(FriendshipRequest friendshipRequest) {
 	}
 }

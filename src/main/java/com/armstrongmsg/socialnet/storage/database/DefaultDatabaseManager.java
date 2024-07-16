@@ -1,6 +1,5 @@
 package com.armstrongmsg.socialnet.storage.database;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.armstrongmsg.socialnet.exceptions.UserNotFoundException;
@@ -11,22 +10,24 @@ import com.armstrongmsg.socialnet.model.Group;
 import com.armstrongmsg.socialnet.model.User;
 import com.armstrongmsg.socialnet.storage.database.repository.DefaultFollowRepository;
 import com.armstrongmsg.socialnet.storage.database.repository.DefaultFriendshipRepository;
+import com.armstrongmsg.socialnet.storage.database.repository.DefaultFriendshipRequestRepository;
 import com.armstrongmsg.socialnet.storage.database.repository.DefaultUserRepository;
 import com.armstrongmsg.socialnet.storage.database.repository.FollowRepository;
 import com.armstrongmsg.socialnet.storage.database.repository.FriendshipRepository;
+import com.armstrongmsg.socialnet.storage.database.repository.FriendshipRequestRepository;
 import com.armstrongmsg.socialnet.storage.database.repository.UserRepository;
 
 public class DefaultDatabaseManager implements DatabaseManager {
-	private List<FriendshipRequest> friendshipRequests;
 	private UserRepository userRepository;
 	private FriendshipRepository friendshipRepository;
 	private FollowRepository followRepository;
+	private FriendshipRequestRepository friendshipRequestsRepository;
 	
 	public DefaultDatabaseManager() {
 		this.userRepository = new DefaultUserRepository();
 		this.friendshipRepository = new DefaultFriendshipRepository();
 		this.followRepository = new DefaultFollowRepository();
-		this.friendshipRequests = new ArrayList<FriendshipRequest>();
+		this.friendshipRequestsRepository = new DefaultFriendshipRequestRepository();
 	}
 
 	@Override
@@ -117,50 +118,26 @@ public class DefaultDatabaseManager implements DatabaseManager {
 
 	@Override
 	public void saveFriendshipRequest(FriendshipRequest friendshipRequest) {
-		this.friendshipRequests.add(friendshipRequest);
+		this.friendshipRequestsRepository.add(friendshipRequest);
 	}
 
 	@Override
 	public List<FriendshipRequest> getSentFriendshipRequestsById(String userId) {
-		List<FriendshipRequest> requests = new ArrayList<FriendshipRequest>();
-		
-		for (FriendshipRequest request : this.friendshipRequests) {
-			if (request.getRequester().getUserId().equals(userId)) {
-				requests.add(request);
-			}
-		}
-		
-		return requests;
+		return this.friendshipRequestsRepository.getSentFriendshipRequestsById(userId);
 	}
 
 	@Override
-	public List<FriendshipRequest> getReceivedFriendshipRequestsById(String userId) {
-		List<FriendshipRequest> requests = new ArrayList<FriendshipRequest>();
-		
-		for (FriendshipRequest request : this.friendshipRequests) {
-			if (request.getRequested().getUserId().equals(userId)) {
-				requests.add(request);
-			}
-		}
-		
-		return requests;
+	public List<FriendshipRequest> getReceivedFriendshipRequestsById(String userId) {	
+		return this.friendshipRequestsRepository.getReceivedFriendshipRequestsById(userId);
 	}
 
 	@Override
-	public FriendshipRequest getReceivedFriendshipRequestById(String userId, String username) {
-		for (FriendshipRequest request : this.friendshipRequests) {
-			if (request.getRequested().getUserId().equals(userId) && 
-					request.getRequester().getUsername().equals(username)) {
-				return request;
-			}
-		}
-		
-		return null;
+	public FriendshipRequest getReceivedFriendshipRequestById(String userId, String username) {		
+		return this.friendshipRequestsRepository.getReceivedFriendshipRequestById(userId, username);
 	}
 
 	@Override
-	public void removeFriendshipRequestById(String userId, String username) {
-		FriendshipRequest request = getReceivedFriendshipRequestById(userId, username);
-		this.friendshipRequests.remove(request);
+	public void removeFriendshipRequestById(FriendshipRequest friendshipRequest) {
+		this.friendshipRequestsRepository.removeFriendshipRequest(friendshipRequest);
 	}
 }

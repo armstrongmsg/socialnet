@@ -197,7 +197,7 @@ public class Network {
 		
 		User friend = findUserByUsername(username);
 		this.storageFacade.saveFriendship(new Friendship(requester, friend));
-		this.storageFacade.removeFriendshipRequest(requester.getUserId(), username);
+		this.storageFacade.removeFriendshipRequest(request);
 	}
 	
 	public void rejectFriendshipRequest(UserToken userToken, String username) throws AuthenticationException, UnauthorizedOperationException {
@@ -211,7 +211,7 @@ public class Network {
 					String.format(Messages.Exception.FRIENDSHIP_REQUEST_NOT_FOUND, userToken, username));
 		}
 		
-		this.storageFacade.removeFriendshipRequest(requester.getUserId(), username);
+		this.storageFacade.removeFriendshipRequest(request);
 	}
 	
 	public void addFriendship(UserToken userToken, String username) throws UnauthorizedOperationException, AuthenticationException {

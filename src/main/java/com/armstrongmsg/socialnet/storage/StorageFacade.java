@@ -160,9 +160,9 @@ public class StorageFacade {
 		return request;
 	}
 
-	public void removeFriendshipRequest(String userId, String username) {
-		cache.removeFriendshipRequestById(userId, username);
-		databaseManager.removeFriendshipRequestById(userId, username);
+	public void removeFriendshipRequest(FriendshipRequest friendshipRequest) {
+		cache.removeFriendshipRequestById(friendshipRequest);
+		databaseManager.removeFriendshipRequestById(friendshipRequest);
 	}
 
 	public void removeFollow(Follow follow) {

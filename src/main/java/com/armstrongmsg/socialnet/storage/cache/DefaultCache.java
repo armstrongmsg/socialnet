@@ -216,8 +216,9 @@ public class DefaultCache implements Cache {
 	}
 
 	@Override
-	public void removeFriendshipRequestById(String userId, String username) {
-		FriendshipRequest request = getReceivedFriendshipRequestById(userId, username);
+	public void removeFriendshipRequestById(FriendshipRequest friendshipRequest) {
+		FriendshipRequest request = getReceivedFriendshipRequestById(friendshipRequest.getRequested().getUserId(), 
+				friendshipRequest.getRequester().getUsername());
 		this.friendshipRequests.remove(request);
 	}
 

@@ -31,3 +31,10 @@ create table follows (
 	);
 alter table follows add constraint "follows_follower_fk" foreign key ("follower_userid") references "users" ("userid");
 alter table follows add constraint "follows_followed_fk" foreign key ("followed_userid") references "users" ("userid");
+create table friendship_requests (
+	id VARCHAR(100) PRIMARY KEY,
+	requester_userid VARCHAR(100),
+	requested_userid VARCHAR(100)
+	);
+alter table friendship_requests add constraint "friendship_requests_requester_fk" foreign key ("requester_userid") references "users" ("userid");
+alter table friendship_requests add constraint "friendship_requests_requested_fk" foreign key ("requested_userid") references "users" ("userid");
