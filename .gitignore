@@ -32,3 +32,4 @@ conf/properties
 cloud/cloud-properties
 src/main/resources/application.properties
 src/main/resources/logback.xml
+src/main/resources/META-INF/persistence.xml

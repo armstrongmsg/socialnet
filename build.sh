@@ -1,5 +1,7 @@
 source conf/properties
 
-mvn package
+echo "Building socialnet package."
+mvn package &> $BUILD_LOG_FILE
 
-docker build -t socialnet:$VERSION .
+echo "Building docker image."
+docker build -t socialnet:$VERSION . &> $BUILD_LOG_FILE

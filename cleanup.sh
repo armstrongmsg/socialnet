@@ -1,9 +1,15 @@
 source conf/properties
 
-docker stop socialnet
-docker rm socialnet
-docker rmi socialnet:$VERSION
+echo "Stopping socialnet container."
+docker stop socialnet &> $BUILD_LOG_FILE
+
+echo "Removing socialnet container."
+docker rm socialnet &> $BUILD_LOG_FILE
+
+echo "Removing socialnet image."
+docker rmi socialnet:$VERSION &> $BUILD_LOG_FILE
 
 bash reset_db.sh
 
-docker network rm socialnet-net
+echo "Removing docker network."
+docker network rm socialnet-net &> $BUILD_LOG_FILE
