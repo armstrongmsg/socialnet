@@ -4,6 +4,10 @@ public class FriendshipRequest {
 	private User requester;
 	private User requested;
 	
+	public FriendshipRequest() {
+		
+	}
+	
 	public FriendshipRequest(User requester, User requested) {
 		this.requester = requester;
 		this.requested = requested;

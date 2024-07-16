@@ -18,8 +18,8 @@ public class DefaultFriendshipRepository implements FriendshipRepository {
 		
 		try {
 			em.getTransaction().begin();
-			Query query = em.createQuery("SELECT f FROM Friendship f WHERE f.friend1_id = :userid or f.friend2_id = :userid")
-						.setParameter("userid", userId);
+			Query query = em.createQuery("SELECT f FROM Friendship f WHERE f.friend1.userId = :userId or f.friend2.userId = :userId")
+						.setParameter("userId", userId);
 			return query.getResultList();
 		} finally {
 			em.close();
@@ -37,6 +37,28 @@ public class DefaultFriendshipRepository implements FriendshipRepository {
 			boolean committed = false;
 			try {
 				em.persist(friendship);
+				em.getTransaction().commit();
+				committed = true;
+			} finally {
+				if (!committed)
+					em.getTransaction().rollback();
+			}
+		} finally {
+			em.close();
+			emf.close();
+		}
+	}
+	
+	@Override
+	public void removeFriendship(Friendship friendship) {
+		EntityManagerFactory emf = Persistence.createEntityManagerFactory("default");
+		EntityManager em = emf.createEntityManager();
+		
+		try {
+			em.getTransaction().begin();
+			boolean committed = false;
+			try {
+				em.remove(em.contains(friendship) ? friendship : em.merge(friendship));
 				em.getTransaction().commit();
 				committed = true;
 			} finally {

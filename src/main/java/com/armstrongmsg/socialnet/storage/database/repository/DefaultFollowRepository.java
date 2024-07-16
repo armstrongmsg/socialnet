@@ -18,8 +18,8 @@ public class DefaultFollowRepository implements FollowRepository {
 		
 		try {
 			em.getTransaction().begin();
-			Query query = em.createQuery("SELECT f FROM Follow f WHERE f.follower_id = :userid or f.followed_id = :userid")
-						.setParameter("userid", userId);
+			Query query = em.createQuery("SELECT f FROM Follow f WHERE f.follower.userId = :userId or f.followed.userId = :userId")
+						.setParameter("userId", userId);
 			return query.getResultList();
 		} finally {
 			em.close();
@@ -58,7 +58,7 @@ public class DefaultFollowRepository implements FollowRepository {
 			em.getTransaction().begin();
 			boolean committed = false;
 			try {
-				em.remove(follow);
+				em.remove(em.contains(follow) ? follow : em.merge(follow));
 				em.getTransaction().commit();
 				committed = true;
 			} finally {

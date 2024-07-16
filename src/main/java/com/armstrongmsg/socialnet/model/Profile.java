@@ -5,13 +5,14 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 
 @Embeddable
 public class Profile {
 	@Column
 	private String description;
-	@OneToMany(cascade={CascadeType.ALL})
+	@OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
 	private List<Post> posts;
 	
 	public Profile() {

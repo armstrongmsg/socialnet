@@ -17,7 +17,6 @@ import com.armstrongmsg.socialnet.storage.database.repository.FriendshipReposito
 import com.armstrongmsg.socialnet.storage.database.repository.UserRepository;
 
 public class DefaultDatabaseManager implements DatabaseManager {
-	private List<Friendship> friendships;
 	private List<FriendshipRequest> friendshipRequests;
 	private UserRepository userRepository;
 	private FriendshipRepository friendshipRepository;
@@ -27,7 +26,6 @@ public class DefaultDatabaseManager implements DatabaseManager {
 		this.userRepository = new DefaultUserRepository();
 		this.friendshipRepository = new DefaultFriendshipRepository();
 		this.followRepository = new DefaultFollowRepository();
-		this.friendships = new ArrayList<Friendship>();
 		this.friendshipRequests = new ArrayList<FriendshipRequest>();
 	}
 
@@ -99,7 +97,7 @@ public class DefaultDatabaseManager implements DatabaseManager {
 	
 	@Override
 	public void removeFriendship(Friendship friendship) {
-		this.friendships.remove(friendship);
+		this.friendshipRepository.removeFriendship(friendship);
 	}
 
 	@Override

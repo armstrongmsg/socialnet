@@ -20,6 +20,10 @@ public class Follow extends Relationship {
 	@OneToOne
 	private User followed;
 	
+	public Follow() {
+		
+	}
+	
 	public Follow(User follower, User followed) {
 		this.id = UUID.randomUUID().toString();
 		this.follower = follower;

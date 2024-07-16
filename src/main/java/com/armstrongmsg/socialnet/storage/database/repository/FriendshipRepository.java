@@ -7,4 +7,5 @@ import com.armstrongmsg.socialnet.model.Friendship;
 public interface FriendshipRepository {
 	List<Friendship> getFriendshipsByUserId(String userId);
 	void saveFriendship(Friendship friendship);
+	void removeFriendship(Friendship friendship);
 }

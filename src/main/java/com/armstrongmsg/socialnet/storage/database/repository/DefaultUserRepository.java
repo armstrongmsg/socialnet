@@ -18,8 +18,8 @@ public class DefaultUserRepository implements UserRepository {
 		
 		try {
 			em.getTransaction().begin();
-			Query query = em.createQuery("SELECT c FROM User c WHERE c.userid = :userid")
-						.setParameter("userid", id);
+			Query query = em.createQuery("SELECT c FROM User c WHERE c.userId = :userId")
+						.setParameter("userId", id);
 			List<User> result = query.getResultList();
 			return result.get(0);
 		} finally {

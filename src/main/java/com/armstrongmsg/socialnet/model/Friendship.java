@@ -20,6 +20,10 @@ public class Friendship extends Relationship {
 	@OneToOne
 	private User friend2;
 	
+	public Friendship() {
+		
+	}
+	
 	public Friendship(User friend1, User friend2) {
 		this.id = UUID.randomUUID().toString();
 		this.friend1 = friend1;
