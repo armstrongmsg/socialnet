@@ -10,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.armstrongmsg.socialnet.constants.Messages;
-import com.armstrongmsg.socialnet.constants.SystemConstants;
 import com.armstrongmsg.socialnet.exceptions.FatalErrorException;
 
 public class PropertiesUtil {
@@ -40,9 +39,8 @@ public class PropertiesUtil {
 	
 	private PropertiesUtil() throws FileNotFoundException, IOException {
 		properties = new Properties();
-		// FIXME project base path should not be a constant
-		String configurationPath = SystemConstants.PROJECT_BASE_PATH + 
-				File.separator + SystemConstants.CONFIGURATION_PATH;
+		String configurationPath = Thread.currentThread().getContextClassLoader().getResource("").getPath() + 
+				File.separator + "application.properties";
 		properties.load(new FileInputStream(configurationPath));
 	}
 	
