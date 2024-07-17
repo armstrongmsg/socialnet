@@ -6,11 +6,11 @@ import java.util.NavigableSet;
 import java.util.TreeSet;
 
 import com.armstrongmsg.socialnet.constants.ConfigurationProperties;
+import com.armstrongmsg.socialnet.constants.Messages;
 import com.armstrongmsg.socialnet.exceptions.FatalErrorException;
 import com.armstrongmsg.socialnet.model.Post;
 import com.armstrongmsg.socialnet.util.PropertiesUtil;
 
-// TODO test
 public class DefaultFeedPolicy implements FeedPolicy {
 	private Integer maxNumberOfPosts;
 	
@@ -18,7 +18,17 @@ public class DefaultFeedPolicy implements FeedPolicy {
 		String maxNumberOfPostsProperty;
 			maxNumberOfPostsProperty = PropertiesUtil.getInstance().getProperty(
 					ConfigurationProperties.MAX_NUMBER_OF_POSTS);
-			this.maxNumberOfPosts = Integer.valueOf(maxNumberOfPostsProperty);
+		
+		if (maxNumberOfPostsProperty == null || maxNumberOfPostsProperty.isEmpty()) {
+			throw new FatalErrorException(
+					String.format(Messages.Exception.INVALID_PROPERTY, ConfigurationProperties.MAX_NUMBER_OF_POSTS));
+		}
+			
+		this.maxNumberOfPosts = Integer.valueOf(maxNumberOfPostsProperty);
+	}
+	
+	public Integer getMaxNumberOfPosts() {
+		return maxNumberOfPosts;
 	}
 	
 	@Override
@@ -26,6 +36,6 @@ public class DefaultFeedPolicy implements FeedPolicy {
 		NavigableSet<Post> postsWithNoDuplicates = new TreeSet<Post>(posts);
 		NavigableSet<Post> postsInReverseOrder = postsWithNoDuplicates.descendingSet();
 		return new ArrayList<Post>(postsInReverseOrder).
-				subList(0, Math.min(maxNumberOfPosts, postsInReverseOrder.size()));
+				subList(0, Math.min(getMaxNumberOfPosts(), postsInReverseOrder.size()));
 	}
 }
