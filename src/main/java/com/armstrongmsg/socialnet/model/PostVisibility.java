@@ -13,14 +13,4 @@ public enum PostVisibility {
 	public String getValue() {
 		return value;
 	}
-	
-	public PostVisibility fromValue(String value) {
-		for (PostVisibility instance : PostVisibility.values()) {
-			if (instance.getValue().equals(value)) {
-				return instance;
-			}
-		}
-		// FIXME treat this case
-		return null;
-	}
 }
