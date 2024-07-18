@@ -272,7 +272,7 @@ public class ApplicationFacade {
 		}
 	}
 
-	public List<Post> getFriendsPosts(UserToken token) throws UnauthorizedOperationException, AuthenticationException {
+	public List<Post> getFriendsPosts(UserToken token) throws UnauthorizedOperationException, AuthenticationException, UserNotFoundException {
 		logger.debug(Messages.Logging.RECEIVED_GET_FRIENDS_POSTS_REQUEST, token);
 		
 		try {
@@ -283,10 +283,13 @@ public class ApplicationFacade {
 		} catch (UnauthorizedOperationException e) {
 			logger.debug(Messages.Logging.AUTHORIZATION_EXCEPTION, e.getMessage());
 			throw e;
+		} catch (UserNotFoundException e) {
+			// TODO log
+			throw e;
 		}
 	}
 	
-	public List<Post> getFeedPosts(UserToken token) throws AuthenticationException, UnauthorizedOperationException {
+	public List<Post> getFeedPosts(UserToken token) throws AuthenticationException, UnauthorizedOperationException, UserNotFoundException {
 		logger.debug(Messages.Logging.RECEIVED_GET_FEED_POSTS_REQUEST, token);
 
 		try {
@@ -296,6 +299,9 @@ public class ApplicationFacade {
 			throw e;
 		} catch (UnauthorizedOperationException e) {
 			logger.debug(Messages.Logging.AUTHORIZATION_EXCEPTION, e.getMessage());
+			throw e;
+		} catch (UserNotFoundException e) {
+			// TODO log
 			throw e;
 		}
 	}

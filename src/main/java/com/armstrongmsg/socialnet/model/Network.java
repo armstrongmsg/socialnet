@@ -220,6 +220,10 @@ public class Network {
 	public List<User> getFriends(UserToken userToken, String userId) throws UnauthorizedOperationException, AuthenticationException, UserNotFoundException {
 		User requester = this.authenticationPlugin.getUser(userToken);
 		this.authorizationPlugin.authorize(requester, new Operation(OperationType.GET_FRIENDS_ADMIN));
+		return this.doGetUserFriends(userId);
+	}
+	
+	private List<User> doGetUserFriends(String userId) throws UserNotFoundException {
 		User user = findUserById(userId);
 		
 		List<Friendship> userFriendships = this.storageFacade.getFriendshipsByUserId(userId);
@@ -285,7 +289,10 @@ public class Network {
 	public List<User> getFollowedUsers(UserToken userToken, String userId) throws UnauthorizedOperationException, AuthenticationException, UserNotFoundException {
 		User requester = this.authenticationPlugin.getUser(userToken);
 		this.authorizationPlugin.authorize(requester, new Operation(OperationType.GET_FOLLOWED_USERS_ADMIN));
-		
+		return this.doGetUserFollowedUsers(userId);
+	}
+
+	private List<User> doGetUserFollowedUsers(String userId) throws UserNotFoundException {
 		User user = findUserById(userId);
 		List<Follow> userFollows = this.storageFacade.getFollowsByUserId(userId);
 		List<User> followedUsers = new ArrayList<User>();
@@ -323,27 +330,14 @@ public class Network {
 		return this.admin.getUserId().equals(userId);
 	}
 
-	public List<Post> getFriendsPosts(UserToken token) throws UnauthorizedOperationException, AuthenticationException {
+	public List<Post> getFriendsPosts(UserToken token) throws UnauthorizedOperationException, AuthenticationException, UserNotFoundException {
 		User requester = this.authenticationPlugin.getUser(token);
 		this.authorizationPlugin.authorize(requester, new Operation(OperationType.GET_FRIENDS_POSTS));
 		return doGetFriendsPosts(requester);
 	}
 	
-	// TODO refactor
-	private List<Post> doGetFriendsPosts(User requester) {
-		List<Friendship> userFriendships = this.storageFacade.getFriendshipsByUserId(requester.getUserId());
-		List<User> friends = new ArrayList<User>();
-		
-		for (Friendship friendship : userFriendships) {
-			if (friendship.getFriend1().equals(requester)) {
-				friends.add(friendship.getFriend2());
-			}
-			
-			if (friendship.getFriend2().equals(requester)) {
-				friends.add(friendship.getFriend1());
-			}
-		}
-		
+	private List<Post> doGetFriendsPosts(User requester) throws UserNotFoundException {
+		List<User> friends = this.doGetUserFriends(requester.getUserId());
 		List<Post> friendsPosts = new ArrayList<Post>();
 		
 		for (User friend : friends) {
@@ -353,17 +347,8 @@ public class Network {
 		return friendsPosts;
 	}
 	
-	// TODO refactor
-	private List<Post> doGetFollowedPosts(User requester) {
-		List<Follow> follows = this.storageFacade.getFollowsByUserId(requester.getUserId());
-		List<User> followedUsers = new ArrayList<User>();
-		
-		for (Follow follow : follows) {
-			if (follow.getFollower().equals(requester)) {
-				followedUsers.add(follow.getFollowed());
-			}
-		}
-		
+	private List<Post> doGetFollowedPosts(User requester) throws UserNotFoundException {
+		List<User> followedUsers = doGetUserFollowedUsers(requester.getUserId());
 		List<Post> followedUsersPublicPosts = new ArrayList<Post>();
 		
 		for (User followedUser : followedUsers) {
@@ -379,7 +364,7 @@ public class Network {
 		return followedUsersPublicPosts;
 	}
 	
-	public List<Post> getFeedPosts(UserToken token) throws AuthenticationException, UnauthorizedOperationException {
+	public List<Post> getFeedPosts(UserToken token) throws AuthenticationException, UnauthorizedOperationException, UserNotFoundException {
 		User requester = this.authenticationPlugin.getUser(token);
 		this.authorizationPlugin.authorize(requester, new Operation(OperationType.GET_FEED_POSTS));
 		List<Post> friendsPosts = doGetFriendsPosts(requester);

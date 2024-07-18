@@ -130,6 +130,8 @@ public class PostBean {
 				// FIXME treat exception
 			} catch (AuthenticationException e) {
 				// FIXME treat exception
+			} catch (UserNotFoundException e) {
+				// FIXME treat exception
 			}
 		}
 		
@@ -142,7 +144,7 @@ public class PostBean {
 				friendsPosts = new JsfConnector().getViewPosts(
 						facade.getFriendsPosts(SessionManager.getCurrentSession().getUserToken()));
 			}
-		} catch (UnauthorizedOperationException | AuthenticationException e) {
+		} catch (UnauthorizedOperationException | AuthenticationException | UserNotFoundException e) {
 			// FIXME treat exception
 		}
 		
