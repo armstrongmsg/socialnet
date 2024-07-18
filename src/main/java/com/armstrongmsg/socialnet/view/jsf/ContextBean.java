@@ -102,7 +102,6 @@ public class ContextBean {
 		} catch (AuthenticationException e) {
 			setLoginError(true);
 			return new NavigationController().showHome();
-			// FIXME treat this exception
 		} finally {
 			username = null;
 			password = null;

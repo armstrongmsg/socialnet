@@ -18,6 +18,7 @@ public class CacheFactory {
 			String cacheClassName = properties.getProperty(ConfigurationProperties.CACHE_CLASS_NAME);
 			
 			if (cacheClassName == null || cacheClassName.isEmpty()) {
+				// TODO test
 				logger.info(Messages.Logging.NO_CACHE_CONFIGURATION);
 				return new DefaultCache();
 			}
@@ -25,6 +26,7 @@ public class CacheFactory {
 			logger.info(Messages.Logging.LOADING_CACHE_CONFIGURATION, cacheClassName);
 			ClassFactory classFactory = new ClassFactory();
 			return (Cache) classFactory.createInstance(cacheClassName);
+			// TODO test
 		} catch (FatalErrorException e) {
 			logger.error(Messages.Logging.ERROR_WHILE_LOADING_CACHE_CONFIGURATION, e.getMessage());
 			return new DefaultCache();

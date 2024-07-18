@@ -25,6 +25,7 @@ import com.armstrongmsg.socialnet.storage.cache.CacheFactory;
 import com.armstrongmsg.socialnet.storage.database.DatabaseManagerFactory;
 import com.armstrongmsg.socialnet.util.PropertiesUtil;
 
+// TODO test authentication and authorization exceptions
 public class ApplicationFacade {
 	private static Logger logger = LoggerFactory.getLogger(ApplicationFacade.class);
 	private static ApplicationFacade instance;
@@ -36,11 +37,13 @@ public class ApplicationFacade {
 		this.storageManager = storageManager;
 
 		try {
+			// TODO the network startup should be done on application startup
 			this.network = new Network(this.storageManager);
 			PropertiesUtil properties = PropertiesUtil.getInstance();
 			if (properties.getProperty(ConfigurationProperties.BOOTSTRAP).equals(SystemConstants.PROPERTY_VALUE_TRUE)) {
 				new Bootstrap().startNetwork(network);
 			}
+			// TODO test
 		} catch (FatalErrorException e) {
 			logger.error(e.getMessage());
 		}

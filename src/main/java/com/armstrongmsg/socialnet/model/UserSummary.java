@@ -2,6 +2,7 @@ package com.armstrongmsg.socialnet.model;
 
 import java.util.Objects;
 
+// TODO maybe change this class's name to UserView
 public class UserSummary {
 	private String username;
 	private String profileDescription;

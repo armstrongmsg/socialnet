@@ -18,6 +18,7 @@ public class DatabaseManagerFactory {
 			String databaseManagerClassName = properties.getProperty(ConfigurationProperties.DATABASE_MANAGER_CLASS_NAME);
 			
 			if (databaseManagerClassName == null || databaseManagerClassName.isEmpty()) {
+				// TODO test
 				logger.info(Messages.Logging.NO_DATABASE_MANAGER_CONFIGURATION);
 				return new DefaultDatabaseManager();
 			}
@@ -25,6 +26,7 @@ public class DatabaseManagerFactory {
 			logger.info(Messages.Logging.LOADING_DATABASE_MANAGER_CONFIGURATION, databaseManagerClassName);
 			ClassFactory classFactory = new ClassFactory();
 			return (DatabaseManager) classFactory.createInstance(databaseManagerClassName);
+			// TODO test
 		} catch (FatalErrorException e) {
 			logger.error(Messages.Logging.ERROR_WHILE_LOADING_DATABASE_MANAGER_CONFIGURATION, e.getMessage());
 			return new DefaultDatabaseManager();

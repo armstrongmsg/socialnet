@@ -59,6 +59,7 @@ public class DefaultAuthenticationPlugin implements AuthenticationPlugin {
 			} else {
 				return this.storageFacade.getUserById(token.getUserId());
 			}
+		// TODO test
 		} catch (UserNotFoundException e) {
 			throw new AuthenticationException(Messages.Exception.USER_NOT_FOUND_EXCEPTION);
 		}
