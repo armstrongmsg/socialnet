@@ -8,6 +8,7 @@ import javax.faces.bean.RequestScoped;
 import com.armstrongmsg.socialnet.core.ApplicationFacade;
 import com.armstrongmsg.socialnet.exceptions.AuthenticationException;
 import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
+import com.armstrongmsg.socialnet.exceptions.UserNotFoundException;
 import com.armstrongmsg.socialnet.model.PostVisibility;
 import com.armstrongmsg.socialnet.model.authentication.UserToken;
 import com.armstrongmsg.socialnet.view.jsf.model.JsfConnector;
@@ -99,7 +100,7 @@ public class PostBean {
 				userPostsAdmin = new JsfConnector().getViewPosts(facade.getUserPostsAdmin(
 						SessionManager.getCurrentSession().getUserToken(), 
 						getUser().getUserId()));
-			} catch (UnauthorizedOperationException | AuthenticationException e) {
+			} catch (UnauthorizedOperationException | AuthenticationException | UserNotFoundException e) {
 				// FIXME treat exception
 			}
 		}
@@ -160,7 +161,7 @@ public class PostBean {
 				userPosts = new JsfConnector().getViewPosts(
 						facade.getUserPosts(SessionManager.getCurrentSession().getUserToken(), username));
 			}
-		} catch (UnauthorizedOperationException | AuthenticationException e) {
+		} catch (UnauthorizedOperationException | AuthenticationException | UserNotFoundException e) {
 			// FIXME treat exception
 		}
 		

@@ -86,14 +86,14 @@ public class Network {
 	}
 
 	public List<User> getUsers(UserToken userToken) throws AuthenticationException, UnauthorizedOperationException {
-		User requester = findUserById(userToken.getUserId());
+		User requester = this.authenticationPlugin.getUser(userToken);
 		this.authorizationPlugin.authorize(requester, new Operation(OperationType.GET_ALL_USERS));
 		
 		return this.storageFacade.getAllUsers();
 	}
 
 	public void addUser(UserToken userToken, String username, String password, String profileDescription) throws UnauthorizedOperationException, AuthenticationException {
-		User requester = findUserById(userToken.getUserId());
+		User requester = this.authenticationPlugin.getUser(userToken);
 		this.authorizationPlugin.authorize(requester, new Operation(OperationType.ADD_USER));
 		
 		Profile profile = new Profile(profileDescription, new ArrayList<Post>());
@@ -109,18 +109,13 @@ public class Network {
 		this.storageFacade.saveUser(newUser);
 	}
 
-	public void removeUser(UserToken userToken, String userId) throws UnauthorizedOperationException, AuthenticationException {
-		User requester = findUserById(userToken.getUserId());
+	public void removeUser(UserToken userToken, String userId) throws UnauthorizedOperationException, AuthenticationException, UserNotFoundException {
+		User requester = this.authenticationPlugin.getUser(userToken);
 		this.authorizationPlugin.authorize(requester, new Operation(OperationType.REMOVE_USER));
-		try {
-			this.storageFacade.removeUserById(userId);
-		} catch (UserNotFoundException e) {
-			// TODO treat this exception
-		}
+		this.storageFacade.removeUserById(userId);
 	}
 
-	// FIXME at this point it should throw UserNotFoundException
-	private User findUserById(String userId) throws AuthenticationException {
+	private User findUserById(String userId) throws UserNotFoundException {
 		if (admin.getUserId().equals(userId)) {
 			return admin;
 		}
@@ -128,18 +123,18 @@ public class Network {
 		try {
 			return this.storageFacade.getUserById(userId);
 		} catch (UserNotFoundException e) {
-			throw new AuthenticationException(String.format(Messages.Exception.COULD_NOT_FIND_USER, userId));
+			throw new UserNotFoundException(String.format(Messages.Exception.COULD_NOT_FIND_USER, userId));
 		}
 	}
 
 	public void createPost(UserToken userToken, String title, String content, PostVisibility newPostVisibility) throws AuthenticationException {
-		User user = findUserById(userToken.getUserId());
+		User user = this.authenticationPlugin.getUser(userToken);
 		user.getProfile().createPost(title, content, newPostVisibility);
 		this.storageFacade.updateUser(user);
 	}
 
-	public List<Post> getUserPostsAdmin(UserToken userToken, String userId) throws UnauthorizedOperationException, AuthenticationException {
-		User requester = findUserById(userToken.getUserId());
+	public List<Post> getUserPostsAdmin(UserToken userToken, String userId) throws UnauthorizedOperationException, AuthenticationException, UserNotFoundException {
+		User requester = this.authenticationPlugin.getUser(userToken);
 		User target = findUserById(userId);
 		this.authorizationPlugin.authorize(requester, new OperationOnUser(OperationType.GET_USER_POSTS_ADMIN, target));
 		
@@ -148,13 +143,13 @@ public class Network {
 	}
 	
 	public List<Post> getSelfPosts(UserToken userToken) throws AuthenticationException, UnauthorizedOperationException {
-		User requester = findUserById(userToken.getUserId());
+		User requester = this.authenticationPlugin.getUser(userToken);
 		this.authorizationPlugin.authorize(requester, new OperationOnUser(OperationType.GET_SELF_POSTS, requester));
 		return requester.getProfile().getPosts();
 	}
 
-	public void addFriendshipAdmin(UserToken userToken, String userId1, String userId2) throws UnauthorizedOperationException, AuthenticationException {
-		User requester = findUserById(userToken.getUserId());
+	public void addFriendshipAdmin(UserToken userToken, String userId1, String userId2) throws UnauthorizedOperationException, AuthenticationException, UserNotFoundException {
+		User requester = this.authenticationPlugin.getUser(userToken);
 		this.authorizationPlugin.authorize(requester, new Operation(OperationType.ADD_FRIENDSHIP_ADMIN));
 		
 		User user1 = findUserById(userId1);
@@ -162,8 +157,8 @@ public class Network {
 		this.storageFacade.saveFriendship(new Friendship(user1, user2));
 	}
 
-	public void addFriendshipRequest(UserToken userToken, String username) throws AuthenticationException, UnauthorizedOperationException {
-		User requester = findUserById(userToken.getUserId());
+	public void addFriendshipRequest(UserToken userToken, String username) throws AuthenticationException, UnauthorizedOperationException, UserNotFoundException {
+		User requester = this.authenticationPlugin.getUser(userToken);
 		this.authorizationPlugin.authorize(requester, new Operation(OperationType.ADD_FRIENDSHIP_REQUEST));
 		
 		User friend = findUserByUsername(username);
@@ -171,21 +166,21 @@ public class Network {
 	}
 	
 	public List<FriendshipRequest> getSentFriendshipRequests(UserToken userToken) throws AuthenticationException, UnauthorizedOperationException {
-		User requester = findUserById(userToken.getUserId());
+		User requester = this.authenticationPlugin.getUser(userToken);
 		this.authorizationPlugin.authorize(requester, new Operation(OperationType.GET_SENT_FRIENDSHIP_REQUESTS));
 		
 		return this.storageFacade.getSentFrienshipRequestsById(requester.getUserId());
 	}
 	
 	public List<FriendshipRequest> getReceivedFriendshipRequests(UserToken userToken) throws AuthenticationException, UnauthorizedOperationException {
-		User requester = findUserById(userToken.getUserId());
+		User requester = this.authenticationPlugin.getUser(userToken);
 		this.authorizationPlugin.authorize(requester, new Operation(OperationType.GET_RECEIVED_FRIENDSHIP_REQUESTS));
 		
 		return this.storageFacade.getReceivedFrienshipRequestsById(requester.getUserId());
 	}
 	
-	public void acceptFriendshipRequest(UserToken userToken, String username) throws AuthenticationException, UnauthorizedOperationException {
-		User requester = findUserById(userToken.getUserId());
+	public void acceptFriendshipRequest(UserToken userToken, String username) throws AuthenticationException, UnauthorizedOperationException, UserNotFoundException {
+		User requester = this.authenticationPlugin.getUser(userToken);
 		this.authorizationPlugin.authorize(requester, new Operation(OperationType.ACCEPT_FRIENDSHIP_REQUEST));
 		
 		FriendshipRequest request = this.storageFacade.getReceivedFrienshipRequestsById(requester.getUserId(), username);
@@ -201,7 +196,7 @@ public class Network {
 	}
 	
 	public void rejectFriendshipRequest(UserToken userToken, String username) throws AuthenticationException, UnauthorizedOperationException {
-		User requester = findUserById(userToken.getUserId());
+		User requester = this.authenticationPlugin.getUser(userToken);
 		this.authorizationPlugin.authorize(requester, new Operation(OperationType.REJECT_FRIENDSHIP_REQUEST));
 		
 		FriendshipRequest request = this.storageFacade.getReceivedFrienshipRequestsById(requester.getUserId(), username);
@@ -214,16 +209,16 @@ public class Network {
 		this.storageFacade.removeFriendshipRequest(request);
 	}
 	
-	public void addFriendship(UserToken userToken, String username) throws UnauthorizedOperationException, AuthenticationException {
-		User requester = findUserById(userToken.getUserId());
+	public void addFriendship(UserToken userToken, String username) throws UnauthorizedOperationException, AuthenticationException, UserNotFoundException {
+		User requester = this.authenticationPlugin.getUser(userToken);
 		this.authorizationPlugin.authorize(requester, new Operation(OperationType.ADD_FRIENDSHIP));
 		
 		User friend = findUserByUsername(username);
 		this.storageFacade.saveFriendship(new Friendship(requester, friend));
 	}
 	
-	public List<User> getFriends(UserToken userToken, String userId) throws UnauthorizedOperationException, AuthenticationException {
-		User requester = findUserById(userToken.getUserId());
+	public List<User> getFriends(UserToken userToken, String userId) throws UnauthorizedOperationException, AuthenticationException, UserNotFoundException {
+		User requester = this.authenticationPlugin.getUser(userToken);
 		this.authorizationPlugin.authorize(requester, new Operation(OperationType.GET_FRIENDS_ADMIN));
 		User user = findUserById(userId);
 		
@@ -244,7 +239,7 @@ public class Network {
 	}
 	
 	public List<UserSummary> getSelfFriends(UserToken userToken) throws AuthenticationException, UnauthorizedOperationException {
-		User requester = findUserById(userToken.getUserId());
+		User requester = this.authenticationPlugin.getUser(userToken);
 		this.authorizationPlugin.authorize(requester, new Operation(OperationType.GET_FRIENDS));
 		return this.doGetSelfFriends(requester);
 	}
@@ -270,8 +265,8 @@ public class Network {
 		return friends;
 	}
 
-	public void addFollowAdmin(UserToken userToken, String followerId, String followedId) throws UnauthorizedOperationException, AuthenticationException {
-		User requester = findUserById(userToken.getUserId());
+	public void addFollowAdmin(UserToken userToken, String followerId, String followedId) throws UnauthorizedOperationException, AuthenticationException, UserNotFoundException {
+		User requester = this.authenticationPlugin.getUser(userToken);
 		this.authorizationPlugin.authorize(requester, new Operation(OperationType.ADD_FOLLOW_ADMIN));
 		
 		User follower = findUserById(followerId);
@@ -279,16 +274,16 @@ public class Network {
 		this.storageFacade.saveFollow(new Follow(follower, followed));
 	}
 	
-	public void addFollow(UserToken userToken, String followedUsername) throws AuthenticationException, UnauthorizedOperationException {
-		User requester = findUserById(userToken.getUserId());
+	public void addFollow(UserToken userToken, String followedUsername) throws AuthenticationException, UnauthorizedOperationException, UserNotFoundException {
+		User requester = this.authenticationPlugin.getUser(userToken);
 		this.authorizationPlugin.authorize(requester, new Operation(OperationType.ADD_FOLLOW));
 		
 		User followed = findUserByUsername(followedUsername);
 		this.storageFacade.saveFollow(new Follow(requester, followed));
 	}
 	
-	public List<User> getFollowedUsers(UserToken userToken, String userId) throws UnauthorizedOperationException, AuthenticationException {
-		User requester = findUserById(userToken.getUserId());
+	public List<User> getFollowedUsers(UserToken userToken, String userId) throws UnauthorizedOperationException, AuthenticationException, UserNotFoundException {
+		User requester = this.authenticationPlugin.getUser(userToken);
 		this.authorizationPlugin.authorize(requester, new Operation(OperationType.GET_FOLLOWED_USERS_ADMIN));
 		
 		User user = findUserById(userId);
@@ -305,7 +300,7 @@ public class Network {
 	}
 
 	public List<UserSummary> getFollowedUsers(UserToken userToken) throws AuthenticationException, UnauthorizedOperationException {
-		User requester = findUserById(userToken.getUserId());
+		User requester = this.authenticationPlugin.getUser(userToken);
 		this.authorizationPlugin.authorize(requester, new Operation(OperationType.GET_FOLLOWED_USERS));
 		return doGetFollowedUsers(requester);
 	}
@@ -329,7 +324,7 @@ public class Network {
 	}
 
 	public List<Post> getFriendsPosts(UserToken token) throws UnauthorizedOperationException, AuthenticationException {
-		User requester = findUserById(token.getUserId());
+		User requester = this.authenticationPlugin.getUser(token);
 		this.authorizationPlugin.authorize(requester, new Operation(OperationType.GET_FRIENDS_POSTS));
 		return doGetFriendsPosts(requester);
 	}
@@ -385,7 +380,7 @@ public class Network {
 	}
 	
 	public List<Post> getFeedPosts(UserToken token) throws AuthenticationException, UnauthorizedOperationException {
-		User requester = findUserById(token.getUserId());
+		User requester = this.authenticationPlugin.getUser(token);
 		this.authorizationPlugin.authorize(requester, new Operation(OperationType.GET_FEED_POSTS));
 		List<Post> friendsPosts = doGetFriendsPosts(requester);
 		List<Post> followedUsersPosts = doGetFollowedPosts(requester);
@@ -395,8 +390,8 @@ public class Network {
 		return this.feedPolicy.filter(feedCandidatePosts);
 	}
 
-	public List<Post> getUserPosts(UserToken token, String username) throws UnauthorizedOperationException, AuthenticationException {
-		User requester = findUserById(token.getUserId());
+	public List<Post> getUserPosts(UserToken token, String username) throws UnauthorizedOperationException, AuthenticationException, UserNotFoundException {
+		User requester = this.authenticationPlugin.getUser(token);
 		this.authorizationPlugin.authorize(requester, new Operation(OperationType.GET_USER_POSTS));
 		
 		if (doIsFriend(requester, username) || requester.getUsername().equals(username)) {
@@ -408,7 +403,7 @@ public class Network {
 	}
 	
 	public void deletePost(UserToken token, String postId) throws AuthenticationException, UnauthorizedOperationException {
-		User requester = findUserById(token.getUserId());
+		User requester = this.authenticationPlugin.getUser(token);
 		this.authorizationPlugin.authorize(requester, new Operation(OperationType.DELETE_POST));
 		
 		List<Post> posts = requester.getProfile().getPosts();
@@ -428,8 +423,7 @@ public class Network {
 		return this.authenticationPlugin.authenticate(credentials);
 	}
 
-	// FIXME at this point it should throw UserNotFoundException
-	private User findUserByUsername(String username) throws AuthenticationException {
+	private User findUserByUsername(String username) throws UserNotFoundException {
 		if (admin.getUsername().equals(username)) {
 			return admin;
 		}
@@ -437,12 +431,12 @@ public class Network {
 		try {
 			return this.storageFacade.getUserByUsername(username);
 		} catch (UserNotFoundException e) {
-			throw new AuthenticationException(String.format(Messages.Exception.COULD_NOT_FIND_USER, username)); 
+			throw new UserNotFoundException(String.format(Messages.Exception.COULD_NOT_FIND_USER, username)); 
 		}
 	}
 
 	public List<UserSummary> getUserSummaries(UserToken token) throws UnauthorizedOperationException, AuthenticationException {
-		User requester = findUserById(token.getUserId());
+		User requester = this.authenticationPlugin.getUser(token);
 		this.authorizationPlugin.authorize(requester, new Operation(OperationType.GET_USER_SUMMARIES));
 		
 		List<UserSummary> userSummaries = new ArrayList<UserSummary>();
@@ -457,7 +451,7 @@ public class Network {
 	}
 
 	public List<UserSummary> getUserRecommendations(UserToken token) throws UnauthorizedOperationException, AuthenticationException {
-		User requester = findUserById(token.getUserId());
+		User requester = this.authenticationPlugin.getUser(token);
 		this.authorizationPlugin.authorize(requester, new Operation(OperationType.GET_USER_RECOMMENDATIONS));
 		
 		List<UserSummary> friends = doGetSelfFriends(requester);
@@ -475,7 +469,7 @@ public class Network {
 	}
 
 	public boolean isFriend(UserToken userToken, String username) throws AuthenticationException, UnauthorizedOperationException {
-		User requester = findUserById(userToken.getUserId());
+		User requester = this.authenticationPlugin.getUser(userToken);
 		this.authorizationPlugin.authorize(requester, new Operation(OperationType.IS_FRIEND));
 		return doIsFriend(requester, username);
 	}
@@ -493,14 +487,14 @@ public class Network {
 	}
 	
 	public UserSummary getSelf(UserToken userToken) throws AuthenticationException, UnauthorizedOperationException {
-		User requester = findUserById(userToken.getUserId());
+		User requester = this.authenticationPlugin.getUser(userToken);
 		this.authorizationPlugin.authorize(requester, new Operation(OperationType.GET_SELF));
 		UserSummary summary = new UserSummary(requester.getUsername(), requester.getProfile().getDescription());
 		return summary;
 	}
 
 	public boolean follows(UserToken userToken, String username) throws UnauthorizedOperationException, AuthenticationException {
-		User requester = findUserById(userToken.getUserId());
+		User requester = this.authenticationPlugin.getUser(userToken);
 		this.authorizationPlugin.authorize(requester, new Operation(OperationType.FOLLOWS));
 		List<UserSummary> follows = doGetFollowedUsers(requester);
 		
@@ -514,7 +508,7 @@ public class Network {
 	}
 
 	public void unfollow(UserToken userToken, String username) throws AuthenticationException, UnauthorizedOperationException {
-		User requester = findUserById(userToken.getUserId());
+		User requester = this.authenticationPlugin.getUser(userToken);
 		this.authorizationPlugin.authorize(requester, new Operation(OperationType.UNFOLLOW));
 		
 		List<Follow> follows = this.storageFacade.getFollowsByUserId(requester.getUserId());
@@ -527,7 +521,7 @@ public class Network {
 	}
 
 	public void unfriend(UserToken userToken, String username) throws AuthenticationException, UnauthorizedOperationException {
-		User requester = findUserById(userToken.getUserId());
+		User requester = this.authenticationPlugin.getUser(userToken);
 		this.authorizationPlugin.authorize(requester, new Operation(OperationType.UNFRIEND));
 		
 		List<Friendship> friendships = this.storageFacade.getFriendshipsByUserId(requester.getUserId());

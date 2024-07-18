@@ -50,4 +50,18 @@ public class DefaultAuthenticationPlugin implements AuthenticationPlugin {
 	public void setUp(Admin admin) {
 		this.admin = admin;
 	}
+
+	@Override
+	public User getUser(UserToken token) throws AuthenticationException {
+		try {
+			if (admin.getUsername().equals(token.getUserId())) {
+				return admin;
+			} else {
+				return this.storageFacade.getUserById(token.getUserId());
+			}
+		} catch (UserNotFoundException e) {
+			// TODO add message
+			throw new AuthenticationException();
+		}
+	}
 }

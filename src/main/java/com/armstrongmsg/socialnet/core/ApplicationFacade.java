@@ -12,6 +12,7 @@ import com.armstrongmsg.socialnet.constants.SystemConstants;
 import com.armstrongmsg.socialnet.exceptions.AuthenticationException;
 import com.armstrongmsg.socialnet.exceptions.FatalErrorException;
 import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
+import com.armstrongmsg.socialnet.exceptions.UserNotFoundException;
 import com.armstrongmsg.socialnet.model.FriendshipRequest;
 import com.armstrongmsg.socialnet.model.Network;
 import com.armstrongmsg.socialnet.model.Post;
@@ -80,7 +81,7 @@ public class ApplicationFacade {
 		this.network.addUser(userToken, username, password, profileDescription);
 	}
 	
-	public void removeUser(UserToken userToken, String userId) throws UnauthorizedOperationException, AuthenticationException {
+	public void removeUser(UserToken userToken, String userId) throws UnauthorizedOperationException, AuthenticationException, UserNotFoundException {
 		logger.debug(Messages.Logging.RECEIVED_REMOVE_USER_ADMIN_REQUEST, userToken, userId);
 		this.network.removeUser(userToken, userId);
 	}
@@ -90,27 +91,27 @@ public class ApplicationFacade {
 		return this.network.getUsers(userToken);
 	}
 
-	public List<Post> getUserPostsAdmin(UserToken userToken, String userId) throws UnauthorizedOperationException, AuthenticationException {
+	public List<Post> getUserPostsAdmin(UserToken userToken, String userId) throws UnauthorizedOperationException, AuthenticationException, UserNotFoundException {
 		logger.debug(Messages.Logging.RECEIVED_GET_USERS_POSTS_ADMIN_REQUEST, userToken, userId);
 		return this.network.getUserPostsAdmin(userToken, userId);
 	}
 	
-	public void addFriendshipAdmin(UserToken userToken, String userId1, String userId2) throws UnauthorizedOperationException, AuthenticationException {
+	public void addFriendshipAdmin(UserToken userToken, String userId1, String userId2) throws UnauthorizedOperationException, AuthenticationException, UserNotFoundException {
 		logger.debug(Messages.Logging.RECEIVED_ADD_FRIENDSHIP_ADMIN_REQUEST, userToken, userId1, userId2);
 		this.network.addFriendshipAdmin(userToken, userId1, userId2);
 	}
 	
-	public List<User> getFriends(UserToken userToken, String userId) throws UnauthorizedOperationException, AuthenticationException {
+	public List<User> getFriends(UserToken userToken, String userId) throws UnauthorizedOperationException, AuthenticationException, UserNotFoundException {
 		logger.debug(Messages.Logging.RECEIVED_GET_FRIENDS_ADMIN_REQUEST, userToken, userId);
 		return this.network.getFriends(userToken, userId);
 	}
 	
-	public void addFollowAdmin(UserToken userToken, String followerId, String followedId) throws UnauthorizedOperationException, AuthenticationException {
+	public void addFollowAdmin(UserToken userToken, String followerId, String followedId) throws UnauthorizedOperationException, AuthenticationException, UserNotFoundException {
 		logger.debug(Messages.Logging.RECEIVED_ADD_FOLLOW_ADMIN_REQUEST, userToken, followerId, followedId);
 		this.network.addFollowAdmin(userToken, followerId, followedId);
 	}
 	
-	public List<User> getFollowedUsers(UserToken userToken, String userId) throws UnauthorizedOperationException, AuthenticationException {
+	public List<User> getFollowedUsers(UserToken userToken, String userId) throws UnauthorizedOperationException, AuthenticationException, UserNotFoundException {
 		logger.debug(Messages.Logging.RECEIVED_GET_FOLLOWED_USERS_ADMIN_REQUEST, userToken, userId);
 		return this.network.getFollowedUsers(userToken, userId);
 	}
@@ -147,7 +148,7 @@ public class ApplicationFacade {
 		}
 	}
 
-	public List<Post> getUserPosts(UserToken userToken, String username) throws UnauthorizedOperationException, AuthenticationException {
+	public List<Post> getUserPosts(UserToken userToken, String username) throws UnauthorizedOperationException, AuthenticationException, UserNotFoundException {
 		logger.debug(Messages.Logging.RECEIVED_GET_USER_POSTS_REQUEST, userToken, username);
 		
 		try {
@@ -158,10 +159,13 @@ public class ApplicationFacade {
 		} catch (UnauthorizedOperationException e) {
 			logger.debug(Messages.Logging.AUTHORIZATION_EXCEPTION, e.getMessage());
 			throw e;
+		} catch (UserNotFoundException e) {
+			// TODO add message
+			throw e;
 		}
 	}
 	
-	public void addFriendshipRequest(UserToken userToken, String username) throws AuthenticationException, UnauthorizedOperationException {
+	public void addFriendshipRequest(UserToken userToken, String username) throws AuthenticationException, UnauthorizedOperationException, UserNotFoundException {
 		logger.debug(Messages.Logging.RECEIVED_ADD_FRIENDSHIP_REQUEST, userToken, username);
 		
 		try {
@@ -171,6 +175,9 @@ public class ApplicationFacade {
 			throw e;
 		} catch (UnauthorizedOperationException e) {
 			logger.debug(Messages.Logging.AUTHORIZATION_EXCEPTION, e.getMessage());
+			throw e;
+		} catch (UserNotFoundException e) {
+			// TODO add message
 			throw e;
 		}
 	}
@@ -203,7 +210,7 @@ public class ApplicationFacade {
 		}
 	}
 	
-	public void acceptFriendshipRequest(UserToken userToken, String username) throws AuthenticationException, UnauthorizedOperationException {
+	public void acceptFriendshipRequest(UserToken userToken, String username) throws AuthenticationException, UnauthorizedOperationException, UserNotFoundException {
 		logger.debug(Messages.Logging.RECEIVED_ACCEPT_FRIENDSHIP_REQUEST, userToken, username);
 		
 		try {
@@ -213,6 +220,9 @@ public class ApplicationFacade {
 			throw e;
 		} catch (UnauthorizedOperationException e) {
 			logger.debug(Messages.Logging.AUTHORIZATION_EXCEPTION, e.getMessage());
+			throw e;
+		} catch (UserNotFoundException e) {
+			// TODO add message
 			throw e;
 		}
 	}
@@ -231,7 +241,7 @@ public class ApplicationFacade {
 		}
 	}
 	
-	public void addFriendship(UserToken userToken, String username) throws UnauthorizedOperationException, AuthenticationException {
+	public void addFriendship(UserToken userToken, String username) throws UnauthorizedOperationException, AuthenticationException, UserNotFoundException {
 		logger.debug(Messages.Logging.RECEIVED_ADD_FRIENDSHIP_REQUEST, userToken, username);
 		
 		try {
@@ -241,6 +251,9 @@ public class ApplicationFacade {
 			throw e;
 		} catch (UnauthorizedOperationException e) {
 			logger.debug(Messages.Logging.AUTHORIZATION_EXCEPTION, e.getMessage());
+			throw e;
+		} catch (UserNotFoundException e) {
+			// TODO add message
 			throw e;
 		}
 	}
@@ -301,7 +314,7 @@ public class ApplicationFacade {
 		}
 	}
 
-	public void addFollow(UserToken userToken, String followedUsername) throws AuthenticationException, UnauthorizedOperationException {
+	public void addFollow(UserToken userToken, String followedUsername) throws AuthenticationException, UnauthorizedOperationException, UserNotFoundException {
 		logger.debug(Messages.Logging.RECEIVED_ADD_FOLLOW_REQUEST, userToken, followedUsername);
 		
 		try {
@@ -311,6 +324,9 @@ public class ApplicationFacade {
 			throw e;
 		} catch (UnauthorizedOperationException e) {
 			logger.debug(Messages.Logging.AUTHORIZATION_EXCEPTION, e.getMessage());
+			throw e;
+		} catch (UserNotFoundException e) {
+			// TODO add message
 			throw e;
 		}
 	}

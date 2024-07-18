@@ -9,6 +9,7 @@ import javax.faces.bean.SessionScoped;
 import com.armstrongmsg.socialnet.core.ApplicationFacade;
 import com.armstrongmsg.socialnet.exceptions.AuthenticationException;
 import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
+import com.armstrongmsg.socialnet.exceptions.UserNotFoundException;
 import com.armstrongmsg.socialnet.model.authentication.UserToken;
 import com.armstrongmsg.socialnet.view.jsf.model.JsfConnector;
 import com.armstrongmsg.socialnet.view.jsf.model.User;
@@ -132,6 +133,9 @@ public class AdminBean {
 		} catch (AuthenticationException e) {
 			// FIXME Treat this exception
 			e.printStackTrace();
+		} catch (UserNotFoundException e) {
+			// FIXME Treat this exception
+			e.printStackTrace();
 		}
 		return null;
 	}
@@ -149,7 +153,7 @@ public class AdminBean {
 			return new JsfConnector().getViewUsers(
 					facade.getFriends(
 							SessionManager.getCurrentSession().getUserToken(), user.getUserId()));
-		} catch (UnauthorizedOperationException | AuthenticationException e) {
+		} catch (UnauthorizedOperationException | AuthenticationException | UserNotFoundException e) {
 			// FIXME treat exception
 		}
 		return null;
@@ -160,7 +164,7 @@ public class AdminBean {
 			return new JsfConnector().getViewUsers(
 					facade.getFollowedUsers(SessionManager.getCurrentSession().getUserToken(), 
 							user.getUserId()));
-		} catch (UnauthorizedOperationException | AuthenticationException e) {
+		} catch (UnauthorizedOperationException | AuthenticationException | UserNotFoundException e) {
 			// FIXME treat exception
 			return new ArrayList<User>();
 		}

@@ -9,6 +9,7 @@ import javax.faces.bean.RequestScoped;
 import com.armstrongmsg.socialnet.core.ApplicationFacade;
 import com.armstrongmsg.socialnet.exceptions.AuthenticationException;
 import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
+import com.armstrongmsg.socialnet.exceptions.UserNotFoundException;
 import com.armstrongmsg.socialnet.model.authentication.UserToken;
 import com.armstrongmsg.socialnet.view.jsf.model.JsfConnector;
 import com.armstrongmsg.socialnet.view.jsf.model.User;
@@ -55,7 +56,7 @@ public class FollowBean {
 		try {
 			facade.addFollowAdmin(SessionManager.getCurrentSession().getUserToken(), 
 					SessionManager.getCurrentSession().getUserToken().getUserId(), followed.getUserId());
-		} catch (UnauthorizedOperationException | AuthenticationException e) {
+		} catch (UnauthorizedOperationException | AuthenticationException | UserNotFoundException e) {
 			// FIXME treat exception
 		}
 	}
@@ -63,7 +64,7 @@ public class FollowBean {
 	public void addFollow() {
 		try {
 			facade.addFollow(SessionManager.getCurrentSession().getUserToken(), getUsername());
-		} catch (AuthenticationException | UnauthorizedOperationException e) {
+		} catch (AuthenticationException | UnauthorizedOperationException | UserNotFoundException e) {
 			//FIXME treat exception
 		}
 	}

@@ -22,6 +22,7 @@ import com.armstrongmsg.socialnet.core.ApplicationFacade;
 import com.armstrongmsg.socialnet.exceptions.AuthenticationException;
 import com.armstrongmsg.socialnet.exceptions.FatalErrorException;
 import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
+import com.armstrongmsg.socialnet.exceptions.UserNotFoundException;
 import com.armstrongmsg.socialnet.model.FriendshipRequest;
 import com.armstrongmsg.socialnet.model.Post;
 import com.armstrongmsg.socialnet.model.PostVisibility;
@@ -124,7 +125,7 @@ public class IntegrationTest {
 	}
 	
 	@Test
-	public void testGetCreateRemoveUserByAdmin() throws AuthenticationException, UnauthorizedOperationException {
+	public void testGetCreateRemoveUserByAdmin() throws AuthenticationException, UnauthorizedOperationException, UserNotFoundException {
 		UserToken adminToken = loginAsAdmin();
 		
 		List<User> users = facade.getUsers(adminToken);
@@ -203,7 +204,7 @@ public class IntegrationTest {
 	}
 	
 	@Test(expected = UnauthorizedOperationException.class)
-	public void testNonAdminCannotRemoveUser() throws AuthenticationException, UnauthorizedOperationException {		
+	public void testNonAdminCannotRemoveUser() throws AuthenticationException, UnauthorizedOperationException, UserNotFoundException {		
 		UserToken adminToken = loginAsAdmin();
 		
 		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
@@ -253,7 +254,7 @@ public class IntegrationTest {
 	}
 	
 	@Test
-	public void testCreateAndGetPostByAdmin() throws AuthenticationException, UnauthorizedOperationException {
+	public void testCreateAndGetPostByAdmin() throws AuthenticationException, UnauthorizedOperationException, UserNotFoundException {
 		UserToken adminToken = loginAsAdmin();
 		
 		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
@@ -276,7 +277,7 @@ public class IntegrationTest {
 	}
 
 	@Test(expected = UnauthorizedOperationException.class)
-	public void testNonAdminUserCannotGetPostsByUserId() throws AuthenticationException, UnauthorizedOperationException { 
+	public void testNonAdminUserCannotGetPostsByUserId() throws AuthenticationException, UnauthorizedOperationException, UserNotFoundException { 
 		UserToken adminToken = loginAsAdmin();
 		
 		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
@@ -288,7 +289,7 @@ public class IntegrationTest {
 	}
 	
 	@Test(expected = UnauthorizedOperationException.class)
-	public void testNonAdminUserCannotGetPostsFromOtherUser() throws AuthenticationException, UnauthorizedOperationException { 
+	public void testNonAdminUserCannotGetPostsFromOtherUser() throws AuthenticationException, UnauthorizedOperationException, UserNotFoundException { 
 		UserToken adminToken = loginAsAdmin();
 		
 		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
@@ -324,7 +325,7 @@ public class IntegrationTest {
 	}
 	
 	@Test
-	public void testGetOtherUserPostsByNonAdmin() throws AuthenticationException, UnauthorizedOperationException {
+	public void testGetOtherUserPostsByNonAdmin() throws AuthenticationException, UnauthorizedOperationException, UserNotFoundException {
 		UserToken adminToken = loginAsAdmin();
 		
 		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
@@ -391,7 +392,7 @@ public class IntegrationTest {
 	}
 	
 	@Test
-	public void testAddFriendshipAdmin() throws UnauthorizedOperationException, AuthenticationException {
+	public void testAddFriendshipAdmin() throws UnauthorizedOperationException, AuthenticationException, UserNotFoundException {
 		UserToken adminToken = loginAsAdmin();
 		
 		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
@@ -411,7 +412,7 @@ public class IntegrationTest {
 	}
 	
 	@Test(expected = UnauthorizedOperationException.class)
-	public void testNonAdminCannotAddFriendshipByUserId() throws UnauthorizedOperationException, AuthenticationException {
+	public void testNonAdminCannotAddFriendshipByUserId() throws UnauthorizedOperationException, AuthenticationException, UserNotFoundException {
 		UserToken adminToken = loginAsAdmin();
 		
 		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
@@ -426,7 +427,7 @@ public class IntegrationTest {
 	}
 	
 	@Test(expected = UnauthorizedOperationException.class)
-	public void testNonAdminCannotGetFriendsById() throws AuthenticationException, UnauthorizedOperationException {
+	public void testNonAdminCannotGetFriendsById() throws AuthenticationException, UnauthorizedOperationException, UserNotFoundException {
 		UserToken adminToken = loginAsAdmin();
 		
 		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
@@ -437,7 +438,7 @@ public class IntegrationTest {
 	}
 	
 	@Test
-	public void testAddFriendshipRequestAndReject() throws UnauthorizedOperationException, AuthenticationException {
+	public void testAddFriendshipRequestAndReject() throws UnauthorizedOperationException, AuthenticationException, UserNotFoundException {
 		UserToken adminToken = loginAsAdmin();
 		
 		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
@@ -476,7 +477,7 @@ public class IntegrationTest {
 	}
 	
 	@Test
-	public void testAddFriendshipRequestAndAccept() throws UnauthorizedOperationException, AuthenticationException {
+	public void testAddFriendshipRequestAndAccept() throws UnauthorizedOperationException, AuthenticationException, UserNotFoundException {
 		UserToken adminToken = loginAsAdmin();
 		
 		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
@@ -517,7 +518,7 @@ public class IntegrationTest {
 	}
 	
 	@Test
-	public void testAddFriendship() throws UnauthorizedOperationException, AuthenticationException {
+	public void testAddFriendship() throws UnauthorizedOperationException, AuthenticationException, UserNotFoundException {
 		UserToken adminToken = loginAsAdmin();
 		
 		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
@@ -539,7 +540,7 @@ public class IntegrationTest {
 	}
 	
 	@Test
-	public void testGetFriendsPosts() throws AuthenticationException, UnauthorizedOperationException {
+	public void testGetFriendsPosts() throws AuthenticationException, UnauthorizedOperationException, UserNotFoundException {
 		UserToken adminToken = loginAsAdmin();
 		
 		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
@@ -571,7 +572,7 @@ public class IntegrationTest {
 	}
 	
 	@Test
-	public void testGetFeedPosts() throws AuthenticationException, UnauthorizedOperationException, InterruptedException {
+	public void testGetFeedPosts() throws AuthenticationException, UnauthorizedOperationException, InterruptedException, UserNotFoundException {
 		UserToken adminToken = loginAsAdmin();
 		
 		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
@@ -640,7 +641,7 @@ public class IntegrationTest {
 	}
 	
 	@Test
-	public void testAddFollowAdmin() throws UnauthorizedOperationException, AuthenticationException {
+	public void testAddFollowAdmin() throws UnauthorizedOperationException, AuthenticationException, UserNotFoundException {
 		UserToken adminToken = loginAsAdmin();
 		
 		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
@@ -662,7 +663,7 @@ public class IntegrationTest {
 	}
 	
 	@Test(expected = UnauthorizedOperationException.class)
-	public void testNonAdminCannotFollowById() throws UnauthorizedOperationException, AuthenticationException {
+	public void testNonAdminCannotFollowById() throws UnauthorizedOperationException, AuthenticationException, UserNotFoundException {
 		UserToken adminToken = loginAsAdmin();
 		
 		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
@@ -677,7 +678,7 @@ public class IntegrationTest {
 	}
 	
 	@Test(expected = UnauthorizedOperationException.class)
-	public void testNonAdminCannotGetFollowsById() throws UnauthorizedOperationException, AuthenticationException {
+	public void testNonAdminCannotGetFollowsById() throws UnauthorizedOperationException, AuthenticationException, UserNotFoundException {
 		UserToken adminToken = loginAsAdmin();
 		
 		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
@@ -695,7 +696,7 @@ public class IntegrationTest {
 	}
 	
 	@Test
-	public void testAddFollow() throws UnauthorizedOperationException, AuthenticationException {
+	public void testAddFollow() throws UnauthorizedOperationException, AuthenticationException, UserNotFoundException {
 		UserToken adminToken = loginAsAdmin();
 		
 		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
@@ -740,7 +741,7 @@ public class IntegrationTest {
 	}
 	
 	@Test
-	public void testGetUserRecommendations() throws AuthenticationException, UnauthorizedOperationException {
+	public void testGetUserRecommendations() throws AuthenticationException, UnauthorizedOperationException, UserNotFoundException {
 		UserToken adminToken = loginAsAdmin();
 		
 		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
@@ -768,7 +769,7 @@ public class IntegrationTest {
 	}
 	
 	@Test
-	public void testIsFriend() throws AuthenticationException, UnauthorizedOperationException {
+	public void testIsFriend() throws AuthenticationException, UnauthorizedOperationException, UserNotFoundException {
 		UserToken adminToken = loginAsAdmin();
 		
 		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
@@ -809,7 +810,7 @@ public class IntegrationTest {
 	}
 	
 	@Test
-	public void testFollows() throws UnauthorizedOperationException, AuthenticationException {
+	public void testFollows() throws UnauthorizedOperationException, AuthenticationException, UserNotFoundException {
 		UserToken adminToken = loginAsAdmin();
 		
 		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
@@ -832,7 +833,7 @@ public class IntegrationTest {
 	}
 	
 	@Test
-	public void testUnfollow() throws AuthenticationException, UnauthorizedOperationException {
+	public void testUnfollow() throws AuthenticationException, UnauthorizedOperationException, UserNotFoundException {
 		UserToken adminToken = loginAsAdmin();
 		
 		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
@@ -859,7 +860,7 @@ public class IntegrationTest {
 	}
 	
 	@Test
-	public void testUnfriend() throws AuthenticationException, UnauthorizedOperationException {
+	public void testUnfriend() throws AuthenticationException, UnauthorizedOperationException, UserNotFoundException {
 		UserToken adminToken = loginAsAdmin();
 		
 		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);

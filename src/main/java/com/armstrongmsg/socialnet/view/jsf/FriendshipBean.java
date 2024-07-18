@@ -9,6 +9,7 @@ import javax.faces.bean.RequestScoped;
 import com.armstrongmsg.socialnet.core.ApplicationFacade;
 import com.armstrongmsg.socialnet.exceptions.AuthenticationException;
 import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
+import com.armstrongmsg.socialnet.exceptions.UserNotFoundException;
 import com.armstrongmsg.socialnet.model.FriendshipRequest;
 import com.armstrongmsg.socialnet.model.authentication.UserToken;
 import com.armstrongmsg.socialnet.view.jsf.model.JsfConnector;
@@ -54,7 +55,7 @@ public class FriendshipBean {
 	public void addFriendship() {
 		try {
 			facade.addFriendship(SessionManager.getCurrentSession().getUserToken(), username);
-		} catch (UnauthorizedOperationException | AuthenticationException e) {
+		} catch (UnauthorizedOperationException | AuthenticationException | UserNotFoundException e) {
 			// FIXME treat this exception
 		}
 	}
@@ -65,6 +66,8 @@ public class FriendshipBean {
 		} catch (AuthenticationException e) {
 			// FIXME treat this exception
 		} catch (UnauthorizedOperationException e) {
+			// FIXME treat this exception
+		} catch (UserNotFoundException e) {
 			// FIXME treat this exception
 		}
 	}
@@ -115,6 +118,8 @@ public class FriendshipBean {
 		} catch (AuthenticationException e) {
 			// FIXME treat this exception
 		} catch (UnauthorizedOperationException e) {
+			// FIXME treat this exception
+		} catch (UserNotFoundException e) {
 			// FIXME treat this exception
 		}
 	}
