@@ -52,6 +52,7 @@ public class Messages {
 		public static final String RECEIVED_UNFOLLOW_REQUEST = "Received unfollow request. Token: {}, username: {}.";
 		public static final String RECEIVED_UNFRIEND_REQUEST = "Received unfriend request. Token:{}, username: {}.";
 		public static final String RECEIVED_USER_IS_ADMIN_REQUEST = "Received User is Admin request. User ID: {}.";
+		public static final String USER_NOT_FOUND_EXCEPTION = "User not found exception. Message:{}.";
 	}
 	
 	public static class Exception {
@@ -66,5 +67,6 @@ public class Messages {
 		public static final String COULD_NOT_FIND_USER = "Could not find user %s.";
 		public static final String CONSTRUCTOR_NOT_FOUND_ON_INSTANTIATION = 
 				"Could not find correct constructor of class %s. Message: %s.";
+		public static final String USER_NOT_FOUND_EXCEPTION = "User not found exception.";
 	}
 }

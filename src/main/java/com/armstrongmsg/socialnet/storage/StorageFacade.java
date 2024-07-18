@@ -129,7 +129,6 @@ public class StorageFacade {
 	public List<FriendshipRequest> getSentFrienshipRequestsById(String userId) {
 		List<FriendshipRequest> requests = cache.getSentFriendshipRequestsById(userId);
 		
-		// FIXME Should catch an exception and treat this case
 		if (requests == null) {
 			requests = databaseManager.getSentFriendshipRequestsById(userId);
 			cache.putFriendshipRequests(requests);

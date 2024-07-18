@@ -160,7 +160,7 @@ public class ApplicationFacade {
 			logger.debug(Messages.Logging.AUTHORIZATION_EXCEPTION, e.getMessage());
 			throw e;
 		} catch (UserNotFoundException e) {
-			// TODO add message
+			logger.debug(Messages.Logging.USER_NOT_FOUND_EXCEPTION, e.getMessage());
 			throw e;
 		}
 	}
@@ -177,7 +177,7 @@ public class ApplicationFacade {
 			logger.debug(Messages.Logging.AUTHORIZATION_EXCEPTION, e.getMessage());
 			throw e;
 		} catch (UserNotFoundException e) {
-			// TODO add message
+			logger.debug(Messages.Logging.USER_NOT_FOUND_EXCEPTION, e.getMessage());
 			throw e;
 		}
 	}
@@ -222,7 +222,7 @@ public class ApplicationFacade {
 			logger.debug(Messages.Logging.AUTHORIZATION_EXCEPTION, e.getMessage());
 			throw e;
 		} catch (UserNotFoundException e) {
-			// TODO add message
+			logger.debug(Messages.Logging.USER_NOT_FOUND_EXCEPTION, e.getMessage());
 			throw e;
 		}
 	}
@@ -253,7 +253,7 @@ public class ApplicationFacade {
 			logger.debug(Messages.Logging.AUTHORIZATION_EXCEPTION, e.getMessage());
 			throw e;
 		} catch (UserNotFoundException e) {
-			// TODO add message
+			logger.debug(Messages.Logging.USER_NOT_FOUND_EXCEPTION, e.getMessage());
 			throw e;
 		}
 	}
@@ -284,7 +284,7 @@ public class ApplicationFacade {
 			logger.debug(Messages.Logging.AUTHORIZATION_EXCEPTION, e.getMessage());
 			throw e;
 		} catch (UserNotFoundException e) {
-			// TODO log
+			logger.debug(Messages.Logging.USER_NOT_FOUND_EXCEPTION, e.getMessage());
 			throw e;
 		}
 	}
@@ -301,7 +301,7 @@ public class ApplicationFacade {
 			logger.debug(Messages.Logging.AUTHORIZATION_EXCEPTION, e.getMessage());
 			throw e;
 		} catch (UserNotFoundException e) {
-			// TODO log
+			logger.debug(Messages.Logging.USER_NOT_FOUND_EXCEPTION, e.getMessage());
 			throw e;
 		}
 	}
@@ -332,7 +332,7 @@ public class ApplicationFacade {
 			logger.debug(Messages.Logging.AUTHORIZATION_EXCEPTION, e.getMessage());
 			throw e;
 		} catch (UserNotFoundException e) {
-			// TODO add message
+			logger.debug(Messages.Logging.USER_NOT_FOUND_EXCEPTION, e.getMessage());
 			throw e;
 		}
 	}
