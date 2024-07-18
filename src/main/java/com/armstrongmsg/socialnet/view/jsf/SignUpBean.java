@@ -11,6 +11,8 @@ public class SignUpBean {
 	private String username;
 	private String profileDescription;
 	private String password;
+	private String passwordCheck;
+	private boolean passwordInputsDoNotMatch;
 	
 	private static ApplicationFacade facade = ApplicationFacade.getInstance();
 
@@ -37,9 +39,30 @@ public class SignUpBean {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	
+
+	public String getPasswordCheck() {
+		return passwordCheck;
+	}
+
+	public void setPasswordCheck(String passwordCheck) {
+		this.passwordCheck = passwordCheck;
+	}
+
+	public boolean isPasswordInputsDoNotMatch() {
+		return passwordInputsDoNotMatch;
+	}
+
+	public void setPasswordInputsDoNotMatch(boolean passwordInputsDoNotMatch) {
+		this.passwordInputsDoNotMatch = passwordInputsDoNotMatch;
+	}
+
 	public String signUp() {
-		facade.addUser(username, getPassword(), profileDescription);
-		return new NavigationController().showHome();
+		if (password.equals(passwordCheck)) {
+			facade.addUser(username, getPassword(), profileDescription);
+			return new NavigationController().showHome();
+		} else {
+			this.setPasswordInputsDoNotMatch(true);
+			return new NavigationController().showSignUp();
+		}
 	}
 }

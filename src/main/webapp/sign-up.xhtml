@@ -28,12 +28,21 @@ xmlns:f = "http://java.sun.com/jsf/core">
    		  <br/>
    		  <h:inputSecret size = "20" value = "#{signUpBean.password}" />
    		  <br/>
+   		  Type the password again:
+   		  <br/>
+   		  <h:inputSecret size = "20" value = "#{signUpBean.passwordCheck}" />
           <br/>
           <h:commandButton value = "Sign up" action = "#{signUpBean.signUp}" />
+         
+          <br/>
           
-         <h:commandButton action = "#{navigationController.showPage}" value = "Back" >
+          <h:outputText value="Passwords do not match. Try again." rendered="#{signUpBean.passwordInputsDoNotMatch}"/>
+          
+          <br/>
+          
+          <h:commandButton action = "#{navigationController.showPage}" value = "Back" >
 	         <f:param name = "pageId" value = "home" />
-	     </h:commandButton>
+	      </h:commandButton>
       </h:form>
    </h:body>
 </html>

@@ -32,6 +32,10 @@ public class NavigationController {
 		return showPageById("home");
 	}
 	
+	public String showSignUp() {
+		return showPageById("sign-up");
+	}
+	
 	public String showPageById(String pageId) {
 		if (pageId == null) {
 			return "home";
