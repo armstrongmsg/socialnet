@@ -8,16 +8,28 @@ public class DefaultUserRepository implements UserRepository {
 	
 	@Override
 	public User getUserById(String id) {
-		return new DatabaseOperation<List<User>>().
+		List<User> result = new DatabaseOperation<List<User>>().
 				setQueryString("SELECT c FROM User c WHERE c.userId = :userId").
-				setParameter("userId", id).query().get(0);
+				setParameter("userId", id).query();
+		
+		if (result.size() >= 1) {
+			return result.get(0);
+		}
+		
+		return null;
 	}
 
 	@Override
 	public User getUserByUsername(String username) {
-		return new DatabaseOperation<List<User>>().
+		List<User> result = new DatabaseOperation<List<User>>().
 				setQueryString("SELECT c FROM User c WHERE c.username = :username").
-				setParameter("username", username).query().get(0); 
+				setParameter("username", username).query();
+		
+		if (result.size() >= 1) {
+			return result.get(0);
+		}
+		
+		return null;
 	}
 
 	@Override

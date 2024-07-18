@@ -29,11 +29,17 @@ public class DefaultFriendshipRequestRepository implements FriendshipRequestRepo
 
 	@Override
 	public FriendshipRequest getReceivedFriendshipRequestById(String userId, String username) {
-		return new DatabaseOperation<List<FriendshipRequest>>().
+		List<FriendshipRequest> result = new DatabaseOperation<List<FriendshipRequest>>().
 				setQueryString("SELECT f FROM FriendshipRequest f WHERE f.requested.userId = :userId and f.requester.username = :username").
 				setParameter("userId", userId).
 				setParameter("username", username).
-				query().get(0);
+				query();
+		
+		if (result.size() >= 1) {
+			return result.get(0);
+		}
+		
+		return null;
 	}
 
 	@Override
