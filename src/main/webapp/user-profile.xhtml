@@ -94,11 +94,12 @@ xmlns:p="http://primefaces.org/ui">
 			<p:inputTextarea rows="10" cols="100" size="100" autoResize="true"
 				value="#{postBean.content}" />
 
-			<h:selectOneMenu value="#{postBean.postVisibility}">
-				<f:selectItem itemValue="PRIVATE" itemLabel="Private" />
-				<f:selectItem itemValue="PUBLIC" itemLabel="Public" />
-			</h:selectOneMenu>
-			<h:commandButton value="Post" action="#{postBean.createPost}" />
+			<p:selectOneMenu value="#{postBean.postVisibility}">
+				<f:selectItem itemLabel="Select One" itemValue="" />
+				<f:selectItems value="#{postBean.visibilities}" var="visibility"
+					itemLabel="#{visibility.value}" itemValue="#{visibility}" />
+			</p:selectOneMenu>
+			<p:commandButton value="Post" action="#{postBean.createPost}" ajax="false"/>
 		</p:panelGrid>
 	</h:form>
 

@@ -1,5 +1,6 @@
 package com.armstrongmsg.socialnet.view.jsf;
 
+import java.util.Arrays;
 import java.util.List;
 
 import javax.faces.bean.ManagedBean;
@@ -23,6 +24,7 @@ public class PostBean {
 	private String content;
 	private String postVisibility;
 	
+	private List<PostVisibility> visibilities = Arrays.asList(PostVisibility.values());
 	private Post post;
 	private List<Post> userPostsAdmin;
 	
@@ -180,5 +182,13 @@ public class PostBean {
 		} catch (UnauthorizedOperationException e) {
 			// FIXME treat exception
 		}
+	}
+
+	public List<PostVisibility> getVisibilities() {
+		return visibilities;
+	}
+
+	public void setVisibilities(List<PostVisibility> visibilities) {
+		this.visibilities = visibilities;
 	}
 }
