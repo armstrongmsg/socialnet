@@ -4,7 +4,8 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html">
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
 
    <h:head>
       <title>Home</title>		
@@ -14,37 +15,25 @@
 <h:body>
 	<h2>Social net</h2>
 	<hr />
-
+	
 	<h:form>
-		<table>
-			<tr>
-				<td>Username:</td>
-				<td><h:inputText size="20" value="#{contextBean.username}" /></td>
-			</tr>
-
-			<tr>
-				<td>Password :</td>
-				<td><h:inputSecret size="20" value="#{contextBean.password}" /></td>
-			</tr>
-
-			<tr>
-				<td></td>
-				<td>
-					<h:commandButton value="Login" action="#{contextBean.login}" >
-					</h:commandButton>
-					<h:commandButton action="#{navigationController.showPage}"
-						value="Sign up">
-						<f:param name="pageId" value="sign-up" />
-					</h:commandButton>
-				</td>
-			</tr>
-			<tr>
-				<td></td>
-				<td>
-					<h:outputText value="Invalid credentials. Try again." rendered="#{contextBean.loginError}"/>
-				</td>
-			</tr>
-		</table>
+		<div>Username</div>
+		<p:inputText size="20" value="#{contextBean.username}" />
+		<div>Password</div>
+		<p:password size="20" value="#{contextBean.password}" />
+		
+		<p:divider/>
+		
+		<!-- TODO p:commandButton does not update the login message -->
+		<h:commandButton value="Login" action="#{contextBean.login}"/>
+		<h:outputText value="Invalid credentials. Try again." rendered="#{contextBean.loginError}"/>
+		
+		<p:divider/>
+					
+		<p:commandButton action="#{navigationController.showPage}"
+			value="Sign up">
+			<f:param name="pageId" value="sign-up" />
+		</p:commandButton>
 	</h:form>
 </h:body>
 </html>
