@@ -11,29 +11,38 @@ xmlns:p="http://primefaces.org/ui">
       <title>Sign up</title>		
       <h:outputStylesheet library = "css" name = "styles.css"  /> 	
    </h:head>
-   
-   <h:body>
-   	    <h2>Social net</h2>
-	    <hr />
-	    
-   	    <h:form> 
-   		<p:panelGrid columns="1">
-   		  <div>Choose a username</div>
-   		  <p:inputText size = "20" value = "#{signUpBean.username}"/>
-   		  <div>Write something about yourself</div>
-   		  <p:inputTextarea autoResize="true" value = "#{signUpBean.profileDescription}" />
-   		  <div>Choose a password</div>
-   		  <p:password inline = "true" feedback = "true" value = "#{signUpBean.password}" match = "pass_check"/>
-   		  <div>Type the password again</div> 
-   		  <p:password id = "pass_check" value = "#{signUpBean.password}"/>
-   		  
-   		  <p:divider/>
-   		  
-          <h:commandButton value = "Sign up" action = "#{signUpBean.signUp}"/>
-          <h:commandButton action = "#{navigationController.showPage}" value = "Back" >
-	         <f:param name = "pageId" value = "home" />
-	      </h:commandButton>
-   		</p:panelGrid>
-       </h:form>
-   </h:body>
+
+<h:body>
+	<h:form>
+		<p:toolbar>
+			<f:facet name="left">
+				<h2>Social net</h2>
+			</f:facet>
+			<f:facet name="right">
+				<p:commandButton action="#{navigationController.showPage}"
+					value="Back">
+					<f:param name="pageId" value="home" />
+				</p:commandButton>
+			</f:facet>
+		</p:toolbar>
+	</h:form>
+
+	<h:form>
+		<p:panelGrid columns="1">
+			<div>Choose a username</div>
+			<p:inputText size="20" value="#{signUpBean.username}" />
+			<div>Write something about yourself</div>
+			<p:inputTextarea autoResize="true"
+				value="#{signUpBean.profileDescription}" />
+			<div>Choose a password</div>
+			<p:password inline="true" feedback="true"
+				value="#{signUpBean.password}" match="pass_check" />
+			<div>Type the password again</div>
+			<p:password id="pass_check" value="#{signUpBean.password}" />
+
+			<p:commandButton value="Sign up" action="#{signUpBean.signUp}"
+				ajax="false" />
+		</p:panelGrid>
+	</h:form>
+</h:body>
 </html>
