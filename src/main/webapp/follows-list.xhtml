@@ -4,7 +4,8 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html">
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
 
 <h:head>
       <title>Follows</title>		
@@ -13,37 +14,31 @@
 
 <h:body>
 	<h:form>
-		<table>
-			<tr>
-				<td>
-					<h:commandButton action = "#{navigationController.showPage}"
+		<p:toolbar>
+			<f:facet name="left">
+				<p:commandButton action = "#{navigationController.showPage}"
             			value = "Home" >
             			<f:param name = "pageId" value = "user-home" />
-        			</h:commandButton>
-				</td>
-				<td>
-					<h:commandButton action="#{navigationController.showPage}"
+        		</p:commandButton>
+				<p:commandButton action="#{navigationController.showPage}"
 						value="Profile" >
 						<f:param name="pageId" value="user-profile" />
-					</h:commandButton>
-				</td>
-				<td>
-					<h:commandButton action="#{navigationController.showPage}"
+						<f:setPropertyActionListener target="#{contextBean.viewUser}" 
+					    value="" />
+				</p:commandButton>
+				<p:commandButton action="#{navigationController.showPage}"
 						value="Friends">
 						<f:param name="pageId" value="friends-list" />
-					</h:commandButton>
-				</td>
-				<td>
-					<h:commandButton action="#{navigationController.showPage}"
+				</p:commandButton>
+				<p:commandButton action="#{navigationController.showPage}"
 						value="Follows">
 						<f:param name="pageId" value="follows-list" />
-					</h:commandButton>
-				</td>
-				<td>
-					<h:commandButton value="Logout" action="#{contextBean.logout}" />
-				</td>
-			</tr>
-		</table>
+				</p:commandButton>
+			</f:facet>
+			<f:facet name="right">
+				<p:commandButton value="Logout" action="#{contextBean.logout}" />
+			</f:facet>
+		</p:toolbar>
 	</h:form>
 
 	<hr />
