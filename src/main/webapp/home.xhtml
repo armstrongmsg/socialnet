@@ -7,10 +7,10 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:p="http://primefaces.org/ui">
 
-   <h:head>
-      <title>Home</title>		
-      <h:outputStylesheet library = "css" name = "styles.css"  /> 	
-   </h:head>
+<h:head>
+	<title>Home</title>
+	<h:outputStylesheet library="css" name="styles.css" />
+</h:head>
 
 <h:body>
 	<h:form>
@@ -30,8 +30,10 @@
 	<h:form>
 		<p:panelGrid columns="1">
 			<div>Sign In</div>
-			<p:inputText size="20" value="#{contextBean.username}" placeholder="username"/>
-			<p:password size="20" value="#{contextBean.password}" placeholder="password"/>
+			<p:inputText size="20" value="#{contextBean.username}"
+				placeholder="username" />
+			<p:password size="20" value="#{contextBean.password}"
+				placeholder="password" />
 
 			<h:outputText value="Invalid credentials. Try again."
 				rendered="#{contextBean.loginError}" />

@@ -2,37 +2,37 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html xmlns = "http://www.w3.org/1999/xhtml"   
-xmlns:h = "http://java.sun.com/jsf/html"
-xmlns:f = "http://java.sun.com/jsf/core"
-xmlns:p="http://primefaces.org/ui">
-   
-   <h:head>
-      <title>User profile</title>		
-      <h:outputStylesheet library = "css" name = "styles.css"  /> 	
-   </h:head>
-   
-   <h:body>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<title>User profile</title>
+	<h:outputStylesheet library="css" name="styles.css" />
+</h:head>
+
+<h:body>
 	<h:form>
 		<p:toolbar>
 			<f:facet name="left">
-				<p:commandButton action = "#{navigationController.showPage}"
-            			value = "Home" >
-            			<f:param name = "pageId" value = "user-home" />
-        		</p:commandButton>
 				<p:commandButton action="#{navigationController.showPage}"
-						value="Profile" >
-						<f:param name="pageId" value="user-profile" />
-						<f:setPropertyActionListener target="#{contextBean.viewUser}" 
-					    value="" />
+					value="Home">
+					<f:param name="pageId" value="user-home" />
 				</p:commandButton>
 				<p:commandButton action="#{navigationController.showPage}"
-						value="Friends">
-						<f:param name="pageId" value="friends-list" />
+					value="Profile">
+					<f:param name="pageId" value="user-profile" />
+					<f:setPropertyActionListener target="#{contextBean.viewUser}"
+						value="" />
 				</p:commandButton>
 				<p:commandButton action="#{navigationController.showPage}"
-						value="Follows">
-						<f:param name="pageId" value="follows-list" />
+					value="Friends">
+					<f:param name="pageId" value="friends-list" />
+				</p:commandButton>
+				<p:commandButton action="#{navigationController.showPage}"
+					value="Follows">
+					<f:param name="pageId" value="follows-list" />
 				</p:commandButton>
 			</f:facet>
 			<f:facet name="right">
@@ -80,18 +80,18 @@ xmlns:p="http://primefaces.org/ui">
 		</p:toolbar>
 	</h:form>
 
-	<p:divider/>
+	<p:divider />
 
 	<h:form>
-			<h:outputText value="About" />
+		<h:outputText value="About" />
 		<p:panelGrid columns="1">
 			<h:outputText value="#{contextBean.viewUser.profileDescription}" />
 		</p:panelGrid>
 	</h:form>
 
-	<p:divider/>
+	<p:divider />
 
-	<h:form rendered = "#{contextBean.isSelfProfile}">
+	<h:form rendered="#{contextBean.isSelfProfile}">
 		<p:panelGrid columns="1">
 			<div>Create a post</div>
 			<p:inputText value="#{postBean.title}" size="100" />
@@ -103,11 +103,12 @@ xmlns:p="http://primefaces.org/ui">
 				<f:selectItems value="#{postBean.visibilities}" var="visibility"
 					itemLabel="#{visibility.value}" itemValue="#{visibility}" />
 			</p:selectOneMenu>
-			<p:commandButton value="Post" action="#{postBean.createPost}" ajax="false"/>
+			<p:commandButton value="Post" action="#{postBean.createPost}"
+				ajax="false" />
 		</p:panelGrid>
 	</h:form>
 
-	<p:divider/>
+	<p:divider />
 
 	<h:form>
 		<!-- DEPRECATED! -->
