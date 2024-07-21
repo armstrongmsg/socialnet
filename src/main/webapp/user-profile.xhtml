@@ -71,59 +71,54 @@ xmlns:p="http://primefaces.org/ui">
 		   <f:setPropertyActionListener
                      target = "#{followBean.username}" value = "#{contextBean.viewUser.username}" />
         </h:commandButton>
-        
+
       </h:form>
       
-      <hr />
-      
-      <h:form>
-      	<h:outputText value = "Bio" />
-      	<br/>
-        <h:outputText value = "#{contextBean.viewUser.profileDescription}" />
-      </h:form>
+      <p:divider/>
+
+		<h:form>
+			<p:panelGrid columns="1">
+				<h:outputText value="About" />
+				<h:outputText value="#{contextBean.viewUser.profileDescription}" />
+			</p:panelGrid>
+		</h:form>
+
+	<p:divider/>
       
       <h:form rendered = "#{contextBean.isSelfProfile}">
-      	<hr />
-      	<h:inputText value = "#{postBean.title}" size = "100"/>
-      	<br/>
-        <h:inputTextarea rows = "10" cols = "100" value = "#{postBean.content}" />
-        <br/>
-        <table>
-			<tr>
-				<td>
-					<h:selectOneMenu value = "#{postBean.postVisibility}"> 
-           				<f:selectItem itemValue = "PRIVATE" itemLabel = "Private" /> 
-           				<f:selectItem itemValue = "PUBLIC" itemLabel = "Public" /> 
-        			</h:selectOneMenu> 					
-				</td>
-				<td>
-					<h:commandButton value = "Post" action = "#{postBean.createPost}" />					
-				</td>
-			</tr>
-		</table>
-      </h:form>
+		<p:panelGrid columns="1">
+			<div>Create a post</div>
+			<p:inputText value="#{postBean.title}" size="100" />
+			<p:inputTextarea rows="10" cols="100" size="100" autoResize="true"
+				value="#{postBean.content}" />
+
+			<h:selectOneMenu value="#{postBean.postVisibility}">
+				<f:selectItem itemValue="PRIVATE" itemLabel="Private" />
+				<f:selectItem itemValue="PUBLIC" itemLabel="Public" />
+			</h:selectOneMenu>
+			<h:commandButton value="Post" action="#{postBean.createPost}" />
+		</p:panelGrid>
+	</h:form>
       
-      <hr />
+      <p:divider/>
       
       <h:form>
-      	<h:dataTable value="#{postBean.posts}" var="post"
-			styleClass="usersTable" headerClass="usersTableHeader"
-			rowClasses="usersTableOddRow,usersTableEvenRow">
-
-			<h:column>
-				<h:outputText value="Posted on #{post.date}" />
-				<br/>
-				<h:outputText value="#{post.title}" />
-				<br/>
-				<h:outputText value="#{post.content}" />
-			</h:column>
-			<h:column>
-				<h:commandButton value = "Delete" action = "#{postBean.deletePost}" rendered = "#{contextBean.isSelfProfile}">
-		   			<f:setPropertyActionListener 
-                     target = "#{postBean.post}" value = "#{post}" />
-        		</h:commandButton>
-			</h:column>
-		</h:dataTable>
-      </h:form>
+      <!-- DEPRECATED! -->
+		<p:dataGrid var="post" value="#{postBean.posts}" columns="5" rows="5" paginator="true">
+			<p:column>
+				<p:panel header="#{post.title}">
+					<h:panelGrid columns="1">
+						<h:outputText value="Posted on #{post.date}" />
+						<h:outputText value="#{post.content}" />
+						<p:commandButton value = "Delete" action = "#{postBean.deletePost}" rendered = "#{contextBean.isSelfProfile}">
+		   					<f:setPropertyActionListener 
+                     		target = "#{postBean.post}" value = "#{post}" />
+        				</p:commandButton>
+					</h:panelGrid>
+				</p:panel>
+			</p:column>
+		</p:dataGrid>
+	</h:form>
+	
    </h:body>
 </html>

@@ -112,18 +112,18 @@
       Feed
       
      <h:form>
-		<h:dataTable value="#{postBean.feedPosts}" var="post"
-			styleClass="usersTable" headerClass="usersTableHeader"
-			rowClasses="usersTableOddRow,usersTableEvenRow">
-
-			<h:column>
-				<h:outputText value="Posted on #{post.date}" />
-				<br/>
-				<h:outputText value="#{post.title}" />
-				<br/>
-				<h:outputText value="#{post.content}" />
-			</h:column>
-		</h:dataTable>
+		<!-- DEPRECATED! -->
+		<p:dataGrid var="post" value="#{postBean.feedPosts}" columns="5" rows="5" paginator="true">
+			<p:column>
+				<p:panel header="#{post.title}">
+					<h:panelGrid columns="1">
+						<h:outputText value="Posted on #{post.date}" />
+						<h:outputText value="#{post.content}" />
+					</h:panelGrid>
+				</p:panel>
+			</p:column>
+		</p:dataGrid>
+		
 	</h:form>
 	<hr />
 </h:body>
