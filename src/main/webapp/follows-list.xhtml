@@ -41,55 +41,39 @@
 		</p:toolbar>
 	</h:form>
 
-	<hr />
-  
-      <h:form>
-         <h:dataTable value = "#{followBean.selfFollows}" var = "follow"
-            styleClass = "usersTable"
-            headerClass = "usersTableHeader"
-            rowClasses = "usersTableOddRow,usersTableEvenRow">
-            
-            <h:column>    				
-               <f:facet name = "header"></f:facet>
-               <h:commandButton value="#{follow.username}"
-					action="#{navigationController.showPage}">
-					<f:param name="pageId" value="user-profile" />
-					<f:setPropertyActionListener target="#{contextBean.viewUser}" 
-					    value="#{follow}" />
-				</h:commandButton>
-            </h:column>
-         </h:dataTable>
-      </h:form>
-	
-    <hr />
-
-	Recommended users
-
 	<h:form>
-		<h:dataTable value="#{followBean.followRecommendations}" var="user"
-			styleClass="usersTable" headerClass="usersTableHeader"
-			rowClasses="usersTableOddRow,usersTableEvenRow">
-
-			<h:column>
-				<f:facet name="header"></f:facet>
-				<h:commandButton value="#{user.username}"
-					action="#{navigationController.showPage}">
-					<f:param name="pageId" value="user-profile" />
-					<f:setPropertyActionListener target="#{contextBean.viewUser}" 
-					    value="#{user}" />
-				</h:commandButton>
-			</h:column>
-		</h:dataTable>
+		<!-- DEPRECATED! -->
+		<p:panelGrid columns="1">
+			<div>Who you're following</div>
+			<p:dataGrid var="follow" value="#{followBean.selfFollows}">
+				<p:column>
+					<p:commandButton value="#{follow.username}"
+						action="#{navigationController.showPage}" ajax="false">
+						<f:param name="pageId" value="user-profile" />
+						<f:setPropertyActionListener target="#{contextBean.viewUser}"
+							value="#{follow}" />
+					</p:commandButton>
+				</p:column>
+			</p:dataGrid>
+		</p:panelGrid>
 	</h:form>
-	
-	<hr />
 
 	<h:form>
-      	<h:commandButton action = "#{navigationController.showPage}"
-            value = "Back" >
-            <f:param name = "pageId" value = "user-home" />
-        </h:commandButton>
-    </h:form>
-	
+		<!-- DEPRECATED! -->
+		<p:panelGrid columns="1">
+			<div>Recommended users</div>
+			<p:dataGrid var="user"
+				value="#{followBean.followRecommendations}">
+				<p:column>
+					<p:commandButton value="#{user.username}"
+						action="#{navigationController.showPage}" ajax="false">
+						<f:param name="pageId" value="user-profile" />
+						<f:setPropertyActionListener target="#{contextBean.viewUser}"
+							value="#{user}" />
+					</p:commandButton>
+				</p:column>
+			</p:dataGrid>
+		</p:panelGrid>
+	</h:form>
 </h:body>
 </html>

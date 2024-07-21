@@ -41,51 +41,53 @@ xmlns:p="http://primefaces.org/ui">
 		</p:toolbar>
 	</h:form>
 
-	<hr />
+	<h:form>
+		<p:toolbar>
+			<f:facet name="left">
+				<td><h:outputText value="#{contextBean.viewUser.username}" /></td>
+			</f:facet>
 
-	  <h:form>
-        <td><h:outputText value = "#{contextBean.viewUser.username}" /></td>
-        
-        <br/>
-        
-        <h:commandButton value = "Add as friend" action = "#{friendshipBean.addFriendshipRequest}" rendered = "#{contextBean.canAddAsFriend}">
-		   <f:setPropertyActionListener 
-                     target = "#{friendshipBean.username}" value = "#{contextBean.viewUser.username}" />
-        </h:commandButton>
-        
-        <h:outputText value = "Friend request sent" rendered = "#{contextBean.friendRequestIsSent}"/>
-        
-        <h:commandButton value = "Unfriend" action = "#{friendshipBean.unfriend}" rendered = "#{contextBean.isFriend}">
-		   <f:setPropertyActionListener 
-                     target = "#{friendshipBean.username}" value = "#{contextBean.viewUser.username}" />
-        </h:commandButton>
-        
-        <br/>
-        
-        <h:commandButton value = "Follow" action = "#{followBean.addFollow}" rendered = "#{contextBean.canFollow}">
-		   <f:setPropertyActionListener
-                     target = "#{followBean.username}" value = "#{contextBean.viewUser.username}" />
-        </h:commandButton>
-        
-        <h:commandButton value = "Unfollow" action = "#{followBean.unfollow}" rendered = "#{contextBean.isFollowed}">
-		   <f:setPropertyActionListener
-                     target = "#{followBean.username}" value = "#{contextBean.viewUser.username}" />
-        </h:commandButton>
+			<f:facet name="right">
+				<p:commandButton value="Add as friend"
+					action="#{friendshipBean.addFriendshipRequest}"
+					rendered="#{contextBean.canAddAsFriend}" ajax="false">
+					<f:setPropertyActionListener target="#{friendshipBean.username}"
+						value="#{contextBean.viewUser.username}" />
+				</p:commandButton>
 
-      </h:form>
-      
-      <p:divider/>
+				<h:outputText value="Friend request sent"
+					rendered="#{contextBean.friendRequestIsSent}" />
 
-		<h:form>
-			<p:panelGrid columns="1">
-				<h:outputText value="About" />
-				<h:outputText value="#{contextBean.viewUser.profileDescription}" />
-			</p:panelGrid>
-		</h:form>
+				<p:commandButton value="Unfriend"
+					action="#{friendshipBean.unfriend}"
+					rendered="#{contextBean.isFriend}" ajax="false">
+					<f:setPropertyActionListener target="#{friendshipBean.username}"
+						value="#{contextBean.viewUser.username}" />
+				</p:commandButton>
 
-	<p:divider/>
-      
-      <h:form rendered = "#{contextBean.isSelfProfile}">
+				<p:commandButton value="Follow" action="#{followBean.addFollow}"
+					rendered="#{contextBean.canFollow}" ajax="false">
+					<f:setPropertyActionListener target="#{followBean.username}"
+						value="#{contextBean.viewUser.username}" />
+				</p:commandButton>
+
+				<p:commandButton value="Unfollow" action="#{followBean.unfollow}"
+					rendered="#{contextBean.isFollowed}" ajax="false">
+					<f:setPropertyActionListener target="#{followBean.username}"
+						value="#{contextBean.viewUser.username}" />
+				</p:commandButton>
+			</f:facet>
+		</p:toolbar>
+	</h:form>
+
+	<h:form>
+		<p:panelGrid columns="1">
+			<h:outputText value="About" />
+			<h:outputText value="#{contextBean.viewUser.profileDescription}" />
+		</p:panelGrid>
+	</h:form>
+
+	<h:form rendered = "#{contextBean.isSelfProfile}">
 		<p:panelGrid columns="1">
 			<div>Create a post</div>
 			<p:inputText value="#{postBean.title}" size="100" />
@@ -99,26 +101,28 @@ xmlns:p="http://primefaces.org/ui">
 			<h:commandButton value="Post" action="#{postBean.createPost}" />
 		</p:panelGrid>
 	</h:form>
-      
-      <p:divider/>
-      
-      <h:form>
-      <!-- DEPRECATED! -->
-		<p:dataGrid var="post" value="#{postBean.posts}" columns="5" rows="5" paginator="true">
-			<p:column>
-				<p:panel header="#{post.title}">
-					<h:panelGrid columns="1">
-						<h:outputText value="Posted on #{post.date}" />
-						<h:outputText value="#{post.content}" />
-						<p:commandButton value = "Delete" action = "#{postBean.deletePost}" rendered = "#{contextBean.isSelfProfile}">
-		   					<f:setPropertyActionListener 
-                     		target = "#{postBean.post}" value = "#{post}" />
-        				</p:commandButton>
-					</h:panelGrid>
-				</p:panel>
-			</p:column>
-		</p:dataGrid>
+
+	<h:form>
+		<!-- DEPRECATED! -->
+		<p:panelGrid columns="1">
+			<div>Posts</div>
+			<p:dataGrid var="post" value="#{postBean.posts}" columns="5" rows="5"
+				paginator="true">
+				<p:column>
+					<p:panel header="#{post.title}">
+						<h:panelGrid columns="1">
+							<h:outputText value="Posted on #{post.date}" />
+							<h:outputText value="#{post.content}" />
+							<p:commandButton value="Delete" action="#{postBean.deletePost}"
+								rendered="#{contextBean.isSelfProfile}">
+								<f:setPropertyActionListener target="#{postBean.post}"
+									value="#{post}" />
+							</p:commandButton>
+						</h:panelGrid>
+					</p:panel>
+				</p:column>
+			</p:dataGrid>
+		</p:panelGrid>
 	</h:form>
-	
-   </h:body>
+</h:body>
 </html>

@@ -8,31 +8,31 @@
 	xmlns:p="http://primefaces.org/ui">
 
 <h:head>
-      <title>Friends</title>		
-      <h:outputStylesheet library = "css" name = "styles.css"  /> 	
-   </h:head>
+	<title>Friends</title>
+	<h:outputStylesheet library="css" name="styles.css" />
+</h:head>
 
 <h:body>
 	<h:form>
 		<p:toolbar>
 			<f:facet name="left">
-				<p:commandButton action = "#{navigationController.showPage}"
-            			value = "Home" >
-            			<f:param name = "pageId" value = "user-home" />
-        		</p:commandButton>
 				<p:commandButton action="#{navigationController.showPage}"
-						value="Profile" >
-						<f:param name="pageId" value="user-profile" />
-						<f:setPropertyActionListener target="#{contextBean.viewUser}" 
-					    value="" />
+					value="Home">
+					<f:param name="pageId" value="user-home" />
 				</p:commandButton>
 				<p:commandButton action="#{navigationController.showPage}"
-						value="Friends">
-						<f:param name="pageId" value="friends-list" />
+					value="Profile">
+					<f:param name="pageId" value="user-profile" />
+					<f:setPropertyActionListener target="#{contextBean.viewUser}"
+						value="" />
 				</p:commandButton>
 				<p:commandButton action="#{navigationController.showPage}"
-						value="Follows">
-						<f:param name="pageId" value="follows-list" />
+					value="Friends">
+					<f:param name="pageId" value="friends-list" />
+				</p:commandButton>
+				<p:commandButton action="#{navigationController.showPage}"
+					value="Follows">
+					<f:param name="pageId" value="follows-list" />
 				</p:commandButton>
 			</f:facet>
 			<f:facet name="right">
@@ -41,56 +41,39 @@
 		</p:toolbar>
 	</h:form>
 
-  	<hr />
-
-      <h:form>
-         <h:dataTable value = "#{friendshipBean.selfFriends}" var = "friend"
-            styleClass = "usersTable"
-            headerClass = "usersTableHeader"
-            rowClasses = "usersTableOddRow,usersTableEvenRow">
-            
-            <h:column>    				
-               <f:facet name = "header"></f:facet>
-               <h:commandButton value="#{friend.username}"
-					action="#{navigationController.showPage}">
-					<f:param name="pageId" value="user-profile" />
-					<f:setPropertyActionListener target="#{contextBean.viewUser}" 
-					    value="#{friend}" />
-				</h:commandButton>
-            </h:column>
-         </h:dataTable>
-      </h:form>
-      
-      <hr />
-	
-	Recommended users
-	
 	<h:form>
-		<h:dataTable value="#{friendshipBean.friendRecommendations}" var="user"
-			styleClass="usersTable" headerClass="usersTableHeader"
-			rowClasses="usersTableOddRow,usersTableEvenRow">
-
-			<h:column>
-				<f:facet name="header"></f:facet>
-				<h:commandButton value="#{user.username}"
-					action="#{navigationController.showPage}">
-					<f:param name="pageId" value="user-profile" />
-					<f:setPropertyActionListener target="#{contextBean.viewUser}" 
-					    value="#{user}" />
-				</h:commandButton>
-			</h:column>
-		</h:dataTable>
+		<!-- DEPRECATED! -->
+		<p:panelGrid columns="1">
+			<div>Your friends</div>
+			<p:dataGrid var="friend" value="#{friendshipBean.selfFriends}">
+				<p:column>
+					<p:commandButton value="#{friend.username}"
+						action="#{navigationController.showPage}" ajax="false">
+						<f:param name="pageId" value="user-profile" />
+						<f:setPropertyActionListener target="#{contextBean.viewUser}"
+							value="#{friend}" /> 
+					</p:commandButton>
+				</p:column>
+			</p:dataGrid>
+		</p:panelGrid>
 	</h:form>
-	
-	<hr />
 
 	<h:form>
-      	<h:commandButton action = "#{navigationController.showPage}"
-            value = "Back" >
-            <f:param name = "pageId" value = "user-home" />
-        </h:commandButton>
-    </h:form>
-	
-	<br />
+		<!-- DEPRECATED! -->
+		<p:panelGrid columns="1">
+			<div>Recommended users</div>
+			<p:dataGrid var="user"
+				value="#{friendshipBean.friendRecommendations}">
+				<p:column>
+					<p:commandButton value="#{user.username}"
+						action="#{navigationController.showPage}" ajax="false">
+						<f:param name="pageId" value="user-profile" />
+						<f:setPropertyActionListener target="#{contextBean.viewUser}"
+							value="#{user}" />
+					</p:commandButton>
+				</p:column>
+			</p:dataGrid>
+		</p:panelGrid>
+	</h:form>
 </h:body>
 </html>
