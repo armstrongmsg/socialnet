@@ -13,25 +13,31 @@
    </h:head>
 
 <h:body>
-	<h2>Social net</h2>
-	<hr />
-	
 	<h:form>
-	    <p:panelGrid columns="1">
-		    <div>Username</div>
-			<p:inputText size="20" value="#{contextBean.username}" />
-			<div>Password</div>
-			<p:password size="20" value="#{contextBean.password}" />
-			
-			<!-- TODO p:commandButton does not update the login message -->
-			<h:commandButton value="Login" action="#{contextBean.login}"/>
-			<h:outputText value="Invalid credentials. Try again." rendered="#{contextBean.loginError}"/>
-			
-			<p:commandButton action="#{navigationController.showPage}"
-				value="Sign up">
-				<f:param name="pageId" value="sign-up" />
-			</p:commandButton>
-	    </p:panelGrid> 
+		<p:toolbar>
+			<f:facet name="left">
+				<h2>Social net</h2>
+			</f:facet>
+			<f:facet name="right">
+				<p:commandButton action="#{navigationController.showPage}"
+					value="Sign up">
+					<f:param name="pageId" value="sign-up" />
+				</p:commandButton>
+			</f:facet>
+		</p:toolbar>
+	</h:form>
+
+	<h:form>
+		<p:panelGrid columns="1">
+			<div>Sign In</div>
+			<p:inputText size="20" value="#{contextBean.username}" placeholder="username"/>
+			<p:password size="20" value="#{contextBean.password}" placeholder="password"/>
+
+			<h:outputText value="Invalid credentials. Try again."
+				rendered="#{contextBean.loginError}" />
+			<p:commandButton value="Login" action="#{contextBean.login}"
+				ajax="false" />
+		</p:panelGrid>
 	</h:form>
 </h:body>
 </html>
