@@ -57,12 +57,7 @@ public class SignUpBean {
 	}
 
 	public String signUp() {
-		if (password.equals(passwordCheck)) {
-			facade.addUser(username, getPassword(), profileDescription);
-			return new NavigationController().showHome();
-		} else {
-			this.setPasswordInputsDoNotMatch(true);
-			return new NavigationController().showSignUp();
-		}
+		facade.addUser(username, getPassword(), profileDescription);
+		return new NavigationController().showHome();
 	}
 }

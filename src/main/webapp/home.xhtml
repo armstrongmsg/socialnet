@@ -17,23 +17,21 @@
 	<hr />
 	
 	<h:form>
-		<div>Username</div>
-		<p:inputText size="20" value="#{contextBean.username}" />
-		<div>Password</div>
-		<p:password size="20" value="#{contextBean.password}" />
-		
-		<p:divider/>
-		
-		<!-- TODO p:commandButton does not update the login message -->
-		<h:commandButton value="Login" action="#{contextBean.login}"/>
-		<h:outputText value="Invalid credentials. Try again." rendered="#{contextBean.loginError}"/>
-		
-		<p:divider/>
-					
-		<p:commandButton action="#{navigationController.showPage}"
-			value="Sign up">
-			<f:param name="pageId" value="sign-up" />
-		</p:commandButton>
+	    <p:panelGrid columns="1">
+		    <div>Username</div>
+			<p:inputText size="20" value="#{contextBean.username}" />
+			<div>Password</div>
+			<p:password size="20" value="#{contextBean.password}" />
+			
+			<!-- TODO p:commandButton does not update the login message -->
+			<h:commandButton value="Login" action="#{contextBean.login}"/>
+			<h:outputText value="Invalid credentials. Try again." rendered="#{contextBean.loginError}"/>
+			
+			<p:commandButton action="#{navigationController.showPage}"
+				value="Sign up">
+				<f:param name="pageId" value="sign-up" />
+			</p:commandButton>
+	    </p:panelGrid> 
 	</h:form>
 </h:body>
 </html>

@@ -4,7 +4,8 @@
 
 <html xmlns = "http://www.w3.org/1999/xhtml"   
 xmlns:h = "http://java.sun.com/jsf/html"
-xmlns:f = "http://java.sun.com/jsf/core">
+xmlns:f = "http://java.sun.com/jsf/core"
+xmlns:p="http://primefaces.org/ui">
    
    <h:head>
       <title>Sign up</title>		
@@ -15,34 +16,24 @@ xmlns:f = "http://java.sun.com/jsf/core">
    	    <h2>Social net</h2>
 	    <hr />
 	    
-   		<h:form> 
-   		  Choose a username:
-	      <br/>
-   		  <h:inputText size = "20" value = "#{signUpBean.username}" />
-   		  <br/>
-   		  Write something about yourself:
-   		  <br/>
-   		  <h:inputTextarea row = "20" col = "20" value = "#{signUpBean.profileDescription}" />
-   		  <br/>
-   		  Choose a password:
-   		  <br/>
-   		  <h:inputSecret size = "20" value = "#{signUpBean.password}" />
-   		  <br/>
-   		  Type the password again:
-   		  <br/>
-   		  <h:inputSecret size = "20" value = "#{signUpBean.passwordCheck}" />
-          <br/>
-          <h:commandButton value = "Sign up" action = "#{signUpBean.signUp}" />
-         
-          <br/>
-          
-          <h:outputText value="Passwords do not match. Try again." rendered="#{signUpBean.passwordInputsDoNotMatch}"/>
-          
-          <br/>
-          
+   	    <h:form> 
+   		<p:panelGrid columns="1">
+   		  <div>Choose a username</div>
+   		  <p:inputText size = "20" value = "#{signUpBean.username}"/>
+   		  <div>Write something about yourself</div>
+   		  <p:inputTextarea autoResize="true" value = "#{signUpBean.profileDescription}" />
+   		  <div>Choose a password</div>
+   		  <p:password inline = "true" feedback = "true" value = "#{signUpBean.password}" match = "pass_check"/>
+   		  <div>Type the password again</div> 
+   		  <p:password id = "pass_check" value = "#{signUpBean.password}"/>
+   		  
+   		  <p:divider/>
+   		  
+          <h:commandButton value = "Sign up" action = "#{signUpBean.signUp}"/>
           <h:commandButton action = "#{navigationController.showPage}" value = "Back" >
 	         <f:param name = "pageId" value = "home" />
 	      </h:commandButton>
-      </h:form>
+   		</p:panelGrid>
+       </h:form>
    </h:body>
 </html>
