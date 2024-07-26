@@ -6,10 +6,12 @@ import java.util.Objects;
 public class UserSummary {
 	private String username;
 	private String profileDescription;
-	
-	public UserSummary(String username, String profileDescription) {
+	private byte[] profilePic;
+
+	public UserSummary(String username, String profileDescription, byte[] profilePic) {
 		this.username = username;
 		this.profileDescription = profileDescription;
+		this.profilePic = profilePic;
 	}
 
 	public String getUsername() {
@@ -28,6 +30,14 @@ public class UserSummary {
 		this.profileDescription = profileDescription;
 	}
 
+	public byte[] getProfilePic() {
+		return this.profilePic;
+	}
+	
+	public void setProfilePic(byte[] profilePic) {
+		this.profilePic = profilePic;
+	}
+	
 	@Override
 	public int hashCode() {
 		return Objects.hash(profileDescription, username);

@@ -102,14 +102,14 @@ public class ContextBeanTest {
 		
 		Mockito.when(facade.login(credentials)).thenReturn(userToken);
 		Mockito.when(facade.getSelf(userToken)).thenReturn(
-				new com.armstrongmsg.socialnet.model.UserSummary(REGULAR_USERNAME, REGULAR_PROFILE_DESCRIPTION));
+				new com.armstrongmsg.socialnet.model.UserSummary(REGULAR_USERNAME, REGULAR_PROFILE_DESCRIPTION, null));
 		
 		bean = new ContextBean();
 		bean.setUsername(REGULAR_USERNAME);
 		bean.setPassword(PASSWORD);
 		bean.login();
 		
-		bean.setViewUser(new UserSummary(REGULAR_USERNAME, REGULAR_PROFILE_DESCRIPTION));
+		bean.setViewUser(new UserSummary(REGULAR_USERNAME, REGULAR_PROFILE_DESCRIPTION, null));
 		
 		assertFalse(bean.getCanAddAsFriend());
 	}
@@ -121,7 +121,7 @@ public class ContextBeanTest {
 		
 		Mockito.when(facade.login(credentials)).thenReturn(userToken);
 		Mockito.when(facade.getSelf(userToken)).thenReturn(
-				new com.armstrongmsg.socialnet.model.UserSummary(REGULAR_USERNAME, REGULAR_PROFILE_DESCRIPTION));
+				new com.armstrongmsg.socialnet.model.UserSummary(REGULAR_USERNAME, REGULAR_PROFILE_DESCRIPTION, null));
 		Mockito.when(facade.isFriend(userToken, REGULAR_USERNAME_2)).thenReturn(false);
 		
 		bean = new ContextBean();
@@ -129,7 +129,7 @@ public class ContextBeanTest {
 		bean.setPassword(PASSWORD);
 		bean.login();
 		
-		bean.setViewUser(new UserSummary(REGULAR_USERNAME_2, REGULAR_PROFILE_DESCRIPTION_2));
+		bean.setViewUser(new UserSummary(REGULAR_USERNAME_2, REGULAR_PROFILE_DESCRIPTION_2, null));
 		
 		assertTrue(bean.getCanAddAsFriend());
 	}
@@ -141,7 +141,7 @@ public class ContextBeanTest {
 		
 		Mockito.when(facade.login(credentials)).thenReturn(userToken);
 		Mockito.when(facade.getSelf(userToken)).thenReturn(
-				new com.armstrongmsg.socialnet.model.UserSummary(REGULAR_USERNAME, REGULAR_PROFILE_DESCRIPTION));
+				new com.armstrongmsg.socialnet.model.UserSummary(REGULAR_USERNAME, REGULAR_PROFILE_DESCRIPTION, null));
 		Mockito.when(facade.isFriend(userToken, REGULAR_USERNAME_2)).thenReturn(true);
 		
 		bean = new ContextBean();
@@ -149,7 +149,7 @@ public class ContextBeanTest {
 		bean.setPassword(PASSWORD);
 		bean.login();
 		
-		bean.setViewUser(new UserSummary(REGULAR_USERNAME_2, REGULAR_PROFILE_DESCRIPTION_2));
+		bean.setViewUser(new UserSummary(REGULAR_USERNAME_2, REGULAR_PROFILE_DESCRIPTION_2, null));
 		
 		assertFalse(bean.getCanAddAsFriend());
 	}
@@ -161,14 +161,14 @@ public class ContextBeanTest {
 		
 		Mockito.when(facade.login(credentials)).thenReturn(userToken);
 		Mockito.when(facade.getSelf(userToken)).thenReturn(
-				new com.armstrongmsg.socialnet.model.UserSummary(REGULAR_USERNAME, REGULAR_PROFILE_DESCRIPTION));
+				new com.armstrongmsg.socialnet.model.UserSummary(REGULAR_USERNAME, REGULAR_PROFILE_DESCRIPTION, null));
 		
 		bean = new ContextBean();
 		bean.setUsername(REGULAR_USERNAME);
 		bean.setPassword(PASSWORD);
 		bean.login();
 		
-		bean.setViewUser(new UserSummary(REGULAR_USERNAME, REGULAR_PROFILE_DESCRIPTION));
+		bean.setViewUser(new UserSummary(REGULAR_USERNAME, REGULAR_PROFILE_DESCRIPTION, null));
 		
 		assertFalse(bean.getCanFollow());
 	}
@@ -180,7 +180,7 @@ public class ContextBeanTest {
 		
 		Mockito.when(facade.login(credentials)).thenReturn(userToken);
 		Mockito.when(facade.getSelf(userToken)).thenReturn(
-				new com.armstrongmsg.socialnet.model.UserSummary(REGULAR_USERNAME, REGULAR_PROFILE_DESCRIPTION));
+				new com.armstrongmsg.socialnet.model.UserSummary(REGULAR_USERNAME, REGULAR_PROFILE_DESCRIPTION, null));
 		Mockito.when(facade.follows(userToken, REGULAR_USERNAME_2)).thenReturn(false);
 		
 		bean = new ContextBean();
@@ -188,7 +188,7 @@ public class ContextBeanTest {
 		bean.setPassword(PASSWORD);
 		bean.login();
 		
-		bean.setViewUser(new UserSummary(REGULAR_USERNAME_2, REGULAR_PROFILE_DESCRIPTION_2));
+		bean.setViewUser(new UserSummary(REGULAR_USERNAME_2, REGULAR_PROFILE_DESCRIPTION_2, null));
 		
 		assertTrue(bean.getCanFollow());
 	}
@@ -200,7 +200,7 @@ public class ContextBeanTest {
 		
 		Mockito.when(facade.login(credentials)).thenReturn(userToken);
 		Mockito.when(facade.getSelf(userToken)).thenReturn(
-				new com.armstrongmsg.socialnet.model.UserSummary(REGULAR_USERNAME, REGULAR_PROFILE_DESCRIPTION));
+				new com.armstrongmsg.socialnet.model.UserSummary(REGULAR_USERNAME, REGULAR_PROFILE_DESCRIPTION, null));
 		Mockito.when(facade.follows(userToken, REGULAR_USERNAME_2)).thenReturn(true);
 		
 		bean = new ContextBean();
@@ -208,7 +208,7 @@ public class ContextBeanTest {
 		bean.setPassword(PASSWORD);
 		bean.login();
 		
-		bean.setViewUser(new UserSummary(REGULAR_USERNAME_2, REGULAR_PROFILE_DESCRIPTION_2));
+		bean.setViewUser(new UserSummary(REGULAR_USERNAME_2, REGULAR_PROFILE_DESCRIPTION_2, null));
 		
 		assertFalse(bean.getCanFollow());
 	}

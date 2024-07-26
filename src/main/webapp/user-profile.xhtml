@@ -44,7 +44,8 @@
 	<h:form>
 		<p:toolbar>
 			<f:facet name="left">
-				<td><h:outputText value="#{contextBean.viewUser.username}" /></td>
+				<h:outputText value="#{contextBean.viewUser.username}" />
+				<p:graphicImage value="#{contextBean.viewUser.profilePic}" />
 			</f:facet>
 
 			<f:facet name="right">

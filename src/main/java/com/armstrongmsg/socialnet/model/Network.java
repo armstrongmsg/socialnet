@@ -259,13 +259,15 @@ public class Network {
 		for (Friendship friendship : userFriendships) {
 			if (friendship.getFriend1().equals(requester)) {
 				User friend = friendship.getFriend2();
-				UserSummary summary = new UserSummary(friend.getUsername(), friend.getProfile().getDescription());
+				UserSummary summary = new UserSummary(friend.getUsername(), friend.getProfile().getDescription(), 
+						friend.getProfile().getProfilePic());
 				friends.add(summary);
 			}
 			
 			if (friendship.getFriend2().equals(requester)) {
 				User friend = friendship.getFriend1();
-				UserSummary summary = new UserSummary(friend.getUsername(), friend.getProfile().getDescription());
+				UserSummary summary = new UserSummary(friend.getUsername(), friend.getProfile().getDescription(), 
+						friend.getProfile().getProfilePic());
 				friends.add(summary);
 			}
 		}
@@ -323,7 +325,8 @@ public class Network {
 		for (Follow follow : userFollows) {
 			if (follow.getFollower().equals(requester)) {
 				User followed = follow.getFollowed();
-				followedUsers.add(new UserSummary(followed.getUsername(), followed.getProfile().getDescription()));
+				followedUsers.add(new UserSummary(followed.getUsername(), followed.getProfile().getDescription(), 
+						followed.getProfile().getProfilePic()));
 			}
 		}
 		
@@ -433,7 +436,8 @@ public class Network {
 		
 		for (User user : this.storageFacade.getAllUsers()) {
 			if (!user.equals(requester)) {
-				userSummaries.add(new UserSummary(user.getUsername(), user.getProfile().getDescription()));
+				userSummaries.add(new UserSummary(user.getUsername(), user.getProfile().getDescription(), 
+						user.getProfile().getProfilePic()));
 			}
 		}
 
@@ -448,7 +452,8 @@ public class Network {
 		List<UserSummary> userSummaries = new ArrayList<UserSummary>();
 		
 		for (User user : this.storageFacade.getAllUsers()) {
-			UserSummary userSummary = new UserSummary(user.getUsername(), user.getProfile().getDescription()); 
+			UserSummary userSummary = new UserSummary(user.getUsername(), user.getProfile().getDescription(), 
+					user.getProfile().getProfilePic()); 
 			
 			if (!user.equals(requester) && !friends.contains(userSummary)) {
 				userSummaries.add(userSummary);
@@ -479,7 +484,8 @@ public class Network {
 	public UserSummary getSelf(UserToken userToken) throws AuthenticationException, UnauthorizedOperationException {
 		User requester = this.authenticationPlugin.getUser(userToken);
 		this.authorizationPlugin.authorize(requester, new Operation(OperationType.GET_SELF));
-		UserSummary summary = new UserSummary(requester.getUsername(), requester.getProfile().getDescription());
+		UserSummary summary = new UserSummary(requester.getUsername(), requester.getProfile().getDescription(), 
+				requester.getProfile().getProfilePic());
 		return summary;
 	}
 

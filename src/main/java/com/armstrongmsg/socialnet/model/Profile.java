@@ -40,4 +40,9 @@ public class Profile {
 		Post newPost = new Post(title, System.currentTimeMillis(), content, newPostVisibility);
 		posts.add(newPost);
 	}
+
+	public byte[] getProfilePic() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
