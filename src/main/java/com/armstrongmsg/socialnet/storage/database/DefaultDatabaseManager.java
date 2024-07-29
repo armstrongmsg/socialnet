@@ -10,6 +10,7 @@ import com.armstrongmsg.socialnet.model.Friendship;
 import com.armstrongmsg.socialnet.model.FriendshipRequest;
 import com.armstrongmsg.socialnet.model.Group;
 import com.armstrongmsg.socialnet.model.Picture;
+import com.armstrongmsg.socialnet.model.Post;
 import com.armstrongmsg.socialnet.model.User;
 import com.armstrongmsg.socialnet.storage.database.repository.DefaultFollowRepository;
 import com.armstrongmsg.socialnet.storage.database.repository.DefaultFriendshipRepository;
@@ -49,6 +50,12 @@ public class DefaultDatabaseManager implements DatabaseManager {
 				user.getProfile().getProfilePicId());
 		user.getProfile().setProfilePic(profilePic);
 		
+		for (Post post : user.getProfile().getPosts()) {
+			Picture postPicture = 
+					this.pictureRepository.getPictureById(post.getPictureId());
+			post.setPicture(postPicture);
+		}
+		
 		return user;
 	}
 
@@ -64,6 +71,12 @@ public class DefaultDatabaseManager implements DatabaseManager {
 				user.getProfile().getProfilePicId());
 		user.getProfile().setProfilePic(profilePic);
 		
+		for (Post post : user.getProfile().getPosts()) {
+			Picture postPicture = 
+					this.pictureRepository.getPictureById(post.getPictureId());
+			post.setPicture(postPicture);
+		}
+		
 		return user;
 	}
 
@@ -74,6 +87,10 @@ public class DefaultDatabaseManager implements DatabaseManager {
 		if (!user.getProfile().getProfilePic().getId().equals(SystemConstants.DEFAULT_PROFILE_PIC_ID)) {
 			this.pictureRepository.savePicture(user.getProfile().getProfilePic());
 		}
+		
+		for (Post post : user.getProfile().getPosts()) {
+			this.pictureRepository.savePicture(post.getPicture());
+		}
 	}
 	
 	@Override
@@ -82,6 +99,10 @@ public class DefaultDatabaseManager implements DatabaseManager {
 		
 		if (!user.getProfile().getProfilePic().getId().equals(SystemConstants.DEFAULT_PROFILE_PIC_ID)) {
 			this.pictureRepository.savePicture(user.getProfile().getProfilePic());
+		}
+		
+		for (Post post : user.getProfile().getPosts()) {
+			this.pictureRepository.savePicture(post.getPicture());
 		}
 	}
 	

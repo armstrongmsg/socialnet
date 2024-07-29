@@ -6,6 +6,8 @@ import java.util.List;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
 
+import org.primefaces.model.file.UploadedFile;
+
 import com.armstrongmsg.socialnet.core.ApplicationFacade;
 import com.armstrongmsg.socialnet.exceptions.AuthenticationException;
 import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
@@ -34,6 +36,8 @@ public class PostBean {
 	
 	private String username;
 	private List<Post> userPosts;
+	
+	private UploadedFile postPic;
 	
 	private static ApplicationFacade facade = ApplicationFacade.getInstance();
 	
@@ -77,10 +81,18 @@ public class PostBean {
 		this.username = username;
 	}
 	
+	public UploadedFile getPostPic() {
+		return postPic;
+	}
+
+	public void setPostPic(UploadedFile postPic) {
+		this.postPic = postPic;
+	}
+	
 	public String createPost() {
 		UserToken token = SessionManager.getCurrentSession().getUserToken();
 		try {
-			facade.createPost(token, title, content, PostVisibility.valueOf(postVisibility));
+			facade.createPost(token, title, content, PostVisibility.valueOf(postVisibility), this.postPic.getContent());
 		} catch (AuthenticationException e) {
 			// FIXME treat exception
 		}

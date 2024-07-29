@@ -38,7 +38,7 @@ public class JsfConnectorTest {
 	@Test
 	public void testGetViewPost() {
 		com.armstrongmsg.socialnet.model.Post modelPost = 
-				new com.armstrongmsg.socialnet.model.Post(POST_TITLE_1, POST_TIMESTAMP_1, POST_CONTENT_1, POST_VISIBILITY_1);
+				new com.armstrongmsg.socialnet.model.Post(POST_TITLE_1, POST_TIMESTAMP_1, POST_CONTENT_1, POST_VISIBILITY_1, null);
 		
 		Post viewPost = connector.getViewPost(modelPost);
 		assertEquals(POST_TITLE_1, viewPost.getTitle());
@@ -49,9 +49,9 @@ public class JsfConnectorTest {
 	@Test
 	public void testGetViewPosts() {
 		com.armstrongmsg.socialnet.model.Post modelPost1 = 
-				new com.armstrongmsg.socialnet.model.Post(POST_TITLE_1, POST_TIMESTAMP_1, POST_CONTENT_1, POST_VISIBILITY_1);
+				new com.armstrongmsg.socialnet.model.Post(POST_TITLE_1, POST_TIMESTAMP_1, POST_CONTENT_1, POST_VISIBILITY_1, null);
 		com.armstrongmsg.socialnet.model.Post modelPost2 = 
-				new com.armstrongmsg.socialnet.model.Post(POST_TITLE_2, POST_TIMESTAMP_2, POST_CONTENT_2, POST_VISIBILITY_2);
+				new com.armstrongmsg.socialnet.model.Post(POST_TITLE_2, POST_TIMESTAMP_2, POST_CONTENT_2, POST_VISIBILITY_2, null);
 		
 		List<Post> viewPosts = connector.getViewPosts(Arrays.asList(modelPost1, modelPost2));
 		assertEquals(2, viewPosts.size());

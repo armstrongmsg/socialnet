@@ -98,7 +98,7 @@
 
 	<p:divider />
 
-	<h:form rendered="#{contextBean.isSelfProfile}">
+	<h:form rendered="#{contextBean.isSelfProfile}" enctype="multipart/form-data">
 		<p:panelGrid columns="1">
 			<div>Create a post</div>
 			<p:inputText value="#{postBean.title}" size="100" />
@@ -110,6 +110,9 @@
 				<f:selectItems value="#{postBean.visibilities}" var="visibility"
 					itemLabel="#{visibility.value}" itemValue="#{visibility}" />
 			</p:selectOneMenu>
+			
+			<p:fileUpload value="#{postBean.postPic}" mode="simple" />
+			
 			<p:commandButton value="Post" action="#{postBean.createPost}"
 				ajax="false" />
 		</p:panelGrid>
@@ -128,6 +131,7 @@
 						<h:panelGrid columns="1">
 							<h:outputText value="Posted on #{post.date}" />
 							<h:outputText value="#{post.content}" />
+							<p:graphicImage value="#{post.picture}" stream="false"/>
 							<p:commandButton value="Delete" action="#{postBean.deletePost}"
 								rendered="#{contextBean.isSelfProfile}">
 								<f:setPropertyActionListener target="#{postBean.post}"

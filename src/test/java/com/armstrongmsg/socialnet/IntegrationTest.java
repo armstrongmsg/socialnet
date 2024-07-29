@@ -264,7 +264,7 @@ public class IntegrationTest {
 		List<Post> userPosts = facade.getUserPostsAdmin(adminToken, userToken.getUserId());
 		assertTrue(userPosts.isEmpty());
 		
-		facade.createPost(userToken, NEW_POST_TITLE, NEW_POST_CONTENT, NEW_POST_VISIBILITY);
+		facade.createPost(userToken, NEW_POST_TITLE, NEW_POST_CONTENT, NEW_POST_VISIBILITY, null);
 		
 		List<Post> userPostsAfterCreation = facade.getUserPostsAdmin(adminToken, userToken.getUserId());
 		
@@ -312,7 +312,7 @@ public class IntegrationTest {
 		List<Post> userPosts = facade.getSelfPosts(userToken);
 		assertTrue(userPosts.isEmpty());
 		
-		facade.createPost(userToken, NEW_POST_TITLE, NEW_POST_CONTENT, NEW_POST_VISIBILITY);
+		facade.createPost(userToken, NEW_POST_TITLE, NEW_POST_CONTENT, NEW_POST_VISIBILITY, null);
 		
 		List<Post> userPostsAfterCreation = facade.getSelfPosts(userToken);
 		
@@ -345,8 +345,8 @@ public class IntegrationTest {
 		assertTrue(user2PostsForUser1.isEmpty());
 		assertTrue(user1PostsForUser2.isEmpty());
 		
-		facade.createPost(user1Token, NEW_POST_TITLE, NEW_POST_CONTENT, NEW_POST_VISIBILITY);
-		facade.createPost(user2Token, NEW_POST_TITLE_2, NEW_POST_CONTENT_2, NEW_POST_VISIBILITY_2);
+		facade.createPost(user1Token, NEW_POST_TITLE, NEW_POST_CONTENT, NEW_POST_VISIBILITY, null);
+		facade.createPost(user2Token, NEW_POST_TITLE_2, NEW_POST_CONTENT_2, NEW_POST_VISIBILITY_2, null);
 		
 		List<Post> user1PostsAfter = facade.getUserPosts(user1Token, NEW_USERNAME_1);
 		
@@ -551,8 +551,8 @@ public class IntegrationTest {
 		
 		facade.addFriendship(userToken1, NEW_USERNAME_2);
 		
-		facade.createPost(userToken1, NEW_POST_TITLE, NEW_POST_CONTENT, NEW_POST_VISIBILITY);
-		facade.createPost(userToken1, NEW_POST_TITLE_2, NEW_POST_CONTENT_2, NEW_POST_VISIBILITY_2);
+		facade.createPost(userToken1, NEW_POST_TITLE, NEW_POST_CONTENT, NEW_POST_VISIBILITY, null);
+		facade.createPost(userToken1, NEW_POST_TITLE_2, NEW_POST_CONTENT_2, NEW_POST_VISIBILITY_2, null);
 		
 		List<Post> postsFriendsUser1 = facade.getFriendsPosts(userToken1);
 		List<Post> postsFriendsUser2 = facade.getFriendsPosts(userToken2);
@@ -585,16 +585,16 @@ public class IntegrationTest {
 		UserToken userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);	
 		UserToken userToken2 = loginAsUser(NEW_USERNAME_2, NEW_USER_PASSWORD_2);
 		
-		facade.createPost(userToken2, NEW_POST_TITLE, NEW_POST_CONTENT, PostVisibility.PUBLIC);
+		facade.createPost(userToken2, NEW_POST_TITLE, NEW_POST_CONTENT, PostVisibility.PUBLIC, null);
 		
 		Thread.sleep(5);
-		facade.createPost(userToken2, NEW_POST_TITLE_2, NEW_POST_CONTENT_2, PostVisibility.PUBLIC);
+		facade.createPost(userToken2, NEW_POST_TITLE_2, NEW_POST_CONTENT_2, PostVisibility.PUBLIC, null);
 		
 		Thread.sleep(5);
-		facade.createPost(userToken2, NEW_POST_TITLE_3, NEW_POST_CONTENT_3, PostVisibility.PUBLIC);
+		facade.createPost(userToken2, NEW_POST_TITLE_3, NEW_POST_CONTENT_3, PostVisibility.PUBLIC, null);
 		
 		Thread.sleep(5);
-		facade.createPost(userToken2, NEW_POST_TITLE_4, NEW_POST_CONTENT_4, PostVisibility.PRIVATE);
+		facade.createPost(userToken2, NEW_POST_TITLE_4, NEW_POST_CONTENT_4, PostVisibility.PRIVATE, null);
 		
 		List<Post> postsBeforeFollow = facade.getFeedPosts(userToken1);
 		
@@ -626,7 +626,7 @@ public class IntegrationTest {
 		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
 		
 		UserToken userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
-		facade.createPost(userToken1, NEW_POST_TITLE, NEW_POST_CONTENT, PostVisibility.PRIVATE);
+		facade.createPost(userToken1, NEW_POST_TITLE, NEW_POST_CONTENT, PostVisibility.PRIVATE, null);
 		
 		List<Post> postsBeforeDelete = facade.getSelfPosts(userToken1);
 		

@@ -1,9 +1,13 @@
 package com.armstrongmsg.socialnet.view.jsf.model;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
+
+import org.primefaces.model.DefaultStreamedContent;
 
 public class JsfConnector {
 
@@ -35,8 +39,18 @@ public class JsfConnector {
 	}
 	
 	public Post getViewPost(com.armstrongmsg.socialnet.model.Post modelPost) {
+		DefaultStreamedContent content = null;
+		
+		if (modelPost.getPicture() != null) {
+			InputStream profilePicStream = new ByteArrayInputStream(modelPost.getPicture().getData());
+			content = DefaultStreamedContent.
+					builder().
+					contentType("image/jpeg").
+					stream(() -> profilePicStream).
+					build();
+		}
 		return new Post(modelPost.getId(), modelPost.getTitle(), toViewDate(modelPost.getTimestamp()), 
-				modelPost.getContent(), modelPost.getVisibility().getValue());
+				modelPost.getContent(), modelPost.getVisibility().getValue(), content);
 	}
 	
 	public List<Post> getViewPosts(List<com.armstrongmsg.socialnet.model.Post> modelPosts) {

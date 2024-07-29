@@ -9,6 +9,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name = "Posts")
@@ -25,17 +26,29 @@ public class Post implements Comparable<Post> {
 	@Column
 	@Enumerated(EnumType.STRING)
 	private PostVisibility visibility;
+	@Column(name = "picture_id")
+	private String pictureId;
+	@Transient
+	private Picture picture;
 	
 	public Post() {
 		
 	}
 	
-	public Post(String title, long timestamp, String content, PostVisibility visibility) {
+	public Post(String title, long timestamp, String content, PostVisibility visibility, Picture postPicture) {
 		this.id = UUID.randomUUID().toString();
 		this.title = title;
 		this.timestamp = timestamp;
 		this.content = content;
 		this.visibility = visibility;
+		
+		if (postPicture != null) {
+			this.pictureId = postPicture.getId();
+			this.picture = postPicture;
+		} else {
+			this.pictureId = null;
+			this.picture = null;
+		}
 	}
 
 	public String getId() {
@@ -76,6 +89,18 @@ public class Post implements Comparable<Post> {
 
 	public void setVisibility(PostVisibility visibility) {
 		this.visibility = visibility;
+	}
+
+	public String getPictureId() {
+		return this.pictureId;
+	}
+
+	public void setPicture(Picture postPicture) {
+		this.picture = postPicture;
+	}
+
+	public Picture getPicture() {
+		return this.picture;
 	}
 
 	@Override

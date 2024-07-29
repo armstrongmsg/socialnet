@@ -23,6 +23,7 @@ public class LocalFileSystemPictureRepository implements PictureRepository {
 					ConfigurationProperties.PICTURE_REPOSITORY_LOCAL_PATH));
 		}
 		
+		pictureRepositoryLocalPath = repositoryLocalPathProperty;
 		File path = new File(pictureRepositoryLocalPath);
 		
 		if (!path.exists()) {

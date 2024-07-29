@@ -74,9 +74,9 @@ public class DefaultFeedPolicyTest {
 	public void testFilter() throws FatalErrorException {
 		feedPolicy = new DefaultFeedPolicy();
 		
-		Post post1 = new Post(POST_TITLE_1, POST_TIMESTAMP_1, POST_CONTENT_1, POST_VISIBILITY_1);
-		Post post2 = new Post(POST_TITLE_2, POST_TIMESTAMP_2, POST_CONTENT_2, POST_VISIBILITY_2);
-		Post post3 = new Post(POST_TITLE_3, POST_TIMESTAMP_3, POST_CONTENT_3, POST_VISIBILITY_3);
+		Post post1 = new Post(POST_TITLE_1, POST_TIMESTAMP_1, POST_CONTENT_1, POST_VISIBILITY_1, null);
+		Post post2 = new Post(POST_TITLE_2, POST_TIMESTAMP_2, POST_CONTENT_2, POST_VISIBILITY_2, null);
+		Post post3 = new Post(POST_TITLE_3, POST_TIMESTAMP_3, POST_CONTENT_3, POST_VISIBILITY_3, null);
 		
 	 	List<Post> filteredPosts = feedPolicy.filter(Arrays.asList(post1, post2, post3, post3));
 	 	assertEquals(2, filteredPosts.size());
@@ -96,7 +96,7 @@ public class DefaultFeedPolicyTest {
 	public void testFilterWithNumberOfPostsLowerThanLimit() throws FatalErrorException {
 		feedPolicy = new DefaultFeedPolicy();
 		
-		Post post1 = new Post(POST_TITLE_1, POST_TIMESTAMP_1, POST_CONTENT_1, POST_VISIBILITY_1);
+		Post post1 = new Post(POST_TITLE_1, POST_TIMESTAMP_1, POST_CONTENT_1, POST_VISIBILITY_1, null);
 		
 	 	List<Post> filteredPosts = feedPolicy.filter(Arrays.asList(post1));
 	 	assertEquals(1, filteredPosts.size());

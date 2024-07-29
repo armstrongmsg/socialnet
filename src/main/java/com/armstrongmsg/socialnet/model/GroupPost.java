@@ -4,7 +4,7 @@ public class GroupPost extends Post {
 	private User author;
 	
 	public GroupPost(User author, String title, long timestamp, String content, PostVisibility visibility) {
-		super(title, timestamp, content, visibility);
+		super(title, timestamp, content, visibility, null);
 		this.author = author;
 	}
 

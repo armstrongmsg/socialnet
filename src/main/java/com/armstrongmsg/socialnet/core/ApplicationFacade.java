@@ -131,11 +131,11 @@ public class ApplicationFacade {
 		this.network.addUser(username, password, profileDescription);
 	}
 
-	public void createPost(UserToken userToken, String title, String content, PostVisibility newPostVisibility) throws AuthenticationException {
+	public void createPost(UserToken userToken, String title, String content, PostVisibility newPostVisibility, byte[] pictureData) throws AuthenticationException {
 		logger.debug(Messages.Logging.RECEIVED_CREATE_POST_REQUEST, userToken, title, content, newPostVisibility);
 		
 		try {
-			this.network.createPost(userToken, title, content, newPostVisibility);
+			this.network.createPost(userToken, title, content, newPostVisibility, pictureData);
 		} catch (AuthenticationException e) {
 			logger.debug(Messages.Logging.AUTHENTICATION_EXCEPTION, e.getMessage());
 			throw e;

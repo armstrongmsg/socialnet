@@ -10,7 +10,8 @@ create table posts(
 	title VARCHAR(100), 
 	timestamp BIGINT, 
 	content VARCHAR(500), 
-	visibility VARCHAR(20)
+	visibility VARCHAR(20),
+	picture_id VARCHAR(100)
 	);
 create table users_posts(
 	user_userid VARCHAR(100),

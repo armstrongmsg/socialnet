@@ -61,8 +61,8 @@ public class Profile {
 		this.profilePic = profilePic;
 	}
 	
-	public void createPost(String title, String content, PostVisibility newPostVisibility) {
-		Post newPost = new Post(title, System.currentTimeMillis(), content, newPostVisibility);
+	public void createPost(String title, String content, PostVisibility newPostVisibility, Picture postPicture) {
+		Post newPost = new Post(title, System.currentTimeMillis(), content, newPostVisibility, postPicture);
 		posts.add(newPost);
 	}
 }

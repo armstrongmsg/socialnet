@@ -131,9 +131,10 @@ public class Network {
 		}
 	}
 
-	public void createPost(UserToken userToken, String title, String content, PostVisibility newPostVisibility) throws AuthenticationException {
+	public void createPost(UserToken userToken, String title, String content, PostVisibility newPostVisibility, byte[] pictureData) throws AuthenticationException {
 		User user = this.authenticationPlugin.getUser(userToken);
-		user.getProfile().createPost(title, content, newPostVisibility);
+		Picture postPicture = new Picture(UUID.randomUUID().toString(), pictureData);
+		user.getProfile().createPost(title, content, newPostVisibility, postPicture);
 		this.storageFacade.updateUser(user);
 	}
 
