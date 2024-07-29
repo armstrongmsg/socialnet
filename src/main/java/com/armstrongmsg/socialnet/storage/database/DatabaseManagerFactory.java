@@ -12,7 +12,7 @@ import com.armstrongmsg.socialnet.util.PropertiesUtil;
 public class DatabaseManagerFactory {
 	private static Logger logger = LoggerFactory.getLogger(DatabaseManagerFactory.class);
 	
-	public DatabaseManager loadDatabaseManagerFromConfiguration() {
+	public DatabaseManager loadDatabaseManagerFromConfiguration() throws FatalErrorException {
 		try {
 			PropertiesUtil properties = PropertiesUtil.getInstance();
 			String databaseManagerClassName = properties.getProperty(ConfigurationProperties.DATABASE_MANAGER_CLASS_NAME);

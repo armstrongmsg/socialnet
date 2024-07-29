@@ -2,7 +2,8 @@ create table users(
 	userid VARCHAR(100) PRIMARY KEY, 
 	username VARCHAR(100), 
 	password VARCHAR(100), 
-	description VARCHAR(300)
+	description VARCHAR(300),
+	profile_pic_id VARCHAR(100)
 	);
 create table posts(
 	id VARCHAR(100) PRIMARY KEY, 

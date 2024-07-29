@@ -27,6 +27,7 @@ public class Messages {
 		public static final String RECEIVED_ADD_USER_REQUEST = "Received Add user request. username:{}, password:{}, profile desc:{}.";
 		public static final String RECEIVED_ADD_USER_ADMIN_REQUEST = 
 				"Received Add user admin request. Token: {}, username: {}, password: {}, profile desc:{}.";
+		public static final String RECEIVED_CHANGE_PROFILE_PIC_REQUEST = "Received change profile pic request. Token:{}.";
 		public static final String RECEIVED_CREATE_POST_REQUEST = 
 				"Received Create post request. Token:{}, title:{}, content:{}, visibility:{}.";
 		public static final String RECEIVED_DELETE_POST_REQUEST = "Received delete post request. Token: {}, postId: {}.";
@@ -41,6 +42,7 @@ public class Messages {
 		public static final String RECEIVED_GET_SELF_POSTS_REQUEST = "Received Get self posts request. Token:{}.";
 		public static final String RECEIVED_GET_SELF_REQUEST = "Received Get self request. Token:{}.";
 		public static final String RECEIVED_GET_SENT_FRIENDSHIP_REQUESTS_REQUEST = "Received get sent friendship requests request. Token: {}.";
+		public static final String RECEIVED_GET_USER_PROFILE_PIC = "Received get user pic. Token:{}, username:{}.";
 		public static final String RECEIVED_GET_USER_POSTS_REQUEST = "Received Get user posts request. Token: {}, username: {}.";
 		public static final String RECEIVED_GET_USER_RECOMMENDATIONS_REQUEST = "Received Get user recommendations request. Token:{}.";
 		public static final String RECEIVED_GET_USER_SUMMARIES_REQUEST = "Received Get user summaries request. Token:{}.";
@@ -57,6 +59,7 @@ public class Messages {
 	
 	public static class Exception {
 		public static final String CANNOT_LOAD_BOOTSTRAP_PROPERTY = "Cannot load bootstrap property %s.";
+		public static final String CANNOT_LOAD_LOCAL_PATH_PROPERTY = "Cannot load local path property %s.";
 		public static final String CLASS_NOT_FOUND_ON_INSTANTIATION = "Could not find class %s. Message: %s.";
 		public static final String COULD_NOT_LOAD_ADMIN_CONFIGURATION = "Could not load admin configuration. Message: {}";
 		public static final String ERROR_ON_INSTANTIATION = "Error while instantiating class %s. Message: %s."; 

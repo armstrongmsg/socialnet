@@ -260,14 +260,14 @@ public class Network {
 			if (friendship.getFriend1().equals(requester)) {
 				User friend = friendship.getFriend2();
 				UserSummary summary = new UserSummary(friend.getUsername(), friend.getProfile().getDescription(), 
-						friend.getProfile().getProfilePic());
+						friend.getProfile().getProfilePic().getData());
 				friends.add(summary);
 			}
 			
 			if (friendship.getFriend2().equals(requester)) {
 				User friend = friendship.getFriend1();
 				UserSummary summary = new UserSummary(friend.getUsername(), friend.getProfile().getDescription(), 
-						friend.getProfile().getProfilePic());
+						friend.getProfile().getProfilePic().getData());
 				friends.add(summary);
 			}
 		}
@@ -326,7 +326,7 @@ public class Network {
 			if (follow.getFollower().equals(requester)) {
 				User followed = follow.getFollowed();
 				followedUsers.add(new UserSummary(followed.getUsername(), followed.getProfile().getDescription(), 
-						followed.getProfile().getProfilePic()));
+						followed.getProfile().getProfilePic().getData()));
 			}
 		}
 		
@@ -437,7 +437,7 @@ public class Network {
 		for (User user : this.storageFacade.getAllUsers()) {
 			if (!user.equals(requester)) {
 				userSummaries.add(new UserSummary(user.getUsername(), user.getProfile().getDescription(), 
-						user.getProfile().getProfilePic()));
+						user.getProfile().getProfilePic().getData()));
 			}
 		}
 
@@ -453,7 +453,7 @@ public class Network {
 		
 		for (User user : this.storageFacade.getAllUsers()) {
 			UserSummary userSummary = new UserSummary(user.getUsername(), user.getProfile().getDescription(), 
-					user.getProfile().getProfilePic()); 
+					user.getProfile().getProfilePic().getData()); 
 			
 			if (!user.equals(requester) && !friends.contains(userSummary)) {
 				userSummaries.add(userSummary);
@@ -485,7 +485,7 @@ public class Network {
 		User requester = this.authenticationPlugin.getUser(userToken);
 		this.authorizationPlugin.authorize(requester, new Operation(OperationType.GET_SELF));
 		UserSummary summary = new UserSummary(requester.getUsername(), requester.getProfile().getDescription(), 
-				requester.getProfile().getProfilePic());
+				requester.getProfile().getProfilePic().getData());
 		return summary;
 	}
 
@@ -533,5 +533,25 @@ public class Network {
 				this.storageFacade.removeFriendship(friendship);
 			}
 		}
+	}
+
+	public void changeSelfProfilePic(UserToken userToken, byte[] picData) throws AuthenticationException, UnauthorizedOperationException {
+		User requester = this.authenticationPlugin.getUser(userToken);
+		this.authorizationPlugin.authorize(requester, new Operation(OperationType.CHANGE_SELF_PROFILE_PIC));
+		
+		String profilePicId = UUID.randomUUID().toString();
+		Picture newProfilePic = new Picture(profilePicId, picData);
+		requester.getProfile().setProfilePic(newProfilePic);
+		requester.getProfile().setProfilePicId(profilePicId);
+		
+		this.storageFacade.updateUser(requester);
+	}
+
+	public byte[] getUserProfilePic(UserToken loggedUserToken, String username) throws AuthenticationException, UnauthorizedOperationException, UserNotFoundException {
+		User requester = this.authenticationPlugin.getUser(loggedUserToken);
+		this.authorizationPlugin.authorize(requester, new Operation(OperationType.GET_USER_PROFILE_PIC));
+		
+		User user = findUserByUsername(username);
+		return user.getProfile().getProfilePic().getData();
 	}
 }

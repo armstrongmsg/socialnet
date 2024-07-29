@@ -58,9 +58,14 @@ public class ApplicationFacade {
 	}
 	
 	public synchronized static ApplicationFacade getInstance() {
-		return getInstance(new StorageFacade(
-				new CacheFactory().loadCacheFromConfiguration(),
-				new DatabaseManagerFactory().loadDatabaseManagerFromConfiguration()));
+		try {
+			return getInstance(new StorageFacade(
+					new CacheFactory().loadCacheFromConfiguration(),
+					new DatabaseManagerFactory().loadDatabaseManagerFromConfiguration()));
+		} catch (FatalErrorException e) {
+			// TODO log
+			return null;
+		}
 	}
 		
 	public synchronized static void reset() {
@@ -448,6 +453,37 @@ public class ApplicationFacade {
 			throw e;
 		} catch (UnauthorizedOperationException e) {
 			logger.debug(Messages.Logging.AUTHORIZATION_EXCEPTION, e.getMessage());
+			throw e;
+		}
+	}
+
+	public void changeSelfProfilePic(UserToken userToken, byte[] picData) throws AuthenticationException, UnauthorizedOperationException {
+		logger.debug(Messages.Logging.RECEIVED_CHANGE_PROFILE_PIC_REQUEST, userToken);
+
+		try {
+			this.network.changeSelfProfilePic(userToken, picData);
+		} catch (AuthenticationException e) {
+			logger.debug(Messages.Logging.AUTHENTICATION_EXCEPTION, e.getMessage());
+			throw e;
+		} catch (UnauthorizedOperationException e) {
+			logger.debug(Messages.Logging.AUTHORIZATION_EXCEPTION, e.getMessage());
+			throw e;
+		}
+	}
+
+	public byte[] getUserPic(UserToken userToken, String username) throws AuthenticationException, UnauthorizedOperationException, UserNotFoundException{
+		logger.debug(Messages.Logging.RECEIVED_GET_USER_PROFILE_PIC, userToken);
+		
+		try {
+			return this.network.getUserProfilePic(userToken, username);
+		} catch (AuthenticationException e) {
+			logger.debug(Messages.Logging.AUTHENTICATION_EXCEPTION, e.getMessage());
+			throw e;
+		} catch (UnauthorizedOperationException e) {
+			logger.debug(Messages.Logging.AUTHORIZATION_EXCEPTION, e.getMessage());
+			throw e;
+		} catch (UserNotFoundException e) {
+			logger.debug(Messages.Logging.USER_NOT_FOUND_EXCEPTION, e.getMessage());
 			throw e;
 		}
 	}

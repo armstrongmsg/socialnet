@@ -1,5 +1,10 @@
 package com.armstrongmsg.socialnet.view.jsf;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -7,10 +12,16 @@ import java.util.Map;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
 
+import org.primefaces.model.DefaultStreamedContent;
+import org.primefaces.model.StreamedContent;
+import org.primefaces.model.file.UploadedFile;
+
 import com.armstrongmsg.socialnet.constants.AuthenticationParameters;
+import com.armstrongmsg.socialnet.constants.SystemConstants;
 import com.armstrongmsg.socialnet.core.ApplicationFacade;
 import com.armstrongmsg.socialnet.exceptions.AuthenticationException;
 import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
+import com.armstrongmsg.socialnet.exceptions.UserNotFoundException;
 import com.armstrongmsg.socialnet.model.FriendshipRequest;
 import com.armstrongmsg.socialnet.model.authentication.UserToken;
 import com.armstrongmsg.socialnet.view.jsf.model.JsfConnector;
@@ -23,6 +34,7 @@ public class ContextBean {
 	private String password;
 	private UserSummary loggedUserSummary;
 	private boolean loginError;
+	private UploadedFile profilePic;
 	
 	private ApplicationFacade facade = ApplicationFacade.getInstance();
 	
@@ -48,6 +60,14 @@ public class ContextBean {
 
 	public void setLoginError(boolean loginError) {
 		this.loginError = loginError;
+	}
+
+	public UploadedFile getProfilePic() {
+		return profilePic;
+	}
+
+	public void setProfilePic(UploadedFile profilePic) {
+		this.profilePic = profilePic;
 	}
 	
 	public UserSummary getViewUser() {
@@ -243,5 +263,52 @@ public class ContextBean {
 		}
 		
 		return false;
+	}
+	
+	public void saveProfilePic() { 
+		try {
+			byte[] picData = this.profilePic.getContent();
+			UserToken loggedUserToken = SessionManager.getCurrentSession().getUserToken();
+			this.facade.changeSelfProfilePic(loggedUserToken, picData);
+			SessionManager.getCurrentSession().setCurrentViewUser(null);
+		} catch (AuthenticationException e) {
+			// FIXME treat this exception
+		} catch (UnauthorizedOperationException e) {
+			// FIXME treat this exception
+		}
+	}
+	
+	public StreamedContent getUserPic() throws FileNotFoundException {
+		UserSummary viewUser = getViewUser();
+		UserToken loggedUserToken = SessionManager.getCurrentSession().getUserToken();
+		try {
+			byte[] picData = this.facade.getUserPic(loggedUserToken, viewUser.getUsername());
+			
+			if (picData == null) {
+				String defaultProfilePicPath = Thread.currentThread().getContextClassLoader().
+						getResource("").getPath() + File.separator + SystemConstants.DEFAULT_PROFILE_PIC;
+				InputStream profilePicStream = new FileInputStream(new File(defaultProfilePicPath));
+				return DefaultStreamedContent.
+						builder().
+						contentType("image/jpeg").
+						stream(() -> profilePicStream).
+						build();
+			} else {
+				InputStream profilePicStream = new ByteArrayInputStream(picData);
+				return DefaultStreamedContent.
+						builder().
+						contentType("image/jpeg").
+						stream(() -> profilePicStream).
+						build();
+			}
+			
+		} catch (AuthenticationException e) {
+			// FIXME treat this exception
+		} catch (UnauthorizedOperationException e) {
+			// FIXME treat this exception
+		} catch (UserNotFoundException e) {
+			// FIXME treat this exception
+		}
+		return null;
 	}
 }

@@ -45,7 +45,7 @@
 		<p:toolbar>
 			<f:facet name="left">
 				<h:outputText value="#{contextBean.viewUser.username}" />
-				<p:graphicImage value="#{contextBean.viewUser.profilePic}" />
+				<p:graphicImage value="#{contextBean.userPic}" cache="false"/>
 			</f:facet>
 
 			<f:facet name="right">
@@ -79,6 +79,12 @@
 				</p:commandButton>
 			</f:facet>
 		</p:toolbar>
+	</h:form>
+	
+	<h:form enctype="multipart/form-data"
+		rendered="#{contextBean.isSelfProfile}">
+		<p:fileUpload value="#{contextBean.profilePic}" mode="simple" />
+		<p:commandButton value="Submit" action="#{contextBean.saveProfilePic}" ajax="false" />
 	</h:form>
 
 	<p:divider />

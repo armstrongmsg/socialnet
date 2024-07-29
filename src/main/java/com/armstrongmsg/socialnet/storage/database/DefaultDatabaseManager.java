@@ -2,11 +2,14 @@ package com.armstrongmsg.socialnet.storage.database;
 
 import java.util.List;
 
+import com.armstrongmsg.socialnet.constants.SystemConstants;
+import com.armstrongmsg.socialnet.exceptions.FatalErrorException;
 import com.armstrongmsg.socialnet.exceptions.UserNotFoundException;
 import com.armstrongmsg.socialnet.model.Follow;
 import com.armstrongmsg.socialnet.model.Friendship;
 import com.armstrongmsg.socialnet.model.FriendshipRequest;
 import com.armstrongmsg.socialnet.model.Group;
+import com.armstrongmsg.socialnet.model.Picture;
 import com.armstrongmsg.socialnet.model.User;
 import com.armstrongmsg.socialnet.storage.database.repository.DefaultFollowRepository;
 import com.armstrongmsg.socialnet.storage.database.repository.DefaultFriendshipRepository;
@@ -15,6 +18,8 @@ import com.armstrongmsg.socialnet.storage.database.repository.DefaultUserReposit
 import com.armstrongmsg.socialnet.storage.database.repository.FollowRepository;
 import com.armstrongmsg.socialnet.storage.database.repository.FriendshipRepository;
 import com.armstrongmsg.socialnet.storage.database.repository.FriendshipRequestRepository;
+import com.armstrongmsg.socialnet.storage.database.repository.LocalFileSystemPictureRepository;
+import com.armstrongmsg.socialnet.storage.database.repository.PictureRepository;
 import com.armstrongmsg.socialnet.storage.database.repository.UserRepository;
 
 public class DefaultDatabaseManager implements DatabaseManager {
@@ -22,12 +27,14 @@ public class DefaultDatabaseManager implements DatabaseManager {
 	private FriendshipRepository friendshipRepository;
 	private FollowRepository followRepository;
 	private FriendshipRequestRepository friendshipRequestsRepository;
+	private PictureRepository pictureRepository;
 	
-	public DefaultDatabaseManager() {
+	public DefaultDatabaseManager() throws FatalErrorException {
 		this.userRepository = new DefaultUserRepository();
 		this.friendshipRepository = new DefaultFriendshipRepository();
 		this.followRepository = new DefaultFollowRepository();
 		this.friendshipRequestsRepository = new DefaultFriendshipRequestRepository();
+		this.pictureRepository = new LocalFileSystemPictureRepository();
 	}
 
 	@Override
@@ -37,6 +44,10 @@ public class DefaultDatabaseManager implements DatabaseManager {
 		if (user == null) {
 			throw new UserNotFoundException(id);	
 		}
+		
+		Picture profilePic = this.pictureRepository.getPictureById(
+				user.getProfile().getProfilePicId());
+		user.getProfile().setProfilePic(profilePic);
 		
 		return user;
 	}
@@ -49,17 +60,29 @@ public class DefaultDatabaseManager implements DatabaseManager {
 			throw new UserNotFoundException(username);	
 		}
 		
+		Picture profilePic = this.pictureRepository.getPictureById(
+				user.getProfile().getProfilePicId());
+		user.getProfile().setProfilePic(profilePic);
+		
 		return user;
 	}
 
 	@Override
 	public void saveUser(User user) {
 		this.userRepository.saveUser(user);
+		
+		if (!user.getProfile().getProfilePic().getId().equals(SystemConstants.DEFAULT_PROFILE_PIC_ID)) {
+			this.pictureRepository.savePicture(user.getProfile().getProfilePic());
+		}
 	}
 	
 	@Override
 	public void updateUser(User user) {
 		this.userRepository.updateUser(user);
+		
+		if (!user.getProfile().getProfilePic().getId().equals(SystemConstants.DEFAULT_PROFILE_PIC_ID)) {
+			this.pictureRepository.savePicture(user.getProfile().getProfilePic());
+		}
 	}
 	
 	@Override
