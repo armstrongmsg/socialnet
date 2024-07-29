@@ -3,7 +3,7 @@ package com.armstrongmsg.socialnet.view.jsf;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
@@ -24,6 +24,7 @@ import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
 import com.armstrongmsg.socialnet.exceptions.UserNotFoundException;
 import com.armstrongmsg.socialnet.model.FriendshipRequest;
 import com.armstrongmsg.socialnet.model.authentication.UserToken;
+import com.armstrongmsg.socialnet.util.ImageUtils;
 import com.armstrongmsg.socialnet.view.jsf.model.JsfConnector;
 import com.armstrongmsg.socialnet.view.jsf.model.UserSummary;
 
@@ -278,7 +279,7 @@ public class ContextBean {
 		}
 	}
 	
-	public StreamedContent getUserPic() throws FileNotFoundException {
+	public StreamedContent getUserPic() throws IOException {
 		UserSummary viewUser = getViewUser();
 		UserToken loggedUserToken = SessionManager.getCurrentSession().getUserToken();
 		try {
@@ -294,7 +295,9 @@ public class ContextBean {
 						stream(() -> profilePicStream).
 						build();
 			} else {
-				InputStream profilePicStream = new ByteArrayInputStream(picData);
+				// FIXME constant
+				byte[] rescaledPic = new ImageUtils().rescale(picData, 300, 300);
+				InputStream profilePicStream = new ByteArrayInputStream(rescaledPic);
 				return DefaultStreamedContent.
 						builder().
 						contentType("image/jpeg").
