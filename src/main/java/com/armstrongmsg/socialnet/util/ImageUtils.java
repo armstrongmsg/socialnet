@@ -11,8 +11,9 @@ import java.io.InputStream;
 
 import javax.imageio.ImageIO;
 
-// TODO test
 public class ImageUtils {
+	private static final String OUTPUT_TYPE = "JPG";
+
 	public byte[] rescale(byte[] image, int maxHeight, int maxWidth) throws IOException {
 		InputStream in = new ByteArrayInputStream(image); 
 		BufferedImage bufferedImage = ImageIO.read(in);
@@ -37,27 +38,23 @@ public class ImageUtils {
 		targetWidth = getTargetWidth(height, heightRatio, width, widthRatio);
 		
 		BufferedImage newImage = doScale(bufferedImage, targetHeight, targetWidth);
-	    return tryToGetNewImageDataOrDefault(newImage, image);
+	    return tryToGetNewImageData(newImage);
 	}
 
 	private int getTargetWidth(int height, double heightRatio, int width, double widthRatio) {
-//		int targetWidth;
 		if (height > width) {
 			return new Double(heightRatio*width).intValue();
 		} else {
 			return new Double(widthRatio*width).intValue();
 		}
-//		return targetWidth;
 	}
 
 	private int getTargetHeight(int height, double heightRatio, int width, double widthRatio) {
-//		int targetHeight;
 		if (height > width) {
 			return new Double(heightRatio*height).intValue();
 		} else {
 			return new Double(widthRatio*height).intValue();
 		}
-//		return targetHeight;
 	}
 
 	private BufferedImage doScale(BufferedImage bufferedImage, int targetHeight, int targetWidth) {
@@ -76,24 +73,16 @@ public class ImageUtils {
 		return newImage;
 	}
 
-	private byte[] tryToGetNewImageDataOrDefault(BufferedImage newImage, byte[] defaultData) {
+	private byte[] tryToGetNewImageData(BufferedImage newImage) throws IOException {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 
 	    try {
-	    	// FIXME constant
-	    	ImageIO.write(newImage, "JPG", out);
+	    	ImageIO.write(newImage, OUTPUT_TYPE, out);
 	    	byte[] newImageData = out.toByteArray();
 	    	out.close();
 	    	return newImageData;
-	    } catch (IOException e) {
-	    	// TODO log
-	    	return defaultData;
-	    } finally {
-	    	try {
-				out.close();
-			} catch (IOException e) {
-				// TODO log
-			}
+	    } finally { 
+	    	out.close();
 	    }
 	}
 }

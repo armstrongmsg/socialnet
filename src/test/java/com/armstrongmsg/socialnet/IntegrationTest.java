@@ -33,7 +33,7 @@ import com.armstrongmsg.socialnet.model.authentication.UserToken;
 import com.armstrongmsg.socialnet.model.authorization.DefaultAuthorizationPlugin;
 import com.armstrongmsg.socialnet.model.feed.DefaultFeedPolicy;
 import com.armstrongmsg.socialnet.storage.StorageFacade;
-import com.armstrongmsg.socialnet.storage.cache.DefaultCache;
+import com.armstrongmsg.socialnet.storage.cache.NoOperationCache;
 import com.armstrongmsg.socialnet.storage.database.DatabaseManager;
 import com.armstrongmsg.socialnet.storage.database.InMemoryDatabaseManager;
 import com.armstrongmsg.socialnet.util.PropertiesUtil;
@@ -60,7 +60,7 @@ public class IntegrationTest {
 	private static final String MAX_NUMBER_OF_POSTS = "2";
 	private ApplicationFacade facade;
 	private StorageFacade storageFacade;
-	private DefaultCache cache;
+	private NoOperationCache cache;
 	private DatabaseManager databaseManager;
 	private MockedStatic<PropertiesUtil> propertiesUtilMock;
 	
@@ -68,7 +68,7 @@ public class IntegrationTest {
 	public void setUp() throws FatalErrorException {
 		ApplicationFacade.reset();
 		
-		this.cache = new DefaultCache();
+		this.cache = new NoOperationCache();
 		this.databaseManager = new InMemoryDatabaseManager();
 				
 		storageFacade = new StorageFacade(this.cache, this.databaseManager);

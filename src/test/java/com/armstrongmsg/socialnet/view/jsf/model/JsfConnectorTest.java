@@ -1,15 +1,21 @@
 package com.armstrongmsg.socialnet.view.jsf.model;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 
+import com.armstrongmsg.socialnet.model.Picture;
 import com.armstrongmsg.socialnet.model.PostVisibility;
 import com.armstrongmsg.socialnet.model.Profile;
+import com.armstrongmsg.socialnet.util.ImageUtils;
 
 public class JsfConnectorTest {
 	private static final String POST_TITLE_1 = "post1";
@@ -28,22 +34,49 @@ public class JsfConnectorTest {
 	private static final String USERNAME_2 = "username2";
 	private static final String PASSWORD_2 = "password2";
 	private static final String USER_DESCRIPTION_2 = "user-description2";
+	private static final String PICTURE_ID_1 = "pictureId1";
+	private static final byte[] PICTURE_DATA_1 = {1, 1, 1};
+	private static final byte[] RESCALED_PICTURE_DATA_1 = {2, 2, 2};
 	private JsfConnector connector;
+	private Picture picture1;
+	private ImageUtils imageUtils;
 	
 	@Before
-	public void setUp() {
-		connector = new JsfConnector();
+	public void setUp() throws IOException {
+		picture1 = new Picture(PICTURE_ID_1, PICTURE_DATA_1);
+		
+		imageUtils = Mockito.mock(ImageUtils.class);
+		Mockito.when(imageUtils.rescale(PICTURE_DATA_1, 600, 600)).thenReturn(RESCALED_PICTURE_DATA_1);
+		
+		connector = new JsfConnector(imageUtils);
 	}
 	
 	@Test
-	public void testGetViewPost() {
+	public void testGetViewPost() throws IOException {
+		com.armstrongmsg.socialnet.model.Post modelPost = 
+				new com.armstrongmsg.socialnet.model.Post(POST_TITLE_1, POST_TIMESTAMP_1, POST_CONTENT_1, POST_VISIBILITY_1, picture1);
+		
+		Post viewPost = connector.getViewPost(modelPost);
+		
+		assertEquals(POST_TITLE_1, viewPost.getTitle());
+		assertEquals(POST_CONTENT_1, viewPost.getContent());
+		assertEquals(POST_VISIBILITY_1.getValue(), viewPost.getVisibility());
+		byte[] dataFromStreamedContent = new byte[3];
+		viewPost.getPicture().getStream().get().read(dataFromStreamedContent);
+		assertArrayEquals(RESCALED_PICTURE_DATA_1, dataFromStreamedContent);
+	}
+	
+	@Test
+	public void testGetViewPostNullPicture() {
 		com.armstrongmsg.socialnet.model.Post modelPost = 
 				new com.armstrongmsg.socialnet.model.Post(POST_TITLE_1, POST_TIMESTAMP_1, POST_CONTENT_1, POST_VISIBILITY_1, null);
 		
 		Post viewPost = connector.getViewPost(modelPost);
+		
 		assertEquals(POST_TITLE_1, viewPost.getTitle());
 		assertEquals(POST_CONTENT_1, viewPost.getContent());
 		assertEquals(POST_VISIBILITY_1.getValue(), viewPost.getVisibility());
+		assertNull(viewPost.getPicture());
 	}
 	
 	@Test

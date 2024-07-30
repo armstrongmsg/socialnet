@@ -11,7 +11,6 @@ import com.armstrongmsg.socialnet.model.User;
 import com.armstrongmsg.socialnet.storage.cache.Cache;
 import com.armstrongmsg.socialnet.storage.database.DatabaseManager;
 
-// TODO test cache misses
 public class StorageFacade {
 	private Cache cache;
 	private DatabaseManager databaseManager;
@@ -35,7 +34,6 @@ public class StorageFacade {
 		User user = cache.getUserById(userId);
 		
 		if (user == null) {
-			// TODO test
 			user = databaseManager.getUserById(userId);
 			cache.putUser(user);
 		}
@@ -47,7 +45,6 @@ public class StorageFacade {
 		User user = cache.getUserByUsername(username);
 		
 		if (user == null) {
-			// TODO test
 			user = databaseManager.getUserByUsername(username);
 			cache.putUser(user);
 		}
@@ -87,7 +84,6 @@ public class StorageFacade {
 		List<Friendship> friendships = cache.getFriendshipsByUserId(userId);
 		
 		if (friendships == null) {
-			// TODO test
 			friendships = databaseManager.getFriendshipsByUserId(userId);
 			cache.putFriendships(friendships);
 		}
@@ -104,7 +100,6 @@ public class StorageFacade {
 		List<Follow> follows = cache.getFollowsByUserId(userId);
 		
 		if (follows == null) {
-			// TODO test
 			follows = databaseManager.getFollowsByUserId(userId);
 			cache.putFollows(follows);
 		}

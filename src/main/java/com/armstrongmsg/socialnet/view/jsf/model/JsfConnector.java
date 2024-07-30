@@ -13,7 +13,19 @@ import org.primefaces.model.DefaultStreamedContent;
 import com.armstrongmsg.socialnet.util.ImageUtils;
 
 public class JsfConnector {
-
+	private static final int PIC_LIMIT_WIDTH = 600;
+	private static final int PIC_LIMIT_HEIGHT = 600;
+	
+	private ImageUtils imageUtils;
+	
+	public JsfConnector() {
+		this.imageUtils = new ImageUtils();
+	}
+	
+	public JsfConnector(ImageUtils imageUtils) {
+		this.imageUtils = imageUtils;
+	}
+	
 	public User getViewUser(com.armstrongmsg.socialnet.model.User modelUser) {
 		return new User(modelUser.getUserId(), modelUser.getUsername(), 
 				modelUser.getProfile().getDescription());
@@ -44,15 +56,14 @@ public class JsfConnector {
 	public Post getViewPost(com.armstrongmsg.socialnet.model.Post modelPost) {
 		DefaultStreamedContent content = null;
 		
-		// TODO test
 		if (modelPost.getPicture() != null) {
 			byte[] picData = modelPost.getPicture().getData();
 			try {
-				// FIXME constant
-				picData = new ImageUtils().rescale(picData, 600, 600);
+				picData = imageUtils.rescale(picData, PIC_LIMIT_HEIGHT, PIC_LIMIT_WIDTH);
 			} catch (IOException e) {
-				// TODO log
+				// TODO should throw InternalErrorException
 			}
+			// primefaces dependency!
 			InputStream profilePicStream = new ByteArrayInputStream(picData);
 			content = DefaultStreamedContent.
 					builder().

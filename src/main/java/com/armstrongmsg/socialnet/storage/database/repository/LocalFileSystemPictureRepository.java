@@ -11,10 +11,19 @@ import com.armstrongmsg.socialnet.exceptions.FatalErrorException;
 import com.armstrongmsg.socialnet.model.Picture;
 import com.armstrongmsg.socialnet.util.PropertiesUtil;
 
-// TODO test
 public class LocalFileSystemPictureRepository implements PictureRepository {
-	private String pictureRepositoryLocalPath = "";
+	private String pictureRepositoryLocalPath;
 	
+	public LocalFileSystemPictureRepository(String pictureRepositoryLocalPath) {
+		this.pictureRepositoryLocalPath = pictureRepositoryLocalPath;
+		
+		File path = new File(pictureRepositoryLocalPath);
+		
+		if (!path.exists()) {
+			path.mkdirs();
+		}
+	}
+			
 	public LocalFileSystemPictureRepository() throws FatalErrorException {
 		String repositoryLocalPathProperty =
 				PropertiesUtil.getInstance().getProperty(ConfigurationProperties.PICTURE_REPOSITORY_LOCAL_PATH);
@@ -49,14 +58,14 @@ public class LocalFileSystemPictureRepository implements PictureRepository {
 			pictureInputStream.read(data);
 			return new Picture(id, data);
 		} catch (IOException e) {
-			// TODO treat exception
+			// maybe should throw RollbackException
 			return null;
 		} finally {
 			if (pictureInputStream != null) {
 				try {
 					pictureInputStream.close();
 				} catch (IOException e) {
-					// TODO treat exception
+					// maybe should throw RollbackException
 				}
 			}
 		}
@@ -74,14 +83,14 @@ public class LocalFileSystemPictureRepository implements PictureRepository {
 				out.write(picture.getData());
 			}
 		} catch (IOException e) {
-			// TODO treat this exception
+			// maybe should throw RollbackException
 		} finally {
 			try {
 				if (out != null) {
 					out.close();
 				}
 			} catch (IOException e) {
-				// TODO treat this exception
+				// maybe should throw RollbackException
 			}
 		}
 	}

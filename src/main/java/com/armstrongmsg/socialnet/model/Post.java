@@ -94,6 +94,10 @@ public class Post implements Comparable<Post> {
 	public String getPictureId() {
 		return this.pictureId;
 	}
+	
+	public void setPictureId(String pictureId) {
+		this.pictureId = pictureId;
+	}
 
 	public void setPicture(Picture postPicture) {
 		this.picture = postPicture;

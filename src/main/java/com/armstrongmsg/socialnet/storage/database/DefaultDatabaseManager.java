@@ -23,13 +23,22 @@ import com.armstrongmsg.socialnet.storage.database.repository.LocalFileSystemPic
 import com.armstrongmsg.socialnet.storage.database.repository.PictureRepository;
 import com.armstrongmsg.socialnet.storage.database.repository.UserRepository;
 
-// TODO test
 public class DefaultDatabaseManager implements DatabaseManager {
 	private UserRepository userRepository;
 	private FriendshipRepository friendshipRepository;
 	private FollowRepository followRepository;
 	private FriendshipRequestRepository friendshipRequestsRepository;
 	private PictureRepository pictureRepository;
+	
+	public DefaultDatabaseManager(UserRepository userRepository, 
+			FriendshipRepository friendshipRepository, FollowRepository followRepository,
+			FriendshipRequestRepository friendshipRequestsRepository, PictureRepository pictureRepository) {
+		this.userRepository = userRepository;
+		this.friendshipRepository = friendshipRepository;
+		this.followRepository = followRepository;
+		this.friendshipRequestsRepository = friendshipRequestsRepository;
+		this.pictureRepository = pictureRepository;
+	}
 	
 	public DefaultDatabaseManager() throws FatalErrorException {
 		this.userRepository = new DefaultUserRepository();
