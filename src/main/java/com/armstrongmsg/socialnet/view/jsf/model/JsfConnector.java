@@ -44,6 +44,7 @@ public class JsfConnector {
 	public Post getViewPost(com.armstrongmsg.socialnet.model.Post modelPost) {
 		DefaultStreamedContent content = null;
 		
+		// TODO test
 		if (modelPost.getPicture() != null) {
 			byte[] picData = modelPost.getPicture().getData();
 			try {

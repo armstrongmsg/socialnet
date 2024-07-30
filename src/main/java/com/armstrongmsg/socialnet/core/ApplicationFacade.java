@@ -456,7 +456,8 @@ public class ApplicationFacade {
 			throw e;
 		}
 	}
-
+	
+	// TODO test
 	public void changeSelfProfilePic(UserToken userToken, byte[] picData) throws AuthenticationException, UnauthorizedOperationException {
 		logger.debug(Messages.Logging.RECEIVED_CHANGE_PROFILE_PIC_REQUEST, userToken);
 
@@ -471,6 +472,7 @@ public class ApplicationFacade {
 		}
 	}
 
+	// TODO test
 	public byte[] getUserPic(UserToken userToken, String username) throws AuthenticationException, UnauthorizedOperationException, UserNotFoundException{
 		logger.debug(Messages.Logging.RECEIVED_GET_USER_PROFILE_PIC, userToken);
 		

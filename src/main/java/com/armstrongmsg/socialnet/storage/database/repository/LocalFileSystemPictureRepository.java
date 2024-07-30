@@ -11,6 +11,7 @@ import com.armstrongmsg.socialnet.exceptions.FatalErrorException;
 import com.armstrongmsg.socialnet.model.Picture;
 import com.armstrongmsg.socialnet.util.PropertiesUtil;
 
+// TODO test
 public class LocalFileSystemPictureRepository implements PictureRepository {
 	private String pictureRepositoryLocalPath = "";
 	

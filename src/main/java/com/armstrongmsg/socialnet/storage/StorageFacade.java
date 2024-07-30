@@ -11,6 +11,7 @@ import com.armstrongmsg.socialnet.model.User;
 import com.armstrongmsg.socialnet.storage.cache.Cache;
 import com.armstrongmsg.socialnet.storage.database.DatabaseManager;
 
+// TODO test cache misses
 public class StorageFacade {
 	private Cache cache;
 	private DatabaseManager databaseManager;
