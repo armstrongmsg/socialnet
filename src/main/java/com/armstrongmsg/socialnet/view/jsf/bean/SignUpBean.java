@@ -1,9 +1,10 @@
-package com.armstrongmsg.socialnet.view.jsf;
+package com.armstrongmsg.socialnet.view.jsf.bean;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
 
 import com.armstrongmsg.socialnet.core.ApplicationFacade;
+import com.armstrongmsg.socialnet.view.jsf.NavigationController;
 
 @ManagedBean(name = "signUpBean", eager = true)
 @RequestScoped

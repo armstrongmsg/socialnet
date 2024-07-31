@@ -19,6 +19,7 @@ import com.armstrongmsg.socialnet.core.ApplicationFacade;
 import com.armstrongmsg.socialnet.core.authentication.UserToken;
 import com.armstrongmsg.socialnet.exceptions.AuthenticationException;
 import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
+import com.armstrongmsg.socialnet.view.jsf.bean.ContextBean;
 import com.armstrongmsg.socialnet.view.jsf.model.UserSummary;
 
 public class ContextBeanTest {

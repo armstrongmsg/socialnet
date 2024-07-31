@@ -1,4 +1,4 @@
-package com.armstrongmsg.socialnet.view.jsf;
+package com.armstrongmsg.socialnet.view.jsf.bean;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -25,6 +25,9 @@ import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
 import com.armstrongmsg.socialnet.exceptions.UserNotFoundException;
 import com.armstrongmsg.socialnet.model.FriendshipRequest;
 import com.armstrongmsg.socialnet.util.ImageUtils;
+import com.armstrongmsg.socialnet.view.jsf.NavigationController;
+import com.armstrongmsg.socialnet.view.jsf.Session;
+import com.armstrongmsg.socialnet.view.jsf.SessionManager;
 import com.armstrongmsg.socialnet.view.jsf.model.JsfConnector;
 import com.armstrongmsg.socialnet.view.jsf.model.UserSummary;
 
