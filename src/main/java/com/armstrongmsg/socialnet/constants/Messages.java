@@ -5,6 +5,8 @@ public class Messages {
 		public static final String AUTHENTICATION_EXCEPTION = "Authentication exception. Message:{}.";
 		public static final String AUTHORIZATION_EXCEPTION = "Authorization exception. Message:{}.";
 		public static final String COULD_NOT_LOAD_ADMIN_CONFIGURATION = "Could not load admin configuration. Message: {}";
+		public static final String ERROR_WHILE_CREATING_CACHE_INSTANCE = "Error while creating cache instance. Using default. Message: {}.";
+		public static final String ERROR_WHILE_CREATING_DATABASE_MANAGER_INSTANCE = "Error while creating database manager intance. Using default. Message: {}.";
 		public static final String ERROR_WHILE_LOADING_CACHE_CONFIGURATION = "Error while loading cache configuration. Using default. Message: {}.";
 		public static final String ERROR_WHILE_LOADING_DATABASE_MANAGER_CONFIGURATION = 
 				"Error while loading database manager configuration. Using default. Message: {}";

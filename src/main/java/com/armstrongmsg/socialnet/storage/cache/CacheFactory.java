@@ -12,23 +12,36 @@ import com.armstrongmsg.socialnet.util.PropertiesUtil;
 public class CacheFactory {
 	private static Logger logger = LoggerFactory.getLogger(CacheFactory.class);
 	
+	private ClassFactory classFactory;
+	
+	public CacheFactory() {
+		this.classFactory = new ClassFactory();
+	}
+	
+	public CacheFactory(ClassFactory classFactory) {
+		this.classFactory = classFactory;
+	}
+	
 	public Cache loadCacheFromConfiguration() {
+		String cacheClassName = null;
+		
 		try {
 			PropertiesUtil properties = PropertiesUtil.getInstance();
-			String cacheClassName = properties.getProperty(ConfigurationProperties.CACHE_CLASS_NAME);
+			cacheClassName = properties.getProperty(ConfigurationProperties.CACHE_CLASS_NAME);
+		} catch (FatalErrorException e) {
+			logger.error(Messages.Logging.ERROR_WHILE_LOADING_CACHE_CONFIGURATION, e.getMessage());
+			return new DefaultCache();
+		}
 			
+		try {
 			if (cacheClassName == null || cacheClassName.isEmpty()) {
-				// TODO test
 				logger.info(Messages.Logging.NO_CACHE_CONFIGURATION);
 				return new DefaultCache();
 			}
-			
 			logger.info(Messages.Logging.LOADING_CACHE_CONFIGURATION, cacheClassName);
-			ClassFactory classFactory = new ClassFactory();
 			return (Cache) classFactory.createInstance(cacheClassName);
-			// TODO test
 		} catch (FatalErrorException e) {
-			logger.error(Messages.Logging.ERROR_WHILE_LOADING_CACHE_CONFIGURATION, e.getMessage());
+			logger.error(Messages.Logging.ERROR_WHILE_CREATING_CACHE_INSTANCE, e.getMessage());
 			return new DefaultCache();
 		}
 	}

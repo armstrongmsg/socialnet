@@ -43,7 +43,6 @@ public class ApplicationFacade {
 			if (properties.getProperty(ConfigurationProperties.BOOTSTRAP).equals(SystemConstants.PROPERTY_VALUE_TRUE)) {
 				new Bootstrap().startNetwork(network);
 			}
-			// TODO test
 		} catch (FatalErrorException e) {
 			logger.error(e.getMessage());
 		}
@@ -63,7 +62,7 @@ public class ApplicationFacade {
 					new CacheFactory().loadCacheFromConfiguration(),
 					new DatabaseManagerFactory().loadDatabaseManagerFromConfiguration()));
 		} catch (FatalErrorException e) {
-			// TODO log
+			logger.error(e.getMessage());
 			return null;
 		}
 	}
@@ -457,7 +456,6 @@ public class ApplicationFacade {
 		}
 	}
 	
-	// TODO test
 	public void changeSelfProfilePic(UserToken userToken, byte[] picData) throws AuthenticationException, UnauthorizedOperationException {
 		logger.debug(Messages.Logging.RECEIVED_CHANGE_PROFILE_PIC_REQUEST, userToken);
 
@@ -472,7 +470,6 @@ public class ApplicationFacade {
 		}
 	}
 
-	// TODO test
 	public byte[] getUserPic(UserToken userToken, String username) throws AuthenticationException, UnauthorizedOperationException, UserNotFoundException{
 		logger.debug(Messages.Logging.RECEIVED_GET_USER_PROFILE_PIC, userToken);
 		

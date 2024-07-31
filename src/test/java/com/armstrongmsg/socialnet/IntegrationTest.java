@@ -1,8 +1,10 @@
 package com.armstrongmsg.socialnet;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.HashMap;
@@ -884,6 +886,23 @@ public class IntegrationTest {
 		List<UserSummary> friendsAfter = facade.getSelfFriends(userToken1);
 		
 		assertTrue(friendsAfter.isEmpty());		
+	}
+	
+	@Test
+	public void testChangeAndGetProfilePic() throws AuthenticationException, UnauthorizedOperationException, UserNotFoundException {
+		UserToken adminToken = loginAsAdmin();
+		
+		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
+		
+		UserToken userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
+		
+		assertNull(facade.getUserPic(userToken1, NEW_USERNAME_1));
+		
+		byte[] profilePicData = new byte[] {1, 1, 1};
+		
+		facade.changeSelfProfilePic(userToken1, profilePicData);
+		
+		assertArrayEquals(new byte[] {1, 1, 1}, facade.getUserPic(userToken1, NEW_USERNAME_1));
 	}
 	
 	private UserToken loginAsAdmin() throws AuthenticationException {
