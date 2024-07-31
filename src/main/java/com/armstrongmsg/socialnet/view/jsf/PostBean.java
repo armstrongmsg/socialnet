@@ -9,11 +9,11 @@ import javax.faces.bean.RequestScoped;
 import org.primefaces.model.file.UploadedFile;
 
 import com.armstrongmsg.socialnet.core.ApplicationFacade;
+import com.armstrongmsg.socialnet.core.authentication.UserToken;
 import com.armstrongmsg.socialnet.exceptions.AuthenticationException;
 import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
 import com.armstrongmsg.socialnet.exceptions.UserNotFoundException;
 import com.armstrongmsg.socialnet.model.PostVisibility;
-import com.armstrongmsg.socialnet.model.authentication.UserToken;
 import com.armstrongmsg.socialnet.view.jsf.model.JsfConnector;
 import com.armstrongmsg.socialnet.view.jsf.model.Post;
 import com.armstrongmsg.socialnet.view.jsf.model.User;

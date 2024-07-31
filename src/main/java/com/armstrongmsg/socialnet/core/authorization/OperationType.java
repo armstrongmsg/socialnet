@@ -1,4 +1,4 @@
-package com.armstrongmsg.socialnet.model.authorization;
+package com.armstrongmsg.socialnet.core.authorization;
 
 public enum OperationType {
 	ADD_USER("ADD_USER"), 

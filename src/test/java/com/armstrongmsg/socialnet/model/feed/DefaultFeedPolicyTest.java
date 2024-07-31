@@ -13,6 +13,7 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import com.armstrongmsg.socialnet.constants.ConfigurationProperties;
+import com.armstrongmsg.socialnet.core.feed.DefaultFeedPolicy;
 import com.armstrongmsg.socialnet.exceptions.FatalErrorException;
 import com.armstrongmsg.socialnet.model.Post;
 import com.armstrongmsg.socialnet.model.PostVisibility;

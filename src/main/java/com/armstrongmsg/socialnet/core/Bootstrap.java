@@ -8,7 +8,6 @@ import com.armstrongmsg.socialnet.constants.ConfigurationProperties;
 import com.armstrongmsg.socialnet.constants.Messages;
 import com.armstrongmsg.socialnet.constants.SystemConstants;
 import com.armstrongmsg.socialnet.exceptions.FatalErrorException;
-import com.armstrongmsg.socialnet.model.Network;
 import com.armstrongmsg.socialnet.util.PropertiesUtil;
 
 public class Bootstrap {

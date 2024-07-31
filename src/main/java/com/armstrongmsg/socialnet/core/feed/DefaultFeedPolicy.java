@@ -1,4 +1,4 @@
-package com.armstrongmsg.socialnet.model.feed;
+package com.armstrongmsg.socialnet.core.feed;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.armstrongmsg.socialnet.model.authorization;
+package com.armstrongmsg.socialnet.core.authorization;
 
 import com.armstrongmsg.socialnet.model.User;
 

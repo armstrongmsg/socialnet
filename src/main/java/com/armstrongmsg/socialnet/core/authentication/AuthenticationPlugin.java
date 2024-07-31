@@ -1,4 +1,4 @@
-package com.armstrongmsg.socialnet.model.authentication;
+package com.armstrongmsg.socialnet.core.authentication;
 
 import java.util.Map;
 

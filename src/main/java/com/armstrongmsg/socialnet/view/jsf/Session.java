@@ -2,7 +2,7 @@ package com.armstrongmsg.socialnet.view.jsf;
 
 import java.util.Objects;
 
-import com.armstrongmsg.socialnet.model.authentication.UserToken;
+import com.armstrongmsg.socialnet.core.authentication.UserToken;
 import com.armstrongmsg.socialnet.view.jsf.model.UserSummary;
 
 public class Session {

@@ -1,6 +1,6 @@
 package com.armstrongmsg.socialnet.view.jsf;
 
-import com.armstrongmsg.socialnet.model.authentication.UserToken;
+import com.armstrongmsg.socialnet.core.authentication.UserToken;
 
 public class SessionManager {
 	private static Session currentSession;

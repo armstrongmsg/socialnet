@@ -1,4 +1,4 @@
-package com.armstrongmsg.socialnet.model;
+package com.armstrongmsg.socialnet.core;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,23 +11,32 @@ import org.slf4j.LoggerFactory;
 import com.armstrongmsg.socialnet.constants.ConfigurationProperties;
 import com.armstrongmsg.socialnet.constants.ConfigurationPropertiesDefaults;
 import com.armstrongmsg.socialnet.constants.Messages;
+import com.armstrongmsg.socialnet.core.authentication.AuthenticationPlugin;
+import com.armstrongmsg.socialnet.core.authentication.UserToken;
+import com.armstrongmsg.socialnet.core.authorization.AuthorizationPlugin;
+import com.armstrongmsg.socialnet.core.authorization.Operation;
+import com.armstrongmsg.socialnet.core.authorization.OperationOnUser;
+import com.armstrongmsg.socialnet.core.authorization.OperationType;
+import com.armstrongmsg.socialnet.core.feed.FeedPolicy;
 import com.armstrongmsg.socialnet.exceptions.AuthenticationException;
 import com.armstrongmsg.socialnet.exceptions.FatalErrorException;
 import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
 import com.armstrongmsg.socialnet.exceptions.UserNotFoundException;
-import com.armstrongmsg.socialnet.model.authentication.AuthenticationPlugin;
-import com.armstrongmsg.socialnet.model.authentication.UserToken;
-import com.armstrongmsg.socialnet.model.authorization.AuthorizationPlugin;
-import com.armstrongmsg.socialnet.model.authorization.Operation;
-import com.armstrongmsg.socialnet.model.authorization.OperationOnUser;
-import com.armstrongmsg.socialnet.model.authorization.OperationType;
-import com.armstrongmsg.socialnet.model.feed.FeedPolicy;
+import com.armstrongmsg.socialnet.model.Admin;
+import com.armstrongmsg.socialnet.model.Follow;
+import com.armstrongmsg.socialnet.model.Friendship;
+import com.armstrongmsg.socialnet.model.FriendshipRequest;
+import com.armstrongmsg.socialnet.model.Group;
+import com.armstrongmsg.socialnet.model.Picture;
+import com.armstrongmsg.socialnet.model.Post;
+import com.armstrongmsg.socialnet.model.PostVisibility;
+import com.armstrongmsg.socialnet.model.Profile;
+import com.armstrongmsg.socialnet.model.User;
+import com.armstrongmsg.socialnet.model.UserSummary;
 import com.armstrongmsg.socialnet.storage.StorageFacade;
 import com.armstrongmsg.socialnet.util.ClassFactory;
 import com.armstrongmsg.socialnet.util.PropertiesUtil;
 
-// TODO move to core package
-// TODO authentication and authorization packages should be move to core package too
 // TODO many methods can use smarter queries to the database
 public class Network {
 	private Admin admin;
