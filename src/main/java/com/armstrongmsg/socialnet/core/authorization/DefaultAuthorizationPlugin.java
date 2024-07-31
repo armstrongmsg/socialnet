@@ -41,7 +41,7 @@ public class DefaultAuthorizationPlugin implements AuthorizationPlugin {
 	}
 
 	@Override
-	public void setUp(Admin admin) {
-		this.admin = admin;
+	public void setUp(Object ... objects) {
+		this.admin = (Admin) objects[0];
 	}	
 }

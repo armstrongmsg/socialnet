@@ -47,8 +47,8 @@ public class DefaultAuthenticationPlugin implements AuthenticationPlugin {
 	}
 
 	@Override
-	public void setUp(Admin admin) {
-		this.admin = admin;
+	public void setUp(Object ... objects) {
+		this.admin = (Admin) objects[0];
 	}
 
 	@Override

@@ -34,6 +34,10 @@ import com.armstrongmsg.socialnet.view.jsf.model.UserSummary;
 @ManagedBean(name = "contextBean", eager = true)
 @RequestScoped
 public class ContextBean {
+	private static final String IMAGE_TYPE = "image/jpeg";
+	private static final int PIC_MAX_WIDTH = 300;
+	private static final int PIC_MAX_HEIGHT = 300;
+	
 	private String username;
 	private String password;
 	private UserSummary loggedUserSummary;
@@ -294,16 +298,15 @@ public class ContextBean {
 				InputStream profilePicStream = new FileInputStream(new File(defaultProfilePicPath));
 				return DefaultStreamedContent.
 						builder().
-						contentType("image/jpeg").
+						contentType(IMAGE_TYPE).
 						stream(() -> profilePicStream).
 						build();
 			} else {
-				// FIXME constant
-				byte[] rescaledPic = new ImageUtils().rescale(picData, 300, 300);
+				byte[] rescaledPic = new ImageUtils().rescale(picData, PIC_MAX_HEIGHT, PIC_MAX_WIDTH);
 				InputStream profilePicStream = new ByteArrayInputStream(rescaledPic);
 				return DefaultStreamedContent.
 						builder().
-						contentType("image/jpeg").
+						contentType(IMAGE_TYPE).
 						stream(() -> profilePicStream).
 						build();
 			}

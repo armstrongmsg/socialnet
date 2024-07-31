@@ -33,8 +33,6 @@ public class DatabaseManagerFactoryTest {
 		
 		DatabaseManager returnedInstance = dbManagerFactory.loadDatabaseManagerFromConfiguration();
 		
-		System.out.println(returnedInstance.getClass());
-		
 		assertTrue(returnedInstance instanceof InMemoryDatabaseManager);
 	}
 	
