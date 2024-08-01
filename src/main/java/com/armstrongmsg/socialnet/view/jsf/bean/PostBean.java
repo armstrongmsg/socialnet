@@ -93,7 +93,13 @@ public class PostBean {
 	public String createPost() {
 		UserToken token = SessionManager.getCurrentSession().getUserToken();
 		try {
-			facade.createPost(token, title, content, PostVisibility.valueOf(postVisibility), this.postPic.getContent());
+			byte[] picData = null;
+			
+			if (this.postPic != null) {
+				picData = this.postPic.getContent();
+			}
+			
+			facade.createPost(token, title, content, PostVisibility.valueOf(postVisibility), picData);
 		} catch (AuthenticationException e) {
 			// FIXME treat exception
 		}

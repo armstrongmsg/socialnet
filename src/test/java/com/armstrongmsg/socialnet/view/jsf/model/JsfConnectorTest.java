@@ -67,7 +67,7 @@ public class JsfConnectorTest {
 	}
 	
 	@Test
-	public void testGetViewPostNullPicture() {
+	public void testGetViewPostNullPicture() throws IOException {
 		com.armstrongmsg.socialnet.model.Post modelPost = 
 				new com.armstrongmsg.socialnet.model.Post(POST_TITLE_1, POST_TIMESTAMP_1, POST_CONTENT_1, POST_VISIBILITY_1, null);
 		
@@ -76,7 +76,7 @@ public class JsfConnectorTest {
 		assertEquals(POST_TITLE_1, viewPost.getTitle());
 		assertEquals(POST_CONTENT_1, viewPost.getContent());
 		assertEquals(POST_VISIBILITY_1.getValue(), viewPost.getVisibility());
-		assertNull(viewPost.getPicture());
+		assertEquals(-1, viewPost.getPicture().getStream().get().read());
 	}
 	
 	@Test

@@ -70,6 +70,13 @@ public class JsfConnector {
 					contentType("image/jpeg").
 					stream(() -> profilePicStream).
 					build();
+		} else {
+			InputStream profilePicStream = new ByteArrayInputStream(new byte[] {});
+			content = DefaultStreamedContent.
+					builder().
+					contentType("image/jpeg").
+					stream(() -> profilePicStream).
+					build();
 		}
 		return new Post(modelPost.getId(), modelPost.getTitle(), toViewDate(modelPost.getTimestamp()), 
 				modelPost.getContent(), modelPost.getVisibility().getValue(), content);

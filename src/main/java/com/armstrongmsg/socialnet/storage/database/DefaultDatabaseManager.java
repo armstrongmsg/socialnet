@@ -61,9 +61,11 @@ public class DefaultDatabaseManager implements DatabaseManager {
 		user.getProfile().setProfilePic(profilePic);
 		
 		for (Post post : user.getProfile().getPosts()) {
-			Picture postPicture = 
-					this.pictureRepository.getPictureById(post.getPictureId());
-			post.setPicture(postPicture);
+			if (post.getPictureId() != null) {
+				Picture postPicture = 
+						this.pictureRepository.getPictureById(post.getPictureId());
+				post.setPicture(postPicture);
+			}
 		}
 		
 		return user;
@@ -82,9 +84,11 @@ public class DefaultDatabaseManager implements DatabaseManager {
 		user.getProfile().setProfilePic(profilePic);
 		
 		for (Post post : user.getProfile().getPosts()) {
-			Picture postPicture = 
-					this.pictureRepository.getPictureById(post.getPictureId());
-			post.setPicture(postPicture);
+			if (post.getPictureId() != null) {
+				Picture postPicture = 
+						this.pictureRepository.getPictureById(post.getPictureId());
+				post.setPicture(postPicture);
+			}
 		}
 		
 		return user;
@@ -99,7 +103,9 @@ public class DefaultDatabaseManager implements DatabaseManager {
 		}
 		
 		for (Post post : user.getProfile().getPosts()) {
-			this.pictureRepository.savePicture(post.getPicture());
+			if (post.getPicture() != null) {
+				this.pictureRepository.savePicture(post.getPicture());
+			}
 		}
 	}
 	
@@ -112,7 +118,9 @@ public class DefaultDatabaseManager implements DatabaseManager {
 		}
 		
 		for (Post post : user.getProfile().getPosts()) {
-			this.pictureRepository.savePicture(post.getPicture());
+			if (post.getPicture() != null) {
+				this.pictureRepository.savePicture(post.getPicture());
+			}
 		}
 	}
 	
