@@ -534,8 +534,8 @@ public class IntegrationTest {
 		List<UserSummary> friends1 = facade.getSelfFriends(userToken1);
 		List<UserSummary> friends2 = facade.getSelfFriends(userToken2);
 		
-		UserSummary user1Summary = new UserSummary(NEW_USERNAME_1, NEW_USER_PROFILE_DESCRIPTION_1, null);
-		UserSummary user2Summary = new UserSummary(NEW_USERNAME_2, NEW_USER_PROFILE_DESCRIPTION_2, null);
+		UserSummary user1Summary = new UserSummary(NEW_USERNAME_1, NEW_USER_PROFILE_DESCRIPTION_1);
+		UserSummary user2Summary = new UserSummary(NEW_USERNAME_2, NEW_USER_PROFILE_DESCRIPTION_2);
 		
 		assertTrue(friends1.contains(user2Summary));
 		assertTrue(friends2.contains(user1Summary));
@@ -712,7 +712,7 @@ public class IntegrationTest {
 		List<UserSummary> followsUser1 = facade.getFollowedUsers(userToken1);
 		List<UserSummary> followsUser2 = facade.getFollowedUsers(userToken2);
 		
-		UserSummary user2Summary = new UserSummary(NEW_USERNAME_2, NEW_USER_PROFILE_DESCRIPTION_2, null);
+		UserSummary user2Summary = new UserSummary(NEW_USERNAME_2, NEW_USER_PROFILE_DESCRIPTION_2);
 				
 		assertEquals(1, followsUser1.size());
 		assertTrue(followsUser1.contains(user2Summary));

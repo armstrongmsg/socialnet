@@ -23,12 +23,12 @@ public class Profile {
 	private Picture profilePic;
 	
 	public Profile() {
-		this.profilePic = new Picture(SystemConstants.DEFAULT_PROFILE_PIC_ID, null);
-		this.profilePicId = SystemConstants.DEFAULT_PROFILE_PIC_ID;
+		
 	}
 	
 	public Profile(String description, List<Post> posts) {
-		this();
+		this.profilePic = new Picture(SystemConstants.DEFAULT_PROFILE_PIC_ID, null);
+		this.profilePicId = SystemConstants.DEFAULT_PROFILE_PIC_ID;
 		this.description = description;
 		this.posts = posts;
 	}

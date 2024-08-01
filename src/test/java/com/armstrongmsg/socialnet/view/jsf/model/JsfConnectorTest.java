@@ -2,7 +2,6 @@ package com.armstrongmsg.socialnet.view.jsf.model;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -129,7 +128,7 @@ public class JsfConnectorTest {
 	@Test
 	public void testGetViewUserSummary() {
 		com.armstrongmsg.socialnet.model.UserSummary modelUserSummary = 
-				new com.armstrongmsg.socialnet.model.UserSummary(USERNAME_1, USER_DESCRIPTION_1, null);
+				new com.armstrongmsg.socialnet.model.UserSummary(USERNAME_1, USER_DESCRIPTION_1);
 		
 		UserSummary viewUserSummary = connector.getViewUserSummary(modelUserSummary);
 		
@@ -140,9 +139,9 @@ public class JsfConnectorTest {
 	@Test
 	public void testGetViewUserSummaries() {
 		com.armstrongmsg.socialnet.model.UserSummary modelUserSummary1 = 
-				new com.armstrongmsg.socialnet.model.UserSummary(USERNAME_1, USER_DESCRIPTION_1, null);
+				new com.armstrongmsg.socialnet.model.UserSummary(USERNAME_1, USER_DESCRIPTION_1);
 		com.armstrongmsg.socialnet.model.UserSummary modelUserSummary2 = 
-				new com.armstrongmsg.socialnet.model.UserSummary(USERNAME_2, USER_DESCRIPTION_2, null);
+				new com.armstrongmsg.socialnet.model.UserSummary(USERNAME_2, USER_DESCRIPTION_2);
 		
 		List<UserSummary> viewUserSummaries = connector.getViewUserSummaries(Arrays.asList(modelUserSummary1, modelUserSummary2));
 		

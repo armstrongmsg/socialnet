@@ -6,7 +6,7 @@ public class UserSummary {
 	private String username;
 	private String profileDescription;
 	
-	public UserSummary(String username, String profileDescription, byte[] profilePic) {
+	public UserSummary(String username, String profileDescription) {
 		this.username = username;
 		this.profileDescription = profileDescription;
 	}

@@ -44,8 +44,10 @@
 	<h:form>
 		<p:toolbar>
 			<f:facet name="left">
-				<h:outputText value="#{contextBean.viewUser.username}" />
-				<p:graphicImage value="#{contextBean.userPic}" cache="false"/>
+				<p:panelGrid columns="1">
+					<h:outputText value="#{contextBean.viewUser.username}" />
+					<p:graphicImage value="#{contextBean.userPic}" cache="false"/>
+				</p:panelGrid>
 			</f:facet>
 
 			<f:facet name="right">
@@ -83,15 +85,15 @@
 	
 	<h:form enctype="multipart/form-data"
 		rendered="#{contextBean.isSelfProfile}">
-		<p:fileUpload value="#{contextBean.profilePic}" mode="simple" />
-		<p:commandButton value="Submit" action="#{contextBean.saveProfilePic}" ajax="false" />
+		<p:fileUpload value="#{contextBean.profilePic}" mode="simple"/>
+		<p:commandButton value="Submit pic" action="#{contextBean.saveProfilePic}" ajax="false" />
 	</h:form>
 
 	<p:divider />
 
 	<h:form>
-		<h:outputText value="About" />
 		<p:panelGrid columns="1">
+			<h:outputText value="About" />
 			<h:outputText value="#{contextBean.viewUser.profileDescription}" />
 		</p:panelGrid>
 	</h:form>
@@ -105,16 +107,18 @@
 			<p:inputTextarea rows="10" cols="100" size="100" autoResize="true"
 				value="#{postBean.content}" />
 
-			<p:selectOneMenu value="#{postBean.postVisibility}">
-				<f:selectItem itemLabel="Select One" itemValue="" />
-				<f:selectItems value="#{postBean.visibilities}" var="visibility"
-					itemLabel="#{visibility.value}" itemValue="#{visibility}" />
-			</p:selectOneMenu>
+			<p:panelGrid columns="6">
+				<p:fileUpload value="#{postBean.postPic}" mode="simple" />
 			
-			<p:fileUpload value="#{postBean.postPic}" mode="simple" />
-			
-			<p:commandButton value="Post" action="#{postBean.createPost}"
-				ajax="false" />
+				<p:selectOneMenu value="#{postBean.postVisibility}">
+					<f:selectItem itemLabel="Select One" itemValue="" />
+					<f:selectItems value="#{postBean.visibilities}" var="visibility"
+						itemLabel="#{visibility.value}" itemValue="#{visibility}" />
+				</p:selectOneMenu>
+				
+				<p:commandButton value="Post" action="#{postBean.createPost}"
+					ajax="false" />
+			</p:panelGrid>
 		</p:panelGrid>
 	</h:form>
 

@@ -56,9 +56,11 @@ public class DefaultDatabaseManager implements DatabaseManager {
 			throw new UserNotFoundException(id);	
 		}
 		
-		Picture profilePic = this.pictureRepository.getPictureById(
-				user.getProfile().getProfilePicId());
-		user.getProfile().setProfilePic(profilePic);
+		if (!user.getProfile().getProfilePicId().equals(SystemConstants.DEFAULT_PROFILE_PIC_ID)) {
+			Picture profilePic = this.pictureRepository.getPictureById(
+					user.getProfile().getProfilePicId());
+			user.getProfile().setProfilePic(profilePic);
+		}
 		
 		for (Post post : user.getProfile().getPosts()) {
 			if (post.getPictureId() != null) {
@@ -76,12 +78,14 @@ public class DefaultDatabaseManager implements DatabaseManager {
 		User user = this.userRepository.getUserByUsername(username);
 		
 		if (user == null) {
-			throw new UserNotFoundException(username);	
+			throw new UserNotFoundException(username);
 		}
 		
-		Picture profilePic = this.pictureRepository.getPictureById(
-				user.getProfile().getProfilePicId());
-		user.getProfile().setProfilePic(profilePic);
+		if (!user.getProfile().getProfilePicId().equals(SystemConstants.DEFAULT_PROFILE_PIC_ID)) {
+			Picture profilePic = this.pictureRepository.getPictureById(
+					user.getProfile().getProfilePicId());
+			user.getProfile().setProfilePic(profilePic);
+		}
 		
 		for (Post post : user.getProfile().getPosts()) {
 			if (post.getPictureId() != null) {
@@ -119,7 +123,8 @@ public class DefaultDatabaseManager implements DatabaseManager {
 		}
 		
 		for (Post postInStorage : userInStorage.getProfile().getPosts()) {
-			if (!user.getProfile().getPosts().contains(postInStorage)) {
+			if (!user.getProfile().getPosts().contains(postInStorage) && 
+					postInStorage.getPicture() != null) {
 				this.pictureRepository.deletePicture(postInStorage.getPicture());
 			}
 		}
@@ -133,13 +138,35 @@ public class DefaultDatabaseManager implements DatabaseManager {
 	
 	@Override
 	public List<User> getAllUsers() {
-		return this.userRepository.getAllUsers();
+		List<User> users = this.userRepository.getAllUsers();
+		
+		for (User user : users) {
+			if (!user.getProfile().getProfilePicId().equals(SystemConstants.DEFAULT_PROFILE_PIC_ID)) {
+				Picture profilePic = this.pictureRepository.getPictureById(
+						user.getProfile().getProfilePicId());
+				user.getProfile().setProfilePic(profilePic);
+			}
+			
+			for (Post post : user.getProfile().getPosts()) {
+				if (post.getPictureId() != null) {
+					Picture postPicture = 
+							this.pictureRepository.getPictureById(post.getPictureId());
+					post.setPicture(postPicture);
+				}
+			}
+		}
+		
+		return users;
 	}
 
 	@Override
 	public void removeUserById(String userId) throws UserNotFoundException {
 		User user = this.getUserById(userId);
 		this.userRepository.removeUserById(userId);
+
+		if (!user.getProfile().getProfilePicId().equals(SystemConstants.DEFAULT_PROFILE_PIC_ID)) {
+			this.pictureRepository.deletePicture(user.getProfile().getProfilePic());
+		}
 		
 		for (Post post : user.getProfile().getPosts()) {
 			if (post.getPicture() != null) {
