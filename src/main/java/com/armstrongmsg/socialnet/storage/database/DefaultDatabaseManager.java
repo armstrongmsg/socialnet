@@ -110,11 +110,18 @@ public class DefaultDatabaseManager implements DatabaseManager {
 	}
 	
 	@Override
-	public void updateUser(User user) {
+	public void updateUser(User user) throws UserNotFoundException {
+		User userInStorage = this.userRepository.getUserById(user.getUserId());
 		this.userRepository.updateUser(user);
 		
 		if (!user.getProfile().getProfilePic().getId().equals(SystemConstants.DEFAULT_PROFILE_PIC_ID)) {
 			this.pictureRepository.savePicture(user.getProfile().getProfilePic());
+		}
+		
+		for (Post postInStorage : userInStorage.getProfile().getPosts()) {
+			if (!user.getProfile().getPosts().contains(postInStorage)) {
+				this.pictureRepository.deletePicture(postInStorage.getPicture());
+			}
 		}
 		
 		for (Post post : user.getProfile().getPosts()) {
@@ -131,7 +138,14 @@ public class DefaultDatabaseManager implements DatabaseManager {
 
 	@Override
 	public void removeUserById(String userId) throws UserNotFoundException {
+		User user = this.getUserById(userId);
 		this.userRepository.removeUserById(userId);
+		
+		for (Post post : user.getProfile().getPosts()) {
+			if (post.getPicture() != null) {
+				this.pictureRepository.deletePicture(post.getPicture());
+			}
+		}
 	}
 
 	@Override

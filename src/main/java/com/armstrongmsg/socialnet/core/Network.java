@@ -140,7 +140,7 @@ public class Network {
 		}
 	}
 
-	public void createPost(UserToken userToken, String title, String content, PostVisibility newPostVisibility, byte[] pictureData) throws AuthenticationException {
+	public void createPost(UserToken userToken, String title, String content, PostVisibility newPostVisibility, byte[] pictureData) throws AuthenticationException, UserNotFoundException {
 		User user = this.authenticationPlugin.getUser(userToken);
 		Picture postPicture = null;
 		
@@ -409,7 +409,7 @@ public class Network {
 		return new ArrayList<Post>();
 	}
 	
-	public void deletePost(UserToken token, String postId) throws AuthenticationException, UnauthorizedOperationException {
+	public void deletePost(UserToken token, String postId) throws AuthenticationException, UnauthorizedOperationException, UserNotFoundException {
 		User requester = this.authenticationPlugin.getUser(token);
 		this.authorizationPlugin.authorize(requester, new Operation(OperationType.DELETE_POST));
 		
@@ -550,7 +550,7 @@ public class Network {
 		}
 	}
 
-	public void changeSelfProfilePic(UserToken userToken, byte[] picData) throws AuthenticationException, UnauthorizedOperationException {
+	public void changeSelfProfilePic(UserToken userToken, byte[] picData) throws AuthenticationException, UnauthorizedOperationException, UserNotFoundException {
 		User requester = this.authenticationPlugin.getUser(userToken);
 		this.authorizationPlugin.authorize(requester, new Operation(OperationType.CHANGE_SELF_PROFILE_PIC));
 		

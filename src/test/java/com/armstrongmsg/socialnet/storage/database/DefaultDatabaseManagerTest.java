@@ -197,7 +197,7 @@ public class DefaultDatabaseManagerTest {
 	}
 	
 	@Test
-	public void testUpdateUser() {
+	public void testUpdateUser() throws UserNotFoundException {
 		userProfile.setProfilePic(profilePicture);
 		post1.setPicture(postPicture1);
 		post2.setPicture(postPicture2);
@@ -214,7 +214,7 @@ public class DefaultDatabaseManagerTest {
 	}
 	
 	@Test
-	public void testUpdateUserWithDefaultProfilePic() {
+	public void testUpdateUserWithDefaultProfilePic() throws UserNotFoundException {
 		userProfile.setProfilePicId(SystemConstants.DEFAULT_PROFILE_PIC_ID);
 		post1.setPicture(postPicture1);
 		post2.setPicture(postPicture2);
@@ -227,6 +227,5 @@ public class DefaultDatabaseManagerTest {
 		Mockito.verify(userRepository).updateUser(user);
 		Mockito.verify(pictureRepository).savePicture(postPicture1);
 		Mockito.verify(pictureRepository).savePicture(postPicture2);
-		Mockito.verifyNoMoreInteractions(pictureRepository);
 	}
 }

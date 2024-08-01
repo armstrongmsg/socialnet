@@ -273,7 +273,7 @@ public class ContextBean {
 		return false;
 	}
 	
-	public void saveProfilePic() { 
+	public void saveProfilePic() throws UserNotFoundException { 
 		try {
 			byte[] picData = this.profilePic.getContent();
 			UserToken loggedUserToken = SessionManager.getCurrentSession().getUserToken();

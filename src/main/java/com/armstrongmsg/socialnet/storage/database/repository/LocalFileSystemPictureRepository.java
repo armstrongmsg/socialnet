@@ -94,4 +94,13 @@ public class LocalFileSystemPictureRepository implements PictureRepository {
 			}
 		}
 	}
+
+	@Override
+	public void deletePicture(Picture picture) {
+		File localPath = new File(pictureRepositoryLocalPath + File.separator + picture.getId());
+		
+		if (localPath.exists()) {
+			localPath.delete();
+		}
+	}
 }

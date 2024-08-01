@@ -304,7 +304,7 @@ public class IntegrationTest {
 	}
 	
 	@Test
-	public void testCreateAndGetPostByNonAdmin() throws UnauthorizedOperationException, AuthenticationException {
+	public void testCreateAndGetPostByNonAdmin() throws UnauthorizedOperationException, AuthenticationException, UserNotFoundException {
 		UserToken adminToken = loginAsAdmin();
 		
 		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
@@ -622,7 +622,7 @@ public class IntegrationTest {
 	}
 	
 	@Test
-	public void testDeletePost() throws AuthenticationException, UnauthorizedOperationException {
+	public void testDeletePost() throws AuthenticationException, UnauthorizedOperationException, UserNotFoundException {
 		UserToken adminToken = loginAsAdmin();
 		
 		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);

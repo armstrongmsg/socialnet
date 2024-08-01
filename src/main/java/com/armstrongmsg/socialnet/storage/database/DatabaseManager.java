@@ -13,6 +13,7 @@ public interface DatabaseManager {
 	void saveUser(User user);
 	User getUserById(String userId) throws UserNotFoundException;
 	User getUserByUsername(String username) throws UserNotFoundException;
+	void updateUser(User user) throws UserNotFoundException;
 	void removeUserById(String userId) throws UserNotFoundException;
 
 	Group getGroupById(String groupId);
@@ -33,5 +34,4 @@ public interface DatabaseManager {
 	FriendshipRequest getReceivedFriendshipRequestById(String userId, String username);
 	void removeFriendshipRequestById(FriendshipRequest friendshipRequest);
 	void removeFriendship(Friendship friendship);
-	void updateUser(User user);
 }

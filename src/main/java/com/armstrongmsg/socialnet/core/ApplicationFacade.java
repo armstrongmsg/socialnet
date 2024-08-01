@@ -129,7 +129,7 @@ public class ApplicationFacade {
 		this.network.addUser(username, password, profileDescription);
 	}
 
-	public void createPost(UserToken userToken, String title, String content, PostVisibility newPostVisibility, byte[] pictureData) throws AuthenticationException {
+	public void createPost(UserToken userToken, String title, String content, PostVisibility newPostVisibility, byte[] pictureData) throws AuthenticationException, UserNotFoundException {
 		logger.debug(Messages.Logging.RECEIVED_CREATE_POST_REQUEST, userToken, title, content, newPostVisibility);
 		
 		try {
@@ -312,7 +312,7 @@ public class ApplicationFacade {
 		}
 	}
 
-	public void deletePost(UserToken token, String postId) throws AuthenticationException, UnauthorizedOperationException {
+	public void deletePost(UserToken token, String postId) throws AuthenticationException, UnauthorizedOperationException, UserNotFoundException {
 		logger.debug(Messages.Logging.RECEIVED_DELETE_POST_REQUEST, token, postId);
 		
 		try {
@@ -455,7 +455,7 @@ public class ApplicationFacade {
 		}
 	}
 	
-	public void changeSelfProfilePic(UserToken userToken, byte[] picData) throws AuthenticationException, UnauthorizedOperationException {
+	public void changeSelfProfilePic(UserToken userToken, byte[] picData) throws AuthenticationException, UnauthorizedOperationException, UserNotFoundException {
 		logger.debug(Messages.Logging.RECEIVED_CHANGE_PROFILE_PIC_REQUEST, userToken);
 
 		try {

@@ -25,7 +25,7 @@ public class StorageFacade {
 		databaseManager.saveUser(user);
 	}
 
-	public void updateUser(User user) {
+	public void updateUser(User user) throws UserNotFoundException {
 		cache.putUser(user);
 		databaseManager.updateUser(user);
 	}

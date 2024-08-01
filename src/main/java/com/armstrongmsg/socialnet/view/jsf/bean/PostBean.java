@@ -90,7 +90,7 @@ public class PostBean {
 		this.postPic = postPic;
 	}
 	
-	public String createPost() {
+	public String createPost() throws UserNotFoundException {
 		UserToken token = SessionManager.getCurrentSession().getUserToken();
 		try {
 			byte[] picData = null;
@@ -191,7 +191,7 @@ public class PostBean {
 		return userPosts;
 	}
 	
-	public void deletePost() {
+	public void deletePost() throws UserNotFoundException {
 		try {
 			facade.deletePost(SessionManager.getCurrentSession().getUserToken(), post.getId());
 			userPosts = new JsfConnector().getViewPosts(facade.getSelfPosts(
