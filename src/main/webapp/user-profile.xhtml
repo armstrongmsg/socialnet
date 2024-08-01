@@ -133,7 +133,7 @@
 							<h:outputText value="#{post.content}" />
 							<p:graphicImage value="#{post.picture}" stream="false"/>
 							<p:commandButton value="Delete" action="#{postBean.deletePost}"
-								rendered="#{contextBean.isSelfProfile}">
+								rendered="#{contextBean.isSelfProfile}" ajax="false">
 								<f:setPropertyActionListener target="#{postBean.post}"
 									value="#{post}" />
 							</p:commandButton>
