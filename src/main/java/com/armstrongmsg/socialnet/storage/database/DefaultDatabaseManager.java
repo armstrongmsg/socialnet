@@ -2,15 +2,12 @@ package com.armstrongmsg.socialnet.storage.database;
 
 import java.util.List;
 
-import com.armstrongmsg.socialnet.constants.SystemConstants;
 import com.armstrongmsg.socialnet.exceptions.FatalErrorException;
 import com.armstrongmsg.socialnet.exceptions.UserNotFoundException;
 import com.armstrongmsg.socialnet.model.Follow;
 import com.armstrongmsg.socialnet.model.Friendship;
 import com.armstrongmsg.socialnet.model.FriendshipRequest;
 import com.armstrongmsg.socialnet.model.Group;
-import com.armstrongmsg.socialnet.model.Picture;
-import com.armstrongmsg.socialnet.model.Post;
 import com.armstrongmsg.socialnet.model.User;
 import com.armstrongmsg.socialnet.storage.database.repository.DefaultFollowRepository;
 import com.armstrongmsg.socialnet.storage.database.repository.DefaultFriendshipRepository;
@@ -19,8 +16,6 @@ import com.armstrongmsg.socialnet.storage.database.repository.DefaultUserReposit
 import com.armstrongmsg.socialnet.storage.database.repository.FollowRepository;
 import com.armstrongmsg.socialnet.storage.database.repository.FriendshipRepository;
 import com.armstrongmsg.socialnet.storage.database.repository.FriendshipRequestRepository;
-import com.armstrongmsg.socialnet.storage.database.repository.LocalFileSystemPictureRepository;
-import com.armstrongmsg.socialnet.storage.database.repository.PictureRepository;
 import com.armstrongmsg.socialnet.storage.database.repository.UserRepository;
 
 public class DefaultDatabaseManager implements DatabaseManager {
@@ -28,16 +23,14 @@ public class DefaultDatabaseManager implements DatabaseManager {
 	private FriendshipRepository friendshipRepository;
 	private FollowRepository followRepository;
 	private FriendshipRequestRepository friendshipRequestsRepository;
-	private PictureRepository pictureRepository;
 	
 	public DefaultDatabaseManager(UserRepository userRepository, 
 			FriendshipRepository friendshipRepository, FollowRepository followRepository,
-			FriendshipRequestRepository friendshipRequestsRepository, PictureRepository pictureRepository) {
+			FriendshipRequestRepository friendshipRequestsRepository) {
 		this.userRepository = userRepository;
 		this.friendshipRepository = friendshipRepository;
 		this.followRepository = followRepository;
 		this.friendshipRequestsRepository = friendshipRequestsRepository;
-		this.pictureRepository = pictureRepository;
 	}
 	
 	public DefaultDatabaseManager() throws FatalErrorException {
@@ -45,7 +38,6 @@ public class DefaultDatabaseManager implements DatabaseManager {
 		this.friendshipRepository = new DefaultFriendshipRepository();
 		this.followRepository = new DefaultFollowRepository();
 		this.friendshipRequestsRepository = new DefaultFriendshipRequestRepository();
-		this.pictureRepository = new LocalFileSystemPictureRepository();
 	}
 
 	@Override
@@ -54,20 +46,6 @@ public class DefaultDatabaseManager implements DatabaseManager {
 		
 		if (user == null) {
 			throw new UserNotFoundException(id);	
-		}
-		
-		if (!user.getProfile().getProfilePicId().equals(SystemConstants.DEFAULT_PROFILE_PIC_ID)) {
-			Picture profilePic = this.pictureRepository.getPictureById(
-					user.getProfile().getProfilePicId());
-			user.getProfile().setProfilePic(profilePic);
-		}
-		
-		for (Post post : user.getProfile().getPosts()) {
-			if (post.getPictureId() != null) {
-				Picture postPicture = 
-						this.pictureRepository.getPictureById(post.getPictureId());
-				post.setPicture(postPicture);
-			}
 		}
 		
 		return user;
@@ -81,98 +59,28 @@ public class DefaultDatabaseManager implements DatabaseManager {
 			throw new UserNotFoundException(username);
 		}
 		
-		if (!user.getProfile().getProfilePicId().equals(SystemConstants.DEFAULT_PROFILE_PIC_ID)) {
-			Picture profilePic = this.pictureRepository.getPictureById(
-					user.getProfile().getProfilePicId());
-			user.getProfile().setProfilePic(profilePic);
-		}
-		
-		for (Post post : user.getProfile().getPosts()) {
-			if (post.getPictureId() != null) {
-				Picture postPicture = 
-						this.pictureRepository.getPictureById(post.getPictureId());
-				post.setPicture(postPicture);
-			}
-		}
-		
 		return user;
 	}
 
 	@Override
 	public void saveUser(User user) {
 		this.userRepository.saveUser(user);
-		
-		if (!user.getProfile().getProfilePic().getId().equals(SystemConstants.DEFAULT_PROFILE_PIC_ID)) {
-			this.pictureRepository.savePicture(user.getProfile().getProfilePic());
-		}
-		
-		for (Post post : user.getProfile().getPosts()) {
-			if (post.getPicture() != null) {
-				this.pictureRepository.savePicture(post.getPicture());
-			}
-		}
 	}
 	
 	@Override
 	public void updateUser(User user) throws UserNotFoundException {
-		User userInStorage = this.userRepository.getUserById(user.getUserId());
 		this.userRepository.updateUser(user);
-		
-		if (!user.getProfile().getProfilePic().getId().equals(SystemConstants.DEFAULT_PROFILE_PIC_ID)) {
-			this.pictureRepository.savePicture(user.getProfile().getProfilePic());
-		}
-		
-		for (Post postInStorage : userInStorage.getProfile().getPosts()) {
-			if (!user.getProfile().getPosts().contains(postInStorage) && 
-					postInStorage.getPicture() != null) {
-				this.pictureRepository.deletePicture(postInStorage.getPicture());
-			}
-		}
-		
-		for (Post post : user.getProfile().getPosts()) {
-			if (post.getPicture() != null) {
-				this.pictureRepository.savePicture(post.getPicture());
-			}
-		}
 	}
 	
 	@Override
 	public List<User> getAllUsers() {
 		List<User> users = this.userRepository.getAllUsers();
-		
-		for (User user : users) {
-			if (!user.getProfile().getProfilePicId().equals(SystemConstants.DEFAULT_PROFILE_PIC_ID)) {
-				Picture profilePic = this.pictureRepository.getPictureById(
-						user.getProfile().getProfilePicId());
-				user.getProfile().setProfilePic(profilePic);
-			}
-			
-			for (Post post : user.getProfile().getPosts()) {
-				if (post.getPictureId() != null) {
-					Picture postPicture = 
-							this.pictureRepository.getPictureById(post.getPictureId());
-					post.setPicture(postPicture);
-				}
-			}
-		}
-		
 		return users;
 	}
 
 	@Override
 	public void removeUserById(String userId) throws UserNotFoundException {
-		User user = this.getUserById(userId);
 		this.userRepository.removeUserById(userId);
-
-		if (!user.getProfile().getProfilePicId().equals(SystemConstants.DEFAULT_PROFILE_PIC_ID)) {
-			this.pictureRepository.deletePicture(user.getProfile().getProfilePic());
-		}
-		
-		for (Post post : user.getProfile().getPosts()) {
-			if (post.getPicture() != null) {
-				this.pictureRepository.deletePicture(post.getPicture());
-			}
-		}
 	}
 
 	@Override

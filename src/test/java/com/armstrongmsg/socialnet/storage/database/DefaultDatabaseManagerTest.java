@@ -101,7 +101,7 @@ public class DefaultDatabaseManagerTest {
 	@Test
 	public void testGetUserById() throws UserNotFoundException {
 		manager = new DefaultDatabaseManager(userRepository, friendshipRepository, 
-				followRepository, friendshipRequestsRepository, pictureRepository);
+				followRepository, friendshipRequestsRepository);
 		
 		User returnedUser = manager.getUserById(USER_ID);
 		
@@ -109,8 +109,6 @@ public class DefaultDatabaseManagerTest {
 		assertEquals(USER_NAME, returnedUser.getUsername());
 		assertEquals(PASSWORD, returnedUser.getPassword());
 		assertEquals(USER_DESCRIPTION, returnedUser.getProfile().getDescription());
-		assertEquals(profilePicture, returnedUser.getProfile().getProfilePic());
-		assertEquals(PICTURE_ID_3, returnedUser.getProfile().getProfilePicId());
 		assertEquals(2, returnedUser.getProfile().getPosts().size());
 		
 		Post returnedUserPost1 = returnedUser.getProfile().getPosts().get(0); 
@@ -118,22 +116,18 @@ public class DefaultDatabaseManagerTest {
 		assertEquals(POST_CONTENT_1, returnedUserPost1.getContent());
 		assertEquals(POST_TIMESTAMP_1, returnedUserPost1.getTimestamp());
 		assertEquals(POST_VISIBILITY_1, returnedUserPost1.getVisibility());
-		assertEquals(postPicture1, returnedUserPost1.getPicture());
-		assertEquals(PICTURE_ID_1, returnedUserPost1.getPictureId());
 		
 		Post returnedUserPost2 = returnedUser.getProfile().getPosts().get(1); 
 		assertEquals(POST_TITLE_2, returnedUserPost2.getTitle());
 		assertEquals(POST_CONTENT_2, returnedUserPost2.getContent());
 		assertEquals(POST_TIMESTAMP_2, returnedUserPost2.getTimestamp());
 		assertEquals(POST_VISIBILITY_2, returnedUserPost2.getVisibility());
-		assertEquals(postPicture2, returnedUserPost2.getPicture());
-		assertEquals(PICTURE_ID_2, returnedUserPost2.getPictureId());
 	}
 	
 	@Test
 	public void testGetUserByUsername() throws UserNotFoundException { 
 		manager = new DefaultDatabaseManager(userRepository, friendshipRepository, 
-				followRepository, friendshipRequestsRepository, pictureRepository);
+				followRepository, friendshipRequestsRepository);
 		
 		User returnedUser = manager.getUserByUsername(USER_NAME);
 		
@@ -141,8 +135,6 @@ public class DefaultDatabaseManagerTest {
 		assertEquals(USER_NAME, returnedUser.getUsername());
 		assertEquals(PASSWORD, returnedUser.getPassword());
 		assertEquals(USER_DESCRIPTION, returnedUser.getProfile().getDescription());
-		assertEquals(profilePicture, returnedUser.getProfile().getProfilePic());
-		assertEquals(PICTURE_ID_3, returnedUser.getProfile().getProfilePicId());
 		assertEquals(2, returnedUser.getProfile().getPosts().size());
 		
 		Post returnedUserPost1 = returnedUser.getProfile().getPosts().get(0); 
@@ -150,16 +142,12 @@ public class DefaultDatabaseManagerTest {
 		assertEquals(POST_CONTENT_1, returnedUserPost1.getContent());
 		assertEquals(POST_TIMESTAMP_1, returnedUserPost1.getTimestamp());
 		assertEquals(POST_VISIBILITY_1, returnedUserPost1.getVisibility());
-		assertEquals(postPicture1, returnedUserPost1.getPicture());
-		assertEquals(PICTURE_ID_1, returnedUserPost1.getPictureId());
 		
 		Post returnedUserPost2 = returnedUser.getProfile().getPosts().get(1); 
 		assertEquals(POST_TITLE_2, returnedUserPost2.getTitle());
 		assertEquals(POST_CONTENT_2, returnedUserPost2.getContent());
 		assertEquals(POST_TIMESTAMP_2, returnedUserPost2.getTimestamp());
 		assertEquals(POST_VISIBILITY_2, returnedUserPost2.getVisibility());
-		assertEquals(postPicture2, returnedUserPost2.getPicture());
-		assertEquals(PICTURE_ID_2, returnedUserPost2.getPictureId());
 	}
 	
 	@Test
@@ -169,14 +157,11 @@ public class DefaultDatabaseManagerTest {
 		post2.setPicture(postPicture2);
 		
 		manager = new DefaultDatabaseManager(userRepository, friendshipRepository, 
-				followRepository, friendshipRequestsRepository, pictureRepository);
+				followRepository, friendshipRequestsRepository);
 		
 		manager.saveUser(user);
 		
 		Mockito.verify(userRepository).saveUser(user);
-		Mockito.verify(pictureRepository).savePicture(profilePicture);
-		Mockito.verify(pictureRepository).savePicture(postPicture1);
-		Mockito.verify(pictureRepository).savePicture(postPicture2);
 	}
 	
 	@Test
@@ -186,14 +171,11 @@ public class DefaultDatabaseManagerTest {
 		post2.setPicture(postPicture2);
 		
 		manager = new DefaultDatabaseManager(userRepository, friendshipRepository, 
-				followRepository, friendshipRequestsRepository, pictureRepository);
+				followRepository, friendshipRequestsRepository);
 		
 		manager.saveUser(user);
 		
 		Mockito.verify(userRepository).saveUser(user);
-		Mockito.verify(pictureRepository).savePicture(postPicture1);
-		Mockito.verify(pictureRepository).savePicture(postPicture2);
-		Mockito.verifyNoMoreInteractions(pictureRepository);
 	}
 	
 	@Test
@@ -203,14 +185,11 @@ public class DefaultDatabaseManagerTest {
 		post2.setPicture(postPicture2);
 		
 		manager = new DefaultDatabaseManager(userRepository, friendshipRepository, 
-				followRepository, friendshipRequestsRepository, pictureRepository);
+				followRepository, friendshipRequestsRepository);
 		
 		manager.updateUser(user);
 		
 		Mockito.verify(userRepository).updateUser(user);
-		Mockito.verify(pictureRepository).savePicture(profilePicture);
-		Mockito.verify(pictureRepository).savePicture(postPicture1);
-		Mockito.verify(pictureRepository).savePicture(postPicture2);
 	}
 	
 	@Test
@@ -220,12 +199,10 @@ public class DefaultDatabaseManagerTest {
 		post2.setPicture(postPicture2);
 		
 		manager = new DefaultDatabaseManager(userRepository, friendshipRepository, 
-				followRepository, friendshipRequestsRepository, pictureRepository);
+				followRepository, friendshipRequestsRepository);
 		
 		manager.updateUser(user);
 		
 		Mockito.verify(userRepository).updateUser(user);
-		Mockito.verify(pictureRepository).savePicture(postPicture1);
-		Mockito.verify(pictureRepository).savePicture(postPicture2);
 	}
 }
