@@ -101,24 +101,43 @@
 	<p:divider />
 
 	<h:form rendered="#{contextBean.isSelfProfile}" enctype="multipart/form-data">
-		<p:panelGrid columns="1">
-			<div>Create a post</div>
-			<p:inputText value="#{postBean.title}" size="100" />
-			<p:inputTextarea rows="10" cols="100" size="100" autoResize="true"
-				value="#{postBean.content}" />
-
-			<p:panelGrid columns="6">
+		<p:panelGrid>
+			<p:row>
+				<p:column>
+					<div>Create a post</div>
+				</p:column>
+			</p:row>
+			<p:row>
+				<p:column>
+					<p:inputTextarea rows="2" cols="100" value="#{postBean.title}" size="100" placeholder="Title"/>
+				</p:column>
+			</p:row>
+			<p:row>
+				<p:column>
+					<p:inputTextarea rows="10" cols="100" size="100" autoResize="true"
+						value="#{postBean.content}" placeholder="Your message"/>
+				</p:column>
+			</p:row>
+			<p:row>
 				<p:fileUpload value="#{postBean.postPic}" mode="simple" />
-			
-				<p:selectOneMenu value="#{postBean.postVisibility}">
-					<f:selectItem itemLabel="Select One" itemValue="" />
-					<f:selectItems value="#{postBean.visibilities}" var="visibility"
-						itemLabel="#{visibility.value}" itemValue="#{visibility}" />
-				</p:selectOneMenu>
-				
-				<p:commandButton value="Post" action="#{postBean.createPost}"
-					ajax="false" />
-			</p:panelGrid>
+			</p:row>
+			<p:row colspan="6">
+				<p:column></p:column>
+				<p:column></p:column>
+				<p:column></p:column>
+				<p:column></p:column>
+				<p:column>
+					<p:selectOneMenu value="#{postBean.postVisibility}">
+						<f:selectItem itemLabel="Select One" itemValue="" />
+						<f:selectItems value="#{postBean.visibilities}" var="visibility"
+							itemLabel="#{visibility.value}" itemValue="#{visibility}" />
+					</p:selectOneMenu>				
+				</p:column>
+				<p:column>
+					<p:commandButton value="Publish" action="#{postBean.createPost}"
+						ajax="false" />
+				</p:column>
+			</p:row>
 		</p:panelGrid>
 	</h:form>
 
