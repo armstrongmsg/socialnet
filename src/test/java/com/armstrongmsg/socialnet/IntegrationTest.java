@@ -7,6 +7,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +16,8 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
@@ -35,11 +38,15 @@ import com.armstrongmsg.socialnet.model.PostVisibility;
 import com.armstrongmsg.socialnet.model.User;
 import com.armstrongmsg.socialnet.model.UserSummary;
 import com.armstrongmsg.socialnet.storage.StorageFacade;
+import com.armstrongmsg.socialnet.storage.cache.Cache;
+import com.armstrongmsg.socialnet.storage.cache.DefaultCache;
 import com.armstrongmsg.socialnet.storage.cache.NoOperationCache;
 import com.armstrongmsg.socialnet.storage.database.DatabaseManager;
 import com.armstrongmsg.socialnet.storage.database.InMemoryDatabaseManager;
+import com.armstrongmsg.socialnet.util.ClassFactory;
 import com.armstrongmsg.socialnet.util.PropertiesUtil;
 
+@RunWith(Parameterized.class)
 public class IntegrationTest {
 	private static final String ADMIN_USERNAME = "admin-username";
 	private static final String ADMIN_PASSWORD = "admin-password";
@@ -62,17 +69,29 @@ public class IntegrationTest {
 	private static final String MAX_NUMBER_OF_POSTS = "2";
 	private ApplicationFacade facade;
 	private StorageFacade storageFacade;
-	private NoOperationCache cache;
+	private Cache cache;
 	private DatabaseManager databaseManager;
 	private MockedStatic<PropertiesUtil> propertiesUtilMock;
+	
+	@Parameterized.Parameters
+	public static List<Object[]> getTestParameters() {
+		List<Object[]> args = new ArrayList<Object[]>();
+		args.add(new Object[] {NoOperationCache.class.getCanonicalName(), 
+				InMemoryDatabaseManager.class.getCanonicalName()});
+		args.add(new Object[] {DefaultCache.class.getCanonicalName(), 
+				InMemoryDatabaseManager.class.getCanonicalName()});
+		return args;
+	}
+	
+	public IntegrationTest(String cacheType, String databaseManagerType) throws FatalErrorException {
+		this.cache = (Cache) new ClassFactory().createInstance(cacheType);
+		this.databaseManager = (DatabaseManager) new ClassFactory().createInstance(databaseManagerType);
+	}
 	
 	@Before
 	public void setUp() throws FatalErrorException {
 		ApplicationFacade.reset();
 		
-		this.cache = new NoOperationCache();
-		this.databaseManager = new InMemoryDatabaseManager();
-				
 		storageFacade = new StorageFacade(this.cache, this.databaseManager);
 		
 		PropertiesUtil propertiesUtil = Mockito.mock(PropertiesUtil.class);
