@@ -70,6 +70,10 @@ public class ApplicationFacade {
 	public synchronized static void reset() {
 		instance = null;
 	}
+
+	public void shutdown() {
+		this.storageManager.shutdown();
+	}
 	
 	public UserToken login(Map<String, String> credentials) throws AuthenticationException {
 		logger.debug(Messages.Logging.RECEIVED_LOGIN_REQUEST);

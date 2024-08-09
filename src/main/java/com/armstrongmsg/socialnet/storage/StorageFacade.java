@@ -19,6 +19,11 @@ public class StorageFacade {
 		this.cache = cache;
 		this.databaseManager = databaseManager;
 	}
+	
+	public void shutdown() {
+		this.cache.shutdown();
+		this.databaseManager.shutdown();
+	}
 
 	public void saveUser(User user) {
 		cache.putUser(user);

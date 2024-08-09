@@ -34,4 +34,6 @@ public interface DatabaseManager {
 	FriendshipRequest getReceivedFriendshipRequestById(String userId, String username);
 	void removeFriendshipRequestById(FriendshipRequest friendshipRequest);
 	void removeFriendship(Friendship friendship);
+	
+	void shutdown();
 }

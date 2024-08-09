@@ -37,4 +37,6 @@ public interface Cache {
 	FriendshipRequest getReceivedFriendshipRequestById(String userId, String username);
 	void removeFriendshipRequestById(FriendshipRequest friendshipRequest);
 	void removeFriendship(Friendship friendship);
+	
+	void shutdown();
 }

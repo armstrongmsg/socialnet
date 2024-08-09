@@ -15,11 +15,11 @@ public class SocialnetService implements ServletContextListener {
 
     public void contextInitialized(ServletContextEvent event) {
     	logger.info("Starting up.");
-    	
     	ApplicationFacade.getInstance();
     }
 
     public void contextDestroyed(ServletContextEvent event) {
     	System.out.println("Shutting down.");
+    	ApplicationFacade.getInstance().shutdown();
     }
 }

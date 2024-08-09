@@ -9,6 +9,8 @@ import com.armstrongmsg.socialnet.model.Friendship;
 import com.armstrongmsg.socialnet.model.FriendshipRequest;
 import com.armstrongmsg.socialnet.model.Group;
 import com.armstrongmsg.socialnet.model.User;
+import com.armstrongmsg.socialnet.storage.database.connection.DatabaseConnectionManager;
+import com.armstrongmsg.socialnet.storage.database.connection.PoolBasedDatabaseConnectionManager;
 import com.armstrongmsg.socialnet.storage.database.repository.DefaultFollowRepository;
 import com.armstrongmsg.socialnet.storage.database.repository.DefaultFriendshipRepository;
 import com.armstrongmsg.socialnet.storage.database.repository.DefaultFriendshipRequestRepository;
@@ -24,6 +26,8 @@ public class DefaultDatabaseManager implements DatabaseManager {
 	private FollowRepository followRepository;
 	private FriendshipRequestRepository friendshipRequestsRepository;
 	
+	private DatabaseConnectionManager connectionManager;
+	
 	public DefaultDatabaseManager(UserRepository userRepository, 
 			FriendshipRepository friendshipRepository, FollowRepository followRepository,
 			FriendshipRequestRepository friendshipRequestsRepository) {
@@ -34,10 +38,16 @@ public class DefaultDatabaseManager implements DatabaseManager {
 	}
 	
 	public DefaultDatabaseManager() throws FatalErrorException {
-		this.userRepository = new DefaultUserRepository();
-		this.friendshipRepository = new DefaultFriendshipRepository();
-		this.followRepository = new DefaultFollowRepository();
-		this.friendshipRequestsRepository = new DefaultFriendshipRequestRepository();
+		this.connectionManager = new PoolBasedDatabaseConnectionManager();
+		this.userRepository = new DefaultUserRepository(this.connectionManager);
+		this.friendshipRepository = new DefaultFriendshipRepository(this.connectionManager);
+		this.followRepository = new DefaultFollowRepository(this.connectionManager);
+		this.friendshipRequestsRepository = new DefaultFriendshipRequestRepository(this.connectionManager);
+	}
+
+	@Override
+	public void shutdown() {
+		this.connectionManager.close();
 	}
 
 	@Override

@@ -183,4 +183,9 @@ public class InMemoryDatabaseManager implements DatabaseManager {
 				friendshipRequest.getRequester().getUsername());
 		this.friendshipRequests.remove(request);
 	}
+
+	@Override
+	public void shutdown() {
+		// does nothing
+	}
 }

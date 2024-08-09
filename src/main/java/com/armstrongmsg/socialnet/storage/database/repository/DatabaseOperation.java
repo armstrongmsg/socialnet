@@ -6,40 +6,49 @@ import java.util.Map;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+import com.armstrongmsg.socialnet.storage.database.connection.DatabaseConnectionManager;
+
 public class DatabaseOperation<T> {
-	private DatabaseConnectionManager connectionManager;
+	private DatabaseConnectionManager databaseConnectionManager;
 	private String queryString;
 	private Map<String, String> parameters;
 	
-	public DatabaseOperation() {
-		connectionManager = new DatabaseConnectionManager();
+	public DatabaseOperation(DatabaseConnectionManager connectionManager) {
+		this.databaseConnectionManager = connectionManager;
 		parameters = new HashMap<String, String>();
 	}
 	
 	@SuppressWarnings("unchecked")
 	public T query() {
-		EntityManager em = this.connectionManager.getEntityManager();
+		EntityManager em = this.databaseConnectionManager.getEntityManager();
+		
+		if (!em.getTransaction().isActive()) {
+			em.getTransaction().begin();
+		}
 		
 		try {
-			em.getTransaction().begin();
 			Query query = em.createQuery(queryString);
 			
 			for (String key : parameters.keySet()) {
 				query.setParameter(key, parameters.get(key));
 			}
 			
-			return (T) query.getResultList();
+			T result = (T) query.getResultList();
+			em.getTransaction().rollback();
+			return result;
 		} finally {
 			em.close();
-			connectionManager.close();
 		}
 	}
 	
 	public void persist(T entity) {
-		EntityManager em = this.connectionManager.getEntityManager();
+		EntityManager em = this.databaseConnectionManager.getEntityManager();
+		
+		if (!em.getTransaction().isActive()) {
+			em.getTransaction().begin();
+		}
 		
 		try {
-			em.getTransaction().begin();
 			boolean committed = false;
 			try {
 				em.persist(entity);
@@ -51,15 +60,17 @@ public class DatabaseOperation<T> {
 			}
 		} finally {
 			em.close();
-			connectionManager.close();
 		}
 	}
 	
 	public void merge(T entity) {
-		EntityManager em = this.connectionManager.getEntityManager();
+		EntityManager em = this.databaseConnectionManager.getEntityManager();
+
+		if (!em.getTransaction().isActive()) {
+			em.getTransaction().begin();
+		}
 		
 		try {
-			em.getTransaction().begin();
 			boolean committed = false;
 			try {
 				em.merge(entity);
@@ -71,15 +82,17 @@ public class DatabaseOperation<T> {
 			}
 		} finally {
 			em.close();
-			connectionManager.close();
 		}
 	}
 	
 	public void remove(T entity) {
-		EntityManager em = this.connectionManager.getEntityManager();
+		EntityManager em = this.databaseConnectionManager.getEntityManager();
+		
+		if (!em.getTransaction().isActive()) {
+			em.getTransaction().begin();
+		}
 		
 		try {
-			em.getTransaction().begin();
 			boolean committed = false;
 
 			try {
@@ -92,7 +105,6 @@ public class DatabaseOperation<T> {
 			}
 		} finally {
 			em.close();
-			connectionManager.close();
 		}
 	}
 	

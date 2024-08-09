@@ -226,4 +226,9 @@ public class DefaultCache implements Cache {
 	public void putFriendshipRequests(List<FriendshipRequest> requests) {
 		this.friendshipRequests.addAll(requests);
 	}
+
+	@Override
+	public void shutdown() {
+		// does nothing
+	}
 }

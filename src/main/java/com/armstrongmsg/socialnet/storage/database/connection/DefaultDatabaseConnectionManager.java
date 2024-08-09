@@ -1,10 +1,10 @@
-package com.armstrongmsg.socialnet.storage.database.repository;
+package com.armstrongmsg.socialnet.storage.database.connection;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
-public class DatabaseConnectionManager {
+public class DefaultDatabaseConnectionManager implements DatabaseConnectionManager {
 	// FIXME should read from config
 	private static final String DATABASE_PERSISTENCE_UNIT = "default";
 	

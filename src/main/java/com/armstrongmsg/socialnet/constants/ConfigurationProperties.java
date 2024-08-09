@@ -11,6 +11,7 @@ public class ConfigurationProperties {
 	public static final String BOOTSTRAP_PASSWORD = "BOOTSTRAP_PASSWORD_";
 	public static final String CACHE_CLASS_NAME = "CACHE_CLASS_NAME";
 	public static final String DATABASE_MANAGER_CLASS_NAME = "DATABASE_MANAGER_CLASS_NAME";
+	public static final String DATABASE_PERSISTENCE_UNIT = "DATABASE_PERSISTENCE_UNIT";
 	public static final String FEED_POLICY_CLASS_NAME = "FEED_POLICY_CLASS_NAME";
 	public static final String MAX_NUMBER_OF_POSTS = "MAX_NUMBER_OF_POSTS";
 	public static final String PICTURE_REPOSITORY_LOCAL_PATH = "PICTURE_REPOSITORY_LOCAL_PATH";

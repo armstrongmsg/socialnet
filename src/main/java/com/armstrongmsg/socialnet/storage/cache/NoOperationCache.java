@@ -112,4 +112,9 @@ public class NoOperationCache implements Cache {
 	@Override
 	public void removeFriendshipRequestById(FriendshipRequest friendshipRequest) {
 	}
+
+	@Override
+	public void shutdown() {
+		// does nothing
+	}
 }
