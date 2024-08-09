@@ -15,7 +15,8 @@ import org.junit.Before;
 import com.armstrongmsg.socialnet.exceptions.FatalErrorException;
 
 public class PersistenceTest {
-	public static final String TEST_DIRECTORY = "/tmp/test_db";
+	public static final String TEST_DIRECTORY = "/tmp/test_db/";
+	public static final String TEST_DATABASE_FILE = TEST_DIRECTORY + "test.db";
 	
 	@Before
 	public void setUp() throws FatalErrorException {
@@ -25,7 +26,7 @@ public class PersistenceTest {
 			testDirectory.mkdir();
 		}
 	}
-	
+
 	@After
 	public void tearDown() throws IOException {
 		deleteDir(TEST_DIRECTORY);

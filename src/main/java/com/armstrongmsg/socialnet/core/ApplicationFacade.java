@@ -40,6 +40,7 @@ public class ApplicationFacade {
 			this.network = new Network(this.storageManager);
 			PropertiesUtil properties = PropertiesUtil.getInstance();
 			if (properties.getProperty(ConfigurationProperties.BOOTSTRAP).equals(SystemConstants.PROPERTY_VALUE_TRUE)) {
+				logger.info("Starting network with bootstrap.");
 				new Bootstrap().startNetwork(network);
 			}
 		} catch (FatalErrorException e) {
