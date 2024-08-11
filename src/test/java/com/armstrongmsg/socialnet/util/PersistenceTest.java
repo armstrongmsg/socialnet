@@ -13,6 +13,8 @@ import org.junit.After;
 import org.junit.Before;
 
 import com.armstrongmsg.socialnet.exceptions.FatalErrorException;
+import com.armstrongmsg.socialnet.storage.database.connection.DatabaseConnectionManager;
+import com.armstrongmsg.socialnet.storage.database.connection.PoolBasedDatabaseConnectionManager;
 
 public class PersistenceTest {
 	public static final String TEST_DIRECTORY = "/tmp/test_db/";
@@ -48,5 +50,9 @@ public class PersistenceTest {
 		       return FileVisitResult.CONTINUE;
 		   }
 		});
+	}
+
+	public DatabaseConnectionManager getConnectionManager() {
+		return new PoolBasedDatabaseConnectionManager("default-test");
 	}
 }

@@ -12,14 +12,18 @@ import com.armstrongmsg.socialnet.util.PropertiesUtil;
 public class PoolBasedDatabaseConnectionManager implements DatabaseConnectionManager {
 	private EntityManagerFactory emFactory;
 	
-	public PoolBasedDatabaseConnectionManager() {
+	public PoolBasedDatabaseConnectionManager(String persistenceUnit) {
+		this.emFactory = Persistence.createEntityManagerFactory(persistenceUnit);
+	}
+	
+	public PoolBasedDatabaseConnectionManager() throws FatalErrorException {
 		String persistenceUnit = ConfigurationPropertiesDefaults.DATABASE_PERSISTENCE_UNIT;
 		
 		try {
 			persistenceUnit = PropertiesUtil.getInstance().getProperty(ConfigurationProperties.DATABASE_PERSISTENCE_UNIT, 
 					ConfigurationPropertiesDefaults.DATABASE_PERSISTENCE_UNIT);
 		} catch (FatalErrorException | NumberFormatException e) {
-			// TODO log
+			throw new FatalErrorException();
 		}
 		
 		this.emFactory = Persistence.createEntityManagerFactory(persistenceUnit);

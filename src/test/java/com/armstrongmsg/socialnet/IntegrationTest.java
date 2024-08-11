@@ -7,6 +7,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -43,11 +44,13 @@ import com.armstrongmsg.socialnet.storage.cache.DefaultCache;
 import com.armstrongmsg.socialnet.storage.cache.NoOperationCache;
 import com.armstrongmsg.socialnet.storage.database.DatabaseManager;
 import com.armstrongmsg.socialnet.storage.database.InMemoryDatabaseManager;
+import com.armstrongmsg.socialnet.storage.database.PictureLoadingAwareDatabaseManager;
 import com.armstrongmsg.socialnet.util.ClassFactory;
+import com.armstrongmsg.socialnet.util.PersistenceTest;
 import com.armstrongmsg.socialnet.util.PropertiesUtil;
 
 @RunWith(Parameterized.class)
-public class IntegrationTest {
+public class IntegrationTest extends PersistenceTest {
 	private static final String ADMIN_USERNAME = "admin-username";
 	private static final String ADMIN_PASSWORD = "admin-password";
 	private static final String NEW_USERNAME_1 = "new-username-1";
@@ -72,6 +75,8 @@ public class IntegrationTest {
 	private Cache cache;
 	private DatabaseManager databaseManager;
 	private MockedStatic<PropertiesUtil> propertiesUtilMock;
+	private String cacheType;
+	private String databaseManagerType;
 	
 	@Parameterized.Parameters
 	public static List<Object[]> getTestParameters() {
@@ -80,16 +85,24 @@ public class IntegrationTest {
 				InMemoryDatabaseManager.class.getCanonicalName()});
 		args.add(new Object[] {DefaultCache.class.getCanonicalName(), 
 				InMemoryDatabaseManager.class.getCanonicalName()});
+		args.add(new Object[] {NoOperationCache.class.getCanonicalName(), 
+				PictureLoadingAwareDatabaseManager.class.getCanonicalName()});
 		return args;
 	}
 	
 	public IntegrationTest(String cacheType, String databaseManagerType) throws FatalErrorException {
-		this.cache = (Cache) new ClassFactory().createInstance(cacheType);
-		this.databaseManager = (DatabaseManager) new ClassFactory().createInstance(databaseManagerType);
+		this.cacheType = cacheType;
+		this.databaseManagerType = databaseManagerType;
 	}
 	
 	@Before
+	@Override
 	public void setUp() throws FatalErrorException {
+		super.setUp();
+		
+		this.cache = (Cache) new ClassFactory().createInstance(cacheType);
+		this.databaseManager = (DatabaseManager) new ClassFactory().createInstance(databaseManagerType);
+		
 		ApplicationFacade.reset();
 		
 		storageFacade = new StorageFacade(this.cache, this.databaseManager);
@@ -941,7 +954,10 @@ public class IntegrationTest {
 	}
 	
 	@After
-	public void TearDown() {
+	@Override
+	public void tearDown() throws IOException {
 		propertiesUtilMock.close();
+		ApplicationFacade.getInstance().shutdown();
+		super.tearDown();
 	}
 }
