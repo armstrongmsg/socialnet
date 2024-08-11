@@ -41,6 +41,7 @@ import com.armstrongmsg.socialnet.model.UserSummary;
 import com.armstrongmsg.socialnet.storage.StorageFacade;
 import com.armstrongmsg.socialnet.storage.cache.Cache;
 import com.armstrongmsg.socialnet.storage.cache.DefaultCache;
+import com.armstrongmsg.socialnet.storage.cache.LruCache;
 import com.armstrongmsg.socialnet.storage.cache.NoOperationCache;
 import com.armstrongmsg.socialnet.storage.database.DatabaseManager;
 import com.armstrongmsg.socialnet.storage.database.InMemoryDatabaseManager;
@@ -86,6 +87,8 @@ public class IntegrationTest extends PersistenceTest {
 		args.add(new Object[] {DefaultCache.class.getCanonicalName(), 
 				InMemoryDatabaseManager.class.getCanonicalName()});
 		args.add(new Object[] {NoOperationCache.class.getCanonicalName(), 
+				PictureLoadingAwareDatabaseManager.class.getCanonicalName()});
+		args.add(new Object[] {LruCache.class.getCanonicalName(), 
 				PictureLoadingAwareDatabaseManager.class.getCanonicalName()});
 		return args;
 	}

@@ -6,6 +6,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 
@@ -15,7 +16,8 @@ import com.armstrongmsg.socialnet.constants.SystemConstants;
 public class Profile {
 	@Column
 	private String description;
-	@OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
+	@OneToMany(orphanRemoval=true, cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
+	@JoinColumn(name="user_id")
 	private List<Post> posts;
 	@Column(name = "profile_pic_id")
 	private String profilePicId;
