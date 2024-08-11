@@ -9,6 +9,7 @@ import com.armstrongmsg.socialnet.model.FriendshipRequest;
 import com.armstrongmsg.socialnet.model.Group;
 import com.armstrongmsg.socialnet.model.User;
 
+// TODO test
 public class DefaultCache implements Cache {
 	private List<User> users;
 	private List<Friendship> friendships;

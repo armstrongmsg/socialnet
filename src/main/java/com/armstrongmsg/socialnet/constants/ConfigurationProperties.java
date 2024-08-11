@@ -10,6 +10,7 @@ public class ConfigurationProperties {
 	public static final String BOOTSTRAP_DESCRIPTION = "BOOTSTRAP_DESCRIPTION_";
 	public static final String BOOTSTRAP_PASSWORD = "BOOTSTRAP_PASSWORD_";
 	public static final String CACHE_CLASS_NAME = "CACHE_CLASS_NAME";
+	public static final String CACHE_MAX_CAPACITY = "CACHE_MAX_CAPACITY";
 	public static final String DATABASE_MANAGER_CLASS_NAME = "DATABASE_MANAGER_CLASS_NAME";
 	public static final String DATABASE_PERSISTENCE_UNIT = "DATABASE_PERSISTENCE_UNIT";
 	public static final String FEED_POLICY_CLASS_NAME = "FEED_POLICY_CLASS_NAME";
