@@ -1,5 +1,6 @@
 package com.armstrongmsg.socialnet.model;
 
+import java.util.Objects;
 import java.util.UUID;
 
 import javax.persistence.Column;
@@ -29,6 +30,16 @@ public class FriendshipRequest {
 		this.requested = requested;
 	}
 
+	public FriendshipRequest(String id, User requester, User requested) {
+		this.id = id;
+		this.requester = requester;
+		this.requested = requested;
+	}
+
+	public String getId() {
+		return id;
+	}
+
 	public User getRequester() {
 		return requester;
 	}
@@ -43,5 +54,24 @@ public class FriendshipRequest {
 
 	public void setRequested(User requested) {
 		this.requested = requested;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id, requested, requester);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		FriendshipRequest other = (FriendshipRequest) obj;
+		return Objects.equals(id, other.id) && 
+				Objects.equals(requested.getUserId(), other.requested.getUserId()) && 
+				Objects.equals(requester.getUserId(), other.requester.getUserId());
 	}
 }

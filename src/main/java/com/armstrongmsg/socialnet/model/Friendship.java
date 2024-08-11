@@ -24,12 +24,22 @@ public class Friendship extends Relationship {
 		
 	}
 	
+	public Friendship(String id, User friend1, User friend2) {
+		this.id = id;
+		this.friend1 = friend1;
+		this.friend2 = friend2;
+	}
+	
 	public Friendship(User friend1, User friend2) {
 		this.id = UUID.randomUUID().toString();
 		this.friend1 = friend1;
 		this.friend2 = friend2;
 	}
 
+	public String getId() {
+		return id;
+	}
+	
 	public User getFriend1() {
 		return friend1;
 	}
@@ -40,7 +50,7 @@ public class Friendship extends Relationship {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id);
+		return Objects.hash(getId());
 	}
 
 	@Override
@@ -52,6 +62,8 @@ public class Friendship extends Relationship {
 		if (getClass() != obj.getClass())
 			return false;
 		Friendship other = (Friendship) obj;
-		return Objects.equals(id, other.id);
+		return Objects.equals(getId(), other.getId()) && 
+				Objects.equals(friend1.getUserId(), other.friend1.getUserId()) && 
+				Objects.equals(friend2.getUserId(), other.friend2.getUserId());
 	}
 }

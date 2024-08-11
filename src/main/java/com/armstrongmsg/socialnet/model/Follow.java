@@ -29,6 +29,16 @@ public class Follow extends Relationship {
 		this.follower = follower;
 		this.followed = followed;
 	}
+	
+	public Follow(String id, User follower, User followed) {
+		this.id = id;
+		this.follower = follower;
+		this.followed = followed;
+	}
+
+	public String getId() {
+		return id;
+	}
 
 	public User getFollower() {
 		return follower;
@@ -52,6 +62,8 @@ public class Follow extends Relationship {
 		if (getClass() != obj.getClass())
 			return false;
 		Follow other = (Follow) obj;
-		return Objects.equals(id, other.id);
+		return Objects.equals(id, other.id) && 
+				Objects.equals(follower.getUserId(), other.follower.getUserId()) && 
+				Objects.equals(followed.getUserId(), other.followed.getUserId());
 	}
 }

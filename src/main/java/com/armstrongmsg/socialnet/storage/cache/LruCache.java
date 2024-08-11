@@ -144,11 +144,13 @@ public class LruCache implements Cache {
 
 	@Override
 	public void putFriendship(Friendship friendship) {
-		if (this.friendships.size() >= this.totalCapacity) {
-			friendships.remove(0);
+		if (!this.friendships.contains(friendship)) {
+			if (this.friendships.size() >= this.totalCapacity) {
+				friendships.remove(0);
+			}
+			
+			friendships.add(friendship);
 		}
-
-		friendships.add(friendship);
 	}
 
 	@Override
@@ -188,11 +190,13 @@ public class LruCache implements Cache {
 
 	@Override
 	public void putFollow(Follow follow) {
-		if (this.follows.size() >= this.totalCapacity) {
-			follows.remove(0);
+		if (!this.follows.contains(follow)) {
+			if (this.follows.size() >= this.totalCapacity) {
+				follows.remove(0);
+			}
+			
+			follows.add(follow);		
 		}
-
-		follows.add(follow);		
 	}
 
 	@Override
@@ -209,11 +213,13 @@ public class LruCache implements Cache {
 
 	@Override
 	public void putFriendshipRequest(FriendshipRequest friendshipRequest) {
-		if (this.friendshipRequests.size() >= this.totalCapacity) {
-			friendshipRequests.remove(0);
+		if (!this.friendshipRequests.contains(friendshipRequest)) {
+			if (this.friendshipRequests.size() >= this.totalCapacity) {
+				friendshipRequests.remove(0);
+			}
+			
+			friendshipRequests.add(friendshipRequest);		
 		}
-				
-		friendshipRequests.add(friendshipRequest);		
 	}
 
 	@Override

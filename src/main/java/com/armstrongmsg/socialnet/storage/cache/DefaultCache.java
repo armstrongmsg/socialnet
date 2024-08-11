@@ -47,7 +47,9 @@ public class DefaultCache implements Cache {
 
 	@Override
 	public void putUser(User user) {
-		this.users.add(user);
+		if (!this.users.contains(user)) {
+			this.users.add(user);
+		}
 	}
 
 	@Override
@@ -101,12 +103,16 @@ public class DefaultCache implements Cache {
 
 	@Override
 	public void putFriendship(Friendship friendship) {
-		this.friendships.add(friendship);
+		if (!this.friendships.contains(friendship)) {
+			this.friendships.add(friendship);
+		}
 	}
 
 	@Override
 	public void putFriendships(List<Friendship> friendships) {
-		this.friendships.addAll(friendships);
+		for (Friendship friendship : friendships) {
+			putFriendship(friendship);
+		}
 	}
 
 	@Override
@@ -150,12 +156,16 @@ public class DefaultCache implements Cache {
 
 	@Override
 	public void putFollow(Follow follow) {
-		this.follows.add(follow);
+		if (!this.follows.contains(follow)) {
+			this.follows.add(follow);
+		}
 	}
 
 	@Override
 	public void putFollows(List<Follow> follows) {
-		this.follows.addAll(follows);
+		for (Follow follow : follows) {
+			this.putFollow(follow);
+		}
 	}
 
 	@Override
@@ -175,7 +185,9 @@ public class DefaultCache implements Cache {
 
 	@Override
 	public void putFriendshipRequest(FriendshipRequest friendshipRequest) {
-		this.friendshipRequests.add(friendshipRequest);
+		if (!this.friendshipRequests.contains(friendshipRequest)) {
+			this.friendshipRequests.add(friendshipRequest);
+		}
 	}
 
 	@Override
@@ -225,7 +237,9 @@ public class DefaultCache implements Cache {
 
 	@Override
 	public void putFriendshipRequests(List<FriendshipRequest> requests) {
-		this.friendshipRequests.addAll(requests);
+		for (FriendshipRequest request : requests) {
+			this.putFriendshipRequest(request);
+		}
 	}
 
 	@Override
