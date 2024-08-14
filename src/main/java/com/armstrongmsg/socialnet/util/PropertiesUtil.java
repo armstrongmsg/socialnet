@@ -1,6 +1,5 @@
 package com.armstrongmsg.socialnet.util;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -39,8 +38,7 @@ public class PropertiesUtil {
 	
 	private PropertiesUtil() throws FileNotFoundException, IOException {
 		properties = new Properties();
-		String configurationPath = Thread.currentThread().getContextClassLoader().getResource("").getPath() + 
-				File.separator + "application.properties";
+		String configurationPath = ApplicationPaths.getApplicationPropertiesPath();
 		properties.load(new FileInputStream(configurationPath));
 	}
 	

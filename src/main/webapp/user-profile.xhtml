@@ -143,28 +143,28 @@
 
 	<p:divider />
 
-	<h:form>
-		<!-- DEPRECATED! -->
-		<p:panelGrid columns="1">
-			<div>Posts</div>
-			<p:dataGrid var="post" value="#{postBean.posts}" columns="5" rows="5"
-				paginator="true">
-				<p:column>
-					<p:panel header="#{post.title}">
-						<h:panelGrid columns="1">
-							<h:outputText value="Posted on #{post.date}" />
-							<h:outputText value="#{post.content}" />
-							<p:graphicImage value="#{post.picture}" stream="false"/>
-							<p:commandButton value="Delete" action="#{postBean.deletePost}"
-								rendered="#{contextBean.isSelfProfile}" ajax="false">
-								<f:setPropertyActionListener target="#{postBean.post}"
-									value="#{post}" />
-							</p:commandButton>
-						</h:panelGrid>
-					</p:panel>
-				</p:column>
-			</p:dataGrid>
-		</p:panelGrid>
-	</h:form>
+    <h:form>
+        <p:dataScroller value="#{postBean.posts}" var="post" chunkSize="10" mode="inline"
+                        scrollHeight="500">
+            <f:facet name="header">
+                Scroll Down to Load More Posts
+            </f:facet>
+
+			<div>
+                <div>
+                	<div>#{post.date}</div>
+                	<div>#{post.content}</div>
+                    <p:graphicImage value="#{post.cachedPicturePath}" width="600"/>
+                </div>
+                <div>
+					<p:commandButton value="Delete" action="#{postBean.deletePost}"
+						rendered="#{contextBean.isSelfProfile}" ajax="false">
+						<f:setPropertyActionListener target="#{postBean.post}"
+							value="#{post}" />
+					</p:commandButton>
+				</div>
+            </div>
+        </p:dataScroller>
+    </h:form>
 </h:body>
 </html>

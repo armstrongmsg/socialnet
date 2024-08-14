@@ -9,14 +9,16 @@ public class Post {
 	private String content;
 	private String visibility;
 	private StreamedContent picture;
+	private String cachedPicturePath;
 	
-	public Post(String id, String title, String date, String content, String visibility, StreamedContent picture) {
+	public Post(String id, String title, String date, String content, String visibility, StreamedContent picture, String cachedPicturePath) {
 		this.setId(id);
 		this.setTitle(title);
 		this.setDate(date);
 		this.setContent(content);
 		this.setVisibility(visibility);
 		this.picture = picture;
+		this.setCachedPicturePath(cachedPicturePath);
 	}
 
 	public String getId() {
@@ -65,5 +67,13 @@ public class Post {
 
 	public void setPicture(StreamedContent picture) {
 		this.picture = picture;
+	}
+
+	public String getCachedPicturePath() {
+		return cachedPicturePath;
+	}
+
+	public void setCachedPicturePath(String cachedPicturePath) {
+		this.cachedPicturePath = cachedPicturePath;
 	}
 }

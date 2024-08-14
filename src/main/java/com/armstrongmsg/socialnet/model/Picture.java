@@ -6,14 +6,22 @@ import java.util.Objects;
 public class Picture extends Media {
 	private String id;
 	private byte[] data;
-
+	private String path;
+	
 	public Picture() {
 		
 	}
 	
+	public Picture(String id, byte[] data, String pictureLocalPath) {
+		this.id = id;
+		this.data = data;
+		this.path = pictureLocalPath;
+	}
+
 	public Picture(String id, byte[] data) {
 		this.id = id;
 		this.data = data;
+		this.path = "";
 	}
 
 	public String getId() {
@@ -30,6 +38,14 @@ public class Picture extends Media {
 	
 	public void setData(byte[] data) {
 		this.data = data;
+	}
+	
+	public void setPath(String path) {
+		this.path = path;
+	}
+	
+	public String getPath() {
+		return path;
 	}
 	
 	@Override

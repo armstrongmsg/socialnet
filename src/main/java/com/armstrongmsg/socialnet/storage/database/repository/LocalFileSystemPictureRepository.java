@@ -9,18 +9,27 @@ import com.armstrongmsg.socialnet.constants.ConfigurationProperties;
 import com.armstrongmsg.socialnet.constants.Messages;
 import com.armstrongmsg.socialnet.exceptions.FatalErrorException;
 import com.armstrongmsg.socialnet.model.Picture;
+import com.armstrongmsg.socialnet.util.ApplicationPaths;
 import com.armstrongmsg.socialnet.util.PropertiesUtil;
 
 public class LocalFileSystemPictureRepository implements PictureRepository {
 	private String pictureRepositoryLocalPath;
+	private String pictureCacheDirectory;
 	
-	public LocalFileSystemPictureRepository(String pictureRepositoryLocalPath) {
+	public LocalFileSystemPictureRepository(String pictureRepositoryLocalPath, String pictureCacheDirectory) {
 		this.pictureRepositoryLocalPath = pictureRepositoryLocalPath;
 		
 		File path = new File(pictureRepositoryLocalPath);
 		
 		if (!path.exists()) {
 			path.mkdirs();
+		}
+		
+		this.pictureCacheDirectory = pictureCacheDirectory;
+		File cachePath = new File(pictureCacheDirectory);
+		
+		if (!cachePath.exists()) {
+			cachePath.mkdir();
 		}
 	}
 			
@@ -39,6 +48,14 @@ public class LocalFileSystemPictureRepository implements PictureRepository {
 		if (!path.exists()) {
 			path.mkdirs();
 		}
+		
+		pictureCacheDirectory = ApplicationPaths.getApplicationImageCachePath();
+		File cachePath = new File(pictureCacheDirectory);
+		
+		if (!cachePath.exists()) {
+			cachePath.mkdir();
+		}
+		
 	}
 	
 	@Override
@@ -56,7 +73,9 @@ public class LocalFileSystemPictureRepository implements PictureRepository {
 			int size = sizeAsLong.intValue();
 			byte[] data = new byte[size];
 			pictureInputStream.read(data);
-			return new Picture(id, data);
+			String pictureLocalPath = pictureCacheDirectory + File.separator + id;
+			createCachedImageCopies(id, data, pictureLocalPath);
+			return new Picture(id, data, pictureLocalPath);
 		} catch (IOException e) {
 			// maybe should throw RollbackException
 			return null;
@@ -71,16 +90,40 @@ public class LocalFileSystemPictureRepository implements PictureRepository {
 		}
 	}
 
+	private void createCachedImageCopies(String id, byte[] data, String pictureLocalPath) throws IOException {
+		File cachedImageFile = new File(pictureLocalPath);
+
+		if (!cachedImageFile.exists()) {
+			FileOutputStream out = null;
+			try {
+				cachedImageFile.createNewFile();
+				out = new FileOutputStream(cachedImageFile);
+				out.write(data);
+			} finally {
+				try {
+					if (out != null) {
+						out.close();
+					}
+				} catch (IOException e) {
+					// maybe should throw RollbackException
+				}
+			}
+		}
+	}
+
 	@Override
 	public void savePicture(Picture picture) {
-		File localPath = new File(pictureRepositoryLocalPath + File.separator + picture.getId());
+		String pictureLocalPath = pictureRepositoryLocalPath + File.separator + picture.getId();
+		File localPathFile = new File(pictureLocalPath);
 		FileOutputStream out = null;
 
 		try {
-			if (!localPath.exists()) {
-				localPath.createNewFile();
-				out = new FileOutputStream(localPath);
+			if (!localPathFile.exists()) {
+				localPathFile.createNewFile();
+				out = new FileOutputStream(localPathFile);
 				out.write(picture.getData());
+				String cachedImageLocalPath = this.pictureCacheDirectory + File.separator + picture.getId();
+				createCachedImageCopies(picture.getId(), picture.getData(), cachedImageLocalPath);
 			}
 		} catch (IOException e) {
 			// maybe should throw RollbackException
@@ -101,6 +144,13 @@ public class LocalFileSystemPictureRepository implements PictureRepository {
 		
 		if (localPath.exists()) {
 			localPath.delete();
+		}
+		
+		String cachedImageLocalPath = pictureCacheDirectory + File.separator + picture.getId();
+		File cachedImageLocalPathFile = new File(cachedImageLocalPath);
+		
+		if (cachedImageLocalPathFile.exists()) {
+			cachedImageLocalPathFile.delete();
 		}
 	}
 }

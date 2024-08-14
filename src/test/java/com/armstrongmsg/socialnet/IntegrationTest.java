@@ -7,6 +7,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -46,12 +47,14 @@ import com.armstrongmsg.socialnet.storage.cache.NoOperationCache;
 import com.armstrongmsg.socialnet.storage.database.DatabaseManager;
 import com.armstrongmsg.socialnet.storage.database.InMemoryDatabaseManager;
 import com.armstrongmsg.socialnet.storage.database.PictureLoadingAwareDatabaseManager;
+import com.armstrongmsg.socialnet.util.ApplicationPaths;
 import com.armstrongmsg.socialnet.util.ClassFactory;
 import com.armstrongmsg.socialnet.util.PersistenceTest;
 import com.armstrongmsg.socialnet.util.PropertiesUtil;
 
 @RunWith(Parameterized.class)
 public class IntegrationTest extends PersistenceTest {
+	private static final String TEST_CACHE_PATH = TEST_DIRECTORY + File.separator + "cache";
 	private static final String ADMIN_USERNAME = "admin-username";
 	private static final String ADMIN_PASSWORD = "admin-password";
 	private static final String NEW_USERNAME_1 = "new-username-1";
@@ -76,6 +79,7 @@ public class IntegrationTest extends PersistenceTest {
 	private Cache cache;
 	private DatabaseManager databaseManager;
 	private MockedStatic<PropertiesUtil> propertiesUtilMock;
+	private MockedStatic<ApplicationPaths> pathsUtilMock;
 	private String cacheType;
 	private String databaseManagerType;
 	
@@ -102,6 +106,11 @@ public class IntegrationTest extends PersistenceTest {
 	@Override
 	public void setUp() throws FatalErrorException {
 		super.setUp();
+		
+		pathsUtilMock = Mockito.mockStatic(ApplicationPaths.class);
+		
+		Mockito.when(ApplicationPaths.getApplicationImageCachePath()).
+			thenReturn(TEST_CACHE_PATH);
 		
 		this.cache = (Cache) new ClassFactory().createInstance(cacheType);
 		this.databaseManager = (DatabaseManager) new ClassFactory().createInstance(databaseManagerType);
@@ -960,6 +969,7 @@ public class IntegrationTest extends PersistenceTest {
 	@Override
 	public void tearDown() throws IOException {
 		propertiesUtilMock.close();
+		pathsUtilMock.close();
 		ApplicationFacade.getInstance().shutdown();
 		super.tearDown();
 	}

@@ -1,7 +1,6 @@
 package com.armstrongmsg.socialnet.view.jsf.model;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -10,22 +9,7 @@ import java.util.List;
 
 import org.primefaces.model.DefaultStreamedContent;
 
-import com.armstrongmsg.socialnet.util.ImageUtils;
-
 public class JsfConnector {
-	private static final int PIC_LIMIT_WIDTH = 600;
-	private static final int PIC_LIMIT_HEIGHT = 600;
-	
-	private ImageUtils imageUtils;
-	
-	public JsfConnector() {
-		this.imageUtils = new ImageUtils();
-	}
-	
-	public JsfConnector(ImageUtils imageUtils) {
-		this.imageUtils = imageUtils;
-	}
-	
 	public User getViewUser(com.armstrongmsg.socialnet.model.User modelUser) {
 		return new User(modelUser.getUserId(), modelUser.getUsername(), 
 				modelUser.getProfile().getDescription());
@@ -55,14 +39,10 @@ public class JsfConnector {
 	
 	public Post getViewPost(com.armstrongmsg.socialnet.model.Post modelPost) {
 		DefaultStreamedContent content = null;
+		String picturePath = null;
 		
 		if (modelPost.getPicture() != null) {
 			byte[] picData = modelPost.getPicture().getData();
-			try {
-				picData = imageUtils.rescale(picData, PIC_LIMIT_HEIGHT, PIC_LIMIT_WIDTH);
-			} catch (IOException e) {
-				// TODO should throw InternalErrorException
-			}
 			// primefaces dependency!
 			InputStream profilePicStream = new ByteArrayInputStream(picData);
 			content = DefaultStreamedContent.
@@ -70,6 +50,7 @@ public class JsfConnector {
 					contentType("image/jpeg").
 					stream(() -> profilePicStream).
 					build();
+			picturePath = convertPicturePathToWebFormat(modelPost.getPicture().getPath());
 		} else {
 			InputStream profilePicStream = new ByteArrayInputStream(new byte[] {});
 			content = DefaultStreamedContent.
@@ -79,7 +60,16 @@ public class JsfConnector {
 					build();
 		}
 		return new Post(modelPost.getId(), modelPost.getTitle(), toViewDate(modelPost.getTimestamp()), 
-				modelPost.getContent(), modelPost.getVisibility().getValue(), content);
+				modelPost.getContent(), modelPost.getVisibility().getValue(), content, picturePath);
+	}
+	
+	private String convertPicturePathToWebFormat(String path) {
+		// FIXME constant
+		if (path != null && !path.isEmpty()) {
+			return path.split("socialnet")[1];
+		}
+		
+		return null;
 	}
 	
 	public List<Post> getViewPosts(List<com.armstrongmsg.socialnet.model.Post> modelPosts) {
