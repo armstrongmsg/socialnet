@@ -41,95 +41,38 @@
 		</p:toolbar>
 	</h:form>
 
-	<p:panelGrid columns="2">
-		<p:panelGrid columns="1">
-			<h:form>
-				<p:panelGrid columns="1">
-					<div>Sent friendship requests waiting approval</div>
-					<p:dataGrid var="username"
-						value="#{friendshipBean.sentFriendshipRequests}" emptyMessage="No request found.">
-						<p:column>
-							<h:panelGrid columns="1">
-								<h:outputText value="#{username}" />
-							</h:panelGrid>
-						</p:column>
-					</p:dataGrid>
-				</p:panelGrid>
-			</h:form>
-	
-			<h:form>
-				<p:panelGrid columns="1">
-					<div>Received friendship requests waiting approval</div>
-					<!-- DEPRECATED! -->
-					<p:dataGrid var="username"
-						value="#{friendshipBean.receivedFriendshipRequests}" emptyMessage="No request found.">
-						<p:column>
-							<h:panelGrid columns="3">
-								<h:outputText value="#{username}" />
-	
-								<p:commandButton
-									action="#{friendshipBean.accceptFriendshipRequest}"
-									value="Accept" ajax="false">
-									<f:setPropertyActionListener target="#{friendshipBean.username}"
-										value="#{username}" />
-								</p:commandButton>
-	
-								<p:commandButton
-									action="#{friendshipBean.rejectFriendshipRequest}"
-									value="Reject" ajax="false">
-									<f:setPropertyActionListener target="#{friendshipBean.username}"
-										value="#{username}" />
-								</p:commandButton>
-							</h:panelGrid>
-						</p:column>
-					</p:dataGrid>
-				</p:panelGrid>
-			</h:form>
-		</p:panelGrid>
-		
+	<h:form enctype="multipart/form-data">
 		<p:panelGrid>
-			<h:form enctype="multipart/form-data">
-				<p:panelGrid>
-					<p:row>
-						<p:column>
-							<div>Create a post</div>
-						</p:column>
-					</p:row>
-					<p:row>
-						<p:column>
-							<p:inputTextarea rows="2" cols="80" value="#{postBean.title}" size="100" placeholder="Title"/>
-						</p:column>
-					</p:row>
-					<p:row>
-						<p:column>
-							<p:inputTextarea rows="10" cols="80" size="100" autoResize="true"
-								value="#{postBean.content}" placeholder="Your message"/>
-						</p:column>
-					</p:row>
-					<p:row>
-						<p:fileUpload value="#{postBean.postPic}" mode="simple" />
-					</p:row>
-					<p:row colspan="3">
-						<p:column></p:column>
-						<p:column>
-							<p:selectOneMenu value="#{postBean.postVisibility}">
-								<f:selectItem itemLabel="Select One" itemValue="" />
-								<f:selectItems value="#{postBean.visibilities}" var="visibility"
-									itemLabel="#{visibility.value}" itemValue="#{visibility}" />
-							</p:selectOneMenu>				
-						</p:column>
-						<p:column>
-							<p:commandButton value="Publish" action="#{postBean.createPost}"
-								ajax="false" />
-						</p:column>
-					</p:row>
-				</p:panelGrid>
-			</h:form>
+			<f:facet name="header">
+                         Create a post
+			</f:facet>
+			<p:row>
+				<p:column>
+					<p:inputTextarea rows="2" cols="80" value="#{postBean.title}"
+						size="100" placeholder="Title" />
+				</p:column>
+			</p:row>
+			<p:row>
+				<p:column>
+					<p:inputTextarea rows="10" cols="80" size="100" autoResize="true"
+						value="#{postBean.content}" placeholder="Your message" />
+				</p:column>
+			</p:row>
+			<p:row>
+				<p:fileUpload value="#{postBean.postPic}" mode="simple" />
+			</p:row>
+			<p:row>
+				<p:selectOneMenu value="#{postBean.postVisibility}">
+					<f:selectItem itemLabel="Select One" itemValue="" />
+					<f:selectItems value="#{postBean.visibilities}" var="visibility"
+						itemLabel="#{visibility.value}" itemValue="#{visibility}" />
+				</p:selectOneMenu>
+				<p:commandButton value="Publish" action="#{postBean.createPost}"
+					ajax="false" />
+			</p:row>
 		</p:panelGrid>
-	</p:panelGrid>
-	
-	<p:divider />
-	
+	</h:form>
+
 	<h:form>
         <p:dataScroller value="#{postBean.feedPosts}" var="post" chunkSize="10" mode="inline"
                         scrollHeight="500">

@@ -62,6 +62,51 @@
 	</h:form>
 
 	<h:form>
+		<p:panelGrid columns="1">
+			<div>Sent friendship requests waiting approval</div>
+			<p:dataGrid var="username"
+				value="#{friendshipBean.sentFriendshipRequests}"
+				emptyMessage="No request found.">
+				<p:column>
+					<h:panelGrid columns="1">
+						<h:outputText value="#{username}" />
+					</h:panelGrid>
+				</p:column>
+			</p:dataGrid>
+		</p:panelGrid>
+	</h:form>
+
+	<h:form>
+		<p:panelGrid columns="1">
+			<div>Received friendship requests waiting approval</div>
+			<!-- DEPRECATED! -->
+			<p:dataGrid var="username"
+				value="#{friendshipBean.receivedFriendshipRequests}"
+				emptyMessage="No request found.">
+				<p:column>
+					<h:panelGrid columns="3">
+						<h:outputText value="#{username}" />
+
+						<p:commandButton
+							action="#{friendshipBean.accceptFriendshipRequest}"
+							value="Accept" ajax="false">
+							<f:setPropertyActionListener target="#{friendshipBean.username}"
+								value="#{username}" />
+						</p:commandButton>
+
+						<p:commandButton
+							action="#{friendshipBean.rejectFriendshipRequest}" value="Reject"
+							ajax="false">
+							<f:setPropertyActionListener target="#{friendshipBean.username}"
+								value="#{username}" />
+						</p:commandButton>
+					</h:panelGrid>
+				</p:column>
+			</p:dataGrid>
+		</p:panelGrid>
+	</h:form>
+
+	<h:form>
 		<!-- DEPRECATED! -->
 		<p:panelGrid columns="1">
 			<div>Recommended users</div>
