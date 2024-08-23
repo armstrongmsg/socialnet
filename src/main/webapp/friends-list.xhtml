@@ -46,14 +46,17 @@
 		<p:panelGrid columns="1">
 			<div>Your friends</div>
 			<p:dataGrid var="friend" value="#{friendshipBean.selfFriends}">
-				<p:column>
-					<p:commandButton value="#{friend.username}"
-						action="#{navigationController.showPage}" ajax="false">
-						<f:param name="pageId" value="user-profile" />
-						<f:setPropertyActionListener target="#{contextBean.viewUser}"
-							value="#{friend}" />
-					</p:commandButton>
-				</p:column>
+				<p:panelGrid columns="1">
+					<p:column>
+							<p:graphicImage value="#{friend.cachedPicturePath}" width="70"/>
+							<p:commandButton value="#{friend.username}"
+								action="#{navigationController.showPage}" ajax="false">
+								<f:param name="pageId" value="user-profile" />
+								<f:setPropertyActionListener target="#{contextBean.viewUser}"
+									value="#{friend}" />
+							</p:commandButton>
+					</p:column>
+				</p:panelGrid>
 			</p:dataGrid>
 		</p:panelGrid>
 	</h:form>
@@ -64,14 +67,17 @@
 			<div>Recommended users</div>
 			<p:dataGrid var="user"
 				value="#{friendshipBean.friendRecommendations}">
-				<p:column>
-					<p:commandButton value="#{user.username}"
-						action="#{navigationController.showPage}" ajax="false">
-						<f:param name="pageId" value="user-profile" />
-						<f:setPropertyActionListener target="#{contextBean.viewUser}"
-							value="#{user}" />
-					</p:commandButton>
-				</p:column>
+				<p:panelGrid columns="1">
+					<p:column>
+						<p:graphicImage value="#{user.cachedPicturePath}" cache="false" width="70"/>
+						<p:commandButton value="#{user.username}"
+							action="#{navigationController.showPage}" ajax="false">
+							<f:param name="pageId" value="user-profile" />
+							<f:setPropertyActionListener target="#{contextBean.viewUser}"
+								value="#{user}" />
+						</p:commandButton>
+					</p:column>
+				</p:panelGrid>
 			</p:dataGrid>
 		</p:panelGrid>
 	</h:form>

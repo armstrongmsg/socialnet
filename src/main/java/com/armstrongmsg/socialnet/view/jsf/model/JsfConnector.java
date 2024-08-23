@@ -1,15 +1,19 @@
 package com.armstrongmsg.socialnet.view.jsf.model;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-import org.primefaces.model.DefaultStreamedContent;
+import org.primefaces.model.StreamedContent;
 
 public class JsfConnector {
+	private PrimefacesConnector primefacesConnector;
+	
+	public JsfConnector() {
+		this.primefacesConnector = new PrimefacesConnector();
+	}
+	
 	public User getViewUser(com.armstrongmsg.socialnet.model.User modelUser) {
 		return new User(modelUser.getUserId(), modelUser.getUsername(), 
 				modelUser.getProfile().getDescription());
@@ -38,40 +42,17 @@ public class JsfConnector {
 	}
 	
 	public Post getViewPost(com.armstrongmsg.socialnet.model.Post modelPost) {
-		DefaultStreamedContent content = null;
+		StreamedContent content = this.primefacesConnector.getOrDefaultStreamContent(modelPost.getPicture());
 		String picturePath = null;
 		
 		if (modelPost.getPicture() != null) {
-			byte[] picData = modelPost.getPicture().getData();
-			// primefaces dependency!
-			InputStream profilePicStream = new ByteArrayInputStream(picData);
-			content = DefaultStreamedContent.
-					builder().
-					contentType("image/jpeg").
-					stream(() -> profilePicStream).
-					build();
-			picturePath = convertPicturePathToWebFormat(modelPost.getPicture().getPath());
-		} else {
-			InputStream profilePicStream = new ByteArrayInputStream(new byte[] {});
-			content = DefaultStreamedContent.
-					builder().
-					contentType("image/jpeg").
-					stream(() -> profilePicStream).
-					build();
+			picturePath = this.primefacesConnector.convertPicturePathToWebFormat(modelPost.getPicture().getPath());
 		}
+		
 		return new Post(modelPost.getId(), modelPost.getTitle(), toViewDate(modelPost.getTimestamp()), 
 				modelPost.getContent(), modelPost.getVisibility().getValue(), content, picturePath);
 	}
-	
-	private String convertPicturePathToWebFormat(String path) {
-		// FIXME constant
-		if (path != null && !path.isEmpty()) {
-			return path.split("socialnet")[1];
-		}
-		
-		return null;
-	}
-	
+
 	public List<Post> getViewPosts(List<com.armstrongmsg.socialnet.model.Post> modelPosts) {
 		List<Post> newViewPosts = new ArrayList<Post>();
 		
@@ -86,13 +67,18 @@ public class JsfConnector {
 		List<UserSummary> viewUserSummaries = new ArrayList<UserSummary>();
 		
 		for (com.armstrongmsg.socialnet.model.UserSummary modelUserSummary : modelUserSummaries) {
-			viewUserSummaries.add(new UserSummary(modelUserSummary.getUsername(), modelUserSummary.getProfileDescription()));
+			viewUserSummaries.add(getViewUserSummary(modelUserSummary));
 		}
 		
 		return viewUserSummaries;
 	}
 
 	public UserSummary getViewUserSummary(com.armstrongmsg.socialnet.model.UserSummary modelUserSummary) {
-		return new UserSummary(modelUserSummary.getUsername(), modelUserSummary.getProfileDescription());
+		StreamedContent profilePicStreamedContent = this.primefacesConnector.
+					getOrDefaultStreamContent(modelUserSummary.getProfilePicture());
+		String profilePicturePath = this.primefacesConnector.
+					convertPicturePathToWebFormat(modelUserSummary.getProfilePicture().getPath());
+		return new UserSummary(modelUserSummary.getUsername(), modelUserSummary.getProfileDescription(), 
+				profilePicStreamedContent, profilePicturePath);
 	}
 }

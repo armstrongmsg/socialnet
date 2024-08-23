@@ -6,10 +6,12 @@ import java.util.Objects;
 public class UserSummary {
 	private String username;
 	private String profileDescription;
+	private Picture profilePicture;
 
-	public UserSummary(String username, String profileDescription) {
+	public UserSummary(String username, String profileDescription, Picture profilePicture) {
 		this.username = username;
 		this.profileDescription = profileDescription;
+		this.profilePicture = profilePicture;
 	}
 
 	public String getUsername() {
@@ -26,6 +28,14 @@ public class UserSummary {
 	
 	public void setProfileDescription(String profileDescription) {
 		this.profileDescription = profileDescription;
+	}
+
+	public Picture getProfilePicture() {
+		return profilePicture;
+	}
+
+	public void setProfilePicture(Picture profilePicture) {
+		this.profilePicture = profilePicture;
 	}
 	
 	@Override
