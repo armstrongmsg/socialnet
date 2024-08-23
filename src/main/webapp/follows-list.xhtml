@@ -47,6 +47,7 @@
 			<div>Who you're following</div>
 			<p:dataGrid var="follow" value="#{followBean.selfFollows}">
 				<p:column>
+					<p:graphicImage value="#{follow.cachedPicturePath}" cache="false" width="70"/>
 					<p:commandButton value="#{follow.username}"
 						action="#{navigationController.showPage}" ajax="false">
 						<f:param name="pageId" value="user-profile" />
@@ -64,6 +65,7 @@
 			<div>Recommended users</div>
 			<p:dataGrid var="user" value="#{followBean.followRecommendations}">
 				<p:column>
+					<p:graphicImage value="#{user.cachedPicturePath}" cache="false" width="70"/>
 					<p:commandButton value="#{user.username}"
 						action="#{navigationController.showPage}" ajax="false">
 						<f:param name="pageId" value="user-profile" />
