@@ -13,7 +13,7 @@
 </h:head>
 
 <h:body>
-	<h:form>
+	<h:form enctype="multipart/form-data">
 		<p:toolbar>
 			<f:facet name="left">
 				<p:commandButton action="#{navigationController.showPage}"
@@ -34,45 +34,26 @@
 					value="Follows">
 					<f:param name="pageId" value="follows-list" />
 				</p:commandButton>
+				<p:commandButton id="createPostButton" value="Create post" type="button" />
+				<p:overlayPanel for="createPostButton" dynamic="true">
+					<p:panelGrid columns="2" layout="flex">
+						<p:inputTextarea rows="2" cols="100" value="#{postBean.title}" size="100" placeholder="Title" />
+						<p:inputTextarea rows="10" cols="100" size="100" autoResize="true"
+							value="#{postBean.content}" placeholder="Your message" />
+						<p:fileUpload value="#{postBean.postPic}" mode="simple" skinSimple="true" />
+						<p:selectBooleanCheckbox value="#{postBean.privatePost}" itemLabel="Private?" />
+						<f:facet name="footer">
+							<p:commandButton value="Publish" action="#{postBean.createPost}" ajax="false" />
+						</f:facet>
+					</p:panelGrid>
+				</p:overlayPanel>
 			</f:facet>
 			<f:facet name="right">
 				<p:commandButton value="Logout" action="#{contextBean.logout}" />
 			</f:facet>
 		</p:toolbar>
 	</h:form>
-
-	<h:form enctype="multipart/form-data">
-		<p:panelGrid>
-			<f:facet name="header">
-                         Create a post
-			</f:facet>
-			<p:row>
-				<p:column>
-					<p:inputTextarea rows="2" cols="80" value="#{postBean.title}"
-						size="100" placeholder="Title" />
-				</p:column>
-			</p:row>
-			<p:row>
-				<p:column>
-					<p:inputTextarea rows="10" cols="80" size="100" autoResize="true"
-						value="#{postBean.content}" placeholder="Your message" />
-				</p:column>
-			</p:row>
-			<p:row>
-				<p:fileUpload value="#{postBean.postPic}" mode="simple" />
-			</p:row>
-			<p:row>
-				<p:selectOneMenu value="#{postBean.postVisibility}">
-					<f:selectItem itemLabel="Select One" itemValue="" />
-					<f:selectItems value="#{postBean.visibilities}" var="visibility"
-						itemLabel="#{visibility.value}" itemValue="#{visibility}" />
-				</p:selectOneMenu>
-				<p:commandButton value="Publish" action="#{postBean.createPost}"
-					ajax="false" />
-			</p:row>
-		</p:panelGrid>
-	</h:form>
-
+	
 	<h:form>
         <p:dataScroller value="#{postBean.feedPosts}" var="post" chunkSize="10" mode="inline"
                         scrollHeight="500">

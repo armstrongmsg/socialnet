@@ -26,6 +26,7 @@ public class PostBean {
 	private String title;
 	private String content;
 	private String postVisibility;
+	private boolean privatePost;
 	
 	private List<PostVisibility> visibilities = Arrays.asList(PostVisibility.values());
 	private Post post;
@@ -74,6 +75,14 @@ public class PostBean {
 		this.postVisibility = postVisibility;
 	}
 
+	public boolean isPrivatePost() {
+		return privatePost;
+	}
+
+	public void setPrivatePost(boolean privatePost) {
+		this.privatePost = privatePost;
+	}
+
 	public String getUsername() {
 		return username;
 	}
@@ -99,7 +108,13 @@ public class PostBean {
 				picData = this.postPic.getContent();
 			}
 			
-			facade.createPost(token, title, content, PostVisibility.valueOf(postVisibility), picData);
+			PostVisibility visibility = PostVisibility.PUBLIC;
+			
+			if (privatePost) {
+				visibility = PostVisibility.PRIVATE;
+			}
+			
+			facade.createPost(token, title, content, visibility, picData);
 		} catch (AuthenticationException e) {
 			// FIXME treat exception
 		}
