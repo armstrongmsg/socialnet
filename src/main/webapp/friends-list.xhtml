@@ -27,6 +27,12 @@
 						value="" />
 				</p:commandButton>
 				<p:commandButton action="#{navigationController.showPage}"
+					value="Edit Profile">
+					<f:param name="pageId" value="edit-user-profile" />
+					<f:setPropertyActionListener target="#{contextBean.viewUser}"
+						value="" />
+				</p:commandButton>
+				<p:commandButton action="#{navigationController.showPage}"
 					value="Friends">
 					<f:param name="pageId" value="friends-list" />
 				</p:commandButton>

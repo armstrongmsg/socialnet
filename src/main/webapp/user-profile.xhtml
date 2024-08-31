@@ -27,6 +27,12 @@
 						value="" />
 				</p:commandButton>
 				<p:commandButton action="#{navigationController.showPage}"
+					value="Edit Profile">
+					<f:param name="pageId" value="edit-user-profile" />
+					<f:setPropertyActionListener target="#{contextBean.viewUser}"
+						value="" />
+				</p:commandButton>
+				<p:commandButton action="#{navigationController.showPage}"
 					value="Friends">
 					<f:param name="pageId" value="friends-list" />
 				</p:commandButton>
@@ -60,6 +66,8 @@
 				<p:panelGrid columns="1">
 					<h:outputText value="#{contextBean.viewUser.username}" />
 					<p:graphicImage value="#{contextBean.userPic}" cache="false"/>
+					<h:outputText value="About" />
+					<h:outputText value="#{contextBean.viewUser.profileDescription}" />
 				</p:panelGrid>
 			</f:facet>
 
@@ -94,19 +102,6 @@
 				</p:commandButton>
 			</f:facet>
 		</p:toolbar>
-	</h:form>
-	
-	<h:form enctype="multipart/form-data"
-		rendered="#{contextBean.isSelfProfile}">
-		<p:fileUpload value="#{contextBean.profilePic}" mode="simple"/>
-		<p:commandButton value="Submit pic" action="#{contextBean.saveProfilePic}" ajax="false" />
-	</h:form>
-
-	<h:form>
-		<p:panelGrid columns="1">
-			<h:outputText value="About" />
-			<h:outputText value="#{contextBean.viewUser.profileDescription}" />
-		</p:panelGrid>
 	</h:form>
 
 	<h:form>

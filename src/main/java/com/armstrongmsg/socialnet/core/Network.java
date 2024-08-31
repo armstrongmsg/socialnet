@@ -547,13 +547,15 @@ public class Network {
 	public void changeSelfProfilePic(UserToken userToken, byte[] picData) throws AuthenticationException, UnauthorizedOperationException, UserNotFoundException {
 		User requester = this.authenticationPlugin.getUser(userToken);
 		this.authorizationPlugin.authorize(requester, new Operation(OperationType.CHANGE_SELF_PROFILE_PIC));
-		
+		doChangeSelfProfilePic(requester, picData);
+		this.storageFacade.updateUser(requester);
+	}
+
+	private void doChangeSelfProfilePic(User requester, byte[] picData) {
 		String profilePicId = UUID.randomUUID().toString();
 		Picture newProfilePic = new Picture(profilePicId, picData);
 		requester.getProfile().setProfilePic(newProfilePic);
 		requester.getProfile().setProfilePicId(profilePicId);
-		
-		this.storageFacade.updateUser(requester);
 	}
 
 	public byte[] getUserProfilePic(UserToken loggedUserToken, String username) throws AuthenticationException, UnauthorizedOperationException, UserNotFoundException {
@@ -562,5 +564,13 @@ public class Network {
 		
 		User user = findUserByUsername(username);
 		return user.getProfile().getProfilePic().getData();
+	}
+
+	public void updateProfile(UserToken userToken, String profileDescription, byte[] picData) throws AuthenticationException, UnauthorizedOperationException, UserNotFoundException {
+		User requester = this.authenticationPlugin.getUser(userToken);
+		this.authorizationPlugin.authorize(requester, new Operation(OperationType.UPDATE_USER_PROFILE));
+		requester.getProfile().setDescription(profileDescription);
+		doChangeSelfProfilePic(requester, picData);
+		this.storageFacade.updateUser(requester);
 	}
 }

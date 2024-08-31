@@ -44,6 +44,7 @@ public class NavigationController {
 		switch(pageId) {
 			case "home": return "home";
 			case "user-profile": return "user-profile";
+			case "edit-user-profile": return "edit-user-profile";
 			case "sign-up": return "sign-up";
 			case "user-home": return "user-home";
 			case "admin-home": return "admin-home";

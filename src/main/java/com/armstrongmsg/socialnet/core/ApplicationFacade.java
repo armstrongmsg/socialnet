@@ -490,4 +490,21 @@ public class ApplicationFacade {
 			throw e;
 		}
 	}
+
+	public void updateProfile(UserToken userToken, String profileDescription, byte[] picData) throws AuthenticationException, UnauthorizedOperationException, UserNotFoundException {
+		logger.debug(Messages.Logging.RECEIVED_UPDATE_USER_PROFILE, userToken);
+		
+		try {
+			this.network.updateProfile(userToken, profileDescription, picData);
+		} catch (AuthenticationException e) {
+			logger.debug(Messages.Logging.AUTHENTICATION_EXCEPTION, e.getMessage());
+			throw e;
+		} catch (UnauthorizedOperationException e) {
+			logger.debug(Messages.Logging.AUTHORIZATION_EXCEPTION, e.getMessage());
+			throw e;
+		} catch (UserNotFoundException e) {
+			logger.debug(Messages.Logging.USER_NOT_FOUND_EXCEPTION, e.getMessage());
+			throw e;
+		}
+	}
 }
