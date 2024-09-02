@@ -65,7 +65,7 @@
 			<f:facet name="left">
 				<p:panelGrid columns="1">
 					<h:outputText value="#{contextBean.viewUser.username}" />
-					<p:graphicImage value="#{contextBean.userPic}" cache="false"/>
+					<p:graphicImage value="#{profileBean.userPic}" cache="false"/>
 					<h:outputText value="About" />
 					<h:outputText value="#{contextBean.viewUser.profileDescription}" />
 				</p:panelGrid>
@@ -74,29 +74,29 @@
 			<f:facet name="right">
 				<p:commandButton value="Add as friend"
 					action="#{friendshipBean.addFriendshipRequest}"
-					rendered="#{contextBean.canAddAsFriend}" ajax="false">
+					rendered="#{profileBean.canAddAsFriend}" ajax="false">
 					<f:setPropertyActionListener target="#{friendshipBean.username}"
 						value="#{contextBean.viewUser.username}" />
 				</p:commandButton>
 
 				<h:outputText value="Friend request sent"
-					rendered="#{contextBean.friendRequestIsSent}" />
+					rendered="#{profileBean.friendRequestIsSent}" />
 
 				<p:commandButton value="Unfriend"
 					action="#{friendshipBean.unfriend}"
-					rendered="#{contextBean.isFriend}" ajax="false">
+					rendered="#{profileBean.isFriend}" ajax="false">
 					<f:setPropertyActionListener target="#{friendshipBean.username}"
 						value="#{contextBean.viewUser.username}" />
 				</p:commandButton>
 
 				<p:commandButton value="Follow" action="#{followBean.addFollow}"
-					rendered="#{contextBean.canFollow}" ajax="false">
+					rendered="#{profileBean.canFollow}" ajax="false">
 					<f:setPropertyActionListener target="#{followBean.username}"
 						value="#{contextBean.viewUser.username}" />
 				</p:commandButton>
 
 				<p:commandButton value="Unfollow" action="#{followBean.unfollow}"
-					rendered="#{contextBean.isFollowed}" ajax="false">
+					rendered="#{profileBean.isFollowed}" ajax="false">
 					<f:setPropertyActionListener target="#{followBean.username}"
 						value="#{contextBean.viewUser.username}" />
 				</p:commandButton>
@@ -119,7 +119,7 @@
                 </div>
                 <div>
 					<p:commandButton value="Delete" action="#{postBean.deletePost}"
-						rendered="#{contextBean.isSelfProfile}" ajax="false">
+						rendered="#{profileBean.isSelfProfile}" ajax="false">
 						<f:setPropertyActionListener target="#{postBean.post}"
 							value="#{post}" />
 					</p:commandButton>

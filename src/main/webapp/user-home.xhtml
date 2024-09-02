@@ -75,7 +75,7 @@
                 </div>
                 <div>
 					<p:commandButton value="Delete" action="#{postBean.deletePost}"
-						rendered="#{contextBean.isSelfProfile}" ajax="false">
+						rendered="#{profileBean.isSelfProfile}" ajax="false">
 						<f:setPropertyActionListener target="#{postBean.post}"
 							value="#{post}" />
 					</p:commandButton>
