@@ -473,6 +473,24 @@ public class Network {
 		return userSummaries;
 	}
 
+	public List<UserSummary> getFollowRecommendations(UserToken token) throws AuthenticationException, UnauthorizedOperationException {
+		User requester = this.authenticationPlugin.getUser(token);
+		this.authorizationPlugin.authorize(requester, new Operation(OperationType.GET_FOLLOW_RECOMMENDATIONS));
+		
+		List<UserSummary> follows = this.doGetFollowedUsers(requester);
+		List<UserSummary> userSummaries = new ArrayList<UserSummary>();
+		
+		for (User user : this.storageFacade.getAllUsers()) {
+			UserSummary userSummary = new UserSummary(user.getUsername(), user.getProfile().getDescription(), user.getProfile().getProfilePic()); 
+			
+			if (!user.equals(requester) && !follows.contains(userSummary)) {
+				userSummaries.add(userSummary);
+			}
+		}
+		
+		return userSummaries;
+	}
+
 	public boolean isFriend(UserToken userToken, String username) throws AuthenticationException, UnauthorizedOperationException {
 		User requester = this.authenticationPlugin.getUser(userToken);
 		this.authorizationPlugin.authorize(requester, new Operation(OperationType.IS_FRIEND));

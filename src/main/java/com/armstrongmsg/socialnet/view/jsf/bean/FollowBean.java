@@ -88,7 +88,7 @@ public class FollowBean {
 		try {
 			if (followRecommendations == null) {
 				UserToken token = SessionManager.getCurrentSession().getUserToken();
-				followRecommendations = new JsfConnector().getViewUserSummaries(facade.getUserRecommendations(token));
+				followRecommendations = new JsfConnector().getViewUserSummaries(facade.getFollowRecommendations(token));
 			}
 			
 			return followRecommendations;

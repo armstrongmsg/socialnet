@@ -36,6 +36,7 @@ public class Messages {
 		public static final String RECEIVED_FOLLOWS_REQUEST = "Received Follows request. Token:{}, User ID:{}.";
 		public static final String RECEIVED_GET_FEED_POSTS_REQUEST = "Received get feed posts request. Token: {}.";
 		public static final String RECEIVED_GET_FOLLOWED_USERS_REQUEST = "Received Get followed users request. Token:{}.";
+		public static final String RECEIVED_GET_FOLLOW_RECOMMENDATIONS_REQUEST = "Received get follow recommendations request. Token:{}.";
 		public static final String RECEIVED_GET_FOLLOWED_USERS_ADMIN_REQUEST = "Received Get followed users admin request. Token:{} , userId:{}.";
 		public static final String RECEIVED_GET_FRIENDS_ADMIN_REQUEST = "Received Get friends admin request. Token:{}, userId:{}.";
 		public static final String RECEIVED_GET_FRIENDS_POSTS_REQUEST = "Received Get friends posts request. Token:{}.";
