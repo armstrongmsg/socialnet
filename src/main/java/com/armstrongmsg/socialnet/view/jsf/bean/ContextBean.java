@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.RequestScoped;
+import javax.faces.bean.SessionScoped;
 
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
@@ -27,12 +27,11 @@ import com.armstrongmsg.socialnet.model.FriendshipRequest;
 import com.armstrongmsg.socialnet.util.ImageUtils;
 import com.armstrongmsg.socialnet.view.jsf.NavigationController;
 import com.armstrongmsg.socialnet.view.jsf.Session;
-import com.armstrongmsg.socialnet.view.jsf.SessionManager;
 import com.armstrongmsg.socialnet.view.jsf.model.JsfConnector;
 import com.armstrongmsg.socialnet.view.jsf.model.UserSummary;
 
 @ManagedBean(name = "contextBean", eager = true)
-@RequestScoped
+@SessionScoped
 public class ContextBean {
 	private static final String IMAGE_TYPE = "image/jpeg";
 	private static final int PIC_MAX_WIDTH = 300;
@@ -45,6 +44,8 @@ public class ContextBean {
 	private UploadedFile profilePic;
 	
 	private ApplicationFacade facade = ApplicationFacade.getInstance();
+	private UserToken token;
+	private Session session;
 	
 	public String getUsername() {
 		return username;
@@ -77,15 +78,31 @@ public class ContextBean {
 	public void setProfilePic(UploadedFile profilePic) {
 		this.profilePic = profilePic;
 	}
+
+	public UserToken getToken() {
+		return token;
+	}
+
+	public void setToken(UserToken token) {
+		this.token = token;
+	}
+
+	public Session getCurrentSession() {
+		return session;
+	}
+
+	public void setSession(Session session) {
+		this.session = session;
+	}
 	
 	public UserSummary getViewUser() {
-		UserSummary currentViewUser = SessionManager.getCurrentSession().getCurrentViewUser();
+		UserSummary currentViewUser = this.session.getCurrentViewUser();
 		
 		if (currentViewUser == null) {
 			try {
-				UserToken currentUserToken = SessionManager.getCurrentSession().getUserToken();
+				UserToken currentUserToken = this.session.getUserToken();
 				currentViewUser = new JsfConnector().getViewUserSummary(facade.getSelf(currentUserToken));
-				SessionManager.getCurrentSession().setCurrentViewUser(currentViewUser);
+				this.session.setCurrentViewUser(currentViewUser);
 			} catch (AuthenticationException e) {
 				// FIXME treat this exception
 				e.printStackTrace();
@@ -99,17 +116,15 @@ public class ContextBean {
 	}
 
 	public void setViewUser(UserSummary viewUser) {
-		SessionManager.getCurrentSession().setCurrentViewUser(viewUser);
+		this.session.setCurrentViewUser(viewUser);
 	}
 	
 	public UserToken getUser() {
-		Session session = SessionManager.getCurrentSession();
-		
-		if (session == null) {
+		if (this.session == null) {
 			return new UserToken("no context", "no context", "no context");
 		}
 		
-		return SessionManager.getCurrentSession().getUserToken();
+		return this.session.getUserToken();
 	}
 
 	public String login() {
@@ -120,7 +135,10 @@ public class ContextBean {
 			
 			UserToken token = facade.login(credentials);
 			boolean userIsAdmin = facade.userIsAdmin(username);
-			SessionManager.startSession(token, userIsAdmin);
+
+			this.session = new Session(token);
+			this.session.setAdmin(userIsAdmin);
+			this.session.setLogged(true);
 			
 			if (userIsAdmin) {
 				return new NavigationController().showAdminHome();
@@ -137,44 +155,36 @@ public class ContextBean {
 	}
 	
 	public String logout() {
-		SessionManager.setCurrentSession(null);
+		this.session = null;
 		this.loggedUserSummary = null;
 		return new NavigationController().showHome();
 	}
 
 	public boolean isLogged() {
-		Session session = SessionManager.getCurrentSession();
-		
-		if (session == null) {
+		if (this.session == null) {
 			return false;
 		}
 		
-		return SessionManager.getCurrentSession().isLogged();
+		return this.session.isLogged();
 	}
 
 	public void setLogged(boolean logged) {
-		Session session = SessionManager.getCurrentSession();
-		
-		if (session != null) {
-			SessionManager.getCurrentSession().setLogged(logged);
+		if (this.session != null) {
+			this.session.setLogged(logged);
 		}
 	}
 
 	public boolean isAdmin() {
-		Session session = SessionManager.getCurrentSession();
-		
-		if (session == null) {
+		if (this.session == null) {
 			return false;
 		}
 		
-		return SessionManager.getCurrentSession().isAdmin();
+		return this.session.isAdmin();
 	}
 
 	public void setAdmin(boolean isAdmin) {
-		Session session = SessionManager.getCurrentSession();
-		
-		if (session != null) {
-			SessionManager.getCurrentSession().setAdmin(isAdmin);			
+		if (this.session != null) {
+			this.session.setAdmin(isAdmin);			
 		}
 	}
 	
@@ -184,8 +194,8 @@ public class ContextBean {
 	
 	private boolean viewUserIsFriend() {
 		try {
-			UserToken token = SessionManager.getCurrentSession().getUserToken();
-			return facade.isFriend(token, SessionManager.getCurrentSession().getCurrentViewUser()
+			UserToken token = this.session.getUserToken();
+			return facade.isFriend(token, this.session.getCurrentViewUser()
 					.getUsername());
 		} catch (AuthenticationException | UnauthorizedOperationException e) {
 			// FIXME treat this exception
@@ -199,8 +209,8 @@ public class ContextBean {
 
 	private boolean viewUserIsFollowed() {
 		try {
-			UserToken token = SessionManager.getCurrentSession().getUserToken();
-			return facade.follows(token, SessionManager.getCurrentSession().getCurrentViewUser()
+			UserToken token = this.session.getUserToken();
+			return facade.follows(token, this.session.getCurrentViewUser()
 					.getUsername());
 		} catch (AuthenticationException | UnauthorizedOperationException e) {
 			// FIXME treat this exception
@@ -211,10 +221,10 @@ public class ContextBean {
 	public boolean getIsSelfProfile() {
 		try {
 			if (loggedUserSummary == null) {
-				UserToken loggedUser = SessionManager.getCurrentSession().getUserToken();
+				UserToken loggedUser = this.session.getUserToken();
 				loggedUserSummary = new JsfConnector().getViewUserSummary(facade.getSelf(loggedUser));
 			}
-			return loggedUserSummary.equals(SessionManager.getCurrentSession().getCurrentViewUser());
+			return loggedUserSummary.equals(this.session.getCurrentViewUser());
 		} catch (AuthenticationException e) {
 			// FIXME treat this exception
 			return false;
@@ -226,8 +236,8 @@ public class ContextBean {
 
 	public boolean getFriendRequestIsSent() {
 		try {
-			List<FriendshipRequest> requests = facade.getSentFriendshipRequests(SessionManager.getCurrentSession().getUserToken());
-			String viewedUsername = SessionManager.getCurrentSession().getCurrentViewUser().getUsername(); 
+			List<FriendshipRequest> requests = facade.getSentFriendshipRequests(this.session.getUserToken());
+			String viewedUsername = this.session.getCurrentViewUser().getUsername(); 
 			
 			for (FriendshipRequest request : requests) {
 				if (request.getRequested().getUsername().equals(viewedUsername)) {
@@ -245,10 +255,10 @@ public class ContextBean {
 	
 	public boolean getIsFollowed() {
 		try {
-			UserToken loggedUserToken = SessionManager.getCurrentSession().getUserToken();
+			UserToken loggedUserToken = this.session.getUserToken();
 			List<UserSummary> followedUsers = new JsfConnector().getViewUserSummaries(
 					facade.getFollowedUsers(loggedUserToken));
-			return followedUsers.contains(SessionManager.getCurrentSession().getCurrentViewUser());
+			return followedUsers.contains(this.session.getCurrentViewUser());
 		} catch (AuthenticationException e) {
 			// FIXME treat this exception
 		} catch (UnauthorizedOperationException e) {
@@ -260,10 +270,10 @@ public class ContextBean {
 	
 	public boolean getIsFriend() {
 		try {
-			UserToken loggedUserToken = SessionManager.getCurrentSession().getUserToken();
+			UserToken loggedUserToken = this.session.getUserToken();
 			List<UserSummary> friends = new JsfConnector().getViewUserSummaries(
 					facade.getSelfFriends(loggedUserToken));
-			return friends.contains(SessionManager.getCurrentSession().getCurrentViewUser());
+			return friends.contains(this.session.getCurrentViewUser());
 		} catch (AuthenticationException e) {
 			// FIXME treat this exception
 		} catch (UnauthorizedOperationException e) {
@@ -276,9 +286,9 @@ public class ContextBean {
 	public void saveProfilePic() throws UserNotFoundException { 
 		try {
 			byte[] picData = this.profilePic.getContent();
-			UserToken loggedUserToken = SessionManager.getCurrentSession().getUserToken();
+			UserToken loggedUserToken = this.session.getUserToken();
 			this.facade.changeSelfProfilePic(loggedUserToken, picData);
-			SessionManager.getCurrentSession().setCurrentViewUser(null);
+			this.session.setCurrentViewUser(null);
 		} catch (AuthenticationException e) {
 			// FIXME treat this exception
 		} catch (UnauthorizedOperationException e) {
@@ -288,7 +298,7 @@ public class ContextBean {
 	
 	public StreamedContent getUserPic() throws IOException {
 		UserSummary viewUser = getViewUser();
-		UserToken loggedUserToken = SessionManager.getCurrentSession().getUserToken();
+		UserToken loggedUserToken = this.session.getUserToken();
 		try {
 			byte[] picData = this.facade.getUserPic(loggedUserToken, viewUser.getUsername());
 			

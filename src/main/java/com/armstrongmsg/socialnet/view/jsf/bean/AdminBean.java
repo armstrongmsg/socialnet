@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
 
 import com.armstrongmsg.socialnet.core.ApplicationFacade;
@@ -11,7 +12,6 @@ import com.armstrongmsg.socialnet.core.authentication.UserToken;
 import com.armstrongmsg.socialnet.exceptions.AuthenticationException;
 import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
 import com.armstrongmsg.socialnet.exceptions.UserNotFoundException;
-import com.armstrongmsg.socialnet.view.jsf.SessionManager;
 import com.armstrongmsg.socialnet.view.jsf.model.JsfConnector;
 import com.armstrongmsg.socialnet.view.jsf.model.User;
 import com.armstrongmsg.socialnet.view.jsf.model.UserSummary;
@@ -30,6 +30,9 @@ public class AdminBean {
 	private UserSummary userSummary;
 
 	private static ApplicationFacade facade = ApplicationFacade.getInstance();
+
+	@ManagedProperty(value="#{contextBean}")
+	private ContextBean contextBean;
 
 	public String getUserId() {
 		return userId;
@@ -79,9 +82,17 @@ public class AdminBean {
 		this.userSummary = userSummary;
 	}
 
+	public ContextBean getContextBean() {
+		return contextBean;
+	}
+
+	public void setContextBean(ContextBean contextBean) {
+		this.contextBean = contextBean;
+	}
+	
 	public List<User> getUsers() {
 		if (users == null) {
-			UserToken token = SessionManager.getCurrentSession().getUserToken();
+			UserToken token = contextBean.getCurrentSession().getUserToken();
 			try {
 				users = new JsfConnector().getViewUsers(facade.getUsers(token));
 			} catch (UnauthorizedOperationException e) {
@@ -97,7 +108,7 @@ public class AdminBean {
 	
 	public List<UserSummary> getUserSummaries() {
 		try {
-			UserToken token = SessionManager.getCurrentSession().getUserToken();
+			UserToken token = contextBean.getCurrentSession().getUserToken();
 			return new JsfConnector().getViewUserSummaries(facade.getUserSummaries(token));
 		} catch (UnauthorizedOperationException | AuthenticationException e) {
 			// FIXME treat exception
@@ -106,7 +117,7 @@ public class AdminBean {
 	}
 
 	public String addUser() {
-		UserToken token = SessionManager.getCurrentSession().getUserToken();
+		UserToken token = contextBean.getCurrentSession().getUserToken();
 		try {
 			facade.addUser(token, userId, username, getProfileDescription());
 			users = new JsfConnector().getViewUsers(facade.getUsers(token));
@@ -125,7 +136,7 @@ public class AdminBean {
 	}
 
 	public String removeUser() {
-		UserToken token = SessionManager.getCurrentSession().getUserToken();
+		UserToken token = contextBean.getCurrentSession().getUserToken();
 		try {
 			facade.removeUser(token, getUser().getUserId());
 			users = new JsfConnector().getViewUsers(facade.getUsers(token));
@@ -153,7 +164,7 @@ public class AdminBean {
 		try {
 			return new JsfConnector().getViewUsers(
 					facade.getFriends(
-							SessionManager.getCurrentSession().getUserToken(), user.getUserId()));
+							contextBean.getCurrentSession().getUserToken(), user.getUserId()));
 		} catch (UnauthorizedOperationException | AuthenticationException | UserNotFoundException e) {
 			// FIXME treat exception
 		}
@@ -163,7 +174,7 @@ public class AdminBean {
 	public List<User> getFollows() {
 		try {
 			return new JsfConnector().getViewUsers(
-					facade.getFollowedUsers(SessionManager.getCurrentSession().getUserToken(), 
+					facade.getFollowedUsers(contextBean.getCurrentSession().getUserToken(), 
 							user.getUserId()));
 		} catch (UnauthorizedOperationException | AuthenticationException | UserNotFoundException e) {
 			// FIXME treat exception

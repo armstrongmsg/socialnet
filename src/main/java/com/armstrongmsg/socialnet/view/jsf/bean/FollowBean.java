@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.RequestScoped;
 
 import com.armstrongmsg.socialnet.core.ApplicationFacade;
@@ -11,7 +12,6 @@ import com.armstrongmsg.socialnet.core.authentication.UserToken;
 import com.armstrongmsg.socialnet.exceptions.AuthenticationException;
 import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
 import com.armstrongmsg.socialnet.exceptions.UserNotFoundException;
-import com.armstrongmsg.socialnet.view.jsf.SessionManager;
 import com.armstrongmsg.socialnet.view.jsf.model.JsfConnector;
 import com.armstrongmsg.socialnet.view.jsf.model.User;
 import com.armstrongmsg.socialnet.view.jsf.model.UserSummary;
@@ -28,6 +28,9 @@ public class FollowBean {
 	private List<UserSummary> followRecommendations;
 	
 	private static ApplicationFacade facade = ApplicationFacade.getInstance();
+	
+	@ManagedProperty(value="#{contextBean}")
+	private ContextBean contextBean;
 	
 	public User getFollower() {
 		return follower;
@@ -53,10 +56,18 @@ public class FollowBean {
 		this.username = username;
 	}
 	
+	public ContextBean getContextBean() {
+		return contextBean;
+	}
+
+	public void setContextBean(ContextBean contextBean) {
+		this.contextBean = contextBean;
+	}
+	
 	public void addFollowAdmin() {
 		try {
-			facade.addFollowAdmin(SessionManager.getCurrentSession().getUserToken(), 
-					SessionManager.getCurrentSession().getUserToken().getUserId(), followed.getUserId());
+			facade.addFollowAdmin(getContextBean().getCurrentSession().getUserToken(), 
+					getContextBean().getCurrentSession().getUserToken().getUserId(), followed.getUserId());
 		} catch (UnauthorizedOperationException | AuthenticationException | UserNotFoundException e) {
 			// FIXME treat exception
 		}
@@ -64,7 +75,7 @@ public class FollowBean {
 	
 	public void addFollow() {
 		try {
-			facade.addFollow(SessionManager.getCurrentSession().getUserToken(), getUsername());
+			facade.addFollow(getContextBean().getCurrentSession().getUserToken(), getUsername());
 		} catch (AuthenticationException | UnauthorizedOperationException | UserNotFoundException e) {
 			//FIXME treat exception
 		}
@@ -74,7 +85,7 @@ public class FollowBean {
 		try {
 			if (follows == null) {
 				follows = new JsfConnector().getViewUserSummaries(
-						facade.getFollowedUsers(SessionManager.getCurrentSession().getUserToken()));
+						facade.getFollowedUsers(getContextBean().getCurrentSession().getUserToken()));
 			}
 			
 			return follows;
@@ -87,7 +98,7 @@ public class FollowBean {
 	public List<UserSummary> getFollowRecommendations() {
 		try {
 			if (followRecommendations == null) {
-				UserToken token = SessionManager.getCurrentSession().getUserToken();
+				UserToken token = getContextBean().getCurrentSession().getUserToken();
 				followRecommendations = new JsfConnector().getViewUserSummaries(facade.getFollowRecommendations(token));
 			}
 			
@@ -100,7 +111,7 @@ public class FollowBean {
 	
 	public void unfollow() {
 		try {
-			UserToken token = SessionManager.getCurrentSession().getUserToken();
+			UserToken token = getContextBean().getCurrentSession().getUserToken();
 			facade.unfollow(token, username);
 		} catch (AuthenticationException e) {
 			// FIXME treat exception

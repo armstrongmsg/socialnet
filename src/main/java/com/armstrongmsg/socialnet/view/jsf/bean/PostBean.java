@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.RequestScoped;
 
 import org.primefaces.model.file.UploadedFile;
@@ -14,7 +15,6 @@ import com.armstrongmsg.socialnet.exceptions.AuthenticationException;
 import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
 import com.armstrongmsg.socialnet.exceptions.UserNotFoundException;
 import com.armstrongmsg.socialnet.model.PostVisibility;
-import com.armstrongmsg.socialnet.view.jsf.SessionManager;
 import com.armstrongmsg.socialnet.view.jsf.model.JsfConnector;
 import com.armstrongmsg.socialnet.view.jsf.model.Post;
 import com.armstrongmsg.socialnet.view.jsf.model.User;
@@ -42,6 +42,9 @@ public class PostBean {
 	private UploadedFile postPic;
 	
 	private static ApplicationFacade facade = ApplicationFacade.getInstance();
+	
+	@ManagedProperty(value="#{contextBean}")
+	private ContextBean contextBean;
 	
 	public User getUser() {
 		return user;
@@ -99,8 +102,16 @@ public class PostBean {
 		this.postPic = postPic;
 	}
 	
+	public ContextBean getContextBean() {
+		return contextBean;
+	}
+
+	public void setContextBean(ContextBean contextBean) {
+		this.contextBean = contextBean;
+	}
+	
 	public String createPost() throws UserNotFoundException {
-		UserToken token = SessionManager.getCurrentSession().getUserToken();
+		UserToken token = contextBean.getCurrentSession().getUserToken();
 		try {
 			byte[] picData = null;
 			
@@ -134,7 +145,7 @@ public class PostBean {
 		if (userPostsAdmin == null) {
 			try {
 				userPostsAdmin = new JsfConnector().getViewPosts(facade.getUserPostsAdmin(
-						SessionManager.getCurrentSession().getUserToken(), 
+						contextBean.getCurrentSession().getUserToken(), 
 						getUser().getUserId()));
 			} catch (UnauthorizedOperationException | AuthenticationException | UserNotFoundException e) {
 				// FIXME treat exception
@@ -148,7 +159,7 @@ public class PostBean {
 		try {
 			if (selfPosts == null) {
 				selfPosts = new JsfConnector().getViewPosts(facade.getSelfPosts(
-						SessionManager.getCurrentSession().getUserToken()));
+						contextBean.getCurrentSession().getUserToken()));
 			}
 		} catch (UnauthorizedOperationException | AuthenticationException e) {
 			// FIXME treat exception
@@ -161,7 +172,7 @@ public class PostBean {
 		if (feedPosts == null) {
 			try {
 				feedPosts = new JsfConnector().getViewPosts(
-						facade.getFeedPosts(SessionManager.getCurrentSession().getUserToken()));
+						facade.getFeedPosts(contextBean.getCurrentSession().getUserToken()));
 			} catch (UnauthorizedOperationException e) {
 				// FIXME treat exception
 			} catch (AuthenticationException e) {
@@ -178,7 +189,7 @@ public class PostBean {
 		try {
 			if (friendsPosts == null) {
 				friendsPosts = new JsfConnector().getViewPosts(
-						facade.getFriendsPosts(SessionManager.getCurrentSession().getUserToken()));
+						facade.getFriendsPosts(contextBean.getCurrentSession().getUserToken()));
 			}
 		} catch (UnauthorizedOperationException | AuthenticationException | UserNotFoundException e) {
 			// FIXME treat exception
@@ -190,14 +201,14 @@ public class PostBean {
 	public List<Post> getPosts() {
 		try {
 			if (userPosts == null) {
-				String username = SessionManager.getCurrentSession().getCurrentViewUser().getUsername();
+				String username = contextBean.getCurrentSession().getCurrentViewUser().getUsername();
 				
 				if (username.isEmpty()) {
-					username = SessionManager.getCurrentSession().getUserToken().getUsername();
+					username = contextBean.getCurrentSession().getUserToken().getUsername();
 				}
 				
 				userPosts = new JsfConnector().getViewPosts(
-						facade.getUserPosts(SessionManager.getCurrentSession().getUserToken(), username));
+						facade.getUserPosts(contextBean.getCurrentSession().getUserToken(), username));
 			}
 		} catch (UnauthorizedOperationException | AuthenticationException | UserNotFoundException e) {
 			// FIXME treat exception
@@ -208,9 +219,9 @@ public class PostBean {
 	
 	public void deletePost() throws UserNotFoundException {
 		try {
-			facade.deletePost(SessionManager.getCurrentSession().getUserToken(), post.getId());
+			facade.deletePost(contextBean.getCurrentSession().getUserToken(), post.getId());
 			userPosts = new JsfConnector().getViewPosts(facade.getSelfPosts(
-					SessionManager.getCurrentSession().getUserToken()));
+					contextBean.getCurrentSession().getUserToken()));
 		} catch (AuthenticationException e) {
 			// FIXME treat exception
 		} catch (UnauthorizedOperationException e) {

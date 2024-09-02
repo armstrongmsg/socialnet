@@ -52,7 +52,6 @@ public class ContextBeanTest {
 	
 	@Test
 	public void testLoginAdmin() throws AuthenticationException {
-		assertNull(SessionManager.getCurrentSession());
 		Mockito.when(facade.userIsAdmin(ADMIN_USERNAME)).thenReturn(true);
 		
 		credentials.put(AuthenticationParameters.USERNAME_KEY, ADMIN_USERNAME);
@@ -61,19 +60,20 @@ public class ContextBeanTest {
 		Mockito.when(facade.login(credentials)).thenReturn(userToken);
 		
 		bean = new ContextBean();
+		assertNull(bean.getCurrentSession());
+		
 		bean.setUsername(ADMIN_USERNAME);
 		bean.setPassword(PASSWORD);
 		
 		bean.login();
 		
-		assertEquals(userToken, SessionManager.getCurrentSession().getUserToken());
-		assertTrue(SessionManager.getCurrentSession().isAdmin());
-		assertTrue(SessionManager.getCurrentSession().isLogged());
+		assertEquals(userToken, bean.getCurrentSession().getUserToken());
+		assertTrue(bean.getCurrentSession().isAdmin());
+		assertTrue(bean.getCurrentSession().isLogged());
 	}
 	
 	@Test
 	public void testLoginRegularUser() throws AuthenticationException {
-		assertNull(SessionManager.getCurrentSession());
 		Mockito.when(facade.userIsAdmin(REGULAR_USERNAME)).thenReturn(false);
 		
 		credentials.put(AuthenticationParameters.USERNAME_KEY, REGULAR_USERNAME);
@@ -82,24 +82,28 @@ public class ContextBeanTest {
 		Mockito.when(facade.login(credentials)).thenReturn(userToken);
 		
 		bean = new ContextBean();
+		assertNull(bean.getCurrentSession());
+		
 		bean.setUsername(REGULAR_USERNAME);
 		bean.setPassword(PASSWORD);
 		
 		bean.login();
 		
-		assertEquals(userToken, SessionManager.getCurrentSession().getUserToken());
-		assertFalse(SessionManager.getCurrentSession().isAdmin());
-		assertTrue(SessionManager.getCurrentSession().isLogged());
+		assertEquals(userToken, bean.getCurrentSession().getUserToken());
+		assertFalse(bean.getCurrentSession().isAdmin());
+		assertTrue(bean.getCurrentSession().isLogged());
 	}
 	
 	@Test
 	public void testLogout() {
-		SessionManager.startSession(userToken, false);
-		
 		bean = new ContextBean();
+		bean.setUsername(REGULAR_USERNAME);
+		bean.setPassword(PASSWORD);
+		
+		bean.login();
 		bean.logout();
 		
-		assertNull(SessionManager.getCurrentSession());
+		assertNull(bean.getCurrentSession());
 	}
 	
 	@Test
@@ -223,6 +227,5 @@ public class ContextBeanTest {
 	@After
 	public void tearDown() {
 		facadeMock.close();
-		SessionManager.setCurrentSession(null);
 	}
 }
