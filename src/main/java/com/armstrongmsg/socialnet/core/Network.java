@@ -180,8 +180,35 @@ public class Network {
 		User requester = this.authenticationPlugin.getUser(userToken);
 		this.authorizationPlugin.authorize(requester, new Operation(OperationType.ADD_FRIENDSHIP_REQUEST));
 		
-		User friend = findUserByUsername(username);
-		this.storageFacade.saveFriendshipRequest(new FriendshipRequest(requester, friend));
+		if (!hasSentFriendshipRequestTo(requester, username) && 
+				!hasReceivedFriendshipRequestFrom(requester, username)) {
+			User friend = findUserByUsername(username);
+			this.storageFacade.saveFriendshipRequest(new FriendshipRequest(requester, friend));
+		} else {
+			// TODO log
+		}
+	}
+	
+	private boolean hasSentFriendshipRequestTo(User requester, String username) {
+		List<FriendshipRequest> sentFriendshipRequests = this.storageFacade.getSentFrienshipRequestsById(requester.getUserId());
+		for (FriendshipRequest request : sentFriendshipRequests) {
+			if (request.getRequested().getUsername().equals(username)) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	private boolean hasReceivedFriendshipRequestFrom(User requester, String username) {
+		List<FriendshipRequest> receivedFriendshipRequests = this.storageFacade.getReceivedFrienshipRequestsById(requester.getUserId());
+		for (FriendshipRequest request : receivedFriendshipRequests) {
+			if (request.getRequester().getUsername().equals(username)) {
+				return true;
+			}
+		}
+		
+		return false;
 	}
 	
 	public List<FriendshipRequest> getSentFriendshipRequests(UserToken userToken) throws AuthenticationException, UnauthorizedOperationException {
@@ -465,7 +492,9 @@ public class Network {
 		for (User user : this.storageFacade.getAllUsers()) {
 			UserSummary userSummary = new UserSummary(user.getUsername(), user.getProfile().getDescription(), user.getProfile().getProfilePic()); 
 			
-			if (!user.equals(requester) && !friends.contains(userSummary)) {
+			if (!user.equals(requester) && !friends.contains(userSummary)
+					&& !hasSentFriendshipRequestTo(requester, user.getUsername())
+					&& !hasReceivedFriendshipRequestFrom(requester, user.getUsername())) {
 				userSummaries.add(userSummary);
 			}
 		}
