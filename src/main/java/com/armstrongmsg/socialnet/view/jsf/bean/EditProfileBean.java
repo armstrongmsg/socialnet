@@ -1,5 +1,6 @@
 package com.armstrongmsg.socialnet.view.jsf.bean;
 
+import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.RequestScoped;
@@ -21,6 +22,14 @@ public class EditProfileBean {
 	
 	@ManagedProperty(value="#{contextBean}")
 	private ContextBean contextBean;
+	
+	@ManagedProperty(value="#{applicationBean}")
+	private ApplicationBean applicationBean;
+	
+	@PostConstruct
+	public void initialize() {
+		facade = applicationBean.getFacade();
+	}
 	
 	public String getProfileDescription() {
 		return profileDescription;
@@ -44,6 +53,14 @@ public class EditProfileBean {
 	
 	public void setContextBean(ContextBean contextBean) {
 		this.contextBean = contextBean;
+	}
+
+	public ApplicationBean getApplicationBean() {
+		return applicationBean;
+	}
+
+	public void setApplicationBean(ApplicationBean applicationBean) {
+		this.applicationBean = applicationBean;
 	}
 	
 	public void updateProfile() throws AuthenticationException, UnauthorizedOperationException, UserNotFoundException {

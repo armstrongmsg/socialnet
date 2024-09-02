@@ -3,6 +3,7 @@ package com.armstrongmsg.socialnet.view.jsf.bean;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.RequestScoped;
@@ -27,24 +28,27 @@ public class PostBean {
 	private String content;
 	private String postVisibility;
 	private boolean privatePost;
-	
 	private List<PostVisibility> visibilities = Arrays.asList(PostVisibility.values());
 	private Post post;
 	private List<Post> userPostsAdmin;
-	
 	private List<Post> selfPosts;
 	private List<Post> friendsPosts;
 	private List<Post> feedPosts;
-	
 	private String username;
 	private List<Post> userPosts;
-	
 	private UploadedFile postPic;
-	
-	private static ApplicationFacade facade = ApplicationFacade.getInstance();
+	private ApplicationFacade facade;
 	
 	@ManagedProperty(value="#{contextBean}")
 	private ContextBean contextBean;
+	
+	@ManagedProperty(value="#{applicationBean}")
+	private ApplicationBean applicationBean;
+	
+	@PostConstruct
+	public void initialize() {
+		facade = getApplicationBean().getFacade();
+	}
 	
 	public User getUser() {
 		return user;
@@ -108,6 +112,14 @@ public class PostBean {
 
 	public void setContextBean(ContextBean contextBean) {
 		this.contextBean = contextBean;
+	}
+
+	public ApplicationBean getApplicationBean() {
+		return applicationBean;
+	}
+
+	public void setApplicationBean(ApplicationBean applicationBean) {
+		this.applicationBean = applicationBean;
 	}
 	
 	public String createPost() throws UserNotFoundException {

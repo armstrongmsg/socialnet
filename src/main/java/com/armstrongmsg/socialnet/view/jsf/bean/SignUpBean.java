@@ -1,6 +1,8 @@
 package com.armstrongmsg.socialnet.view.jsf.bean;
 
+import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.RequestScoped;
 
 import com.armstrongmsg.socialnet.core.ApplicationFacade;
@@ -14,9 +16,16 @@ public class SignUpBean {
 	private String password;
 	private String passwordCheck;
 	private boolean passwordInputsDoNotMatch;
-	
-	private static ApplicationFacade facade = ApplicationFacade.getInstance();
+	private ApplicationFacade facade;
 
+	@ManagedProperty(value="#{applicationBean}")
+	private ApplicationBean applicationBean;
+	
+	@PostConstruct
+	public void initialize() {
+		facade = applicationBean.getFacade();
+	}
+	
 	public String getUsername() {
 		return username;
 	}

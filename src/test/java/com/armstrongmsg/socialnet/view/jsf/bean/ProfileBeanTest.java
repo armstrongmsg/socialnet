@@ -35,6 +35,8 @@ public class ProfileBeanTest {
 	private Map<String, String> credentials;
 	private Picture profilePicture;
 	private ProfileBean bean;
+	private ContextBean contextBean;
+	private ApplicationBean applicationBean;
 	
 	@Before
 	public void setUp() throws AuthenticationException {
@@ -44,6 +46,8 @@ public class ProfileBeanTest {
 		credentials = new HashMap<String, String>();
 		userToken = Mockito.mock(UserToken.class);
 		profilePicture = new Picture(PICTURE_ID, PICTURE_DATA, PICTURE_LOCAL_PATH);
+		applicationBean = new ApplicationBean(facade);
+		contextBean = new ContextBean(applicationBean);
 	}
 	
 	@Test
@@ -55,13 +59,12 @@ public class ProfileBeanTest {
 		Mockito.when(facade.getSelf(userToken)).thenReturn(
 				new com.armstrongmsg.socialnet.model.UserSummary(REGULAR_USERNAME, REGULAR_PROFILE_DESCRIPTION, profilePicture));
 		
-		ContextBean contextBean = new ContextBean();
 		contextBean.setUsername(REGULAR_USERNAME);
 		contextBean.setPassword(PASSWORD);
 		contextBean.login();
 		contextBean.setViewUser(new UserSummary(REGULAR_USERNAME, REGULAR_PROFILE_DESCRIPTION, null, null));
 		
-		bean = new ProfileBean(contextBean);
+		bean = new ProfileBean(contextBean, applicationBean);
 		
 		assertFalse(bean.getCanAddAsFriend());
 	}
@@ -76,13 +79,12 @@ public class ProfileBeanTest {
 				new com.armstrongmsg.socialnet.model.UserSummary(REGULAR_USERNAME, REGULAR_PROFILE_DESCRIPTION, profilePicture));
 		Mockito.when(facade.isFriend(userToken, REGULAR_USERNAME_2)).thenReturn(false);
 		
-		ContextBean contextBean = new ContextBean();
 		contextBean.setUsername(REGULAR_USERNAME);
 		contextBean.setPassword(PASSWORD);
 		contextBean.login();
 		contextBean.setViewUser(new UserSummary(REGULAR_USERNAME_2, REGULAR_PROFILE_DESCRIPTION_2, null, null));
 		
-		bean = new ProfileBean(contextBean);
+		bean = new ProfileBean(contextBean, applicationBean);
 		
 		assertTrue(bean.getCanAddAsFriend());
 	}
@@ -97,13 +99,12 @@ public class ProfileBeanTest {
 				new com.armstrongmsg.socialnet.model.UserSummary(REGULAR_USERNAME, REGULAR_PROFILE_DESCRIPTION, profilePicture));
 		Mockito.when(facade.isFriend(userToken, REGULAR_USERNAME_2)).thenReturn(true);
 		
-		ContextBean contextBean = new ContextBean();
 		contextBean.setUsername(REGULAR_USERNAME);
 		contextBean.setPassword(PASSWORD);
 		contextBean.login();
 		contextBean.setViewUser(new UserSummary(REGULAR_USERNAME_2, REGULAR_PROFILE_DESCRIPTION_2, null, null));
 		
-		bean = new ProfileBean(contextBean);
+		bean = new ProfileBean(contextBean, applicationBean);
 		
 		assertFalse(bean.getCanAddAsFriend());
 	}
@@ -117,13 +118,12 @@ public class ProfileBeanTest {
 		Mockito.when(facade.getSelf(userToken)).thenReturn(
 				new com.armstrongmsg.socialnet.model.UserSummary(REGULAR_USERNAME, REGULAR_PROFILE_DESCRIPTION, profilePicture));
 		
-		ContextBean contextBean = new ContextBean();
 		contextBean.setUsername(REGULAR_USERNAME);
 		contextBean.setPassword(PASSWORD);
 		contextBean.login();
 		contextBean.setViewUser(new UserSummary(REGULAR_USERNAME, REGULAR_PROFILE_DESCRIPTION, null, null));
 		
-		bean = new ProfileBean(contextBean);
+		bean = new ProfileBean(contextBean, applicationBean);
 		
 		assertFalse(bean.getCanFollow());
 	}
@@ -138,13 +138,12 @@ public class ProfileBeanTest {
 				new com.armstrongmsg.socialnet.model.UserSummary(REGULAR_USERNAME, REGULAR_PROFILE_DESCRIPTION, profilePicture));
 		Mockito.when(facade.follows(userToken, REGULAR_USERNAME_2)).thenReturn(false);
 		
-		ContextBean contextBean = new ContextBean();
 		contextBean.setUsername(REGULAR_USERNAME);
 		contextBean.setPassword(PASSWORD);
 		contextBean.login();
 		contextBean.setViewUser(new UserSummary(REGULAR_USERNAME_2, REGULAR_PROFILE_DESCRIPTION_2, null, null));
 		
-		bean = new ProfileBean(contextBean);
+		bean = new ProfileBean(contextBean, applicationBean);
 		
 		assertTrue(bean.getCanFollow());
 	}
@@ -159,13 +158,12 @@ public class ProfileBeanTest {
 				new com.armstrongmsg.socialnet.model.UserSummary(REGULAR_USERNAME, REGULAR_PROFILE_DESCRIPTION, profilePicture));
 		Mockito.when(facade.follows(userToken, REGULAR_USERNAME_2)).thenReturn(true);
 		
-		ContextBean contextBean = new ContextBean();
 		contextBean.setUsername(REGULAR_USERNAME);
 		contextBean.setPassword(PASSWORD);
 		contextBean.login();
 		contextBean.setViewUser(new UserSummary(REGULAR_USERNAME_2, REGULAR_PROFILE_DESCRIPTION_2, null, null));
 		
-		bean = new ProfileBean(contextBean);
+		bean = new ProfileBean(contextBean, applicationBean);
 		
 		assertFalse(bean.getCanFollow());
 	}

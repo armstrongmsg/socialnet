@@ -3,6 +3,7 @@ package com.armstrongmsg.socialnet.view.jsf.bean;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.RequestScoped;
@@ -21,16 +22,21 @@ import com.armstrongmsg.socialnet.view.jsf.model.UserSummary;
 public class FollowBean {
 	private User follower;
 	private User followed;
-	
 	private String username;
-	
 	private List<UserSummary> follows;
 	private List<UserSummary> followRecommendations;
-	
-	private static ApplicationFacade facade = ApplicationFacade.getInstance();
+	private ApplicationFacade facade;
 	
 	@ManagedProperty(value="#{contextBean}")
 	private ContextBean contextBean;
+	
+	@ManagedProperty(value="#{applicationBean}")
+	private ApplicationBean applicationBean;
+	
+	@PostConstruct
+	public void initialize() {
+		facade = applicationBean.getFacade();
+	}
 	
 	public User getFollower() {
 		return follower;
@@ -62,6 +68,14 @@ public class FollowBean {
 
 	public void setContextBean(ContextBean contextBean) {
 		this.contextBean = contextBean;
+	}
+
+	public ApplicationBean getApplicationBean() {
+		return applicationBean;
+	}
+
+	public void setApplicationBean(ApplicationBean applicationBean) {
+		this.applicationBean = applicationBean;
 	}
 	
 	public void addFollowAdmin() {

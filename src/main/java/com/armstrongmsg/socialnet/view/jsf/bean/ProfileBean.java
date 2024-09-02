@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.RequestScoped;
@@ -33,21 +34,29 @@ public class ProfileBean {
 	private static final String IMAGE_TYPE = "image/jpeg";
 	private static final int PIC_MAX_WIDTH = 300;
 	private static final int PIC_MAX_HEIGHT = 300;
+	private UserSummary loggedUserSummary;
+	private UploadedFile profilePic;
+	private ApplicationFacade facade;
 	
 	@ManagedProperty(value="#{contextBean}")
 	private ContextBean contextBean;
 	
-	private ApplicationFacade facade = ApplicationFacade.getInstance();
-	private UserSummary loggedUserSummary;
+	@ManagedProperty(value="#{applicationBean}")
+	private ApplicationBean applicationBean;
 	
-	private UploadedFile profilePic;
+	@PostConstruct
+	public void initialize() {
+		facade = applicationBean.getFacade();
+	}
 	
 	public ProfileBean() {
 		
 	}
 	
-	ProfileBean(ContextBean contextBean) {
+	ProfileBean(ContextBean contextBean, ApplicationBean applicationBean) {
 		this.contextBean = contextBean;
+		this.applicationBean = applicationBean;
+		this.facade = this.applicationBean.getFacade();
 	}
 	
 	public ContextBean getContextBean() {
@@ -56,6 +65,14 @@ public class ProfileBean {
 
 	public void setContextBean(ContextBean contextBean) {
 		this.contextBean = contextBean;
+	}
+	
+	public ApplicationBean getApplicationBean() {
+		return applicationBean;
+	}
+
+	public void setApplicationBean(ApplicationBean applicationBean) {
+		this.applicationBean = applicationBean;
 	}
 	
 	public boolean getCanAddAsFriend() {

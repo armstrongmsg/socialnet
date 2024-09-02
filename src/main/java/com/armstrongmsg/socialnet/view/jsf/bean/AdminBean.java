@@ -3,6 +3,7 @@ package com.armstrongmsg.socialnet.view.jsf.bean;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
@@ -23,17 +24,22 @@ public class AdminBean {
 	private String username;
 	private String password;
 	private String profileDescription;
-
 	private User user;
 	private List<User> users;
-	
 	private UserSummary userSummary;
-
-	private static ApplicationFacade facade = ApplicationFacade.getInstance();
+	private ApplicationFacade facade;
 
 	@ManagedProperty(value="#{contextBean}")
 	private ContextBean contextBean;
 
+	@ManagedProperty(value="#{applicationBean}")
+	private ApplicationBean applicationBean;
+	
+	@PostConstruct
+	public void initialize() {
+		facade = applicationBean.getFacade();
+	}
+	
 	public String getUserId() {
 		return userId;
 	}
@@ -88,6 +94,14 @@ public class AdminBean {
 
 	public void setContextBean(ContextBean contextBean) {
 		this.contextBean = contextBean;
+	}
+	
+	public ApplicationBean getApplicationBean() {
+		return applicationBean;
+	}
+
+	public void setApplicationBean(ApplicationBean applicationBean) {
+		this.applicationBean = applicationBean;
 	}
 	
 	public List<User> getUsers() {

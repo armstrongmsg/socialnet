@@ -3,7 +3,9 @@ package com.armstrongmsg.socialnet.view.jsf.bean;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
 
 import com.armstrongmsg.socialnet.constants.AuthenticationParameters;
@@ -19,13 +21,37 @@ import com.armstrongmsg.socialnet.view.jsf.model.UserSummary;
 @ManagedBean(name = "contextBean", eager = true)
 @SessionScoped
 public class ContextBean {
+	private ApplicationFacade facade;
 	private String username;
 	private String password;
 	private boolean loginError;
-	
-	private ApplicationFacade facade = ApplicationFacade.getInstance();
 	private Session session;
 	
+	@ManagedProperty(value="#{applicationBean}")
+	private ApplicationBean applicationBean;
+	
+	@PostConstruct
+	public void initialize() {
+		facade = applicationBean.getFacade();
+	}
+	
+	public ContextBean() {
+		
+	}
+	
+	ContextBean(ApplicationBean applicationBean) {
+		this.applicationBean = applicationBean;
+		this.facade = applicationBean.getFacade();
+	}
+	
+	public ApplicationBean getApplicationBean() {
+		return applicationBean;
+	}
+
+	public void setApplicationBean(ApplicationBean applicationBean) {
+		this.applicationBean = applicationBean;
+	}
+
 	public String getUsername() {
 		return username;
 	}

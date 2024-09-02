@@ -1,4 +1,4 @@
-package com.armstrongmsg.socialnet.view.jsf;
+package com.armstrongmsg.socialnet.view.jsf.bean;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -18,7 +18,6 @@ import com.armstrongmsg.socialnet.constants.AuthenticationParameters;
 import com.armstrongmsg.socialnet.core.ApplicationFacade;
 import com.armstrongmsg.socialnet.core.authentication.UserToken;
 import com.armstrongmsg.socialnet.exceptions.AuthenticationException;
-import com.armstrongmsg.socialnet.view.jsf.bean.ContextBean;
 
 public class ContextBeanTest {
 	private static final String REGULAR_USERNAME = "username";
@@ -37,6 +36,7 @@ public class ContextBeanTest {
 		Mockito.when(ApplicationFacade.getInstance()).thenReturn(facade);
 		credentials = new HashMap<String, String>();
 		userToken = Mockito.mock(UserToken.class);
+		bean = new ContextBean(new ApplicationBean(facade));
 	}
 	
 	@Test
@@ -48,7 +48,7 @@ public class ContextBeanTest {
 		
 		Mockito.when(facade.login(credentials)).thenReturn(userToken);
 		
-		bean = new ContextBean();
+		
 		assertNull(bean.getCurrentSession());
 		
 		bean.setUsername(ADMIN_USERNAME);
@@ -70,7 +70,6 @@ public class ContextBeanTest {
 		
 		Mockito.when(facade.login(credentials)).thenReturn(userToken);
 		
-		bean = new ContextBean();
 		assertNull(bean.getCurrentSession());
 		
 		bean.setUsername(REGULAR_USERNAME);
@@ -85,7 +84,6 @@ public class ContextBeanTest {
 	
 	@Test
 	public void testLogout() {
-		bean = new ContextBean();
 		bean.setUsername(REGULAR_USERNAME);
 		bean.setPassword(PASSWORD);
 		
