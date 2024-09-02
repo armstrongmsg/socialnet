@@ -18,6 +18,7 @@ import com.armstrongmsg.socialnet.storage.database.repository.LocalFileSystemPic
 import com.armstrongmsg.socialnet.storage.database.repository.PictureRepository;
 import com.armstrongmsg.socialnet.storage.database.repository.UserRepository;
 
+// TODO test
 public class PictureLoadingAwareDatabaseManager extends DefaultDatabaseManager {
 	private PictureRepository pictureRepository;
 	

@@ -390,6 +390,7 @@ public class ApplicationFacade {
 		}
 	}
 
+	// TODO test
 	public List<UserSummary> getFollowRecommendations(UserToken userToken) throws AuthenticationException, UnauthorizedOperationException {
 		logger.debug(Messages.Logging.RECEIVED_GET_FOLLOW_RECOMMENDATIONS_REQUEST, userToken);
 
@@ -505,6 +506,7 @@ public class ApplicationFacade {
 		}
 	}
 
+	// TODO test
 	public void updateProfile(UserToken userToken, String profileDescription, byte[] picData) throws AuthenticationException, UnauthorizedOperationException, UserNotFoundException {
 		logger.debug(Messages.Logging.RECEIVED_UPDATE_USER_PROFILE, userToken);
 		

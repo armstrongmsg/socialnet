@@ -138,6 +138,7 @@ public class LocalFileSystemPictureRepository implements PictureRepository {
 		}
 	}
 
+	// TODO test
 	@Override
 	public void deletePicture(Picture picture) {
 		File localPath = new File(pictureRepositoryLocalPath + File.separator + picture.getId());
