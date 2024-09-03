@@ -42,15 +42,15 @@ public class NavigationController {
 		}
 		
 		switch(pageId) {
-			case "home": return "home";
-			case "user-profile": return "user-profile";
-			case "edit-user-profile": return "edit-user-profile";
-			case "sign-up": return "sign-up";
-			case "user-home": return "user-home";
-			case "admin-home": return "admin-home";
-			case "friends-list": return "friends-list";
-			case "follows-list": return "follows-list";
-			default: return "home";
+			case "home": return "home?faces-redirect=true";
+			case "user-profile": return "user-profile?faces-redirect=true";
+			case "edit-user-profile": return "edit-user-profile?faces-redirect=true";
+			case "sign-up": return "sign-up?faces-redirect=true";
+			case "user-home": return "user-home?faces-redirect=true?faces-redirect=true";
+			case "admin-home": return "admin-home?faces-redirect=true";
+			case "friends-list": return "friends-list?faces-redirect=true";
+			case "follows-list": return "follows-list?faces-redirect=true";
+			default: return "home?faces-redirect=true";
 		}
 	}
 }

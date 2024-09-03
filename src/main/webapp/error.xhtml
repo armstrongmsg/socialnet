@@ -1,0 +1,36 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+
+   <h:head>
+	  <title>Error</title>
+	  <h:outputStylesheet library="css" name="styles.css" />
+   </h:head>
+
+   <h:body>
+   	  <h:form>
+   	  	<p:panelGrid>
+			<f:facet name="header">
+				<p:commandButton value="Sorry. An error occurred while performing the action." styleClass="ui-button-warning" ajax="false">
+					<p:confirm header="Return home?"/>
+				</p:commandButton>
+			</f:facet>
+		</p:panelGrid>
+   	  	  			
+		<p:confirmDialog global="true" showEffect="fade" hideEffect="fade" responsive="true" width="350">
+            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no ui-button-flat"/>
+            <p:commandButton value="Yes" action="#{navigationController.showPage}" rendered="#{!contextBean.logged}" styleClass="ui-confirmdialog-yes" >
+            	<f:param name="pageId" value="home" />
+            </p:commandButton>
+            <p:commandButton value="Yes" action="#{navigationController.showPage}" rendered="#{contextBean.logged}" styleClass="ui-confirmdialog-yes" >
+            	<f:param name="pageId" value="user-home" />
+            </p:commandButton>
+        </p:confirmDialog>
+   	  </h:form>
+   </h:body>
+</html>

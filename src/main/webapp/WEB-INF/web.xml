@@ -26,4 +26,9 @@
       <servlet-name>Faces Servlet</servlet-name>
       <url-pattern>*.jsf</url-pattern>
    </servlet-mapping>
+   
+   <error-page>
+        <exception-type>java.lang.Throwable</exception-type>
+        <location>/error.jsf</location>
+   </error-page>
 </web-app>
