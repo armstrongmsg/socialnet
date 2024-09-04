@@ -126,7 +126,6 @@ public class Network {
 		this.storageFacade.removeUserById(userId);
 	}
 
-	// TODO test
 	private User findUserById(String userId) throws UserNotFoundException {
 		if (admin.getUserId().equals(userId)) {
 			return admin;
@@ -454,7 +453,6 @@ public class Network {
 		return this.authenticationPlugin.authenticate(credentials);
 	}
 
-	// TODO test
 	private User findUserByUsername(String username) throws UserNotFoundException {
 		if (admin.getUsername().equals(username)) {
 			return admin;
