@@ -4,6 +4,7 @@ import java.io.File;
 
 public class SystemConstants {
 	public static final String APP_NAME = "socialnet";
+	public static final String APPLICATION_PROPERTIES_FILE_NAME = "application.properties";
 	public static final String DEFAULT_PROFILE_PIC = "default-profile-pic.jpg";
 	public static final String DEFAULT_PROFILE_PIC_ID = "DEFAULT_PROFILE_PIC_ID";
 	public static final String PROJECT_BASE_PATH = "webapps" + File.separator + SystemConstants.APP_NAME;

@@ -2,14 +2,15 @@ package com.armstrongmsg.socialnet.util;
 
 import java.io.File;
 
+import com.armstrongmsg.socialnet.constants.SystemConstants;
+
 public class ApplicationPaths {
 	public static String getApplicationPath() {
 		return Thread.currentThread().getContextClassLoader().getResource("").getPath();
 	}
 	
 	public static String getApplicationPropertiesPath() {
-		// FIXME constant
-		return getApplicationPath() + File.separator + "application.properties";
+		return getApplicationPath() + File.separator + SystemConstants.APPLICATION_PROPERTIES_FILE_NAME;
 	}
 	
 	public static String getProjectPath() {
