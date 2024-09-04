@@ -28,7 +28,8 @@ public class AdminBean {
 	private List<User> users;
 	private UserSummary userSummary;
 	private ApplicationFacade facade;
-
+	private JsfExceptionHandler exceptionHandler;
+	
 	@ManagedProperty(value="#{contextBean}")
 	private ContextBean contextBean;
 
@@ -38,6 +39,7 @@ public class AdminBean {
 	@PostConstruct
 	public void initialize() {
 		facade = applicationBean.getFacade();
+		exceptionHandler = new JsfExceptionHandler();
 	}
 	
 	public String getUserId() {
@@ -110,10 +112,9 @@ public class AdminBean {
 			try {
 				users = new JsfConnector().getViewUsers(facade.getUsers(token));
 			} catch (UnauthorizedOperationException e) {
-				// FIXME Treat this exception
+				this.exceptionHandler.handle(e);
 			} catch (AuthenticationException e) {
-				// FIXME Treat this exception
-				e.printStackTrace();
+				this.exceptionHandler.handle(e);
 			}
 		}
 
@@ -125,9 +126,10 @@ public class AdminBean {
 			UserToken token = contextBean.getCurrentSession().getUserToken();
 			return new JsfConnector().getViewUserSummaries(facade.getUserSummaries(token));
 		} catch (UnauthorizedOperationException | AuthenticationException e) {
-			// FIXME treat exception
-			return new ArrayList<UserSummary>();
+			this.exceptionHandler.handle(e);
 		}
+		
+		return new ArrayList<UserSummary>();
 	}
 
 	public String addUser() {
@@ -136,11 +138,11 @@ public class AdminBean {
 			facade.addUser(token, userId, username, getProfileDescription());
 			users = new JsfConnector().getViewUsers(facade.getUsers(token));
 		} catch (UnauthorizedOperationException e) {
-			// FIXME Treat this exception
+			this.exceptionHandler.handle(e);
 		} catch (AuthenticationException e) {
-			// FIXME Treat this exception
-			e.printStackTrace();
+			this.exceptionHandler.handle(e);
 		}
+		
 		return null;
 	}
 
@@ -155,14 +157,13 @@ public class AdminBean {
 			facade.removeUser(token, getUser().getUserId());
 			users = new JsfConnector().getViewUsers(facade.getUsers(token));
 		} catch (UnauthorizedOperationException e) {
-			// FIXME Treat this exception
+			this.exceptionHandler.handle(e);
 		} catch (AuthenticationException e) {
-			// FIXME Treat this exception
-			e.printStackTrace();
+			this.exceptionHandler.handle(e);
 		} catch (UserNotFoundException e) {
-			// FIXME Treat this exception
-			e.printStackTrace();
+			this.exceptionHandler.handle(e);
 		}
+		
 		return null;
 	}
 
@@ -180,8 +181,9 @@ public class AdminBean {
 					facade.getFriends(
 							contextBean.getCurrentSession().getUserToken(), user.getUserId()));
 		} catch (UnauthorizedOperationException | AuthenticationException | UserNotFoundException e) {
-			// FIXME treat exception
+			this.exceptionHandler.handle(e);
 		}
+		
 		return null;
 	}
 	
@@ -191,8 +193,9 @@ public class AdminBean {
 					facade.getFollowedUsers(contextBean.getCurrentSession().getUserToken(), 
 							user.getUserId()));
 		} catch (UnauthorizedOperationException | AuthenticationException | UserNotFoundException e) {
-			// FIXME treat exception
-			return new ArrayList<User>();
+			this.exceptionHandler.handle(e);
 		}
+		
+		return new ArrayList<User>();
 	}
 }

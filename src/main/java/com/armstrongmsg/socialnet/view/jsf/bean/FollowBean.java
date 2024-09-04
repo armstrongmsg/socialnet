@@ -26,6 +26,7 @@ public class FollowBean {
 	private List<UserSummary> follows;
 	private List<UserSummary> followRecommendations;
 	private ApplicationFacade facade;
+	private JsfExceptionHandler exceptionHandler;
 	
 	@ManagedProperty(value="#{contextBean}")
 	private ContextBean contextBean;
@@ -36,6 +37,7 @@ public class FollowBean {
 	@PostConstruct
 	public void initialize() {
 		facade = applicationBean.getFacade();
+		exceptionHandler = new JsfExceptionHandler();
 	}
 	
 	public User getFollower() {
@@ -83,7 +85,7 @@ public class FollowBean {
 			facade.addFollowAdmin(getContextBean().getCurrentSession().getUserToken(), 
 					getContextBean().getCurrentSession().getUserToken().getUserId(), followed.getUserId());
 		} catch (UnauthorizedOperationException | AuthenticationException | UserNotFoundException e) {
-			// FIXME treat exception
+			this.exceptionHandler.handle(e);
 		}
 	}
 	
@@ -91,7 +93,7 @@ public class FollowBean {
 		try {
 			facade.addFollow(getContextBean().getCurrentSession().getUserToken(), getUsername());
 		} catch (AuthenticationException | UnauthorizedOperationException | UserNotFoundException e) {
-			//FIXME treat exception
+			this.exceptionHandler.handle(e);
 		}
 	}
 	
@@ -104,9 +106,10 @@ public class FollowBean {
 			
 			return follows;
 		} catch (AuthenticationException | UnauthorizedOperationException e) {
-			// FIXME treat exception
-			return new ArrayList<UserSummary>();
+			this.exceptionHandler.handle(e);
 		}
+		
+		return new ArrayList<UserSummary>();
 	}
 	
 	public List<UserSummary> getFollowRecommendations() {
@@ -118,9 +121,10 @@ public class FollowBean {
 			
 			return followRecommendations;
 		} catch (UnauthorizedOperationException | AuthenticationException e) {
-			// FIXME treat exception
-			return new ArrayList<UserSummary>();
+			this.exceptionHandler.handle(e);
 		}
+		
+		return new ArrayList<UserSummary>();
 	}
 	
 	public void unfollow() {
@@ -128,9 +132,9 @@ public class FollowBean {
 			UserToken token = getContextBean().getCurrentSession().getUserToken();
 			facade.unfollow(token, username);
 		} catch (AuthenticationException e) {
-			// FIXME treat exception
+			this.exceptionHandler.handle(e);
 		} catch (UnauthorizedOperationException e) {
-			// FIXME treat exception
+			this.exceptionHandler.handle(e);
 		}
 	}
 }

@@ -37,6 +37,7 @@ public class ProfileBean {
 	private UserSummary loggedUserSummary;
 	private UploadedFile profilePic;
 	private ApplicationFacade facade;
+	private JsfExceptionHandler exceptionHandler;
 	
 	@ManagedProperty(value="#{contextBean}")
 	private ContextBean contextBean;
@@ -47,6 +48,7 @@ public class ProfileBean {
 	@PostConstruct
 	public void initialize() {
 		facade = applicationBean.getFacade();
+		exceptionHandler = new JsfExceptionHandler();
 	}
 	
 	public ProfileBean() {
@@ -85,9 +87,10 @@ public class ProfileBean {
 			return facade.isFriend(token, contextBean.getCurrentSession().getCurrentViewUser()
 					.getUsername());
 		} catch (AuthenticationException | UnauthorizedOperationException e) {
-			// FIXME treat this exception
-			return false;
+			this.exceptionHandler.handle(e);
 		}
+		
+		return false;
 	}
 	
 	public boolean getCanFollow() {
@@ -100,9 +103,10 @@ public class ProfileBean {
 			return facade.follows(token, contextBean.getCurrentSession().getCurrentViewUser()
 					.getUsername());
 		} catch (AuthenticationException | UnauthorizedOperationException e) {
-			// FIXME treat this exception
-			return false;
+			this.exceptionHandler.handle(e);
 		}
+		
+		return false;
 	}
 
 	public boolean getIsSelfProfile() {
@@ -113,12 +117,12 @@ public class ProfileBean {
 			}
 			return loggedUserSummary.equals(contextBean.getCurrentSession().getCurrentViewUser());
 		} catch (AuthenticationException e) {
-			// FIXME treat this exception
-			return false;
+			this.exceptionHandler.handle(e);
 		} catch (UnauthorizedOperationException e) {
-			// FIXME treat this exception
-			return false;
+			this.exceptionHandler.handle(e);
 		}
+		
+		return false;
 	}
 
 	public boolean getFriendRequestIsSent() {
@@ -132,9 +136,9 @@ public class ProfileBean {
 				}
 			}
 		} catch (AuthenticationException e) {
-			// FIXME treat this exception
+			this.exceptionHandler.handle(e);
 		} catch (UnauthorizedOperationException e) {
-			// FIXME treat this exception
+			this.exceptionHandler.handle(e);
 		}
 		
 		return false;
@@ -147,9 +151,9 @@ public class ProfileBean {
 					facade.getFollowedUsers(loggedUserToken));
 			return followedUsers.contains(contextBean.getCurrentSession().getCurrentViewUser());
 		} catch (AuthenticationException e) {
-			// FIXME treat this exception
+			this.exceptionHandler.handle(e);
 		} catch (UnauthorizedOperationException e) {
-			// FIXME treat this exception
+			this.exceptionHandler.handle(e);
 		}
 		
 		return false;
@@ -162,9 +166,9 @@ public class ProfileBean {
 					facade.getSelfFriends(loggedUserToken));
 			return friends.contains(contextBean.getCurrentSession().getCurrentViewUser());
 		} catch (AuthenticationException e) {
-			// FIXME treat this exception
+			this.exceptionHandler.handle(e);
 		} catch (UnauthorizedOperationException e) {
-			// FIXME treat this exception
+			this.exceptionHandler.handle(e);
 		}
 		
 		return false;
@@ -177,9 +181,9 @@ public class ProfileBean {
 			this.facade.changeSelfProfilePic(loggedUserToken, picData);
 			contextBean.getCurrentSession().setCurrentViewUser(null);
 		} catch (AuthenticationException e) {
-			// FIXME treat this exception
+			this.exceptionHandler.handle(e);
 		} catch (UnauthorizedOperationException e) {
-			// FIXME treat this exception
+			this.exceptionHandler.handle(e);
 		}
 	}
 	
@@ -209,12 +213,13 @@ public class ProfileBean {
 			}
 			
 		} catch (AuthenticationException e) {
-			// FIXME treat this exception
+			this.exceptionHandler.handle(e);
 		} catch (UnauthorizedOperationException e) {
-			// FIXME treat this exception
+			this.exceptionHandler.handle(e);
 		} catch (UserNotFoundException e) {
-			// FIXME treat this exception
+			this.exceptionHandler.handle(e);
 		}
+		
 		return null;
 	}
 }

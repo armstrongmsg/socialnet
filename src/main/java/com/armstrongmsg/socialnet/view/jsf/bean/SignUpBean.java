@@ -66,6 +66,14 @@ public class SignUpBean {
 		this.passwordInputsDoNotMatch = passwordInputsDoNotMatch;
 	}
 
+	public ApplicationBean getApplicationBean() {
+		return applicationBean;
+	}
+
+	public void setApplicationBean(ApplicationBean applicationBean) {
+		this.applicationBean = applicationBean;
+	}
+
 	public String signUp() {
 		facade.addUser(username, getPassword(), profileDescription);
 		return new NavigationController().showHome();

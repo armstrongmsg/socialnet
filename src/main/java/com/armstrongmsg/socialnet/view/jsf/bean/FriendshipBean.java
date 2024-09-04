@@ -27,6 +27,7 @@ public class FriendshipBean {
 	private List<UserSummary> friends;
 	private List<UserSummary> friendRecommendations;
 	private ApplicationFacade facade;
+	private JsfExceptionHandler exceptionHandler;
 	
 	@ManagedProperty(value="#{contextBean}")
 	private ContextBean contextBean;
@@ -37,6 +38,7 @@ public class FriendshipBean {
 	@PostConstruct
 	public void initialize() {
 		facade = applicationBean.getFacade();
+		exceptionHandler = new JsfExceptionHandler();
 	}
 	
 	public User getUser1() {
@@ -83,7 +85,7 @@ public class FriendshipBean {
 		try {
 			facade.addFriendship(contextBean.getCurrentSession().getUserToken(), username);
 		} catch (UnauthorizedOperationException | AuthenticationException | UserNotFoundException e) {
-			// FIXME treat this exception
+			this.exceptionHandler.handle(e);
 		}
 	}
 	
@@ -91,11 +93,11 @@ public class FriendshipBean {
 		try {
 			facade.addFriendshipRequest(contextBean.getCurrentSession().getUserToken(), username);
 		} catch (AuthenticationException e) {
-			// FIXME treat this exception
+			this.exceptionHandler.handle(e);
 		} catch (UnauthorizedOperationException e) {
-			// FIXME treat this exception
+			this.exceptionHandler.handle(e);
 		} catch (UserNotFoundException e) {
-			// FIXME treat this exception
+			this.exceptionHandler.handle(e);
 		}
 	}
 	
@@ -111,9 +113,9 @@ public class FriendshipBean {
 			
 			return usernames;
 		} catch (AuthenticationException e) {
-			// FIXME treat this exception
+			this.exceptionHandler.handle(e);
 		} catch (UnauthorizedOperationException e) {
-			// FIXME treat this exception
+			this.exceptionHandler.handle(e);
 		}
 		
 		return null;
@@ -131,9 +133,9 @@ public class FriendshipBean {
 			
 			return usernames;
 		} catch (AuthenticationException e) {
-			// FIXME treat this exception
+			this.exceptionHandler.handle(e);
 		} catch (UnauthorizedOperationException e) {
-			// FIXME treat this exception
+			this.exceptionHandler.handle(e);
 		}
 		
 		return null;
@@ -143,11 +145,11 @@ public class FriendshipBean {
 		try {
 			facade.acceptFriendshipRequest(contextBean.getCurrentSession().getUserToken(), username);
 		} catch (AuthenticationException e) {
-			// FIXME treat this exception
+			this.exceptionHandler.handle(e);
 		} catch (UnauthorizedOperationException e) {
-			// FIXME treat this exception
+			this.exceptionHandler.handle(e);
 		} catch (UserNotFoundException e) {
-			// FIXME treat this exception
+			this.exceptionHandler.handle(e);
 		}
 	}
 	
@@ -155,9 +157,9 @@ public class FriendshipBean {
 		try {
 			facade.rejectFriendshipRequest(contextBean.getCurrentSession().getUserToken(), username);
 		} catch (AuthenticationException e) {
-			// FIXME treat this exception
+			this.exceptionHandler.handle(e);
 		} catch (UnauthorizedOperationException e) {
-			// FIXME treat this exception
+			this.exceptionHandler.handle(e);
 		}
 	}
 	
@@ -170,9 +172,10 @@ public class FriendshipBean {
 			
 			return friends;
 		} catch (AuthenticationException | UnauthorizedOperationException e) {
-			// FIXME treat exception
-			return new ArrayList<UserSummary>();
+			this.exceptionHandler.handle(e);
 		}
+		
+		return new ArrayList<UserSummary>();
 	}
 	
 	public List<UserSummary> getFriendRecommendations() {
@@ -183,9 +186,10 @@ public class FriendshipBean {
 			}
 			return friendRecommendations;
 		} catch (UnauthorizedOperationException | AuthenticationException e) {
-			// FIXME treat exception
-			return new ArrayList<UserSummary>();
+			this.exceptionHandler.handle(e);
 		}
+		
+		return new ArrayList<UserSummary>();
 	}
 	
 	public void unfriend() {
@@ -193,9 +197,9 @@ public class FriendshipBean {
 			UserToken token = contextBean.getCurrentSession().getUserToken();
 			facade.unfriend(token, username);
 		} catch (AuthenticationException e) {
-			// FIXME treat exception
+			this.exceptionHandler.handle(e);
 		} catch (UnauthorizedOperationException e) {
-			// FIXME treat exception
+			this.exceptionHandler.handle(e);
 		}
 	}
 }

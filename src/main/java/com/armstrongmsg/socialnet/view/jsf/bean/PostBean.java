@@ -38,6 +38,7 @@ public class PostBean {
 	private List<Post> userPosts;
 	private UploadedFile postPic;
 	private ApplicationFacade facade;
+	private JsfExceptionHandler exceptionHandler;
 	
 	@ManagedProperty(value="#{contextBean}")
 	private ContextBean contextBean;
@@ -48,6 +49,7 @@ public class PostBean {
 	@PostConstruct
 	public void initialize() {
 		facade = getApplicationBean().getFacade();
+		exceptionHandler = new JsfExceptionHandler();
 	}
 	
 	public User getUser() {
@@ -139,7 +141,7 @@ public class PostBean {
 			
 			facade.createPost(token, title, content, visibility, picData);
 		} catch (AuthenticationException e) {
-			// FIXME treat exception
+			this.exceptionHandler.handle(e);
 		}
 		
 		return null;
@@ -160,7 +162,7 @@ public class PostBean {
 						contextBean.getCurrentSession().getUserToken(), 
 						getUser().getUserId()));
 			} catch (UnauthorizedOperationException | AuthenticationException | UserNotFoundException e) {
-				// FIXME treat exception
+				this.exceptionHandler.handle(e);
 			}
 		}
 		
@@ -174,7 +176,7 @@ public class PostBean {
 						contextBean.getCurrentSession().getUserToken()));
 			}
 		} catch (UnauthorizedOperationException | AuthenticationException e) {
-			// FIXME treat exception
+			this.exceptionHandler.handle(e);
 		}
 		
 		return selfPosts;
@@ -186,11 +188,11 @@ public class PostBean {
 				feedPosts = new JsfConnector().getViewPosts(
 						facade.getFeedPosts(contextBean.getCurrentSession().getUserToken()));
 			} catch (UnauthorizedOperationException e) {
-				// FIXME treat exception
+				this.exceptionHandler.handle(e);
 			} catch (AuthenticationException e) {
-				// FIXME treat exception
+				this.exceptionHandler.handle(e);
 			} catch (UserNotFoundException e) {
-				// FIXME treat exception
+				this.exceptionHandler.handle(e);
 			}
 		}
 		
@@ -204,7 +206,7 @@ public class PostBean {
 						facade.getFriendsPosts(contextBean.getCurrentSession().getUserToken()));
 			}
 		} catch (UnauthorizedOperationException | AuthenticationException | UserNotFoundException e) {
-			// FIXME treat exception
+			this.exceptionHandler.handle(e);
 		}
 		
 		return friendsPosts;
@@ -223,7 +225,7 @@ public class PostBean {
 						facade.getUserPosts(contextBean.getCurrentSession().getUserToken(), username));
 			}
 		} catch (UnauthorizedOperationException | AuthenticationException | UserNotFoundException e) {
-			// FIXME treat exception
+			this.exceptionHandler.handle(e);
 		}
 		
 		return userPosts;
@@ -235,9 +237,9 @@ public class PostBean {
 			userPosts = new JsfConnector().getViewPosts(facade.getSelfPosts(
 					contextBean.getCurrentSession().getUserToken()));
 		} catch (AuthenticationException e) {
-			// FIXME treat exception
+			this.exceptionHandler.handle(e);
 		} catch (UnauthorizedOperationException e) {
-			// FIXME treat exception
+			this.exceptionHandler.handle(e);
 		}
 	}
 

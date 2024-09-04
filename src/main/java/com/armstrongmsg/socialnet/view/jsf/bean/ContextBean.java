@@ -26,6 +26,7 @@ public class ContextBean {
 	private String password;
 	private boolean loginError;
 	private Session session;
+	private JsfExceptionHandler exceptionHandler;
 	
 	@ManagedProperty(value="#{applicationBean}")
 	private ApplicationBean applicationBean;
@@ -33,6 +34,7 @@ public class ContextBean {
 	@PostConstruct
 	public void initialize() {
 		facade = applicationBean.getFacade();
+		exceptionHandler = new JsfExceptionHandler();
 	}
 	
 	public ContextBean() {
@@ -93,11 +95,9 @@ public class ContextBean {
 				currentViewUser = new JsfConnector().getViewUserSummary(facade.getSelf(currentUserToken));
 				this.session.setCurrentViewUser(currentViewUser);
 			} catch (AuthenticationException e) {
-				// FIXME treat this exception
-				e.printStackTrace();
+				this.exceptionHandler.handle(e);
 			} catch (UnauthorizedOperationException e) {
-				// FIXME treat this exception
-				e.printStackTrace();
+				this.exceptionHandler.handle(e);
 			}
 		}
 		

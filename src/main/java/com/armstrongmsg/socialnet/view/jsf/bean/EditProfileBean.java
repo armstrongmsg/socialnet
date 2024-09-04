@@ -18,7 +18,8 @@ import com.armstrongmsg.socialnet.exceptions.UserNotFoundException;
 public class EditProfileBean {
 	private String profileDescription;
 	private UploadedFile profilePic;
-	private ApplicationFacade facade = ApplicationFacade.getInstance();
+	private ApplicationFacade facade;
+	private JsfExceptionHandler exceptionHandler;
 	
 	@ManagedProperty(value="#{contextBean}")
 	private ContextBean contextBean;
@@ -29,6 +30,7 @@ public class EditProfileBean {
 	@PostConstruct
 	public void initialize() {
 		facade = applicationBean.getFacade();
+		exceptionHandler = new JsfExceptionHandler();
 	}
 	
 	public String getProfileDescription() {
@@ -63,9 +65,13 @@ public class EditProfileBean {
 		this.applicationBean = applicationBean;
 	}
 	
-	public void updateProfile() throws AuthenticationException, UnauthorizedOperationException, UserNotFoundException {
+	public void updateProfile() {
 		UserToken currentUserToken = contextBean.getCurrentSession().getUserToken();
 		
-		facade.updateProfile(currentUserToken, profileDescription, profilePic.getContent());
+		try {
+			facade.updateProfile(currentUserToken, profileDescription, profilePic.getContent());
+		} catch (AuthenticationException | UnauthorizedOperationException | UserNotFoundException e) {
+			this.exceptionHandler.handle(e);
+		}
 	}
 }
