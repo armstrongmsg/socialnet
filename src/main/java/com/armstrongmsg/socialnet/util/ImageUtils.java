@@ -27,11 +27,11 @@ public class ImageUtils {
 		double widthRatio = 1;
 		
 		if (height > maxHeight) {
-			heightRatio = new Double(maxHeight)/height;
+			heightRatio = Double.valueOf(maxHeight)/height;
 		}
 		
 		if (width > maxWidth) {
-			widthRatio = new Double(maxWidth)/width;
+			widthRatio = Double.valueOf(maxWidth)/width;
 		}
 		
 		targetHeight = getTargetHeight(height, heightRatio, width, widthRatio);
@@ -43,17 +43,17 @@ public class ImageUtils {
 
 	private int getTargetWidth(int height, double heightRatio, int width, double widthRatio) {
 		if (height > width) {
-			return new Double(heightRatio*width).intValue();
+			return Double.valueOf(heightRatio*width).intValue();
 		} else {
-			return new Double(widthRatio*width).intValue();
+			return Double.valueOf(widthRatio*width).intValue();
 		}
 	}
 
 	private int getTargetHeight(int height, double heightRatio, int width, double widthRatio) {
 		if (height > width) {
-			return new Double(heightRatio*height).intValue();
+			return Double.valueOf(heightRatio*height).intValue();
 		} else {
-			return new Double(widthRatio*height).intValue();
+			return Double.valueOf(widthRatio*height).intValue();
 		}
 	}
 
