@@ -13,7 +13,6 @@ import com.armstrongmsg.socialnet.model.Group;
 import com.armstrongmsg.socialnet.model.User;
 import com.armstrongmsg.socialnet.util.PropertiesUtil;
 
-// TODO test
 public class LruCache implements Cache {
 	private int totalCapacity;
 	private List<User> users;

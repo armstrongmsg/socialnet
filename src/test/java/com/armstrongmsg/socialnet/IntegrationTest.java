@@ -60,6 +60,7 @@ public class IntegrationTest extends PersistenceTest {
 	private static final String NEW_USERNAME_1 = "new-username-1";
 	private static final String NEW_USER_PASSWORD_1 = "new-user-password-1";
 	private static final String NEW_USER_PROFILE_DESCRIPTION_1 = "new-user-profile-description-1";
+	private static final String UPDATED_USER_PROFILE_DESCRIPTION_1 = "updated-profile-description-1";
 	private static final String NEW_POST_TITLE = "new-post-title";
 	private static final String NEW_POST_CONTENT = "new-post-content";
 	private static final PostVisibility NEW_POST_VISIBILITY = PostVisibility.PUBLIC;
@@ -815,6 +816,40 @@ public class IntegrationTest extends PersistenceTest {
 	}
 	
 	@Test
+	public void testGetFollowRecommendations() throws AuthenticationException, UnauthorizedOperationException, UserNotFoundException {
+		UserToken adminToken = loginAsAdmin();
+		
+		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
+		facade.addUser(adminToken, NEW_USERNAME_2, NEW_USER_PASSWORD_2, NEW_USER_PROFILE_DESCRIPTION_2);
+		
+		UserToken userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);	
+		UserToken userToken2 = loginAsUser(NEW_USERNAME_2, NEW_USER_PASSWORD_2);
+		
+		List<UserSummary> recommendationsUser1 = facade.getFollowRecommendations(userToken1);
+		List<UserSummary> recommendationsUser2 = facade.getFollowRecommendations(userToken2);
+		
+		assertEquals(1, recommendationsUser1.size());
+		assertEquals(NEW_USERNAME_2, recommendationsUser1.get(0).getUsername());
+		
+		assertEquals(1, recommendationsUser2.size());
+		assertEquals(NEW_USERNAME_1, recommendationsUser2.get(0).getUsername());
+		
+		List<User> users = facade.getUsers(adminToken);
+		User user1 = users.get(0);
+		User user2 = users.get(1);
+		
+		facade.addFollowAdmin(adminToken, user1.getUserId(), user2.getUserId());
+		
+		List<UserSummary> recommendationsUser1AfterFollow = facade.getFollowRecommendations(userToken1);
+		List<UserSummary> recommendationsUser2AfterFollow = facade.getFollowRecommendations(userToken2);
+		
+		assertTrue(recommendationsUser1AfterFollow.isEmpty());
+		
+		assertEquals(1, recommendationsUser2AfterFollow.size());
+		assertEquals(NEW_USERNAME_1, recommendationsUser2.get(0).getUsername());
+	}
+	
+	@Test
 	public void testIsFriend() throws AuthenticationException, UnauthorizedOperationException, UserNotFoundException {
 		UserToken adminToken = loginAsAdmin();
 		
@@ -947,6 +982,22 @@ public class IntegrationTest extends PersistenceTest {
 		facade.changeSelfProfilePic(userToken1, profilePicData);
 		
 		assertArrayEquals(new byte[] {1, 1, 1}, facade.getUserPic(userToken1, NEW_USERNAME_1));
+	}
+	
+	@Test
+	public void testUpdateProfile() throws AuthenticationException, UnauthorizedOperationException, UserNotFoundException {
+		UserToken adminToken = loginAsAdmin();
+		
+		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
+		
+		UserToken userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
+		
+		facade.updateProfile(userToken1, UPDATED_USER_PROFILE_DESCRIPTION_1, new byte[] {1, 1, 1});
+		
+		UserSummary userAfterUpdate = facade.getSelf(userToken1);
+		
+		assertEquals(UPDATED_USER_PROFILE_DESCRIPTION_1, userAfterUpdate.getProfileDescription());
+		assertArrayEquals(new byte[] {1, 1, 1}, userAfterUpdate.getProfilePicture().getData());
 	}
 	
 	private UserToken loginAsAdmin() throws AuthenticationException {
