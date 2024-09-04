@@ -1,5 +1,13 @@
+# The version number to use when building the docker image
 VERSION=
+# The port to use to access the application
 PORT=
 
+# Database access credentials
 DATABASE_USERNAME=
 DATABASE_NAME=
+DATABASE_PORT=
+DATABASE_PASSWORD=
+
+# The file to store build and run logs
+BUILD_LOG_FILE=

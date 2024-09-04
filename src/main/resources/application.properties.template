@@ -1,2 +1,35 @@
-ADMIN_USERNAME=
-ADMIN_PASSWORD=
+# The admin credentials
+ADMIN_USERNAME=admin
+ADMIN_PASSWORD=admin
+
+# The class name of the authentication plugin to use
+AUTHENTICATION_PLUGIN_CLASS_NAME=com.armstrongmsg.socialnet.core.authentication.DefaultAuthenticationPlugin
+
+# The class name of the authorization plugin to use
+AUTHORIZATION_PLUGIN_CLASS_NAME=com.armstrongmsg.socialnet.core.authorization.DefaultAuthorizationPlugin
+
+# The class name of the feed policy to use
+FEED_POLICY_CLASS_NAME=com.armstrongmsg.socialnet.core.feed.DefaultFeedPolicy
+
+# The max number of posts to load when creating the a user's feed 
+MAX_NUMBER_OF_POSTS=20
+
+# The class name of the cache to use
+CACHE_CLASS_NAME=com.armstrongmsg.socialnet.storage.cache.LruCache
+
+# The class name of the database manager to use
+DATABASE_MANAGER_CLASS_NAME=com.armstrongmsg.socialnet.storage.database.PictureLoadingAwareDatabaseManager
+
+# If this parameter is true, then the application will create stub users on startup 
+BOOTSTRAP=false
+
+# Options for bootstrap
+BOOTSTRAP_USERS=user1,user2
+
+BOOTSTRAP_DESCRIPTION_user1=user1
+BOOTSTRAP_PASSWORD_user1=pass1
+BOOTSTRAP_DESCRIPTION_user2=user2
+BOOTSTRAP_PASSWORD_user2=pass2
+
+# The path where the pictures will be stored
+PICTURE_REPOSITORY_LOCAL_PATH=/usr/local/tomcat/db
