@@ -59,13 +59,16 @@ public class Messages {
 		public static final String RECEIVED_UPDATE_USER_PROFILE = "Received update user profile request. Token:{}.";
 		public static final String RECEIVED_USER_IS_ADMIN_REQUEST = "Received User is Admin request. User ID: {}.";
 		public static final String USER_NOT_FOUND_EXCEPTION = "User not found exception. Message:{}.";
+		public static final String FRIENDSHIP_REQUEST_ALREADY_RECEIVED_IGNORING_REQUEST = 
+				"Friendship request from {} to {} already received. Ignoring request.";
 	}
 	
 	public static class Exception {
 		public static final String CANNOT_LOAD_BOOTSTRAP_PROPERTY = "Cannot load bootstrap property %s.";
 		public static final String CANNOT_LOAD_LOCAL_PATH_PROPERTY = "Cannot load local path property %s.";
 		public static final String CLASS_NOT_FOUND_ON_INSTANTIATION = "Could not find class %s. Message: %s.";
-		public static final String COULD_NOT_LOAD_ADMIN_CONFIGURATION = "Could not load admin configuration. Message: {}";
+		public static final String COULD_NOT_LOAD_ADMIN_CONFIGURATION = "Could not load admin configuration. Message: %s";
+		public static final String COULD_NOT_LOAD_CACHE_CONFIGURATION_PROPERTY = "Could not load cache configuration property %s.";
 		public static final String ERROR_ON_INSTANTIATION = "Error while instantiating class %s. Message: %s."; 
 		public static final String FRIENDSHIP_REQUEST_NOT_FOUND = "Friendship request not found. Token: %s, username: %s.";
 		public static final String INVALID_CREDENTIALS = "Invalid credentials for user %s.";

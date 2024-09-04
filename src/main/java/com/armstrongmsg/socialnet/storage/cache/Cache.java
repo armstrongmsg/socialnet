@@ -8,7 +8,6 @@ import com.armstrongmsg.socialnet.model.FriendshipRequest;
 import com.armstrongmsg.socialnet.model.Group;
 import com.armstrongmsg.socialnet.model.User;
 
-// TODO get methods should throw 'not found' exceptions
 public interface Cache {
 	User getUserById(String id);
 	User getUserByUsername(String username);

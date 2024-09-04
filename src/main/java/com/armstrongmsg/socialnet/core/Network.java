@@ -37,7 +37,6 @@ import com.armstrongmsg.socialnet.storage.StorageFacade;
 import com.armstrongmsg.socialnet.util.ClassFactory;
 import com.armstrongmsg.socialnet.util.PropertiesUtil;
 
-// TODO many methods can use smarter queries to the database
 public class Network {
 	private Admin admin;
 	private AuthenticationPlugin authenticationPlugin;
@@ -185,7 +184,8 @@ public class Network {
 			User friend = findUserByUsername(username);
 			this.storageFacade.saveFriendshipRequest(new FriendshipRequest(requester, friend));
 		} else {
-			// TODO log
+			logger.debug(Messages.Logging.FRIENDSHIP_REQUEST_ALREADY_RECEIVED_IGNORING_REQUEST, 
+					requester.getUserId(), username);
 		}
 	}
 	
@@ -563,7 +563,6 @@ public class Network {
 		User requester = this.authenticationPlugin.getUser(userToken);
 		this.authorizationPlugin.authorize(requester, new Operation(OperationType.UNFOLLOW));
 		
-		// TODO should query the database for the exact follow object
 		List<Follow> follows = this.storageFacade.getFollowsByUserId(requester.getUserId());
 		
 		for (Follow follow : follows) {
@@ -577,7 +576,6 @@ public class Network {
 		User requester = this.authenticationPlugin.getUser(userToken);
 		this.authorizationPlugin.authorize(requester, new Operation(OperationType.UNFRIEND));
 		
-		// TODO should query the database for the exact friendship object
 		List<Friendship> friendships = this.storageFacade.getFriendshipsByUserId(requester.getUserId());
 		
 		for (Friendship friendship : friendships) {

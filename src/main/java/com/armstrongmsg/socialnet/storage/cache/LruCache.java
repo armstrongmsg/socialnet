@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.armstrongmsg.socialnet.constants.ConfigurationProperties;
+import com.armstrongmsg.socialnet.constants.Messages;
 import com.armstrongmsg.socialnet.exceptions.FatalErrorException;
 import com.armstrongmsg.socialnet.model.Follow;
 import com.armstrongmsg.socialnet.model.Friendship;
@@ -25,8 +26,9 @@ public class LruCache implements Cache {
 				ConfigurationProperties.CACHE_MAX_CAPACITY);
 				
 		if (cacheMaxCapacityProperty == null || cacheMaxCapacityProperty.isEmpty()) {
-			// TODO add message
-			throw new FatalErrorException();
+			throw new FatalErrorException(
+					String.format(Messages.Exception.COULD_NOT_LOAD_CACHE_CONFIGURATION_PROPERTY, 
+					ConfigurationProperties.CACHE_MAX_CAPACITY));
 		}
 		
 		this.totalCapacity = Integer.valueOf(cacheMaxCapacityProperty);

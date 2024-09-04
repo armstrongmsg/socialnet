@@ -27,7 +27,6 @@ import com.armstrongmsg.socialnet.util.ImageUtils;
 import com.armstrongmsg.socialnet.view.jsf.model.JsfConnector;
 import com.armstrongmsg.socialnet.view.jsf.model.UserSummary;
 
-// TODO test the effect of the 'eager' param
 @ManagedBean(name = "profileBean", eager = true)
 @RequestScoped
 public class ProfileBean {
