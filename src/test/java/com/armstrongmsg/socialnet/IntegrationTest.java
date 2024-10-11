@@ -25,6 +25,7 @@ import org.mockito.Mockito;
 
 import com.armstrongmsg.socialnet.constants.AuthenticationParameters;
 import com.armstrongmsg.socialnet.constants.ConfigurationProperties;
+import com.armstrongmsg.socialnet.constants.ConfigurationPropertiesDefaults;
 import com.armstrongmsg.socialnet.core.ApplicationFacade;
 import com.armstrongmsg.socialnet.core.authentication.DefaultAuthenticationPlugin;
 import com.armstrongmsg.socialnet.core.authentication.UserToken;
@@ -113,12 +114,7 @@ public class IntegrationTest extends PersistenceTest {
 		Mockito.when(ApplicationPaths.getApplicationImageCachePath()).
 			thenReturn(TEST_CACHE_PATH);
 		
-		this.cache = (Cache) new ClassFactory().createInstance(cacheType);
-		this.databaseManager = (DatabaseManager) new ClassFactory().createInstance(databaseManagerType);
-		
 		ApplicationFacade.reset();
-		
-		storageFacade = new StorageFacade(this.cache, this.databaseManager);
 		
 		PropertiesUtil propertiesUtil = Mockito.mock(PropertiesUtil.class);
 
@@ -136,9 +132,22 @@ public class IntegrationTest extends PersistenceTest {
 			thenReturn(MAX_NUMBER_OF_POSTS);
 		Mockito.when(propertiesUtil.getProperty("BOOTSTRAP")).
 			thenReturn("false");
+		Mockito.when(propertiesUtil.getProperty(ConfigurationProperties.DATABASE_PERSISTENCE_UNIT, 
+			ConfigurationPropertiesDefaults.DATABASE_PERSISTENCE_UNIT)).thenReturn("default-test");
+		Mockito.when(propertiesUtil.getProperty(ConfigurationProperties.REMOTE_MEDIA_STORAGE)).
+			thenReturn("false");
+		Mockito.when(propertiesUtil.getProperty(ConfigurationProperties.PICTURE_REPOSITORY_LOCAL_PATH)).
+			thenReturn(PersistenceTest.TEST_DIRECTORY);
+		Mockito.when(propertiesUtil.getProperty(ConfigurationProperties.CACHE_MAX_CAPACITY)).
+			thenReturn("100");
 	
 		propertiesUtilMock = Mockito.mockStatic(PropertiesUtil.class);
-		Mockito.when(PropertiesUtil.getInstance()).thenReturn(propertiesUtil).thenReturn(propertiesUtil);
+		Mockito.when(PropertiesUtil.getInstance()).thenReturn(propertiesUtil).thenReturn(propertiesUtil).thenReturn(propertiesUtil).thenReturn(propertiesUtil).thenReturn(propertiesUtil).thenReturn(propertiesUtil);
+		
+		this.cache = (Cache) new ClassFactory().createInstance(cacheType);
+		this.databaseManager = (DatabaseManager) new ClassFactory().createInstance(databaseManagerType);
+		
+		storageFacade = new StorageFacade(this.cache, this.databaseManager);
 		
 		facade = ApplicationFacade.getInstance(storageFacade);
 	}

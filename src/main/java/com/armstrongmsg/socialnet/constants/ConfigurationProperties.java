@@ -16,4 +16,7 @@ public class ConfigurationProperties {
 	public static final String FEED_POLICY_CLASS_NAME = "FEED_POLICY_CLASS_NAME";
 	public static final String MAX_NUMBER_OF_POSTS = "MAX_NUMBER_OF_POSTS";
 	public static final String PICTURE_REPOSITORY_LOCAL_PATH = "PICTURE_REPOSITORY_LOCAL_PATH";
+	public static final String REMOTE_MEDIA_STORAGE = "REMOTE_MEDIA_STORAGE";
+	public static final String REMOTE_MEDIA_STORAGE_URL = "REMOTE_MEDIA_STORAGE_URL";
+	public static final String REMOTE_MEDIA_STORAGE_PORT = "REMOTE_MEDIA_STORAGE_PORT";
 }

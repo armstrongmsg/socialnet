@@ -2,6 +2,7 @@ package com.armstrongmsg.socialnet.storage.database;
 
 import java.util.List;
 
+import com.armstrongmsg.socialnet.constants.ConfigurationProperties;
 import com.armstrongmsg.socialnet.constants.SystemConstants;
 import com.armstrongmsg.socialnet.exceptions.FatalErrorException;
 import com.armstrongmsg.socialnet.exceptions.UserNotFoundException;
@@ -15,8 +16,10 @@ import com.armstrongmsg.socialnet.storage.database.repository.FollowRepository;
 import com.armstrongmsg.socialnet.storage.database.repository.FriendshipRepository;
 import com.armstrongmsg.socialnet.storage.database.repository.FriendshipRequestRepository;
 import com.armstrongmsg.socialnet.storage.database.repository.LocalFileSystemPictureRepository;
+import com.armstrongmsg.socialnet.storage.database.repository.MediaServicePictureRepository;
 import com.armstrongmsg.socialnet.storage.database.repository.PictureRepository;
 import com.armstrongmsg.socialnet.storage.database.repository.UserRepository;
+import com.armstrongmsg.socialnet.util.PropertiesUtil;
 
 // TODO test
 public class PictureLoadingAwareDatabaseManager extends DefaultDatabaseManager {
@@ -31,7 +34,23 @@ public class PictureLoadingAwareDatabaseManager extends DefaultDatabaseManager {
 	
 	public PictureLoadingAwareDatabaseManager() throws FatalErrorException {
 		super();
-		this.pictureRepository = new LocalFileSystemPictureRepository();
+		
+		String remoteMediaStorageProperty = "false";
+		
+		try {
+			remoteMediaStorageProperty = PropertiesUtil.getInstance().
+					getProperty(ConfigurationProperties.REMOTE_MEDIA_STORAGE);
+		} catch (FatalErrorException e) {
+			// TODO log
+		}
+		
+		if (remoteMediaStorageProperty.equals("true")) {
+			String mediaServiceUrl = PropertiesUtil.getInstance().getProperty(ConfigurationProperties.REMOTE_MEDIA_STORAGE_URL);
+			String mediaServicePort = PropertiesUtil.getInstance().getProperty(ConfigurationProperties.REMOTE_MEDIA_STORAGE_PORT);
+			this.pictureRepository = new MediaServicePictureRepository(mediaServiceUrl, mediaServicePort);
+		} else {
+			this.pictureRepository = new LocalFileSystemPictureRepository();
+		}
 	}
 	
 	@Override

@@ -23,7 +23,7 @@ public class PoolBasedDatabaseConnectionManager implements DatabaseConnectionMan
 			persistenceUnit = PropertiesUtil.getInstance().getProperty(ConfigurationProperties.DATABASE_PERSISTENCE_UNIT, 
 					ConfigurationPropertiesDefaults.DATABASE_PERSISTENCE_UNIT);
 		} catch (FatalErrorException | NumberFormatException e) {
-			throw new FatalErrorException();
+			throw new FatalErrorException(e.getMessage());
 		}
 		
 		this.emFactory = Persistence.createEntityManagerFactory(persistenceUnit);

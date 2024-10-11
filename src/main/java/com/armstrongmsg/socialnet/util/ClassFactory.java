@@ -31,6 +31,7 @@ public class ClassFactory {
 			throw new FatalErrorException(String.format(Messages.Exception.CONSTRUCTOR_NOT_FOUND_ON_INSTANTIATION, 
 					className, e.getMessage()));
 		} catch (Exception e) {
+			// TODO add exception class to the message
 			throw new FatalErrorException(String.format(Messages.Exception.ERROR_ON_INSTANTIATION, 
 					className, e.getMessage()));
 		}

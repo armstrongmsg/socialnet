@@ -26,7 +26,7 @@ public class MediaServicePictureRepository implements PictureRepository {
 	private CloseableHttpClient httpclient;
 	
 	public MediaServicePictureRepository(String mediaServiceUrl, String port) {
-		serviceUrl = mediaServiceUrl + ":" + port;
+		serviceUrl = mediaServiceUrl + ":" + port + "/media";
 		httpclient = HttpClients.createDefault();
 	}
 	
@@ -40,7 +40,7 @@ public class MediaServicePictureRepository implements PictureRepository {
 			    HttpEntity entity = response.getEntity();
 			    byte[] content = entity.getContent().readAllBytes();
 			    EntityUtils.consume(entity);
-			    return new Picture(id, content);
+			    return new Picture(id, content, this.serviceUrl + "/" + id);
 			} finally {
 			    response.close();
 			}
