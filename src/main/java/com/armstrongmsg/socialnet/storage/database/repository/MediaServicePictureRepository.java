@@ -16,18 +16,28 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.util.EntityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.armstrongmsg.socialnet.model.Picture;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
+// TODO test
 public class MediaServicePictureRepository implements PictureRepository {
+	private static Logger logger = LoggerFactory.getLogger(MediaServicePictureRepository.class);
+	
 	private String serviceUrl;
+	private String servicePublicUrl;
 	private CloseableHttpClient httpclient;
 	
-	public MediaServicePictureRepository(String mediaServiceUrl, String port) {
+	public MediaServicePictureRepository(String mediaServiceUrl, String mediaServicePublicUrl, String port) {
 		serviceUrl = mediaServiceUrl + ":" + port + "/media";
+		servicePublicUrl = mediaServicePublicUrl + ":" + port + "/media";
 		httpclient = HttpClients.createDefault();
+		
+		logger.info("Media Service URL: {}", serviceUrl);
+		logger.info("Media Service Public URL: {}", servicePublicUrl);
 	}
 	
 	@Override
@@ -40,16 +50,16 @@ public class MediaServicePictureRepository implements PictureRepository {
 			    HttpEntity entity = response.getEntity();
 			    byte[] content = entity.getContent().readAllBytes();
 			    EntityUtils.consume(entity);
-			    return new Picture(id, content, this.serviceUrl + "/" + id);
+			    return new Picture(id, content, this.servicePublicUrl + "/" + id);
 			} finally {
 			    response.close();
 			}
 		} catch (ClientProtocolException e) {
-			// TODO handle exception
-			e.printStackTrace();
+			logger.debug("Exception when loading picture:{}, message:{}", 
+					id, e.getMessage());
 		} catch (IOException e) {
-			// TODO handle exception
-			e.printStackTrace();
+			logger.debug("Exception when loading picture:{}, message:{}", 
+					id, e.getMessage());
 		}
 		return null;
 	}
@@ -82,11 +92,11 @@ public class MediaServicePictureRepository implements PictureRepository {
 				response.close();
 			}
 		} catch (ClientProtocolException e) {
-			// TODO handle exception
-			e.printStackTrace();
+			logger.debug("Exception when saving picture:{}, message:{}", 
+					picture.getId(), e.getMessage());
 		} catch (IOException e) {
-			// TODO handle exception
-			e.printStackTrace();
+			logger.debug("Exception when saving picture:{}, message:{}", 
+					picture.getId(), e.getMessage());
 		}
 	}
 

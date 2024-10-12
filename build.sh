@@ -1,3 +1,5 @@
+#!/bin/bash
+
 source conf/properties
 
 echo "Building socialnet package."

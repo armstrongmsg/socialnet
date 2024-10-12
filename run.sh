@@ -1,3 +1,5 @@
+#!/bin/bash
+
 source conf/properties
 
 bash deploy/prepare_db.sh

@@ -19,4 +19,5 @@ public class ConfigurationProperties {
 	public static final String REMOTE_MEDIA_STORAGE = "REMOTE_MEDIA_STORAGE";
 	public static final String REMOTE_MEDIA_STORAGE_URL = "REMOTE_MEDIA_STORAGE_URL";
 	public static final String REMOTE_MEDIA_STORAGE_PORT = "REMOTE_MEDIA_STORAGE_PORT";
+	public static final String REMOTE_MEDIA_STORAGE_PUBLIC_URL = "REMOTE_MEDIA_STORAGE_PUBLIC_URL";
 }

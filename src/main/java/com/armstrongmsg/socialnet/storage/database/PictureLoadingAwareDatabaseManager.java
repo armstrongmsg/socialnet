@@ -46,8 +46,9 @@ public class PictureLoadingAwareDatabaseManager extends DefaultDatabaseManager {
 		
 		if (remoteMediaStorageProperty.equals("true")) {
 			String mediaServiceUrl = PropertiesUtil.getInstance().getProperty(ConfigurationProperties.REMOTE_MEDIA_STORAGE_URL);
+			String mediaServicePublicUrl = PropertiesUtil.getInstance().getProperty(ConfigurationProperties.REMOTE_MEDIA_STORAGE_PUBLIC_URL);
 			String mediaServicePort = PropertiesUtil.getInstance().getProperty(ConfigurationProperties.REMOTE_MEDIA_STORAGE_PORT);
-			this.pictureRepository = new MediaServicePictureRepository(mediaServiceUrl, mediaServicePort);
+			this.pictureRepository = new MediaServicePictureRepository(mediaServiceUrl, mediaServicePublicUrl, mediaServicePort);
 		} else {
 			this.pictureRepository = new LocalFileSystemPictureRepository();
 		}
