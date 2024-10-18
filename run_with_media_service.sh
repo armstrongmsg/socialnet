@@ -5,8 +5,7 @@ source conf/properties
 bash deploy/prepare_db.sh
 
 echo "Starting socialnet media service"
-docker run -d --name socialnet-mediaservice -p 8085:8085 socialnet-mediaservice:$VERSION &>> $BUILD_LOG_FILE
-docker exec socialnet-mediaservice /bin/bash -c "./mvnw spring-boot:run -X > log.out 2> log.err" &
+docker run -d --name socialnet-mediaservice -p $MEDIA_SERVICE_PORT:8080 socialnet-mediaservice:$VERSION &>> $BUILD_LOG_FILE
 
 echo "Starting socialnet container."
 docker run -d --name socialnet -p $PORT:8080 socialnet:$VERSION &>> $BUILD_LOG_FILE

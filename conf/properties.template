@@ -2,6 +2,8 @@
 VERSION=
 # The port to use to access the application
 PORT=
+# The port to use to access the media service
+MEDIA_SERVICE_PORT=
 
 # Database access credentials
 DATABASE_USERNAME=

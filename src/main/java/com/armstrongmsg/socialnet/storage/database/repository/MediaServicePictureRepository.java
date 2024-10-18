@@ -31,9 +31,9 @@ public class MediaServicePictureRepository implements PictureRepository {
 	private String servicePublicUrl;
 	private CloseableHttpClient httpclient;
 	
-	public MediaServicePictureRepository(String mediaServiceUrl, String mediaServicePublicUrl, String port) {
+	public MediaServicePictureRepository(String mediaServiceUrl, String mediaServicePublicUrl, String port, String mediaServicePublicPort) {
 		serviceUrl = mediaServiceUrl + ":" + port + "/media";
-		servicePublicUrl = mediaServicePublicUrl + ":" + port + "/media";
+		servicePublicUrl = mediaServicePublicUrl + ":" + mediaServicePublicPort + "/media";
 		httpclient = HttpClients.createDefault();
 		
 		logger.info("Media Service URL: {}", serviceUrl);
