@@ -23,6 +23,7 @@ public class LocalFileSystemPictureRepository implements PictureRepository {
 	}
 			
 	public LocalFileSystemPictureRepository() throws FatalErrorException {
+		// FIXME constant
 		pictureRepositoryLocalPath = ApplicationPaths.getApplicationBasePath() + File.separator + "pics";
 		File path = new File(pictureRepositoryLocalPath);
 		
@@ -46,7 +47,8 @@ public class LocalFileSystemPictureRepository implements PictureRepository {
 			int size = sizeAsLong.intValue();
 			byte[] data = new byte[size];
 			pictureInputStream.read(data);
-			return new Picture(id, data, "pics/" + id/* + pictureRepositoryLocalPath + File.separator + id */);
+			// FIXME constant
+			return new Picture(id, data, "pics/" + id);
 		} catch (IOException e) {
 			// maybe should throw RollbackException
 			return null;

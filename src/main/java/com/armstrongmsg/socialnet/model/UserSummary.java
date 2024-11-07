@@ -39,7 +39,7 @@ public class UserSummary {
 	
 	@Override
 	public int hashCode() {
-		return Objects.hash(profileDescription, username);
+		return Objects.hash(profileDescription, username, profilePicture);
 	}
 
 	@Override
@@ -51,6 +51,8 @@ public class UserSummary {
 		if (getClass() != obj.getClass())
 			return false;
 		UserSummary other = (UserSummary) obj;
-		return Objects.equals(profileDescription, other.profileDescription) && Objects.equals(username, other.username);
+		return Objects.equals(profileDescription, other.profileDescription) && 
+				Objects.equals(username, other.username) && 
+				 Objects.equals(profilePicture, other.profilePicture);
 	}
 }

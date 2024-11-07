@@ -26,6 +26,7 @@ import org.mockito.Mockito;
 import com.armstrongmsg.socialnet.constants.AuthenticationParameters;
 import com.armstrongmsg.socialnet.constants.ConfigurationProperties;
 import com.armstrongmsg.socialnet.constants.ConfigurationPropertiesDefaults;
+import com.armstrongmsg.socialnet.constants.SystemConstants;
 import com.armstrongmsg.socialnet.core.ApplicationFacade;
 import com.armstrongmsg.socialnet.core.authentication.DefaultAuthenticationPlugin;
 import com.armstrongmsg.socialnet.core.authentication.UserToken;
@@ -36,17 +37,16 @@ import com.armstrongmsg.socialnet.exceptions.FatalErrorException;
 import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
 import com.armstrongmsg.socialnet.exceptions.UserNotFoundException;
 import com.armstrongmsg.socialnet.model.FriendshipRequest;
+import com.armstrongmsg.socialnet.model.Picture;
 import com.armstrongmsg.socialnet.model.Post;
 import com.armstrongmsg.socialnet.model.PostVisibility;
 import com.armstrongmsg.socialnet.model.User;
 import com.armstrongmsg.socialnet.model.UserSummary;
 import com.armstrongmsg.socialnet.storage.StorageFacade;
 import com.armstrongmsg.socialnet.storage.cache.Cache;
-import com.armstrongmsg.socialnet.storage.cache.DefaultCache;
 import com.armstrongmsg.socialnet.storage.cache.LruCache;
 import com.armstrongmsg.socialnet.storage.cache.NoOperationCache;
 import com.armstrongmsg.socialnet.storage.database.DatabaseManager;
-import com.armstrongmsg.socialnet.storage.database.InMemoryDatabaseManager;
 import com.armstrongmsg.socialnet.storage.database.PictureLoadingAwareDatabaseManager;
 import com.armstrongmsg.socialnet.util.ApplicationPaths;
 import com.armstrongmsg.socialnet.util.ClassFactory;
@@ -76,6 +76,10 @@ public class IntegrationTest extends PersistenceTest {
 	private static final String NEW_POST_TITLE_4 = "new-post-title-4";
 	private static final String NEW_POST_CONTENT_4 = "new-post-content-4";
 	private static final String MAX_NUMBER_OF_POSTS = "2";
+	private static final byte[] PICTURE_DATA = new byte[] {1, 2, 3};
+	private static final byte[] PICTURE_DATA_2 = new byte[] {4, 5, 6};
+	private static final byte[] PICTURE_DATA_3 = new byte[] {7, 8, 9};
+	private static final byte[] PICTURE_DATA_4 = new byte[] {10, 11, 12};
 	private ApplicationFacade facade;
 	private StorageFacade storageFacade;
 	private Cache cache;
@@ -88,10 +92,6 @@ public class IntegrationTest extends PersistenceTest {
 	@Parameterized.Parameters
 	public static List<Object[]> getTestParameters() {
 		List<Object[]> args = new ArrayList<Object[]>();
-		args.add(new Object[] {NoOperationCache.class.getCanonicalName(), 
-				InMemoryDatabaseManager.class.getCanonicalName()});
-		args.add(new Object[] {DefaultCache.class.getCanonicalName(), 
-				InMemoryDatabaseManager.class.getCanonicalName()});
 		args.add(new Object[] {NoOperationCache.class.getCanonicalName(), 
 				PictureLoadingAwareDatabaseManager.class.getCanonicalName()});
 		args.add(new Object[] {LruCache.class.getCanonicalName(), 
@@ -142,7 +142,7 @@ public class IntegrationTest extends PersistenceTest {
 			thenReturn("100");
 	
 		propertiesUtilMock = Mockito.mockStatic(PropertiesUtil.class);
-		Mockito.when(PropertiesUtil.getInstance()).thenReturn(propertiesUtil).thenReturn(propertiesUtil).thenReturn(propertiesUtil).thenReturn(propertiesUtil).thenReturn(propertiesUtil).thenReturn(propertiesUtil);
+		Mockito.when(PropertiesUtil.getInstance()).thenReturn(propertiesUtil);
 		
 		this.cache = (Cache) new ClassFactory().createInstance(cacheType);
 		this.databaseManager = (DatabaseManager) new ClassFactory().createInstance(databaseManagerType);
@@ -200,11 +200,15 @@ public class IntegrationTest extends PersistenceTest {
 		assertEquals(NEW_USER_PASSWORD_1, createdUser1.getPassword());
 		assertEquals(NEW_USER_PROFILE_DESCRIPTION_1, createdUser1.getProfile().getDescription());
 		assertTrue(createdUser1.getProfile().getPosts().isEmpty());
+		assertEquals(SystemConstants.DEFAULT_PROFILE_PIC_ID, createdUser1.getProfile().getProfilePicId());
+		assertEquals(Picture.DEFAULT_PROFILE_PICTURE, createdUser1.getProfile().getProfilePic());
 		User createdUser2 = usersAfterCreation.get(1);
 		assertEquals(NEW_USERNAME_2, createdUser2.getUsername());
 		assertEquals(NEW_USER_PASSWORD_2, createdUser2.getPassword());
 		assertEquals(NEW_USER_PROFILE_DESCRIPTION_2, createdUser2.getProfile().getDescription());
 		assertTrue(createdUser2.getProfile().getPosts().isEmpty());
+		assertEquals(SystemConstants.DEFAULT_PROFILE_PIC_ID, createdUser2.getProfile().getProfilePicId());
+		assertEquals(Picture.DEFAULT_PROFILE_PICTURE, createdUser2.getProfile().getProfilePic());
 		
 		facade.removeUser(adminToken, usersAfterCreation.get(0).getUserId());
 		
@@ -307,6 +311,8 @@ public class IntegrationTest extends PersistenceTest {
 		assertEquals(NEW_USER_PASSWORD_1, createdUser.getPassword());
 		assertEquals(NEW_USER_PROFILE_DESCRIPTION_1, createdUser.getProfile().getDescription());
 		assertTrue(createdUser.getProfile().getPosts().isEmpty());
+		assertEquals(SystemConstants.DEFAULT_PROFILE_PIC_ID, createdUser.getProfile().getProfilePicId());
+		assertEquals(Picture.DEFAULT_PROFILE_PICTURE, createdUser.getProfile().getProfilePic());
 	}
 	
 	@Test
@@ -320,7 +326,7 @@ public class IntegrationTest extends PersistenceTest {
 		List<Post> userPosts = facade.getUserPostsAdmin(adminToken, userToken.getUserId());
 		assertTrue(userPosts.isEmpty());
 		
-		facade.createPost(userToken, NEW_POST_TITLE, NEW_POST_CONTENT, NEW_POST_VISIBILITY, null);
+		facade.createPost(userToken, NEW_POST_TITLE, NEW_POST_CONTENT, NEW_POST_VISIBILITY, PICTURE_DATA);
 		
 		List<Post> userPostsAfterCreation = facade.getUserPostsAdmin(adminToken, userToken.getUserId());
 		
@@ -330,6 +336,9 @@ public class IntegrationTest extends PersistenceTest {
 		assertEquals(NEW_POST_TITLE, createdPost.getTitle());
 		assertEquals(NEW_POST_CONTENT, createdPost.getContent());
 		assertEquals(NEW_POST_VISIBILITY, createdPost.getVisibility());
+		assertNotNull(createdPost.getPictureId());
+		assertArrayEquals(PICTURE_DATA, createdPost.getPicture().getData());
+		assertPicturePathExists(createdPost.getPicture());
 	}
 
 	@Test(expected = UnauthorizedOperationException.class)
@@ -368,7 +377,7 @@ public class IntegrationTest extends PersistenceTest {
 		List<Post> userPosts = facade.getSelfPosts(userToken);
 		assertTrue(userPosts.isEmpty());
 		
-		facade.createPost(userToken, NEW_POST_TITLE, NEW_POST_CONTENT, NEW_POST_VISIBILITY, null);
+		facade.createPost(userToken, NEW_POST_TITLE, NEW_POST_CONTENT, NEW_POST_VISIBILITY, PICTURE_DATA);
 		
 		List<Post> userPostsAfterCreation = facade.getSelfPosts(userToken);
 		
@@ -378,6 +387,8 @@ public class IntegrationTest extends PersistenceTest {
 		assertEquals(NEW_POST_TITLE, createdPost.getTitle());
 		assertEquals(NEW_POST_CONTENT, createdPost.getContent());
 		assertEquals(NEW_POST_VISIBILITY, createdPost.getVisibility());
+		assertArrayEquals(PICTURE_DATA, createdPost.getPicture().getData());
+		assertPicturePathExists(createdPost.getPicture());
 	}
 	
 	@Test
@@ -401,8 +412,8 @@ public class IntegrationTest extends PersistenceTest {
 		assertTrue(user2PostsForUser1.isEmpty());
 		assertTrue(user1PostsForUser2.isEmpty());
 		
-		facade.createPost(user1Token, NEW_POST_TITLE, NEW_POST_CONTENT, NEW_POST_VISIBILITY, null);
-		facade.createPost(user2Token, NEW_POST_TITLE_2, NEW_POST_CONTENT_2, NEW_POST_VISIBILITY_2, null);
+		facade.createPost(user1Token, NEW_POST_TITLE, NEW_POST_CONTENT, NEW_POST_VISIBILITY, PICTURE_DATA);
+		facade.createPost(user2Token, NEW_POST_TITLE_2, NEW_POST_CONTENT_2, NEW_POST_VISIBILITY_2, PICTURE_DATA_2);
 		
 		List<Post> user1PostsAfter = facade.getUserPosts(user1Token, NEW_USERNAME_1);
 		
@@ -411,6 +422,8 @@ public class IntegrationTest extends PersistenceTest {
 		assertEquals(NEW_POST_TITLE, user1PostsAfter.get(0).getTitle());
 		assertEquals(NEW_POST_CONTENT, user1PostsAfter.get(0).getContent());
 		assertEquals(NEW_POST_VISIBILITY, user1PostsAfter.get(0).getVisibility());
+		assertArrayEquals(PICTURE_DATA, user1PostsAfter.get(0).getPicture().getData());
+		assertPicturePathExists(user1PostsAfter.get(0).getPicture());
 		
 		List<Post> user2PostsAfter = facade.getUserPosts(user2Token, NEW_USERNAME_2);
 		
@@ -418,6 +431,8 @@ public class IntegrationTest extends PersistenceTest {
 		assertEquals(NEW_POST_TITLE_2, user2PostsAfter.get(0).getTitle());
 		assertEquals(NEW_POST_CONTENT_2, user2PostsAfter.get(0).getContent());
 		assertEquals(NEW_POST_VISIBILITY_2, user2PostsAfter.get(0).getVisibility());
+		assertArrayEquals(PICTURE_DATA_2, user2PostsAfter.get(0).getPicture().getData());
+		assertPicturePathExists(user2PostsAfter.get(0).getPicture());
 		
 		List<Post> user2PostsForUser1After = facade.getUserPosts(user1Token, NEW_USERNAME_2);
 		List<Post> user1PostsForUser2After = facade.getUserPosts(user2Token, NEW_USERNAME_1);
@@ -438,6 +453,8 @@ public class IntegrationTest extends PersistenceTest {
 		assertEquals(NEW_POST_TITLE_2, user2PostsForUser1AfterFriendship.get(0).getTitle());
 		assertEquals(NEW_POST_CONTENT_2, user2PostsForUser1AfterFriendship.get(0).getContent());
 		assertEquals(NEW_POST_VISIBILITY_2, user2PostsForUser1AfterFriendship.get(0).getVisibility());
+		assertArrayEquals(PICTURE_DATA_2, user2PostsForUser1AfterFriendship.get(0).getPicture().getData());
+		assertPicturePathExists(user2PostsForUser1AfterFriendship.get(0).getPicture());
 		
 		List<Post> user1PostsForUser2AfterFriendship = facade.getUserPosts(user2Token, NEW_USERNAME_1);
 
@@ -445,6 +462,8 @@ public class IntegrationTest extends PersistenceTest {
 		assertEquals(NEW_POST_TITLE, user1PostsForUser2AfterFriendship.get(0).getTitle());
 		assertEquals(NEW_POST_CONTENT, user1PostsForUser2AfterFriendship.get(0).getContent());
 		assertEquals(NEW_POST_VISIBILITY, user1PostsForUser2AfterFriendship.get(0).getVisibility());
+		assertArrayEquals(PICTURE_DATA, user1PostsForUser2AfterFriendship.get(0).getPicture().getData());
+		assertPicturePathExists(user1PostsForUser2AfterFriendship.get(0).getPicture());
 	}
 	
 	@Test
@@ -588,8 +607,8 @@ public class IntegrationTest extends PersistenceTest {
 		List<UserSummary> friends1 = facade.getSelfFriends(userToken1);
 		List<UserSummary> friends2 = facade.getSelfFriends(userToken2);
 		
-		UserSummary user1Summary = new UserSummary(NEW_USERNAME_1, NEW_USER_PROFILE_DESCRIPTION_1, null);
-		UserSummary user2Summary = new UserSummary(NEW_USERNAME_2, NEW_USER_PROFILE_DESCRIPTION_2, null);
+		UserSummary user1Summary = new UserSummary(NEW_USERNAME_1, NEW_USER_PROFILE_DESCRIPTION_1, Picture.DEFAULT_PROFILE_PICTURE);
+		UserSummary user2Summary = new UserSummary(NEW_USERNAME_2, NEW_USER_PROFILE_DESCRIPTION_2, Picture.DEFAULT_PROFILE_PICTURE);
 		
 		assertTrue(friends1.contains(user2Summary));
 		assertTrue(friends2.contains(user1Summary));
@@ -607,8 +626,8 @@ public class IntegrationTest extends PersistenceTest {
 		
 		facade.addFriendship(userToken1, NEW_USERNAME_2);
 		
-		facade.createPost(userToken1, NEW_POST_TITLE, NEW_POST_CONTENT, NEW_POST_VISIBILITY, null);
-		facade.createPost(userToken1, NEW_POST_TITLE_2, NEW_POST_CONTENT_2, NEW_POST_VISIBILITY_2, null);
+		facade.createPost(userToken1, NEW_POST_TITLE, NEW_POST_CONTENT, NEW_POST_VISIBILITY, PICTURE_DATA);
+		facade.createPost(userToken1, NEW_POST_TITLE_2, NEW_POST_CONTENT_2, NEW_POST_VISIBILITY_2, PICTURE_DATA_2);
 		
 		List<Post> postsFriendsUser1 = facade.getFriendsPosts(userToken1);
 		List<Post> postsFriendsUser2 = facade.getFriendsPosts(userToken2);
@@ -621,10 +640,14 @@ public class IntegrationTest extends PersistenceTest {
 		assertEquals(NEW_POST_TITLE, post1.getTitle());
 		assertEquals(NEW_POST_CONTENT, post1.getContent());
 		assertEquals(NEW_POST_VISIBILITY, post1.getVisibility());
+		assertArrayEquals(PICTURE_DATA, post1.getPicture().getData());
+		assertPicturePathExists(post1.getPicture());
 		
 		assertEquals(NEW_POST_TITLE_2, post2.getTitle());
 		assertEquals(NEW_POST_CONTENT_2, post2.getContent());
 		assertEquals(NEW_POST_VISIBILITY_2, post2.getVisibility());
+		assertArrayEquals(PICTURE_DATA_2, post2.getPicture().getData());
+		assertPicturePathExists(post2.getPicture());
 	}
 	
 	@Test
@@ -641,16 +664,16 @@ public class IntegrationTest extends PersistenceTest {
 		UserToken userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);	
 		UserToken userToken2 = loginAsUser(NEW_USERNAME_2, NEW_USER_PASSWORD_2);
 		
-		facade.createPost(userToken2, NEW_POST_TITLE, NEW_POST_CONTENT, PostVisibility.PUBLIC, null);
+		facade.createPost(userToken2, NEW_POST_TITLE, NEW_POST_CONTENT, PostVisibility.PUBLIC, PICTURE_DATA);
 		
 		Thread.sleep(5);
-		facade.createPost(userToken2, NEW_POST_TITLE_2, NEW_POST_CONTENT_2, PostVisibility.PUBLIC, null);
+		facade.createPost(userToken2, NEW_POST_TITLE_2, NEW_POST_CONTENT_2, PostVisibility.PUBLIC, PICTURE_DATA_2);
 		
 		Thread.sleep(5);
-		facade.createPost(userToken2, NEW_POST_TITLE_3, NEW_POST_CONTENT_3, PostVisibility.PUBLIC, null);
+		facade.createPost(userToken2, NEW_POST_TITLE_3, NEW_POST_CONTENT_3, PostVisibility.PUBLIC, PICTURE_DATA_3);
 		
 		Thread.sleep(5);
-		facade.createPost(userToken2, NEW_POST_TITLE_4, NEW_POST_CONTENT_4, PostVisibility.PRIVATE, null);
+		facade.createPost(userToken2, NEW_POST_TITLE_4, NEW_POST_CONTENT_4, PostVisibility.PRIVATE, PICTURE_DATA_4);
 		
 		List<Post> postsBeforeFollow = facade.getFeedPosts(userToken1);
 		
@@ -663,7 +686,14 @@ public class IntegrationTest extends PersistenceTest {
 		assertEquals(2, postsAfterFollow.size());
 		
 		assertEquals(NEW_POST_TITLE_3, postsAfterFollow.get(0).getTitle());
+		assertEquals(NEW_POST_CONTENT_3, postsAfterFollow.get(0).getContent());
+		assertArrayEquals(PICTURE_DATA_3, postsAfterFollow.get(0).getPicture().getData());
+		assertPicturePathExists(postsAfterFollow.get(0).getPicture());
+		
 		assertEquals(NEW_POST_TITLE_2, postsAfterFollow.get(1).getTitle());
+		assertEquals(NEW_POST_CONTENT_2, postsAfterFollow.get(1).getContent());
+		assertArrayEquals(PICTURE_DATA_2, postsAfterFollow.get(1).getPicture().getData());
+		assertPicturePathExists(postsAfterFollow.get(1).getPicture());
 		
 		facade.addFriendshipAdmin(adminToken, user1.getUserId(), user2.getUserId());
 		
@@ -672,7 +702,14 @@ public class IntegrationTest extends PersistenceTest {
 		assertEquals(2, postsAfterFriendship.size());
 		
 		assertEquals(NEW_POST_TITLE_4, postsAfterFriendship.get(0).getTitle());
+		assertEquals(NEW_POST_CONTENT_4, postsAfterFriendship.get(0).getContent());
+		assertArrayEquals(PICTURE_DATA_4, postsAfterFriendship.get(0).getPicture().getData());
+		assertPicturePathExists(postsAfterFriendship.get(0).getPicture());
+		
 		assertEquals(NEW_POST_TITLE_3, postsAfterFriendship.get(1).getTitle());
+		assertEquals(NEW_POST_CONTENT_3, postsAfterFriendship.get(1).getContent());
+		assertArrayEquals(PICTURE_DATA_3, postsAfterFriendship.get(1).getPicture().getData());
+		assertPicturePathExists(postsAfterFriendship.get(1).getPicture());
 	}
 	
 	@Test
@@ -682,7 +719,7 @@ public class IntegrationTest extends PersistenceTest {
 		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
 		
 		UserToken userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
-		facade.createPost(userToken1, NEW_POST_TITLE, NEW_POST_CONTENT, PostVisibility.PRIVATE, null);
+		facade.createPost(userToken1, NEW_POST_TITLE, NEW_POST_CONTENT, PostVisibility.PRIVATE, PICTURE_DATA);
 		
 		List<Post> postsBeforeDelete = facade.getSelfPosts(userToken1);
 		
@@ -766,7 +803,7 @@ public class IntegrationTest extends PersistenceTest {
 		List<UserSummary> followsUser1 = facade.getFollowedUsers(userToken1);
 		List<UserSummary> followsUser2 = facade.getFollowedUsers(userToken2);
 		
-		UserSummary user2Summary = new UserSummary(NEW_USERNAME_2, NEW_USER_PROFILE_DESCRIPTION_2, null);
+		UserSummary user2Summary = new UserSummary(NEW_USERNAME_2, NEW_USER_PROFILE_DESCRIPTION_2, Picture.DEFAULT_PROFILE_PICTURE);
 				
 		assertEquals(1, followsUser1.size());
 		assertTrue(followsUser1.contains(user2Summary));
@@ -790,10 +827,12 @@ public class IntegrationTest extends PersistenceTest {
 		assertEquals(1, summariesUser1.size());
 		assertEquals(NEW_USERNAME_2, summariesUser1.get(0).getUsername());
 		assertEquals(NEW_USER_PROFILE_DESCRIPTION_2, summariesUser1.get(0).getProfileDescription());
+		assertEquals(Picture.DEFAULT_PROFILE_PICTURE, summariesUser1.get(0).getProfilePicture());
 		
 		assertEquals(1, summariesUser2.size());
 		assertEquals(NEW_USERNAME_1, summariesUser2.get(0).getUsername());
 		assertEquals(NEW_USER_PROFILE_DESCRIPTION_1, summariesUser2.get(0).getProfileDescription());
+		assertEquals(Picture.DEFAULT_PROFILE_PICTURE, summariesUser2.get(0).getProfilePicture());
 	}
 	
 	@Test
@@ -895,8 +934,10 @@ public class IntegrationTest extends PersistenceTest {
 		
 		assertEquals(NEW_USERNAME_1, self1.getUsername());
 		assertEquals(NEW_USER_PROFILE_DESCRIPTION_1, self1.getProfileDescription());
+		assertEquals(Picture.DEFAULT_PROFILE_PICTURE, self1.getProfilePicture());
 		assertEquals(NEW_USERNAME_2, self2.getUsername());
 		assertEquals(NEW_USER_PROFILE_DESCRIPTION_2, self2.getProfileDescription());
+		assertEquals(Picture.DEFAULT_PROFILE_PICTURE, self2.getProfilePicture());
 	}
 	
 	@Test
@@ -1023,6 +1064,13 @@ public class IntegrationTest extends PersistenceTest {
 		userCredentials.put(AuthenticationParameters.PASSWORD_KEY, password);
 		
 		return facade.login(userCredentials);
+	}
+
+	private void assertPicturePathExists(Picture picture) {
+		String pictureRelativePath = picture.getPath();
+		String pictureFullPath = TEST_CACHE_PATH + File.separator + pictureRelativePath; 
+		assertNotNull(pictureRelativePath);
+		assertTrue(new File(pictureFullPath).exists());
 	}
 	
 	@After
