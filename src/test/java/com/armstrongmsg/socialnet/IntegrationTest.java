@@ -111,7 +111,7 @@ public class IntegrationTest extends PersistenceTest {
 		
 		pathsUtilMock = Mockito.mockStatic(ApplicationPaths.class);
 		
-		Mockito.when(ApplicationPaths.getApplicationImageCachePath()).
+		Mockito.when(ApplicationPaths.getApplicationBasePath()).
 			thenReturn(TEST_CACHE_PATH);
 		
 		ApplicationFacade.reset();

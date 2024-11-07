@@ -1,7 +1,7 @@
 package com.armstrongmsg.socialnet.view.jsf.model;
 
-import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -33,12 +33,13 @@ public class JsfConnectorTest {
 	private static final String USER_DESCRIPTION_2 = "user-description2";
 	private static final String PICTURE_ID_1 = "pictureId1";
 	private static final byte[] PICTURE_DATA_1 = {1, 1, 1};
+	private static final String PICTURE_PATH_1 = "picturePath1";
 	private JsfConnector connector;
 	private Picture picture1;
 	
 	@Before
 	public void setUp() throws IOException {
-		picture1 = new Picture(PICTURE_ID_1, PICTURE_DATA_1);
+		picture1 = new Picture(PICTURE_ID_1, PICTURE_DATA_1, PICTURE_PATH_1);
 		connector = new JsfConnector();
 	}
 	
@@ -52,9 +53,7 @@ public class JsfConnectorTest {
 		assertEquals(POST_TITLE_1, viewPost.getTitle());
 		assertEquals(POST_CONTENT_1, viewPost.getContent());
 		assertEquals(POST_VISIBILITY_1.getValue(), viewPost.getVisibility());
-		byte[] dataFromStreamedContent = new byte[3];
-		viewPost.getPicture().getStream().get().read(dataFromStreamedContent);
-		assertArrayEquals(PICTURE_DATA_1, dataFromStreamedContent);
+		assertEquals(PICTURE_PATH_1, viewPost.getCachedPicturePath());
 	}
 	
 	@Test
@@ -67,7 +66,7 @@ public class JsfConnectorTest {
 		assertEquals(POST_TITLE_1, viewPost.getTitle());
 		assertEquals(POST_CONTENT_1, viewPost.getContent());
 		assertEquals(POST_VISIBILITY_1.getValue(), viewPost.getVisibility());
-		assertEquals(-1, viewPost.getPicture().getStream().get().read());
+		assertNull(viewPost.getCachedPicturePath());
 	}
 	
 	@Test

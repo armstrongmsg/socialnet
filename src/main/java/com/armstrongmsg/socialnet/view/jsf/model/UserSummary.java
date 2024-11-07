@@ -2,19 +2,15 @@ package com.armstrongmsg.socialnet.view.jsf.model;
 
 import java.util.Objects;
 
-import org.primefaces.model.StreamedContent;
-
 public class UserSummary {
 	private String username;
 	private String profileDescription;
 	private String profilePicPath;
-	private StreamedContent profilePicture;
 	
-	public UserSummary(String username, String profileDescription, StreamedContent profilePicture, String profilePicPath) {
+	public UserSummary(String username, String profileDescription, String profilePicPath) {
 		this.username = username;
 		this.profileDescription = profileDescription;
 		this.profilePicPath = profilePicPath;
-		this.setProfilePicture(profilePicture);
 	}
 
 	public String getUsername() {
@@ -39,14 +35,6 @@ public class UserSummary {
 
 	public void setCachedPicturePath(String profilePicPath) {
 		this.profilePicPath = profilePicPath;
-	}
-
-	public StreamedContent getProfilePicture() {
-		return profilePicture;
-	}
-
-	public void setProfilePicture(StreamedContent profilePicture) {
-		this.profilePicture = profilePicture;
 	}
 
 	@Override

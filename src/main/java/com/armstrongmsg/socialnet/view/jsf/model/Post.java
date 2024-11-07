@@ -1,23 +1,20 @@
 package com.armstrongmsg.socialnet.view.jsf.model;
 
-import org.primefaces.model.StreamedContent;
-
 public class Post {
 	private String id;
 	private String title;
 	private String date;
 	private String content;
 	private String visibility;
-	private StreamedContent picture;
 	private String cachedPicturePath;
 	
-	public Post(String id, String title, String date, String content, String visibility, StreamedContent picture, String cachedPicturePath) {
+	public Post(String id, String title, String date, String content, String visibility, 
+			String cachedPicturePath) {
 		this.setId(id);
 		this.setTitle(title);
 		this.setDate(date);
 		this.setContent(content);
 		this.setVisibility(visibility);
-		this.picture = picture;
 		this.setCachedPicturePath(cachedPicturePath);
 	}
 
@@ -59,14 +56,6 @@ public class Post {
 
 	public void setVisibility(String visibility) {
 		this.visibility = visibility;
-	}
-
-	public StreamedContent getPicture() {
-		return picture;
-	}
-
-	public void setPicture(StreamedContent picture) {
-		this.picture = picture;
 	}
 
 	public String getCachedPicturePath() {

@@ -65,7 +65,7 @@
 			<f:facet name="left">
 				<p:panelGrid columns="1">
 					<h:outputText value="#{contextBean.viewUser.username}" />
-					<p:graphicImage value="#{profileBean.userPic}" cache="false"/>
+					<p:graphicImage value="#{contextBean.viewUser.cachedPicturePath}" cache="false"/>
 					<h:outputText value="About" />
 					<h:outputText value="#{contextBean.viewUser.profileDescription}" />
 				</p:panelGrid>

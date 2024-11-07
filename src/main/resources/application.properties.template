@@ -31,9 +31,6 @@ BOOTSTRAP_PASSWORD_user1=pass1
 BOOTSTRAP_DESCRIPTION_user2=user2
 BOOTSTRAP_PASSWORD_user2=pass2
 
-# The path where the pictures will be stored
-PICTURE_REPOSITORY_LOCAL_PATH=/usr/local/tomcat/db
-
 # Configuration to use a remote service to store media
 REMOTE_MEDIA_STORAGE=false
 REMOTE_MEDIA_STORAGE_URL=

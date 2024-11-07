@@ -15,12 +15,10 @@ import org.junit.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
-import com.armstrongmsg.socialnet.constants.ConfigurationProperties;
 import com.armstrongmsg.socialnet.exceptions.FatalErrorException;
 import com.armstrongmsg.socialnet.model.Picture;
 import com.armstrongmsg.socialnet.util.ApplicationPaths;
 import com.armstrongmsg.socialnet.util.PersistenceTest;
-import com.armstrongmsg.socialnet.util.PropertiesUtil;
 
 public class LocalFileSystemPictureRepositoryTest extends PersistenceTest {
 	private static final String TEST_REPOSITORY_DIRECTORY_PATH = TEST_DIRECTORY + File.separator + "repository";
@@ -31,9 +29,7 @@ public class LocalFileSystemPictureRepositoryTest extends PersistenceTest {
 	private static final byte[] PICTURE_DATA_2 = {2, 2, 2, 2, 2};
 	private LocalFileSystemPictureRepository repository;
 	private Picture picture;
-	private MockedStatic<PropertiesUtil> propertiesUtilMock;
 	private MockedStatic<ApplicationPaths> pathsUtilMock;
-	private PropertiesUtil propertiesUtil;
 	
 	@Before
 	@Override
@@ -42,17 +38,9 @@ public class LocalFileSystemPictureRepositoryTest extends PersistenceTest {
 
 		picture = new Picture(PICTURE_ID_1, PICTURE_DATA_1);
 		
-		propertiesUtil = Mockito.mock(PropertiesUtil.class);
-		
-		propertiesUtilMock = Mockito.mockStatic(PropertiesUtil.class);
-		Mockito.when(PropertiesUtil.getInstance()).thenReturn(propertiesUtil).thenReturn(propertiesUtil);
-		
-		Mockito.when(propertiesUtil.getProperty(ConfigurationProperties.PICTURE_REPOSITORY_LOCAL_PATH)).
-			thenReturn(TEST_REPOSITORY_DIRECTORY_PATH);
-		
 		pathsUtilMock = Mockito.mockStatic(ApplicationPaths.class);
 		
-		Mockito.when(ApplicationPaths.getApplicationImageCachePath()).
+		Mockito.when(ApplicationPaths.getApplicationBasePath()).
 			thenReturn(TEST_CACHE_PATH);
 	}
 	
@@ -60,29 +48,13 @@ public class LocalFileSystemPictureRepositoryTest extends PersistenceTest {
 	public void testConstructor() throws FatalErrorException {
 		new LocalFileSystemPictureRepository();
 		
-		File repositoryFile = new File(TEST_REPOSITORY_DIRECTORY_PATH);
+		File repositoryFile = new File(TEST_CACHE_PATH);
 		assertTrue(repositoryFile.exists());
-	}
-	
-	@Test(expected = FatalErrorException.class)
-	public void testConstructorThrowsExceptionWhenRepositoryPathIsNull() throws FatalErrorException {
-		Mockito.when(propertiesUtil.getProperty(ConfigurationProperties.PICTURE_REPOSITORY_LOCAL_PATH)).
-			thenReturn(null);
-		
-		new LocalFileSystemPictureRepository();
-	}
-	
-	@Test(expected = FatalErrorException.class)
-	public void testConstructorThrowsExceptionWhenRepositoryPathIsEmpty() throws FatalErrorException {
-		Mockito.when(propertiesUtil.getProperty(ConfigurationProperties.PICTURE_REPOSITORY_LOCAL_PATH)).
-			thenReturn("");
-		
-		new LocalFileSystemPictureRepository();
 	}
 	
 	@Test
 	public void testSavePicture() {
-		repository = new LocalFileSystemPictureRepository(TEST_REPOSITORY_DIRECTORY_PATH, TEST_CACHE_PATH);
+		repository = new LocalFileSystemPictureRepository(TEST_REPOSITORY_DIRECTORY_PATH);
 		repository.savePicture(picture);
 		
 		File pictureFile = new File(TEST_REPOSITORY_DIRECTORY_PATH + File.separator + PICTURE_ID_1); 
@@ -94,7 +66,7 @@ public class LocalFileSystemPictureRepositoryTest extends PersistenceTest {
 	
 	@Test
 	public void testGetPictureById() throws IOException {
-		repository = new LocalFileSystemPictureRepository(TEST_REPOSITORY_DIRECTORY_PATH, TEST_CACHE_PATH);
+		repository = new LocalFileSystemPictureRepository(TEST_REPOSITORY_DIRECTORY_PATH);
 		
 		File picture2File = new File(TEST_REPOSITORY_DIRECTORY_PATH + File.separator + PICTURE_ID_2);
 		picture2File.createNewFile();
@@ -110,14 +82,13 @@ public class LocalFileSystemPictureRepositoryTest extends PersistenceTest {
 	
 	@Test
 	public void testGetPictureByIdInvalidId() {
-		repository = new LocalFileSystemPictureRepository(TEST_REPOSITORY_DIRECTORY_PATH, TEST_CACHE_PATH);
+		repository = new LocalFileSystemPictureRepository(TEST_REPOSITORY_DIRECTORY_PATH);
 		assertNull(repository.getPictureById("invalidId"));
 	}
 
 	@After
 	@Override
 	public void tearDown() throws IOException {
-		propertiesUtilMock.close();
 		pathsUtilMock.close();
 		super.tearDown();
 	}

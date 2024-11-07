@@ -3,10 +3,16 @@ package com.armstrongmsg.socialnet.model;
 import java.util.Arrays;
 import java.util.Objects;
 
+import com.armstrongmsg.socialnet.constants.SystemConstants;
+
 public class Picture extends Media {
 	private String id;
 	private byte[] data;
 	private String path;
+	
+	public static final Picture DEFAULT_PROFILE_PICTURE = 
+			new Picture(SystemConstants.DEFAULT_PROFILE_PIC_ID, null, 
+					SystemConstants.DEFAULT_PROFILE_PIC_PATH);
 	
 	public Picture() {
 		
@@ -22,6 +28,10 @@ public class Picture extends Media {
 		this.id = id;
 		this.data = data;
 		this.path = "";
+	}
+	
+	public Picture(String id) {
+		this.id = id;
 	}
 
 	public String getId() {

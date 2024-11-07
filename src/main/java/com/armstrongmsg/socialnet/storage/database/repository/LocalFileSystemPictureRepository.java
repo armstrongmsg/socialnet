@@ -5,18 +5,14 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import com.armstrongmsg.socialnet.constants.ConfigurationProperties;
-import com.armstrongmsg.socialnet.constants.Messages;
 import com.armstrongmsg.socialnet.exceptions.FatalErrorException;
 import com.armstrongmsg.socialnet.model.Picture;
 import com.armstrongmsg.socialnet.util.ApplicationPaths;
-import com.armstrongmsg.socialnet.util.PropertiesUtil;
 
 public class LocalFileSystemPictureRepository implements PictureRepository {
 	private String pictureRepositoryLocalPath;
-	private String pictureCacheDirectory;
 	
-	public LocalFileSystemPictureRepository(String pictureRepositoryLocalPath, String pictureCacheDirectory) {
+	public LocalFileSystemPictureRepository(String pictureRepositoryLocalPath) {
 		this.pictureRepositoryLocalPath = pictureRepositoryLocalPath;
 		
 		File path = new File(pictureRepositoryLocalPath);
@@ -24,38 +20,15 @@ public class LocalFileSystemPictureRepository implements PictureRepository {
 		if (!path.exists()) {
 			path.mkdirs();
 		}
-		
-		this.pictureCacheDirectory = pictureCacheDirectory;
-		File cachePath = new File(pictureCacheDirectory);
-		
-		if (!cachePath.exists()) {
-			cachePath.mkdir();
-		}
 	}
 			
 	public LocalFileSystemPictureRepository() throws FatalErrorException {
-		String repositoryLocalPathProperty =
-				PropertiesUtil.getInstance().getProperty(ConfigurationProperties.PICTURE_REPOSITORY_LOCAL_PATH);
-		
-		if (repositoryLocalPathProperty == null || repositoryLocalPathProperty.isEmpty()) {
-			throw new FatalErrorException(String.format(Messages.Exception.CANNOT_LOAD_LOCAL_PATH_PROPERTY,
-					ConfigurationProperties.PICTURE_REPOSITORY_LOCAL_PATH));
-		}
-		
-		pictureRepositoryLocalPath = repositoryLocalPathProperty;
+		pictureRepositoryLocalPath = ApplicationPaths.getApplicationBasePath() + File.separator + "pics";
 		File path = new File(pictureRepositoryLocalPath);
 		
 		if (!path.exists()) {
 			path.mkdirs();
 		}
-		
-		pictureCacheDirectory = ApplicationPaths.getApplicationImageCachePath();
-		File cachePath = new File(pictureCacheDirectory);
-		
-		if (!cachePath.exists()) {
-			cachePath.mkdir();
-		}
-		
 	}
 	
 	@Override
@@ -73,9 +46,7 @@ public class LocalFileSystemPictureRepository implements PictureRepository {
 			int size = sizeAsLong.intValue();
 			byte[] data = new byte[size];
 			pictureInputStream.read(data);
-			String pictureLocalPath = pictureCacheDirectory + File.separator + id;
-			createCachedImageCopies(id, data, pictureLocalPath);
-			return new Picture(id, data, pictureLocalPath);
+			return new Picture(id, data, "pics/" + id/* + pictureRepositoryLocalPath + File.separator + id */);
 		} catch (IOException e) {
 			// maybe should throw RollbackException
 			return null;
@@ -83,27 +54,6 @@ public class LocalFileSystemPictureRepository implements PictureRepository {
 			if (pictureInputStream != null) {
 				try {
 					pictureInputStream.close();
-				} catch (IOException e) {
-					// maybe should throw RollbackException
-				}
-			}
-		}
-	}
-
-	private void createCachedImageCopies(String id, byte[] data, String pictureLocalPath) throws IOException {
-		File cachedImageFile = new File(pictureLocalPath);
-
-		if (!cachedImageFile.exists()) {
-			FileOutputStream out = null;
-			try {
-				cachedImageFile.createNewFile();
-				out = new FileOutputStream(cachedImageFile);
-				out.write(data);
-			} finally {
-				try {
-					if (out != null) {
-						out.close();
-					}
 				} catch (IOException e) {
 					// maybe should throw RollbackException
 				}
@@ -122,8 +72,6 @@ public class LocalFileSystemPictureRepository implements PictureRepository {
 				localPathFile.createNewFile();
 				out = new FileOutputStream(localPathFile);
 				out.write(picture.getData());
-				String cachedImageLocalPath = this.pictureCacheDirectory + File.separator + picture.getId();
-				createCachedImageCopies(picture.getId(), picture.getData(), cachedImageLocalPath);
 			}
 		} catch (IOException e) {
 			// maybe should throw RollbackException
@@ -145,13 +93,6 @@ public class LocalFileSystemPictureRepository implements PictureRepository {
 		
 		if (localPath.exists()) {
 			localPath.delete();
-		}
-		
-		String cachedImageLocalPath = pictureCacheDirectory + File.separator + picture.getId();
-		File cachedImageLocalPathFile = new File(cachedImageLocalPath);
-		
-		if (cachedImageLocalPathFile.exists()) {
-			cachedImageLocalPathFile.delete();
 		}
 	}
 }

@@ -29,7 +29,7 @@ public class Profile {
 	}
 	
 	public Profile(String description, List<Post> posts) {
-		this.profilePic = new Picture(SystemConstants.DEFAULT_PROFILE_PIC_ID, null);
+		this.profilePic = new Picture(SystemConstants.DEFAULT_PROFILE_PIC_ID);
 		this.profilePicId = SystemConstants.DEFAULT_PROFILE_PIC_ID;
 		this.description = description;
 		this.posts = posts;

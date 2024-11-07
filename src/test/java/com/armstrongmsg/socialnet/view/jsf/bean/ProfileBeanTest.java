@@ -62,7 +62,7 @@ public class ProfileBeanTest {
 		contextBean.setUsername(REGULAR_USERNAME);
 		contextBean.setPassword(PASSWORD);
 		contextBean.login();
-		contextBean.setViewUser(new UserSummary(REGULAR_USERNAME, REGULAR_PROFILE_DESCRIPTION, null, null));
+		contextBean.setViewUser(new UserSummary(REGULAR_USERNAME, REGULAR_PROFILE_DESCRIPTION, null));
 		
 		bean = new ProfileBean(contextBean, applicationBean);
 		
@@ -82,7 +82,7 @@ public class ProfileBeanTest {
 		contextBean.setUsername(REGULAR_USERNAME);
 		contextBean.setPassword(PASSWORD);
 		contextBean.login();
-		contextBean.setViewUser(new UserSummary(REGULAR_USERNAME_2, REGULAR_PROFILE_DESCRIPTION_2, null, null));
+		contextBean.setViewUser(new UserSummary(REGULAR_USERNAME_2, REGULAR_PROFILE_DESCRIPTION_2, null));
 		
 		bean = new ProfileBean(contextBean, applicationBean);
 		
@@ -102,7 +102,7 @@ public class ProfileBeanTest {
 		contextBean.setUsername(REGULAR_USERNAME);
 		contextBean.setPassword(PASSWORD);
 		contextBean.login();
-		contextBean.setViewUser(new UserSummary(REGULAR_USERNAME_2, REGULAR_PROFILE_DESCRIPTION_2, null, null));
+		contextBean.setViewUser(new UserSummary(REGULAR_USERNAME_2, REGULAR_PROFILE_DESCRIPTION_2, null));
 		
 		bean = new ProfileBean(contextBean, applicationBean);
 		
@@ -121,7 +121,7 @@ public class ProfileBeanTest {
 		contextBean.setUsername(REGULAR_USERNAME);
 		contextBean.setPassword(PASSWORD);
 		contextBean.login();
-		contextBean.setViewUser(new UserSummary(REGULAR_USERNAME, REGULAR_PROFILE_DESCRIPTION, null, null));
+		contextBean.setViewUser(new UserSummary(REGULAR_USERNAME, REGULAR_PROFILE_DESCRIPTION, null));
 		
 		bean = new ProfileBean(contextBean, applicationBean);
 		
@@ -141,7 +141,7 @@ public class ProfileBeanTest {
 		contextBean.setUsername(REGULAR_USERNAME);
 		contextBean.setPassword(PASSWORD);
 		contextBean.login();
-		contextBean.setViewUser(new UserSummary(REGULAR_USERNAME_2, REGULAR_PROFILE_DESCRIPTION_2, null, null));
+		contextBean.setViewUser(new UserSummary(REGULAR_USERNAME_2, REGULAR_PROFILE_DESCRIPTION_2, null));
 		
 		bean = new ProfileBean(contextBean, applicationBean);
 		
@@ -161,7 +161,7 @@ public class ProfileBeanTest {
 		contextBean.setUsername(REGULAR_USERNAME);
 		contextBean.setPassword(PASSWORD);
 		contextBean.login();
-		contextBean.setViewUser(new UserSummary(REGULAR_USERNAME_2, REGULAR_PROFILE_DESCRIPTION_2, null, null));
+		contextBean.setViewUser(new UserSummary(REGULAR_USERNAME_2, REGULAR_PROFILE_DESCRIPTION_2, null));
 		
 		bean = new ProfileBean(contextBean, applicationBean);
 		

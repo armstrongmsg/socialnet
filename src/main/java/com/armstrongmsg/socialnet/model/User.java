@@ -27,7 +27,7 @@ public class User {
 	@PostLoad
 	public void postLoad() {
 		if (this.profile.getProfilePicId().equals(SystemConstants.DEFAULT_PROFILE_PIC_ID)) {
-			this.profile.setProfilePic(new Picture(SystemConstants.DEFAULT_PROFILE_PIC_ID, null));
+			this.profile.setProfilePic(Picture.DEFAULT_PROFILE_PICTURE);
 		}
 	}
 	
