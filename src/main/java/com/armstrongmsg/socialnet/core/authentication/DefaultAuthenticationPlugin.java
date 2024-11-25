@@ -11,8 +11,8 @@ import com.armstrongmsg.socialnet.model.User;
 import com.armstrongmsg.socialnet.storage.StorageFacade;
 
 public class DefaultAuthenticationPlugin implements AuthenticationPlugin {
+	private static final String TOKEN_FIELD_SEPARATOR = "#&#";
 	private Admin admin;
-	
 	private StorageFacade storageFacade;
 	
 	public DefaultAuthenticationPlugin(StorageFacade storageFacade) {
@@ -20,30 +20,30 @@ public class DefaultAuthenticationPlugin implements AuthenticationPlugin {
 	}
 
 	@Override
-	public UserToken authenticate(Map<String, String> credentials) throws AuthenticationException {
-		String userId = credentials.get(AuthenticationParameters.USERNAME_KEY);
+	public String authenticate(Map<String, String> credentials) throws AuthenticationException {
+		String username = credentials.get(AuthenticationParameters.USERNAME_KEY);
 		String password = credentials.get(AuthenticationParameters.PASSWORD_KEY);
-		return authenticate(userId, password);
+		return authenticate(username, password);
 	}
 	
-	private UserToken authenticate(String userId, String password) throws AuthenticationException {
+	private String authenticate(String username, String password) throws AuthenticationException {
 		User user = null;
 		
-		if (admin.getUsername().equals(userId)) {
+		if (admin.getUsername().equals(username)) {
 			user = admin;
 		} else {
 			try {
-				user = this.storageFacade.getUserByUsername(userId);
+				user = this.storageFacade.getUserByUsername(username);
 			} catch (UserNotFoundException e) {
-				throw new AuthenticationException(String.format(Messages.Exception.COULD_NOT_FIND_USER, userId));
+				throw new AuthenticationException(String.format(Messages.Exception.COULD_NOT_FIND_USER, username));
 			}
 		}
 
 		if (user != null && user.getPassword().equals(password)) {
-			return new UserToken(user.getUserId(), user.getUsername(), user.getProfile().getDescription());
+			return user.getUserId() + TOKEN_FIELD_SEPARATOR + user.getUsername();
 		}
 		
-		throw new AuthenticationException(String.format(Messages.Exception.INVALID_CREDENTIALS, userId));
+		throw new AuthenticationException(String.format(Messages.Exception.INVALID_CREDENTIALS, username));
 	}
 
 	@Override
@@ -52,12 +52,16 @@ public class DefaultAuthenticationPlugin implements AuthenticationPlugin {
 	}
 
 	@Override
-	public User getUser(UserToken token) throws AuthenticationException {
+	public User getUser(String token) throws AuthenticationException {
+		String[] tokenFields = token.split(TOKEN_FIELD_SEPARATOR);
+		String userId = tokenFields[0];
+		String username = tokenFields[1];
+		
 		try {
-			if (admin.getUsername().equals(token.getUserId())) {
+			if (admin.getUsername().equals(username)) {
 				return admin;
 			} else {
-				return this.storageFacade.getUserById(token.getUserId());
+				return this.storageFacade.getUserById(userId);
 			}
 		} catch (UserNotFoundException e) {
 			throw new AuthenticationException(Messages.Exception.USER_NOT_FOUND_EXCEPTION);

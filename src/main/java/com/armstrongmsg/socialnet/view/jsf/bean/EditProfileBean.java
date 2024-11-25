@@ -8,7 +8,6 @@ import javax.faces.bean.RequestScoped;
 import org.primefaces.model.file.UploadedFile;
 
 import com.armstrongmsg.socialnet.core.ApplicationFacade;
-import com.armstrongmsg.socialnet.core.authentication.UserToken;
 import com.armstrongmsg.socialnet.exceptions.AuthenticationException;
 import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
 import com.armstrongmsg.socialnet.exceptions.UserNotFoundException;
@@ -66,7 +65,7 @@ public class EditProfileBean {
 	}
 	
 	public void updateProfile() {
-		UserToken currentUserToken = contextBean.getCurrentSession().getUserToken();
+		String currentUserToken = contextBean.getCurrentSession().getUserToken();
 		
 		try {
 			facade.updateProfile(currentUserToken, profileDescription, profilePic.getContent());

@@ -10,7 +10,6 @@ import javax.faces.bean.SessionScoped;
 
 import com.armstrongmsg.socialnet.constants.AuthenticationParameters;
 import com.armstrongmsg.socialnet.core.ApplicationFacade;
-import com.armstrongmsg.socialnet.core.authentication.UserToken;
 import com.armstrongmsg.socialnet.exceptions.AuthenticationException;
 import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
 import com.armstrongmsg.socialnet.view.jsf.NavigationController;
@@ -91,7 +90,7 @@ public class ContextBean {
 		
 		if (currentViewUser == null) {
 			try {
-				UserToken currentUserToken = this.session.getUserToken();
+				String currentUserToken = this.session.getUserToken();
 				currentViewUser = new JsfConnector().getViewUserSummary(facade.getSelf(currentUserToken));
 				this.session.setCurrentViewUser(currentViewUser);
 			} catch (AuthenticationException e) {
@@ -108,9 +107,9 @@ public class ContextBean {
 		this.session.setCurrentViewUser(viewUser);
 	}
 	
-	public UserToken getUser() {
+	public String getUser() {
 		if (this.session == null) {
-			return new UserToken("no context", "no context", "no context");
+			return "";
 		}
 		
 		return this.session.getUserToken();
@@ -122,7 +121,7 @@ public class ContextBean {
 			credentials.put(AuthenticationParameters.USERNAME_KEY, username);
 			credentials.put(AuthenticationParameters.PASSWORD_KEY, password);
 			
-			UserToken token = facade.login(credentials);
+			String token = facade.login(credentials);
 			boolean userIsAdmin = facade.userIsAdmin(username);
 
 			this.session = new Session(token);

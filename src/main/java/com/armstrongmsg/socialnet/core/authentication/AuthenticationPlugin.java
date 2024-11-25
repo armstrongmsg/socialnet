@@ -7,6 +7,6 @@ import com.armstrongmsg.socialnet.model.User;
 
 public interface AuthenticationPlugin {
 	void setUp(Object ... params);
-	UserToken authenticate(Map<String, String> credentials) throws AuthenticationException;
-	User getUser(UserToken token) throws AuthenticationException;
+	String authenticate(Map<String, String> credentials) throws AuthenticationException;
+	User getUser(String token) throws AuthenticationException;
 }

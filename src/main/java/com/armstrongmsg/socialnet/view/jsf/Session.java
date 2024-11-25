@@ -2,26 +2,25 @@ package com.armstrongmsg.socialnet.view.jsf;
 
 import java.util.Objects;
 
-import com.armstrongmsg.socialnet.core.authentication.UserToken;
 import com.armstrongmsg.socialnet.view.jsf.model.UserSummary;
 
 public class Session {
 	private boolean admin;
 	private boolean logged;
-	private UserToken userToken;
+	private String userToken;
 	private UserSummary viewUser;
 
-	public Session(UserToken userToken) {
+	public Session(String userToken) {
 		this.userToken = userToken;
 		this.admin = false;
 		this.logged = false;
 	}
 
-	public UserToken getUserToken() {
+	public String getUserToken() {
 		return userToken;
 	}
 
-	public void setUser(UserToken userToken) {
+	public void setUser(String userToken) {
 		this.userToken = userToken;
 	}
 

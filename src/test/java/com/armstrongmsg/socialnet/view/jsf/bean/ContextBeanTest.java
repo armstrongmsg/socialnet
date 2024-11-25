@@ -16,17 +16,16 @@ import org.mockito.Mockito;
 
 import com.armstrongmsg.socialnet.constants.AuthenticationParameters;
 import com.armstrongmsg.socialnet.core.ApplicationFacade;
-import com.armstrongmsg.socialnet.core.authentication.UserToken;
 import com.armstrongmsg.socialnet.exceptions.AuthenticationException;
 
 public class ContextBeanTest {
 	private static final String REGULAR_USERNAME = "username";
 	private static final String PASSWORD = "password";
 	private static final String ADMIN_USERNAME = "admin";
+	private static final String USER_TOKEN = "token";
 	private ContextBean bean;
 	private MockedStatic<ApplicationFacade> facadeMock;
 	private ApplicationFacade facade;
-	private UserToken userToken;
 	private Map<String, String> credentials;
 	
 	@Before
@@ -35,7 +34,6 @@ public class ContextBeanTest {
 		facade = Mockito.mock(ApplicationFacade.class);
 		Mockito.when(ApplicationFacade.getInstance()).thenReturn(facade);
 		credentials = new HashMap<String, String>();
-		userToken = Mockito.mock(UserToken.class);
 		bean = new ContextBean(new ApplicationBean(facade));
 	}
 	
@@ -46,7 +44,7 @@ public class ContextBeanTest {
 		credentials.put(AuthenticationParameters.USERNAME_KEY, ADMIN_USERNAME);
 		credentials.put(AuthenticationParameters.PASSWORD_KEY, PASSWORD);
 		
-		Mockito.when(facade.login(credentials)).thenReturn(userToken);
+		Mockito.when(facade.login(credentials)).thenReturn(USER_TOKEN);
 		
 		
 		assertNull(bean.getCurrentSession());
@@ -56,7 +54,7 @@ public class ContextBeanTest {
 		
 		bean.login();
 		
-		assertEquals(userToken, bean.getCurrentSession().getUserToken());
+		assertEquals(USER_TOKEN, bean.getCurrentSession().getUserToken());
 		assertTrue(bean.getCurrentSession().isAdmin());
 		assertTrue(bean.getCurrentSession().isLogged());
 	}
@@ -68,7 +66,7 @@ public class ContextBeanTest {
 		credentials.put(AuthenticationParameters.USERNAME_KEY, REGULAR_USERNAME);
 		credentials.put(AuthenticationParameters.PASSWORD_KEY, PASSWORD);
 		
-		Mockito.when(facade.login(credentials)).thenReturn(userToken);
+		Mockito.when(facade.login(credentials)).thenReturn(USER_TOKEN);
 		
 		assertNull(bean.getCurrentSession());
 		
@@ -77,7 +75,7 @@ public class ContextBeanTest {
 		
 		bean.login();
 		
-		assertEquals(userToken, bean.getCurrentSession().getUserToken());
+		assertEquals(USER_TOKEN, bean.getCurrentSession().getUserToken());
 		assertFalse(bean.getCurrentSession().isAdmin());
 		assertTrue(bean.getCurrentSession().isLogged());
 	}

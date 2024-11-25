@@ -9,7 +9,6 @@ import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.RequestScoped;
 
 import com.armstrongmsg.socialnet.core.ApplicationFacade;
-import com.armstrongmsg.socialnet.core.authentication.UserToken;
 import com.armstrongmsg.socialnet.exceptions.AuthenticationException;
 import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
 import com.armstrongmsg.socialnet.exceptions.UserNotFoundException;
@@ -181,7 +180,7 @@ public class FriendshipBean {
 	public List<UserSummary> getFriendRecommendations() {
 		try {
 			if (friendRecommendations == null) {
-				UserToken token = contextBean.getCurrentSession().getUserToken();
+				String token = contextBean.getCurrentSession().getUserToken();
 				friendRecommendations = new JsfConnector().getViewUserSummaries(facade.getUserRecommendations(token));
 			}
 			return friendRecommendations;
@@ -194,7 +193,7 @@ public class FriendshipBean {
 	
 	public void unfriend() {
 		try {
-			UserToken token = contextBean.getCurrentSession().getUserToken();
+			String token = contextBean.getCurrentSession().getUserToken();
 			facade.unfriend(token, username);
 		} catch (AuthenticationException e) {
 			this.exceptionHandler.handle(e);

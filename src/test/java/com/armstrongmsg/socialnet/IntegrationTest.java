@@ -29,7 +29,6 @@ import com.armstrongmsg.socialnet.constants.ConfigurationPropertiesDefaults;
 import com.armstrongmsg.socialnet.constants.SystemConstants;
 import com.armstrongmsg.socialnet.core.ApplicationFacade;
 import com.armstrongmsg.socialnet.core.authentication.DefaultAuthenticationPlugin;
-import com.armstrongmsg.socialnet.core.authentication.UserToken;
 import com.armstrongmsg.socialnet.core.authorization.DefaultAuthorizationPlugin;
 import com.armstrongmsg.socialnet.core.feed.DefaultFeedPolicy;
 import com.armstrongmsg.socialnet.exceptions.AuthenticationException;
@@ -158,9 +157,10 @@ public class IntegrationTest extends PersistenceTest {
 		adminCredentials.put(AuthenticationParameters.USERNAME_KEY, ADMIN_USERNAME);
 		adminCredentials.put(AuthenticationParameters.PASSWORD_KEY, ADMIN_PASSWORD);
 		
-		UserToken adminToken = facade.login(adminCredentials);
+		String adminToken = facade.login(adminCredentials);
 		
-		assertEquals(ADMIN_USERNAME, adminToken.getUsername());
+		assertNotNull(adminToken);
+		assertFalse(adminToken.isBlank());
 	}
 	
 	@Test(expected = AuthenticationException.class)
@@ -182,7 +182,7 @@ public class IntegrationTest extends PersistenceTest {
 	
 	@Test
 	public void testGetCreateRemoveUserByAdmin() throws AuthenticationException, UnauthorizedOperationException, UserNotFoundException {
-		UserToken adminToken = loginAsAdmin();
+		String adminToken = loginAsAdmin();
 		
 		List<User> users = facade.getUsers(adminToken);
 		
@@ -219,7 +219,7 @@ public class IntegrationTest extends PersistenceTest {
 	
 	@Test
 	public void testLoginWorksCorrectlyAfterAttemptLoginWithInvalidUser() throws AuthenticationException, UnauthorizedOperationException {
-		UserToken adminToken = loginAsAdmin();
+		String adminToken = loginAsAdmin();
 		
 		List<User> users = facade.getUsers(adminToken);
 		
@@ -243,34 +243,34 @@ public class IntegrationTest extends PersistenceTest {
 	
 	@Test(expected = UnauthorizedOperationException.class)
 	public void testCannotGetAllUsersWithNonAdminToken() throws UnauthorizedOperationException, AuthenticationException {	
-		UserToken adminToken = loginAsAdmin();
+		String adminToken = loginAsAdmin();
 		
 		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
 
-		UserToken userToken = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
+		String userToken = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
 		
 		facade.getUsers(userToken);
 	}
 	
 	@Test(expected = UnauthorizedOperationException.class)
 	public void testCannotAddUserAsAdminWithNonAdminToken() throws UnauthorizedOperationException, AuthenticationException {
-		UserToken adminToken = loginAsAdmin();
+		String adminToken = loginAsAdmin();
 		
 		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
 
-		UserToken userToken = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
+		String userToken = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
 		
 		facade.addUser(userToken, NEW_USERNAME_2, NEW_USER_PASSWORD_2, NEW_USER_PROFILE_DESCRIPTION_2);
 	}
 	
 	@Test(expected = UnauthorizedOperationException.class)
 	public void testNonAdminCannotRemoveUser() throws AuthenticationException, UnauthorizedOperationException, UserNotFoundException {		
-		UserToken adminToken = loginAsAdmin();
+		String adminToken = loginAsAdmin();
 		
 		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
 		facade.addUser(adminToken, NEW_USERNAME_2, NEW_USER_PASSWORD_2, NEW_USER_PROFILE_DESCRIPTION_2);
 		
-		UserToken userToken = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
+		String userToken = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
 		
 		List<User> usersAfterCreation = facade.getUsers(adminToken);
 		
@@ -279,9 +279,9 @@ public class IntegrationTest extends PersistenceTest {
 	
 	@Test
 	public void testIsAdmin() throws AuthenticationException, UnauthorizedOperationException {
-		UserToken adminToken = loginAsAdmin();
+		String adminToken = loginAsAdmin();
 		
-		assertTrue(facade.userIsAdmin(adminToken.getUserId()));
+		assertTrue(facade.userIsAdmin(ADMIN_USERNAME));
 		
 		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
 		facade.addUser(adminToken, NEW_USERNAME_2, NEW_USER_PASSWORD_2, NEW_USER_PROFILE_DESCRIPTION_2);
@@ -294,7 +294,7 @@ public class IntegrationTest extends PersistenceTest {
 	
 	@Test
 	public void testGetAndCreateUserBySelf() throws UnauthorizedOperationException, AuthenticationException {
-		UserToken adminToken = loginAsAdmin();
+		String adminToken = loginAsAdmin();
 		
 		List<User> users = facade.getUsers(adminToken);
 		
@@ -317,18 +317,20 @@ public class IntegrationTest extends PersistenceTest {
 	
 	@Test
 	public void testCreateAndGetPostByAdmin() throws AuthenticationException, UnauthorizedOperationException, UserNotFoundException {
-		UserToken adminToken = loginAsAdmin();
+		String adminToken = loginAsAdmin();
 		
 		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
 		
-		UserToken userToken = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
+		String userToken = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
 		
-		List<Post> userPosts = facade.getUserPostsAdmin(adminToken, userToken.getUserId());
+		List<User> users = facade.getUsers(adminToken);
+		
+		List<Post> userPosts = facade.getUserPostsAdmin(adminToken, users.get(0).getUserId());
 		assertTrue(userPosts.isEmpty());
 		
 		facade.createPost(userToken, NEW_POST_TITLE, NEW_POST_CONTENT, NEW_POST_VISIBILITY, PICTURE_DATA);
 		
-		List<Post> userPostsAfterCreation = facade.getUserPostsAdmin(adminToken, userToken.getUserId());
+		List<Post> userPostsAfterCreation = facade.getUserPostsAdmin(adminToken, users.get(0).getUserId());
 		
 		assertEquals(1, userPostsAfterCreation.size());
 		Post createdPost = userPostsAfterCreation.get(0);
@@ -343,36 +345,39 @@ public class IntegrationTest extends PersistenceTest {
 
 	@Test(expected = UnauthorizedOperationException.class)
 	public void testNonAdminUserCannotGetPostsByUserId() throws AuthenticationException, UnauthorizedOperationException, UserNotFoundException { 
-		UserToken adminToken = loginAsAdmin();
+		String adminToken = loginAsAdmin();
 		
 		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
 		facade.addUser(adminToken, NEW_USERNAME_2, NEW_USER_PASSWORD_2, NEW_USER_PROFILE_DESCRIPTION_2);
 
-		UserToken userToken = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
+		String userToken = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
 		
-		facade.getUserPostsAdmin(userToken, userToken.getUserId());
+		User user1 = facade.getUsers(adminToken).get(0);
+		
+		facade.getUserPostsAdmin(userToken, user1.getUserId());
 	}
 	
 	@Test(expected = UnauthorizedOperationException.class)
 	public void testNonAdminUserCannotGetPostsFromOtherUser() throws AuthenticationException, UnauthorizedOperationException, UserNotFoundException { 
-		UserToken adminToken = loginAsAdmin();
+		String adminToken = loginAsAdmin();
 		
 		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
 		facade.addUser(adminToken, NEW_USERNAME_2, NEW_USER_PASSWORD_2, NEW_USER_PROFILE_DESCRIPTION_2);
 
-		UserToken userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
-		UserToken userToken2 = loginAsUser(NEW_USERNAME_2, NEW_USER_PASSWORD_2);
+		String userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
 		
-		facade.getUserPostsAdmin(userToken1, userToken2.getUserId());
+		User user2 = facade.getUsers(adminToken).get(1);
+		
+		facade.getUserPostsAdmin(userToken1, user2.getUserId());
 	}
 	
 	@Test
 	public void testCreateAndGetPostByNonAdmin() throws UnauthorizedOperationException, AuthenticationException, UserNotFoundException {
-		UserToken adminToken = loginAsAdmin();
+		String adminToken = loginAsAdmin();
 		
 		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
 		
-		UserToken userToken = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
+		String userToken = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
 		
 		List<Post> userPosts = facade.getSelfPosts(userToken);
 		assertTrue(userPosts.isEmpty());
@@ -393,13 +398,13 @@ public class IntegrationTest extends PersistenceTest {
 	
 	@Test
 	public void testGetOtherUserPostsByNonAdmin() throws AuthenticationException, UnauthorizedOperationException, UserNotFoundException {
-		UserToken adminToken = loginAsAdmin();
+		String adminToken = loginAsAdmin();
 		
 		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
 		facade.addUser(adminToken, NEW_USERNAME_2, NEW_USER_PASSWORD_2, NEW_USER_PROFILE_DESCRIPTION_2);
 		
-		UserToken user1Token = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
-		UserToken user2Token = loginAsUser(NEW_USERNAME_2, NEW_USER_PASSWORD_2);
+		String user1Token = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
+		String user2Token = loginAsUser(NEW_USERNAME_2, NEW_USER_PASSWORD_2);
 		
 		List<Post> user1Posts = facade.getUserPosts(user1Token, NEW_USERNAME_1);
 		List<Post> user2PostsForUser1 = facade.getUserPosts(user1Token, NEW_USERNAME_2);
@@ -468,7 +473,7 @@ public class IntegrationTest extends PersistenceTest {
 	
 	@Test
 	public void testAddFriendshipAdmin() throws UnauthorizedOperationException, AuthenticationException, UserNotFoundException {
-		UserToken adminToken = loginAsAdmin();
+		String adminToken = loginAsAdmin();
 		
 		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
 		facade.addUser(adminToken, NEW_USERNAME_2, NEW_USER_PASSWORD_2, NEW_USER_PROFILE_DESCRIPTION_2);
@@ -488,7 +493,7 @@ public class IntegrationTest extends PersistenceTest {
 	
 	@Test(expected = UnauthorizedOperationException.class)
 	public void testNonAdminCannotAddFriendshipByUserId() throws UnauthorizedOperationException, AuthenticationException, UserNotFoundException {
-		UserToken adminToken = loginAsAdmin();
+		String adminToken = loginAsAdmin();
 		
 		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
 		facade.addUser(adminToken, NEW_USERNAME_2, NEW_USER_PASSWORD_2, NEW_USER_PROFILE_DESCRIPTION_2);
@@ -497,30 +502,33 @@ public class IntegrationTest extends PersistenceTest {
 		User user1 = users.get(0);
 		User user2 = users.get(1);
 		
-		UserToken userToken = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
+		String userToken = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
 		facade.addFriendshipAdmin(userToken, user1.getUserId(), user2.getUserId());
 	}
 	
 	@Test(expected = UnauthorizedOperationException.class)
 	public void testNonAdminCannotGetFriendsById() throws AuthenticationException, UnauthorizedOperationException, UserNotFoundException {
-		UserToken adminToken = loginAsAdmin();
+		String adminToken = loginAsAdmin();
 		
 		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
 
-		UserToken userToken = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
+		String userToken = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
 		
-		facade.getFriends(userToken, userToken.getUserId());
+		List<User> users = facade.getUsers(adminToken);
+		User user1 = users.get(0);
+		
+		facade.getFriends(userToken, user1.getUserId());
 	}
 	
 	@Test
 	public void testAddFriendshipRequestAndReject() throws UnauthorizedOperationException, AuthenticationException, UserNotFoundException {
-		UserToken adminToken = loginAsAdmin();
+		String adminToken = loginAsAdmin();
 		
 		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
 		facade.addUser(adminToken, NEW_USERNAME_2, NEW_USER_PASSWORD_2, NEW_USER_PROFILE_DESCRIPTION_2);
 		
-		UserToken userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
-		UserToken userToken2 = loginAsUser(NEW_USERNAME_2, NEW_USER_PASSWORD_2);
+		String userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
+		String userToken2 = loginAsUser(NEW_USERNAME_2, NEW_USER_PASSWORD_2);
 		
 		assertTrue(facade.getSelfFriends(userToken1).isEmpty());
 		assertTrue(facade.getSelfFriends(userToken2).isEmpty());
@@ -553,13 +561,13 @@ public class IntegrationTest extends PersistenceTest {
 	
 	@Test
 	public void testAddFriendshipRequestAndAccept() throws UnauthorizedOperationException, AuthenticationException, UserNotFoundException {
-		UserToken adminToken = loginAsAdmin();
+		String adminToken = loginAsAdmin();
 		
 		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
 		facade.addUser(adminToken, NEW_USERNAME_2, NEW_USER_PASSWORD_2, NEW_USER_PROFILE_DESCRIPTION_2);
 		
-		UserToken userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
-		UserToken userToken2 = loginAsUser(NEW_USERNAME_2, NEW_USER_PASSWORD_2);
+		String userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
+		String userToken2 = loginAsUser(NEW_USERNAME_2, NEW_USER_PASSWORD_2);
 		
 		assertTrue(facade.getSelfFriends(userToken1).isEmpty());
 		assertTrue(facade.getSelfFriends(userToken2).isEmpty());
@@ -594,13 +602,13 @@ public class IntegrationTest extends PersistenceTest {
 	
 	@Test
 	public void testAddFriendship() throws UnauthorizedOperationException, AuthenticationException, UserNotFoundException {
-		UserToken adminToken = loginAsAdmin();
+		String adminToken = loginAsAdmin();
 		
 		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
 		facade.addUser(adminToken, NEW_USERNAME_2, NEW_USER_PASSWORD_2, NEW_USER_PROFILE_DESCRIPTION_2);
 		
-		UserToken userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
-		UserToken userToken2 = loginAsUser(NEW_USERNAME_2, NEW_USER_PASSWORD_2);
+		String userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
+		String userToken2 = loginAsUser(NEW_USERNAME_2, NEW_USER_PASSWORD_2);
 		
 		facade.addFriendship(userToken1, NEW_USERNAME_2);
 		
@@ -616,13 +624,13 @@ public class IntegrationTest extends PersistenceTest {
 	
 	@Test
 	public void testGetFriendsPosts() throws AuthenticationException, UnauthorizedOperationException, UserNotFoundException {
-		UserToken adminToken = loginAsAdmin();
+		String adminToken = loginAsAdmin();
 		
 		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
 		facade.addUser(adminToken, NEW_USERNAME_2, NEW_USER_PASSWORD_2, NEW_USER_PROFILE_DESCRIPTION_2);
 		
-		UserToken userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);	
-		UserToken userToken2 = loginAsUser(NEW_USERNAME_2, NEW_USER_PASSWORD_2);
+		String userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);	
+		String userToken2 = loginAsUser(NEW_USERNAME_2, NEW_USER_PASSWORD_2);
 		
 		facade.addFriendship(userToken1, NEW_USERNAME_2);
 		
@@ -652,7 +660,7 @@ public class IntegrationTest extends PersistenceTest {
 	
 	@Test
 	public void testGetFeedPosts() throws AuthenticationException, UnauthorizedOperationException, InterruptedException, UserNotFoundException {
-		UserToken adminToken = loginAsAdmin();
+		String adminToken = loginAsAdmin();
 		
 		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
 		facade.addUser(adminToken, NEW_USERNAME_2, NEW_USER_PASSWORD_2, NEW_USER_PROFILE_DESCRIPTION_2);
@@ -661,8 +669,8 @@ public class IntegrationTest extends PersistenceTest {
 		User user1 = users.get(0);
 		User user2 = users.get(1);
 		
-		UserToken userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);	
-		UserToken userToken2 = loginAsUser(NEW_USERNAME_2, NEW_USER_PASSWORD_2);
+		String userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);	
+		String userToken2 = loginAsUser(NEW_USERNAME_2, NEW_USER_PASSWORD_2);
 		
 		facade.createPost(userToken2, NEW_POST_TITLE, NEW_POST_CONTENT, PostVisibility.PUBLIC, PICTURE_DATA);
 		
@@ -714,11 +722,11 @@ public class IntegrationTest extends PersistenceTest {
 	
 	@Test
 	public void testDeletePost() throws AuthenticationException, UnauthorizedOperationException, UserNotFoundException {
-		UserToken adminToken = loginAsAdmin();
+		String adminToken = loginAsAdmin();
 		
 		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
 		
-		UserToken userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
+		String userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
 		facade.createPost(userToken1, NEW_POST_TITLE, NEW_POST_CONTENT, PostVisibility.PRIVATE, PICTURE_DATA);
 		
 		List<Post> postsBeforeDelete = facade.getSelfPosts(userToken1);
@@ -735,7 +743,7 @@ public class IntegrationTest extends PersistenceTest {
 	
 	@Test
 	public void testAddFollowAdmin() throws UnauthorizedOperationException, AuthenticationException, UserNotFoundException {
-		UserToken adminToken = loginAsAdmin();
+		String adminToken = loginAsAdmin();
 		
 		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
 		facade.addUser(adminToken, NEW_USERNAME_2, NEW_USER_PASSWORD_2, NEW_USER_PROFILE_DESCRIPTION_2);
@@ -757,7 +765,7 @@ public class IntegrationTest extends PersistenceTest {
 	
 	@Test(expected = UnauthorizedOperationException.class)
 	public void testNonAdminCannotFollowById() throws UnauthorizedOperationException, AuthenticationException, UserNotFoundException {
-		UserToken adminToken = loginAsAdmin();
+		String adminToken = loginAsAdmin();
 		
 		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
 		facade.addUser(adminToken, NEW_USERNAME_2, NEW_USER_PASSWORD_2, NEW_USER_PROFILE_DESCRIPTION_2);
@@ -766,13 +774,13 @@ public class IntegrationTest extends PersistenceTest {
 		User user1 = users.get(0);
 		User user2 = users.get(1);
 		
-		UserToken userToken = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
+		String userToken = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
 		facade.addFollowAdmin(userToken, user1.getUserId(), user2.getUserId());
 	}
 	
 	@Test(expected = UnauthorizedOperationException.class)
 	public void testNonAdminCannotGetFollowsById() throws UnauthorizedOperationException, AuthenticationException, UserNotFoundException {
-		UserToken adminToken = loginAsAdmin();
+		String adminToken = loginAsAdmin();
 		
 		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
 		facade.addUser(adminToken, NEW_USERNAME_2, NEW_USER_PASSWORD_2, NEW_USER_PROFILE_DESCRIPTION_2);
@@ -783,20 +791,20 @@ public class IntegrationTest extends PersistenceTest {
 		
 		facade.addFollowAdmin(adminToken, user1.getUserId(), user2.getUserId());
 		
-		UserToken userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
+		String userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
 		
 		facade.getFollowedUsers(userToken1, user1.getUserId());
 	}
 	
 	@Test
 	public void testAddFollow() throws UnauthorizedOperationException, AuthenticationException, UserNotFoundException {
-		UserToken adminToken = loginAsAdmin();
+		String adminToken = loginAsAdmin();
 		
 		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
 		facade.addUser(adminToken, NEW_USERNAME_2, NEW_USER_PASSWORD_2, NEW_USER_PROFILE_DESCRIPTION_2);
 
-		UserToken userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);	
-		UserToken userToken2 = loginAsUser(NEW_USERNAME_2, NEW_USER_PASSWORD_2);
+		String userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);	
+		String userToken2 = loginAsUser(NEW_USERNAME_2, NEW_USER_PASSWORD_2);
 		
 		facade.addFollow(userToken1, NEW_USERNAME_2);
 		
@@ -813,13 +821,13 @@ public class IntegrationTest extends PersistenceTest {
 	
 	@Test
 	public void testGetUserSummaries() throws UnauthorizedOperationException, AuthenticationException {
-		UserToken adminToken = loginAsAdmin();
+		String adminToken = loginAsAdmin();
 		
 		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
 		facade.addUser(adminToken, NEW_USERNAME_2, NEW_USER_PASSWORD_2, NEW_USER_PROFILE_DESCRIPTION_2);
 		
-		UserToken userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);	
-		UserToken userToken2 = loginAsUser(NEW_USERNAME_2, NEW_USER_PASSWORD_2);
+		String userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);	
+		String userToken2 = loginAsUser(NEW_USERNAME_2, NEW_USER_PASSWORD_2);
 		
 		List<UserSummary> summariesUser1 = facade.getUserSummaries(userToken1);
 		List<UserSummary> summariesUser2 = facade.getUserSummaries(userToken2);
@@ -837,13 +845,13 @@ public class IntegrationTest extends PersistenceTest {
 	
 	@Test
 	public void testGetUserRecommendations() throws AuthenticationException, UnauthorizedOperationException, UserNotFoundException {
-		UserToken adminToken = loginAsAdmin();
+		String adminToken = loginAsAdmin();
 		
 		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
 		facade.addUser(adminToken, NEW_USERNAME_2, NEW_USER_PASSWORD_2, NEW_USER_PROFILE_DESCRIPTION_2);
 		
-		UserToken userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);	
-		UserToken userToken2 = loginAsUser(NEW_USERNAME_2, NEW_USER_PASSWORD_2);
+		String userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);	
+		String userToken2 = loginAsUser(NEW_USERNAME_2, NEW_USER_PASSWORD_2);
 		
 		List<UserSummary> recommendationsUser1 = facade.getUserRecommendations(userToken1);
 		List<UserSummary> recommendationsUser2 = facade.getUserRecommendations(userToken2);
@@ -854,7 +862,11 @@ public class IntegrationTest extends PersistenceTest {
 		assertEquals(1, recommendationsUser2.size());
 		assertEquals(NEW_USERNAME_1, recommendationsUser2.get(0).getUsername());
 		
-		facade.addFriendshipAdmin(adminToken, userToken1.getUserId(), userToken2.getUserId());
+		List<User> users = facade.getUsers(adminToken);
+		User user1 = users.get(0);
+		User user2 = users.get(1);
+		
+		facade.addFriendshipAdmin(adminToken, user1.getUserId(), user2.getUserId());
 		
 		List<UserSummary> recommendationsUser1AfterFriendship = facade.getUserRecommendations(userToken1);
 		List<UserSummary> recommendationsUser2AfterFriendship = facade.getUserRecommendations(userToken2);
@@ -865,13 +877,13 @@ public class IntegrationTest extends PersistenceTest {
 	
 	@Test
 	public void testGetFollowRecommendations() throws AuthenticationException, UnauthorizedOperationException, UserNotFoundException {
-		UserToken adminToken = loginAsAdmin();
+		String adminToken = loginAsAdmin();
 		
 		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
 		facade.addUser(adminToken, NEW_USERNAME_2, NEW_USER_PASSWORD_2, NEW_USER_PROFILE_DESCRIPTION_2);
 		
-		UserToken userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);	
-		UserToken userToken2 = loginAsUser(NEW_USERNAME_2, NEW_USER_PASSWORD_2);
+		String userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);	
+		String userToken2 = loginAsUser(NEW_USERNAME_2, NEW_USER_PASSWORD_2);
 		
 		List<UserSummary> recommendationsUser1 = facade.getFollowRecommendations(userToken1);
 		List<UserSummary> recommendationsUser2 = facade.getFollowRecommendations(userToken2);
@@ -899,13 +911,13 @@ public class IntegrationTest extends PersistenceTest {
 	
 	@Test
 	public void testIsFriend() throws AuthenticationException, UnauthorizedOperationException, UserNotFoundException {
-		UserToken adminToken = loginAsAdmin();
+		String adminToken = loginAsAdmin();
 		
 		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
 		facade.addUser(adminToken, NEW_USERNAME_2, NEW_USER_PASSWORD_2, NEW_USER_PROFILE_DESCRIPTION_2);
 		
-		UserToken userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);	
-		UserToken userToken2 = loginAsUser(NEW_USERNAME_2, NEW_USER_PASSWORD_2);
+		String userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);	
+		String userToken2 = loginAsUser(NEW_USERNAME_2, NEW_USER_PASSWORD_2);
 		
 		assertFalse(facade.isFriend(userToken1, NEW_USERNAME_2));
 		assertFalse(facade.isFriend(userToken2, NEW_USERNAME_1));
@@ -913,7 +925,11 @@ public class IntegrationTest extends PersistenceTest {
 		assertFalse(facade.isFriend(userToken1, NEW_USERNAME_1));
 		assertFalse(facade.isFriend(userToken2, NEW_USERNAME_2));
 		
-		facade.addFriendshipAdmin(adminToken, userToken1.getUserId(), userToken2.getUserId());
+		List<User> users = facade.getUsers(adminToken);
+		User user1 = users.get(0);
+		User user2 = users.get(1);
+		
+		facade.addFriendshipAdmin(adminToken, user1.getUserId(), user2.getUserId());
 		
 		assertTrue(facade.isFriend(userToken1, NEW_USERNAME_2));
 		assertTrue(facade.isFriend(userToken2, NEW_USERNAME_1));
@@ -921,13 +937,13 @@ public class IntegrationTest extends PersistenceTest {
 	
 	@Test
 	public void testGetSelf() throws AuthenticationException, UnauthorizedOperationException {
-		UserToken adminToken = loginAsAdmin();
+		String adminToken = loginAsAdmin();
 		
 		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
 		facade.addUser(adminToken, NEW_USERNAME_2, NEW_USER_PASSWORD_2, NEW_USER_PROFILE_DESCRIPTION_2);
 		
-		UserToken userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);	
-		UserToken userToken2 = loginAsUser(NEW_USERNAME_2, NEW_USER_PASSWORD_2);
+		String userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);	
+		String userToken2 = loginAsUser(NEW_USERNAME_2, NEW_USER_PASSWORD_2);
 		
 		UserSummary self1 = facade.getSelf(userToken1);
 		UserSummary self2 = facade.getSelf(userToken2);
@@ -942,20 +958,24 @@ public class IntegrationTest extends PersistenceTest {
 	
 	@Test
 	public void testFollows() throws UnauthorizedOperationException, AuthenticationException, UserNotFoundException {
-		UserToken adminToken = loginAsAdmin();
+		String adminToken = loginAsAdmin();
 		
 		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
 		facade.addUser(adminToken, NEW_USERNAME_2, NEW_USER_PASSWORD_2, NEW_USER_PROFILE_DESCRIPTION_2);
 		
-		UserToken userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);	
-		UserToken userToken2 = loginAsUser(NEW_USERNAME_2, NEW_USER_PASSWORD_2);
+		String userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);	
+		String userToken2 = loginAsUser(NEW_USERNAME_2, NEW_USER_PASSWORD_2);
 		
 		assertFalse(facade.follows(userToken1, NEW_USERNAME_1));
 		assertFalse(facade.follows(userToken1, NEW_USERNAME_2));
 		assertFalse(facade.follows(userToken2, NEW_USERNAME_1));
 		assertFalse(facade.follows(userToken2, NEW_USERNAME_2));
 		
-		facade.addFollowAdmin(adminToken, userToken1.getUserId(), userToken2.getUserId());
+		List<User> users = facade.getUsers(adminToken);
+		User user1 = users.get(0);
+		User user2 = users.get(1);
+		
+		facade.addFollowAdmin(adminToken, user1.getUserId(), user2.getUserId());
 		
 		assertFalse(facade.follows(userToken1, NEW_USERNAME_1));
 		assertTrue(facade.follows(userToken1, NEW_USERNAME_2));
@@ -965,7 +985,7 @@ public class IntegrationTest extends PersistenceTest {
 	
 	@Test
 	public void testUnfollow() throws AuthenticationException, UnauthorizedOperationException, UserNotFoundException {
-		UserToken adminToken = loginAsAdmin();
+		String adminToken = loginAsAdmin();
 		
 		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
 		facade.addUser(adminToken, NEW_USERNAME_2, NEW_USER_PASSWORD_2, NEW_USER_PROFILE_DESCRIPTION_2);
@@ -974,7 +994,7 @@ public class IntegrationTest extends PersistenceTest {
 		User user1 = users.get(0);
 		User user2 = users.get(1);
 		
-		UserToken userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
+		String userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
 		
 		facade.addFollowAdmin(adminToken, user1.getUserId(), user2.getUserId());
 		
@@ -992,7 +1012,7 @@ public class IntegrationTest extends PersistenceTest {
 	
 	@Test
 	public void testUnfriend() throws AuthenticationException, UnauthorizedOperationException, UserNotFoundException {
-		UserToken adminToken = loginAsAdmin();
+		String adminToken = loginAsAdmin();
 		
 		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
 		facade.addUser(adminToken, NEW_USERNAME_2, NEW_USER_PASSWORD_2, NEW_USER_PROFILE_DESCRIPTION_2);
@@ -1001,7 +1021,7 @@ public class IntegrationTest extends PersistenceTest {
 		User user1 = users.get(0);
 		User user2 = users.get(1);
 		
-		UserToken userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
+		String userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
 		
 		facade.addFriendshipAdmin(adminToken, user1.getUserId(), user2.getUserId());
 		
@@ -1019,11 +1039,11 @@ public class IntegrationTest extends PersistenceTest {
 	
 	@Test
 	public void testChangeAndGetProfilePic() throws AuthenticationException, UnauthorizedOperationException, UserNotFoundException {
-		UserToken adminToken = loginAsAdmin();
+		String adminToken = loginAsAdmin();
 		
 		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
 		
-		UserToken userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
+		String userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
 		
 		assertNull(facade.getUserPic(userToken1, NEW_USERNAME_1));
 		
@@ -1036,11 +1056,11 @@ public class IntegrationTest extends PersistenceTest {
 	
 	@Test
 	public void testUpdateProfile() throws AuthenticationException, UnauthorizedOperationException, UserNotFoundException {
-		UserToken adminToken = loginAsAdmin();
+		String adminToken = loginAsAdmin();
 		
 		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
 		
-		UserToken userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
+		String userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
 		
 		facade.updateProfile(userToken1, UPDATED_USER_PROFILE_DESCRIPTION_1, new byte[] {1, 1, 1});
 		
@@ -1050,7 +1070,7 @@ public class IntegrationTest extends PersistenceTest {
 		assertArrayEquals(new byte[] {1, 1, 1}, userAfterUpdate.getProfilePicture().getData());
 	}
 	
-	private UserToken loginAsAdmin() throws AuthenticationException {
+	private String loginAsAdmin() throws AuthenticationException {
 		Map<String, String> adminCredentials = new HashMap<String, String>();
 		adminCredentials.put(AuthenticationParameters.USERNAME_KEY, ADMIN_USERNAME);
 		adminCredentials.put(AuthenticationParameters.PASSWORD_KEY, ADMIN_PASSWORD);
@@ -1058,7 +1078,7 @@ public class IntegrationTest extends PersistenceTest {
 		return facade.login(adminCredentials);
 	}
 	
-	private UserToken loginAsUser(String username, String password) throws AuthenticationException {
+	private String loginAsUser(String username, String password) throws AuthenticationException {
 		Map<String, String> userCredentials = new HashMap<String, String>();
 		userCredentials.put(AuthenticationParameters.USERNAME_KEY, username);
 		userCredentials.put(AuthenticationParameters.PASSWORD_KEY, password);

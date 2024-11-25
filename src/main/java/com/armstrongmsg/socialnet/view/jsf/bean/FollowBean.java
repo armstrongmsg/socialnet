@@ -9,7 +9,6 @@ import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.RequestScoped;
 
 import com.armstrongmsg.socialnet.core.ApplicationFacade;
-import com.armstrongmsg.socialnet.core.authentication.UserToken;
 import com.armstrongmsg.socialnet.exceptions.AuthenticationException;
 import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
 import com.armstrongmsg.socialnet.exceptions.UserNotFoundException;
@@ -83,7 +82,7 @@ public class FollowBean {
 	public void addFollowAdmin() {
 		try {
 			facade.addFollowAdmin(getContextBean().getCurrentSession().getUserToken(), 
-					getContextBean().getCurrentSession().getUserToken().getUserId(), followed.getUserId());
+					getContextBean().getCurrentSession().getUserToken(), followed.getUserId());
 		} catch (UnauthorizedOperationException | AuthenticationException | UserNotFoundException e) {
 			this.exceptionHandler.handle(e);
 		}
@@ -115,7 +114,7 @@ public class FollowBean {
 	public List<UserSummary> getFollowRecommendations() {
 		try {
 			if (followRecommendations == null) {
-				UserToken token = getContextBean().getCurrentSession().getUserToken();
+				String token = getContextBean().getCurrentSession().getUserToken();
 				followRecommendations = new JsfConnector().getViewUserSummaries(facade.getFollowRecommendations(token));
 			}
 			
@@ -129,7 +128,7 @@ public class FollowBean {
 	
 	public void unfollow() {
 		try {
-			UserToken token = getContextBean().getCurrentSession().getUserToken();
+			String token = getContextBean().getCurrentSession().getUserToken();
 			facade.unfollow(token, username);
 		} catch (AuthenticationException e) {
 			this.exceptionHandler.handle(e);

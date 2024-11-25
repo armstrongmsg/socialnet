@@ -9,7 +9,6 @@ import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
 
 import com.armstrongmsg.socialnet.core.ApplicationFacade;
-import com.armstrongmsg.socialnet.core.authentication.UserToken;
 import com.armstrongmsg.socialnet.exceptions.AuthenticationException;
 import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
 import com.armstrongmsg.socialnet.exceptions.UserNotFoundException;
@@ -108,7 +107,7 @@ public class AdminBean {
 	
 	public List<User> getUsers() {
 		if (users == null) {
-			UserToken token = contextBean.getCurrentSession().getUserToken();
+			String token = contextBean.getCurrentSession().getUserToken();
 			try {
 				users = new JsfConnector().getViewUsers(facade.getUsers(token));
 			} catch (UnauthorizedOperationException e) {
@@ -123,7 +122,7 @@ public class AdminBean {
 	
 	public List<UserSummary> getUserSummaries() {
 		try {
-			UserToken token = contextBean.getCurrentSession().getUserToken();
+			String token = contextBean.getCurrentSession().getUserToken();
 			return new JsfConnector().getViewUserSummaries(facade.getUserSummaries(token));
 		} catch (UnauthorizedOperationException | AuthenticationException e) {
 			this.exceptionHandler.handle(e);
@@ -133,7 +132,7 @@ public class AdminBean {
 	}
 
 	public String addUser() {
-		UserToken token = contextBean.getCurrentSession().getUserToken();
+		String token = contextBean.getCurrentSession().getUserToken();
 		try {
 			facade.addUser(token, userId, username, getProfileDescription());
 			users = new JsfConnector().getViewUsers(facade.getUsers(token));
@@ -152,7 +151,7 @@ public class AdminBean {
 	}
 
 	public String removeUser() {
-		UserToken token = contextBean.getCurrentSession().getUserToken();
+		String token = contextBean.getCurrentSession().getUserToken();
 		try {
 			facade.removeUser(token, getUser().getUserId());
 			users = new JsfConnector().getViewUsers(facade.getUsers(token));

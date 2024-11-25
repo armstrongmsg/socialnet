@@ -11,11 +11,11 @@ import javax.faces.bean.RequestScoped;
 import org.primefaces.model.file.UploadedFile;
 
 import com.armstrongmsg.socialnet.core.ApplicationFacade;
-import com.armstrongmsg.socialnet.core.authentication.UserToken;
 import com.armstrongmsg.socialnet.exceptions.AuthenticationException;
 import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
 import com.armstrongmsg.socialnet.exceptions.UserNotFoundException;
 import com.armstrongmsg.socialnet.model.PostVisibility;
+import com.armstrongmsg.socialnet.model.UserSummary;
 import com.armstrongmsg.socialnet.view.jsf.model.JsfConnector;
 import com.armstrongmsg.socialnet.view.jsf.model.Post;
 import com.armstrongmsg.socialnet.view.jsf.model.User;
@@ -125,7 +125,7 @@ public class PostBean {
 	}
 	
 	public String createPost() throws UserNotFoundException {
-		UserToken token = contextBean.getCurrentSession().getUserToken();
+		String token = contextBean.getCurrentSession().getUserToken();
 		try {
 			byte[] picData = null;
 			
@@ -218,11 +218,14 @@ public class PostBean {
 				String username = contextBean.getCurrentSession().getCurrentViewUser().getUsername();
 				
 				if (username.isEmpty()) {
-					username = contextBean.getCurrentSession().getUserToken().getUsername();
+					UserSummary userSummary = facade.getSelf(
+							contextBean.getCurrentSession().getUserToken());
+					username = userSummary.getUsername();
 				}
 				
 				userPosts = new JsfConnector().getViewPosts(
-						facade.getUserPosts(contextBean.getCurrentSession().getUserToken(), username));
+						facade.getUserPosts(contextBean.getCurrentSession().getUserToken(), 
+								username));
 			}
 		} catch (UnauthorizedOperationException | AuthenticationException | UserNotFoundException e) {
 			this.exceptionHandler.handle(e);

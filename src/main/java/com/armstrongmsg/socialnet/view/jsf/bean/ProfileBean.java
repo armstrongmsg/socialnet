@@ -18,7 +18,6 @@ import org.primefaces.model.file.UploadedFile;
 
 import com.armstrongmsg.socialnet.constants.SystemConstants;
 import com.armstrongmsg.socialnet.core.ApplicationFacade;
-import com.armstrongmsg.socialnet.core.authentication.UserToken;
 import com.armstrongmsg.socialnet.exceptions.AuthenticationException;
 import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
 import com.armstrongmsg.socialnet.exceptions.UserNotFoundException;
@@ -82,7 +81,7 @@ public class ProfileBean {
 	
 	private boolean viewUserIsFriend() {
 		try {
-			UserToken token = contextBean.getCurrentSession().getUserToken();
+			String token = contextBean.getCurrentSession().getUserToken();
 			return facade.isFriend(token, contextBean.getCurrentSession().getCurrentViewUser()
 					.getUsername());
 		} catch (AuthenticationException | UnauthorizedOperationException e) {
@@ -98,7 +97,7 @@ public class ProfileBean {
 
 	private boolean viewUserIsFollowed() {
 		try {
-			UserToken token = contextBean.getCurrentSession().getUserToken();
+			String token = contextBean.getCurrentSession().getUserToken();
 			return facade.follows(token, contextBean.getCurrentSession().getCurrentViewUser()
 					.getUsername());
 		} catch (AuthenticationException | UnauthorizedOperationException e) {
@@ -111,7 +110,7 @@ public class ProfileBean {
 	public boolean getIsSelfProfile() {
 		try {
 			if (loggedUserSummary == null) {
-				UserToken loggedUser = contextBean.getCurrentSession().getUserToken();
+				String loggedUser = contextBean.getCurrentSession().getUserToken();
 				loggedUserSummary = new JsfConnector().getViewUserSummary(facade.getSelf(loggedUser));
 			}
 			return loggedUserSummary.equals(contextBean.getCurrentSession().getCurrentViewUser());
@@ -145,7 +144,7 @@ public class ProfileBean {
 	
 	public boolean getIsFollowed() {
 		try {
-			UserToken loggedUserToken = contextBean.getCurrentSession().getUserToken();
+			String loggedUserToken = contextBean.getCurrentSession().getUserToken();
 			List<UserSummary> followedUsers = new JsfConnector().getViewUserSummaries(
 					facade.getFollowedUsers(loggedUserToken));
 			return followedUsers.contains(contextBean.getCurrentSession().getCurrentViewUser());
@@ -160,7 +159,7 @@ public class ProfileBean {
 	
 	public boolean getIsFriend() {
 		try {
-			UserToken loggedUserToken = contextBean.getCurrentSession().getUserToken();
+			String loggedUserToken = contextBean.getCurrentSession().getUserToken();
 			List<UserSummary> friends = new JsfConnector().getViewUserSummaries(
 					facade.getSelfFriends(loggedUserToken));
 			return friends.contains(contextBean.getCurrentSession().getCurrentViewUser());
@@ -176,7 +175,7 @@ public class ProfileBean {
 	public void saveProfilePic() throws UserNotFoundException { 
 		try {
 			byte[] picData = this.profilePic.getContent();
-			UserToken loggedUserToken = contextBean.getCurrentSession().getUserToken();
+			String loggedUserToken = contextBean.getCurrentSession().getUserToken();
 			this.facade.changeSelfProfilePic(loggedUserToken, picData);
 			contextBean.getCurrentSession().setCurrentViewUser(null);
 		} catch (AuthenticationException e) {
@@ -188,7 +187,7 @@ public class ProfileBean {
 	
 	public StreamedContent getUserPic() throws IOException {
 		UserSummary viewUser = this.contextBean.getViewUser();
-		UserToken loggedUserToken = contextBean.getCurrentSession().getUserToken();
+		String loggedUserToken = contextBean.getCurrentSession().getUserToken();
 		try {
 			byte[] picData = this.facade.getUserPic(loggedUserToken, viewUser.getUsername());
 			
