@@ -6,6 +6,8 @@ import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.RequestScoped;
 
 import com.armstrongmsg.socialnet.core.ApplicationFacade;
+import com.armstrongmsg.socialnet.exceptions.InternalErrorException;
+import com.armstrongmsg.socialnet.exceptions.UserAlreadyExistsException;
 import com.armstrongmsg.socialnet.view.jsf.NavigationController;
 
 @ManagedBean(name = "signUpBean", eager = true)
@@ -75,7 +77,11 @@ public class SignUpBean {
 	}
 
 	public String signUp() {
-		facade.addUser(username, getPassword(), profileDescription);
+		try {
+			facade.addUser(username, getPassword(), profileDescription);
+		} catch (InternalErrorException | UserAlreadyExistsException e) {
+			// TODO handle
+		}
 		return new NavigationController().showHome();
 	}
 }

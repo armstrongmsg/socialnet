@@ -1,27 +1,34 @@
 package com.armstrongmsg.socialnet.storage.cache;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import com.armstrongmsg.socialnet.exceptions.FriendshipRequestNotFound;
+import com.armstrongmsg.socialnet.exceptions.InternalErrorException;
+import com.armstrongmsg.socialnet.exceptions.UserNotFoundException;
 import com.armstrongmsg.socialnet.model.Follow;
 import com.armstrongmsg.socialnet.model.Friendship;
 import com.armstrongmsg.socialnet.model.FriendshipRequest;
-import com.armstrongmsg.socialnet.model.Group;
 import com.armstrongmsg.socialnet.model.User;
 
 public class NoOperationCache implements Cache {
 
 	@Override
-	public User getUserById(String id) {
-		return null;
+	public User getUserById(String id) throws UserNotFoundException {
+		throw new UserNotFoundException();
 	}
 
 	@Override
-	public User getUserByUsername(String username) {
-		return null;
+	public User getUserByUsername(String username) throws UserNotFoundException {
+		throw new UserNotFoundException();
 	}
 
 	@Override
 	public void putUser(User user) {
+	}
+	
+	@Override
+	public void updateUser(User user) throws UserNotFoundException, InternalErrorException {
 	}
 
 	@Override
@@ -29,27 +36,13 @@ public class NoOperationCache implements Cache {
 	}
 
 	@Override
-	public Group getGroupById(String id) {
-		return null;
-	}
-
-	@Override
-	public Group getGroupByName(String name) {
-		return null;
-	}
-
-	@Override
-	public void putGroup(Group group) {
-	}
-
-	@Override
 	public List<Friendship> getFriendshipsByUserId(String userId) {
-		return null;
+		return new ArrayList<Friendship>();
 	}
 
 	@Override
 	public List<Friendship> getFriendshipsByUsername(String username) {
-		return null;
+		return new ArrayList<Friendship>();
 	}
 
 	@Override
@@ -62,12 +55,12 @@ public class NoOperationCache implements Cache {
 
 	@Override
 	public List<Follow> getFollowsByUserId(String userId) {
-		return null;
+		return new ArrayList<Follow>();
 	}
 
 	@Override
 	public List<Follow> getFollowsByUsername(String username) {
-		return null;
+		return new ArrayList<Follow>();
 	}
 
 	@Override
@@ -92,17 +85,17 @@ public class NoOperationCache implements Cache {
 
 	@Override
 	public List<FriendshipRequest> getSentFriendshipRequestsById(String userId) {
-		return null;
+		return new ArrayList<FriendshipRequest>();
 	}
 
 	@Override
 	public List<FriendshipRequest> getReceivedFriendshipRequestsById(String userId) {
-		return null;
+		return new ArrayList<FriendshipRequest>();
 	}
 
 	@Override
-	public FriendshipRequest getReceivedFriendshipRequestById(String userId, String username) {
-		return null;
+	public FriendshipRequest getReceivedFriendshipRequestById(String userId, String username) throws FriendshipRequestNotFound {
+		throw new FriendshipRequestNotFound();
 	}
 
 	@Override

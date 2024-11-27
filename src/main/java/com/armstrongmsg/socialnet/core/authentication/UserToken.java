@@ -2,6 +2,7 @@ package com.armstrongmsg.socialnet.core.authentication;
 
 import java.util.Objects;
 
+// TODO remove
 public class UserToken {
 	private String userId;
 	private String username;

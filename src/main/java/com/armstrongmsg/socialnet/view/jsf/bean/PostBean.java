@@ -12,6 +12,7 @@ import org.primefaces.model.file.UploadedFile;
 
 import com.armstrongmsg.socialnet.core.ApplicationFacade;
 import com.armstrongmsg.socialnet.exceptions.AuthenticationException;
+import com.armstrongmsg.socialnet.exceptions.InternalErrorException;
 import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
 import com.armstrongmsg.socialnet.exceptions.UserNotFoundException;
 import com.armstrongmsg.socialnet.model.PostVisibility;
@@ -142,6 +143,8 @@ public class PostBean {
 			facade.createPost(token, title, content, visibility, picData);
 		} catch (AuthenticationException e) {
 			this.exceptionHandler.handle(e);
+		} catch (InternalErrorException e) {
+			this.exceptionHandler.handle(e);
 		}
 		
 		return null;
@@ -161,7 +164,7 @@ public class PostBean {
 				userPostsAdmin = new JsfConnector().getViewPosts(facade.getUserPostsAdmin(
 						contextBean.getCurrentSession().getUserToken(), 
 						getUser().getUserId()));
-			} catch (UnauthorizedOperationException | AuthenticationException | UserNotFoundException e) {
+			} catch (UnauthorizedOperationException | AuthenticationException | UserNotFoundException | InternalErrorException e) {
 				this.exceptionHandler.handle(e);
 			}
 		}
@@ -193,6 +196,8 @@ public class PostBean {
 				this.exceptionHandler.handle(e);
 			} catch (UserNotFoundException e) {
 				this.exceptionHandler.handle(e);
+			} catch (InternalErrorException e) {
+				this.exceptionHandler.handle(e);
 			}
 		}
 		
@@ -205,7 +210,7 @@ public class PostBean {
 				friendsPosts = new JsfConnector().getViewPosts(
 						facade.getFriendsPosts(contextBean.getCurrentSession().getUserToken()));
 			}
-		} catch (UnauthorizedOperationException | AuthenticationException | UserNotFoundException e) {
+		} catch (UnauthorizedOperationException | AuthenticationException | UserNotFoundException | InternalErrorException e) {
 			this.exceptionHandler.handle(e);
 		}
 		
@@ -227,7 +232,7 @@ public class PostBean {
 						facade.getUserPosts(contextBean.getCurrentSession().getUserToken(), 
 								username));
 			}
-		} catch (UnauthorizedOperationException | AuthenticationException | UserNotFoundException e) {
+		} catch (UnauthorizedOperationException | AuthenticationException | UserNotFoundException | InternalErrorException e) {
 			this.exceptionHandler.handle(e);
 		}
 		
@@ -242,6 +247,8 @@ public class PostBean {
 		} catch (AuthenticationException e) {
 			this.exceptionHandler.handle(e);
 		} catch (UnauthorizedOperationException e) {
+			this.exceptionHandler.handle(e);
+		} catch (InternalErrorException e) {
 			this.exceptionHandler.handle(e);
 		}
 	}

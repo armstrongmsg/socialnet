@@ -7,7 +7,6 @@ import com.armstrongmsg.socialnet.exceptions.UserNotFoundException;
 import com.armstrongmsg.socialnet.model.Follow;
 import com.armstrongmsg.socialnet.model.Friendship;
 import com.armstrongmsg.socialnet.model.FriendshipRequest;
-import com.armstrongmsg.socialnet.model.Group;
 import com.armstrongmsg.socialnet.model.User;
 
 public class InMemoryDatabaseManager implements DatabaseManager {
@@ -46,27 +45,15 @@ public class InMemoryDatabaseManager implements DatabaseManager {
 	}
 
 	@Override
-	public void saveUser(User user) {
+	public User saveUser(User user) {
 		this.users.add(user);
+		return user;
 	}
 	
 	@Override
-	public void updateUser(User user) {
-		
-	}
-
-	@Override
-	public Group getGroupById(String id) {
-		return null;
-	}
-
-	@Override
-	public Group getGroupByName(String name) {
-		return null;
-	}
-
-	@Override
-	public void saveGroup(Group group) {
+	public User updateUser(User user) {
+		// FIXME
+		return user;
 	}
 
 	@Override
@@ -87,8 +74,9 @@ public class InMemoryDatabaseManager implements DatabaseManager {
 	}
 
 	@Override
-	public void saveFriendship(Friendship friendship) {
+	public Friendship saveFriendship(Friendship friendship) {
 		this.friendships.add(friendship);
+		return friendship;
 	}
 
 	@Override
@@ -114,8 +102,10 @@ public class InMemoryDatabaseManager implements DatabaseManager {
 	}
 
 	@Override
-	public void saveFollow(Follow follow) {
+	public Follow saveFollow(Follow follow) {
+		// FIXME
 		this.follows.add(follow);
+		return follow;
 	}
 
 	@Override
@@ -135,8 +125,10 @@ public class InMemoryDatabaseManager implements DatabaseManager {
 	}
 
 	@Override
-	public void saveFriendshipRequest(FriendshipRequest friendshipRequest) {
+	public FriendshipRequest saveFriendshipRequest(FriendshipRequest friendshipRequest) {
 		this.friendshipRequests.add(friendshipRequest);
+		// FIXME
+		return friendshipRequest;
 	}
 
 	@Override

@@ -5,6 +5,7 @@ import java.util.Map;
 import com.armstrongmsg.socialnet.constants.AuthenticationParameters;
 import com.armstrongmsg.socialnet.constants.Messages;
 import com.armstrongmsg.socialnet.exceptions.AuthenticationException;
+import com.armstrongmsg.socialnet.exceptions.InternalErrorException;
 import com.armstrongmsg.socialnet.exceptions.UserNotFoundException;
 import com.armstrongmsg.socialnet.model.Admin;
 import com.armstrongmsg.socialnet.model.User;
@@ -36,6 +37,8 @@ public class DefaultAuthenticationPlugin implements AuthenticationPlugin {
 				user = this.storageFacade.getUserByUsername(username);
 			} catch (UserNotFoundException e) {
 				throw new AuthenticationException(String.format(Messages.Exception.COULD_NOT_FIND_USER, username));
+			} catch (InternalErrorException e) {
+				throw new AuthenticationException();
 			}
 		}
 
@@ -54,17 +57,18 @@ public class DefaultAuthenticationPlugin implements AuthenticationPlugin {
 	@Override
 	public User getUser(String token) throws AuthenticationException {
 		String[] tokenFields = token.split(TOKEN_FIELD_SEPARATOR);
-		String userId = tokenFields[0];
 		String username = tokenFields[1];
 		
 		try {
 			if (admin.getUsername().equals(username)) {
 				return admin;
 			} else {
-				return this.storageFacade.getUserById(userId);
+				return this.storageFacade.getUserByUsername(username);
 			}
 		} catch (UserNotFoundException e) {
 			throw new AuthenticationException(Messages.Exception.USER_NOT_FOUND_EXCEPTION);
+		} catch (InternalErrorException e) {
+			throw new AuthenticationException();
 		}
 	}
 }

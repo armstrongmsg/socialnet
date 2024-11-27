@@ -7,7 +7,6 @@ import com.armstrongmsg.socialnet.exceptions.UserNotFoundException;
 import com.armstrongmsg.socialnet.model.Follow;
 import com.armstrongmsg.socialnet.model.Friendship;
 import com.armstrongmsg.socialnet.model.FriendshipRequest;
-import com.armstrongmsg.socialnet.model.Group;
 import com.armstrongmsg.socialnet.model.User;
 import com.armstrongmsg.socialnet.storage.database.connection.DatabaseConnectionManager;
 import com.armstrongmsg.socialnet.storage.database.connection.PoolBasedDatabaseConnectionManager;
@@ -73,13 +72,17 @@ public class DefaultDatabaseManager implements DatabaseManager {
 	}
 
 	@Override
-	public void saveUser(User user) {
+	public User saveUser(User user) {
 		this.userRepository.saveUser(user);
+		// FIXME
+		return null;
 	}
 	
 	@Override
-	public void updateUser(User user) throws UserNotFoundException {
+	public User updateUser(User user) throws UserNotFoundException {
 		this.userRepository.updateUser(user);
+		// FIXME
+		return null;
 	}
 	
 	@Override
@@ -94,27 +97,15 @@ public class DefaultDatabaseManager implements DatabaseManager {
 	}
 
 	@Override
-	public Group getGroupById(String id) {
-		return null;
-	}
-
-	@Override
-	public Group getGroupByName(String name) {
-		return null;
-	}
-
-	@Override
-	public void saveGroup(Group group) {
-	}
-
-	@Override
 	public List<Friendship> getFriendshipsByUserId(String userId) {
 		return this.friendshipRepository.getFriendshipsByUserId(userId);
 	}
 
 	@Override
-	public void saveFriendship(Friendship friendship) {
+	public Friendship saveFriendship(Friendship friendship) {
 		this.friendshipRepository.saveFriendship(friendship);
+		// FIXME
+		return null;
 	}
 	
 	@Override
@@ -128,8 +119,10 @@ public class DefaultDatabaseManager implements DatabaseManager {
 	}
 
 	@Override
-	public void saveFollow(Follow follow) {
+	public Follow saveFollow(Follow follow) {
 		this.followRepository.saveFollow(follow);
+		// FIXME
+		return null;
 	}
 
 	@Override
@@ -138,8 +131,10 @@ public class DefaultDatabaseManager implements DatabaseManager {
 	}
 
 	@Override
-	public void saveFriendshipRequest(FriendshipRequest friendshipRequest) {
+	public FriendshipRequest saveFriendshipRequest(FriendshipRequest friendshipRequest) {
 		this.friendshipRequestsRepository.add(friendshipRequest);
+		// FIXME
+		return null;
 	}
 
 	@Override

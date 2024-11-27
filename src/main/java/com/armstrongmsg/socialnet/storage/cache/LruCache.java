@@ -6,13 +6,22 @@ import java.util.List;
 import com.armstrongmsg.socialnet.constants.ConfigurationProperties;
 import com.armstrongmsg.socialnet.constants.Messages;
 import com.armstrongmsg.socialnet.exceptions.FatalErrorException;
+import com.armstrongmsg.socialnet.exceptions.FollowAlreadyExistsException;
+import com.armstrongmsg.socialnet.exceptions.FollowNotFoundException;
+import com.armstrongmsg.socialnet.exceptions.FriendshipAlreadyExistsException;
+import com.armstrongmsg.socialnet.exceptions.FriendshipNotFoundException;
+import com.armstrongmsg.socialnet.exceptions.FriendshipRequestAlreadyExistsException;
+import com.armstrongmsg.socialnet.exceptions.FriendshipRequestNotFound;
+import com.armstrongmsg.socialnet.exceptions.InternalErrorException;
+import com.armstrongmsg.socialnet.exceptions.UserAlreadyExistsException;
+import com.armstrongmsg.socialnet.exceptions.UserNotFoundException;
 import com.armstrongmsg.socialnet.model.Follow;
 import com.armstrongmsg.socialnet.model.Friendship;
 import com.armstrongmsg.socialnet.model.FriendshipRequest;
-import com.armstrongmsg.socialnet.model.Group;
 import com.armstrongmsg.socialnet.model.User;
 import com.armstrongmsg.socialnet.util.PropertiesUtil;
 
+// TODO write tests specific for this class
 public class LruCache implements Cache {
 	private int totalCapacity;
 	private List<User> users;
@@ -46,7 +55,7 @@ public class LruCache implements Cache {
 	}
 	
 	@Override
-	public User getUserById(String id) {
+	public User getUserById(String id) throws UserNotFoundException {
 		User foundUser = null;
 		
 		for (User user : this.users) {
@@ -59,13 +68,16 @@ public class LruCache implements Cache {
 		if (foundUser != null) {
 			this.users.remove(foundUser);
 			this.users.add(0, foundUser);
+		} else {
+			// TODO add message
+			throw new UserNotFoundException();
 		}
 		
 		return foundUser;
 	}
 
 	@Override
-	public User getUserByUsername(String username) {
+	public User getUserByUsername(String username) throws UserNotFoundException {
 		User foundUser = null;
 		
 		for (User user : this.users) {
@@ -78,41 +90,45 @@ public class LruCache implements Cache {
 		if (foundUser != null) {
 			this.users.remove(foundUser);
 			this.users.add(0, foundUser);
+		} else {
+			// TODO add message
+			throw new UserNotFoundException();
 		}
 		
 		return foundUser;
 	}
 
 	@Override
-	public void putUser(User user) {
+	public void putUser(User user) throws UserAlreadyExistsException {
 		if (!this.users.contains(user)) {
 			if (this.users.size() >= totalCapacity) {
+				// FIXME
 				this.users.remove(0);
 			}
 			
 			this.users.add(user);
+		} else {
+			// TODO add message
+			throw new UserAlreadyExistsException();
 		}
 	}
 
 	@Override
-	public void removeUserById(String userId) {
+	public void updateUser(User user) throws UserNotFoundException, InternalErrorException {
+		if (!this.users.contains(user)) {
+			// TODO add message
+			throw new UserNotFoundException();
+		} else {
+			int index = this.users.indexOf(user);
+			this.users.remove(index);
+			this.users.add(index, user);
+		}
+	}
+	
+	@Override
+	public void removeUserById(String userId) throws UserNotFoundException {
 		User user = getUserById(userId);
 		this.users.remove(user);
-	}
-
-	@Override
-	public Group getGroupById(String id) {
-		return null;
-	}
-
-	@Override
-	public Group getGroupByName(String name) {
-		return null;
-	}
-
-	@Override
-	public void putGroup(Group group) {
-
 	}
 
 	@Override
@@ -144,23 +160,38 @@ public class LruCache implements Cache {
 	}
 
 	@Override
-	public void putFriendship(Friendship friendship) {
+	public void putFriendship(Friendship friendship) throws FriendshipAlreadyExistsException {
 		if (!this.friendships.contains(friendship)) {
 			if (this.friendships.size() >= this.totalCapacity) {
 				friendships.remove(0);
 			}
 			
 			friendships.add(friendship);
+		} else {
+			// TODO add message
+			throw new FriendshipAlreadyExistsException();
 		}
 	}
 
 	@Override
 	public void putFriendships(List<Friendship> friendships) {
 		for (Friendship friendship : friendships) {
-			putFriendship(friendship);
+			try {
+				putFriendship(friendship);
+			} catch (FriendshipAlreadyExistsException e) {
+				// TODO add message
+			}
 		}
 	}
 
+	@Override
+	public void removeFriendship(Friendship friendship) throws FriendshipNotFoundException {
+		if (!this.friendships.remove(friendship)) {
+			// TODO add message
+			throw new FriendshipNotFoundException();
+		}
+	}
+	
 	@Override
 	public List<Follow> getFollowsByUserId(String userId) {
 		List<Follow> follows = new ArrayList<Follow>();
@@ -190,43 +221,60 @@ public class LruCache implements Cache {
 	}
 
 	@Override
-	public void putFollow(Follow follow) {
+	public void putFollow(Follow follow) throws FollowAlreadyExistsException {
 		if (!this.follows.contains(follow)) {
 			if (this.follows.size() >= this.totalCapacity) {
 				follows.remove(0);
 			}
 			
 			follows.add(follow);		
+		} else {
+			// TODO add message
+			throw new FollowAlreadyExistsException();
 		}
 	}
 
 	@Override
 	public void putFollows(List<Follow> follows) {
 		for (Follow follow : follows) {
-			putFollow(follow);
+			try {
+				putFollow(follow);
+			} catch (FollowAlreadyExistsException e) {
+				// TODO add message
+			}
 		}
 	}
 
 	@Override
-	public void removeFollow(Follow follow) {
-		this.follows.remove(follow);
+	public void removeFollow(Follow follow) throws FollowNotFoundException {
+		if (!this.follows.remove(follow)) {
+			// TODO add message
+			throw new FollowNotFoundException();
+		}
 	}
 
 	@Override
-	public void putFriendshipRequest(FriendshipRequest friendshipRequest) {
+	public void putFriendshipRequest(FriendshipRequest friendshipRequest) throws FriendshipRequestAlreadyExistsException {
 		if (!this.friendshipRequests.contains(friendshipRequest)) {
 			if (this.friendshipRequests.size() >= this.totalCapacity) {
 				friendshipRequests.remove(0);
 			}
 			
 			friendshipRequests.add(friendshipRequest);		
+		} else {
+			// TODO add message
+			throw new FriendshipRequestAlreadyExistsException();
 		}
 	}
 
 	@Override
 	public void putFriendshipRequests(List<FriendshipRequest> requests) {
 		for (FriendshipRequest request : requests) {
-			putFriendshipRequest(request);
+			try {
+				putFriendshipRequest(request);
+			} catch (FriendshipRequestAlreadyExistsException e) {
+				// TODO add message
+			}
 		}
 	}
 
@@ -257,7 +305,7 @@ public class LruCache implements Cache {
 	}
 
 	@Override
-	public FriendshipRequest getReceivedFriendshipRequestById(String userId, String username) {
+	public FriendshipRequest getReceivedFriendshipRequestById(String userId, String username) throws FriendshipRequestNotFound {
 		for (FriendshipRequest friendshipRequest : this.friendshipRequests) {
 			if (friendshipRequest.getRequested().getUserId().equals(userId) && 
 					friendshipRequest.getRequester().getUsername().equals(username)) {
@@ -265,17 +313,16 @@ public class LruCache implements Cache {
 			}
 		}
 
-		return null;
+		// TODO add message
+		throw new FriendshipRequestNotFound();
 	}
 
 	@Override
-	public void removeFriendshipRequestById(FriendshipRequest friendshipRequest) {
-		this.friendshipRequests.remove(friendshipRequest);
-	}
-
-	@Override
-	public void removeFriendship(Friendship friendship) {
-		this.friendships.remove(friendship);
+	public void removeFriendshipRequestById(FriendshipRequest friendshipRequest) throws FriendshipRequestNotFound {
+		if (!this.friendshipRequests.remove(friendshipRequest)) {
+			// TODO add message
+			throw new FriendshipRequestNotFound();
+		}
 	}
 
 	@Override

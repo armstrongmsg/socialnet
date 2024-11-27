@@ -72,19 +72,21 @@ public class PictureLoadingAwareDatabaseManager extends DefaultDatabaseManager {
 	}
 
 	@Override
-	public void saveUser(User user) {
+	public User saveUser(User user) {
 		super.saveUser(user);
 		saveUserProfilePicture(user);
 		saveUserPostsPictures(user);
+		return user;
 	}
 
 	@Override
-	public void updateUser(User user) throws UserNotFoundException {
+	public User updateUser(User user) throws UserNotFoundException {
 		User userInStorage = super.getUserById(user.getUserId()); 
 		super.updateUser(user);
 		saveUserProfilePicture(user);
 		removePicturesFromRemovedPosts(user, userInStorage);
 		saveUserPostsPictures(user);
+		return user;
 	}
 	
 	@Override
@@ -122,8 +124,9 @@ public class PictureLoadingAwareDatabaseManager extends DefaultDatabaseManager {
 	}
 
 	@Override
-	public void saveFriendship(Friendship friendship) {
+	public Friendship saveFriendship(Friendship friendship) {
 		super.saveFriendship(friendship);
+		return friendship;
 	}
 	
 	@Override
@@ -146,8 +149,9 @@ public class PictureLoadingAwareDatabaseManager extends DefaultDatabaseManager {
 	}
 
 	@Override
-	public void saveFollow(Follow follow) {
+	public Follow saveFollow(Follow follow) {
 		super.saveFollow(follow);
+		return follow;
 	}
 
 	@Override
@@ -156,8 +160,9 @@ public class PictureLoadingAwareDatabaseManager extends DefaultDatabaseManager {
 	}
 
 	@Override
-	public void saveFriendshipRequest(FriendshipRequest friendshipRequest) {
+	public FriendshipRequest saveFriendshipRequest(FriendshipRequest friendshipRequest) {
 		super.saveFriendshipRequest(friendshipRequest);
+		return friendshipRequest;
 	}
 
 	@Override

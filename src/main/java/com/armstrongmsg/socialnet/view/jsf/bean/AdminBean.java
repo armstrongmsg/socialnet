@@ -10,7 +10,9 @@ import javax.faces.bean.SessionScoped;
 
 import com.armstrongmsg.socialnet.core.ApplicationFacade;
 import com.armstrongmsg.socialnet.exceptions.AuthenticationException;
+import com.armstrongmsg.socialnet.exceptions.InternalErrorException;
 import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
+import com.armstrongmsg.socialnet.exceptions.UserAlreadyExistsException;
 import com.armstrongmsg.socialnet.exceptions.UserNotFoundException;
 import com.armstrongmsg.socialnet.view.jsf.model.JsfConnector;
 import com.armstrongmsg.socialnet.view.jsf.model.User;
@@ -114,6 +116,8 @@ public class AdminBean {
 				this.exceptionHandler.handle(e);
 			} catch (AuthenticationException e) {
 				this.exceptionHandler.handle(e);
+			} catch (InternalErrorException e) {
+				this.exceptionHandler.handle(e);
 			}
 		}
 
@@ -124,7 +128,7 @@ public class AdminBean {
 		try {
 			String token = contextBean.getCurrentSession().getUserToken();
 			return new JsfConnector().getViewUserSummaries(facade.getUserSummaries(token));
-		} catch (UnauthorizedOperationException | AuthenticationException e) {
+		} catch (UnauthorizedOperationException | AuthenticationException | InternalErrorException e) {
 			this.exceptionHandler.handle(e);
 		}
 		
@@ -139,6 +143,10 @@ public class AdminBean {
 		} catch (UnauthorizedOperationException e) {
 			this.exceptionHandler.handle(e);
 		} catch (AuthenticationException e) {
+			this.exceptionHandler.handle(e);
+		} catch (InternalErrorException e) {
+			this.exceptionHandler.handle(e);
+		} catch (UserAlreadyExistsException e) {
 			this.exceptionHandler.handle(e);
 		}
 		
@@ -161,6 +169,8 @@ public class AdminBean {
 			this.exceptionHandler.handle(e);
 		} catch (UserNotFoundException e) {
 			this.exceptionHandler.handle(e);
+		} catch (InternalErrorException e) {
+			this.exceptionHandler.handle(e);
 		}
 		
 		return null;
@@ -179,7 +189,7 @@ public class AdminBean {
 			return new JsfConnector().getViewUsers(
 					facade.getFriends(
 							contextBean.getCurrentSession().getUserToken(), user.getUserId()));
-		} catch (UnauthorizedOperationException | AuthenticationException | UserNotFoundException e) {
+		} catch (UnauthorizedOperationException | AuthenticationException | UserNotFoundException | InternalErrorException e) {
 			this.exceptionHandler.handle(e);
 		}
 		
@@ -191,7 +201,7 @@ public class AdminBean {
 			return new JsfConnector().getViewUsers(
 					facade.getFollowedUsers(contextBean.getCurrentSession().getUserToken(), 
 							user.getUserId()));
-		} catch (UnauthorizedOperationException | AuthenticationException | UserNotFoundException e) {
+		} catch (UnauthorizedOperationException | AuthenticationException | UserNotFoundException | InternalErrorException e) {
 			this.exceptionHandler.handle(e);
 		}
 		

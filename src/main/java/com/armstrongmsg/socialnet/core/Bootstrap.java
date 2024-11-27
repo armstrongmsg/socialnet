@@ -11,6 +11,8 @@ import com.armstrongmsg.socialnet.constants.ConfigurationProperties;
 import com.armstrongmsg.socialnet.constants.Messages;
 import com.armstrongmsg.socialnet.constants.SystemConstants;
 import com.armstrongmsg.socialnet.exceptions.FatalErrorException;
+import com.armstrongmsg.socialnet.exceptions.InternalErrorException;
+import com.armstrongmsg.socialnet.exceptions.UserAlreadyExistsException;
 import com.armstrongmsg.socialnet.util.PropertiesUtil;
 
 public class Bootstrap {
@@ -65,7 +67,13 @@ public class Bootstrap {
 	public void startNetwork(Network network) throws FatalErrorException {
 		for (int i = 0; i < bootstrapUsernames.size(); i++) {
 			logger.debug("Creating user:{},{}", bootstrapUsernames.get(i), bootstrapUserDescriptions.get(i));
-			network.addUser(bootstrapUsernames.get(i), bootstrapUserPasswords.get(i), bootstrapUserDescriptions.get(i));
+			try {
+				network.addUser(bootstrapUsernames.get(i), bootstrapUserPasswords.get(i), bootstrapUserDescriptions.get(i));
+			} catch (InternalErrorException e) {
+				throw new FatalErrorException(e.getMessage());
+			} catch (UserAlreadyExistsException e) {
+				throw new FatalErrorException(e.getMessage());
+			}
 		}
 	}
 }

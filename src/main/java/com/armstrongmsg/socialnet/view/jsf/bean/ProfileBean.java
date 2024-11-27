@@ -19,6 +19,7 @@ import org.primefaces.model.file.UploadedFile;
 import com.armstrongmsg.socialnet.constants.SystemConstants;
 import com.armstrongmsg.socialnet.core.ApplicationFacade;
 import com.armstrongmsg.socialnet.exceptions.AuthenticationException;
+import com.armstrongmsg.socialnet.exceptions.InternalErrorException;
 import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
 import com.armstrongmsg.socialnet.exceptions.UserNotFoundException;
 import com.armstrongmsg.socialnet.model.FriendshipRequest;
@@ -84,7 +85,7 @@ public class ProfileBean {
 			String token = contextBean.getCurrentSession().getUserToken();
 			return facade.isFriend(token, contextBean.getCurrentSession().getCurrentViewUser()
 					.getUsername());
-		} catch (AuthenticationException | UnauthorizedOperationException e) {
+		} catch (AuthenticationException | UnauthorizedOperationException | InternalErrorException e) {
 			this.exceptionHandler.handle(e);
 		}
 		
@@ -100,7 +101,7 @@ public class ProfileBean {
 			String token = contextBean.getCurrentSession().getUserToken();
 			return facade.follows(token, contextBean.getCurrentSession().getCurrentViewUser()
 					.getUsername());
-		} catch (AuthenticationException | UnauthorizedOperationException e) {
+		} catch (AuthenticationException | UnauthorizedOperationException | InternalErrorException e) {
 			this.exceptionHandler.handle(e);
 		}
 		
@@ -137,6 +138,8 @@ public class ProfileBean {
 			this.exceptionHandler.handle(e);
 		} catch (UnauthorizedOperationException e) {
 			this.exceptionHandler.handle(e);
+		} catch (InternalErrorException e) {
+			this.exceptionHandler.handle(e);
 		}
 		
 		return false;
@@ -151,6 +154,8 @@ public class ProfileBean {
 		} catch (AuthenticationException e) {
 			this.exceptionHandler.handle(e);
 		} catch (UnauthorizedOperationException e) {
+			this.exceptionHandler.handle(e);
+		} catch (InternalErrorException e) {
 			this.exceptionHandler.handle(e);
 		}
 		
@@ -167,6 +172,8 @@ public class ProfileBean {
 			this.exceptionHandler.handle(e);
 		} catch (UnauthorizedOperationException e) {
 			this.exceptionHandler.handle(e);
+		} catch (InternalErrorException e) {
+			this.exceptionHandler.handle(e);
 		}
 		
 		return false;
@@ -181,6 +188,8 @@ public class ProfileBean {
 		} catch (AuthenticationException e) {
 			this.exceptionHandler.handle(e);
 		} catch (UnauthorizedOperationException e) {
+			this.exceptionHandler.handle(e);
+		} catch (InternalErrorException e) {
 			this.exceptionHandler.handle(e);
 		}
 	}
@@ -215,6 +224,8 @@ public class ProfileBean {
 		} catch (UnauthorizedOperationException e) {
 			this.exceptionHandler.handle(e);
 		} catch (UserNotFoundException e) {
+			this.exceptionHandler.handle(e);
+		} catch (InternalErrorException e) {
 			this.exceptionHandler.handle(e);
 		}
 		

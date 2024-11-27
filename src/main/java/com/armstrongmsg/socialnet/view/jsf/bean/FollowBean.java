@@ -10,6 +10,9 @@ import javax.faces.bean.RequestScoped;
 
 import com.armstrongmsg.socialnet.core.ApplicationFacade;
 import com.armstrongmsg.socialnet.exceptions.AuthenticationException;
+import com.armstrongmsg.socialnet.exceptions.FollowAlreadyExistsException;
+import com.armstrongmsg.socialnet.exceptions.FollowNotFoundException;
+import com.armstrongmsg.socialnet.exceptions.InternalErrorException;
 import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
 import com.armstrongmsg.socialnet.exceptions.UserNotFoundException;
 import com.armstrongmsg.socialnet.view.jsf.model.JsfConnector;
@@ -83,7 +86,7 @@ public class FollowBean {
 		try {
 			facade.addFollowAdmin(getContextBean().getCurrentSession().getUserToken(), 
 					getContextBean().getCurrentSession().getUserToken(), followed.getUserId());
-		} catch (UnauthorizedOperationException | AuthenticationException | UserNotFoundException e) {
+		} catch (UnauthorizedOperationException | AuthenticationException | UserNotFoundException | InternalErrorException | FollowAlreadyExistsException e) {
 			this.exceptionHandler.handle(e);
 		}
 	}
@@ -91,7 +94,7 @@ public class FollowBean {
 	public void addFollow() {
 		try {
 			facade.addFollow(getContextBean().getCurrentSession().getUserToken(), getUsername());
-		} catch (AuthenticationException | UnauthorizedOperationException | UserNotFoundException e) {
+		} catch (AuthenticationException | UnauthorizedOperationException | UserNotFoundException | FollowAlreadyExistsException | InternalErrorException e) {
 			this.exceptionHandler.handle(e);
 		}
 	}
@@ -104,7 +107,7 @@ public class FollowBean {
 			}
 			
 			return follows;
-		} catch (AuthenticationException | UnauthorizedOperationException e) {
+		} catch (AuthenticationException | UnauthorizedOperationException | InternalErrorException e) {
 			this.exceptionHandler.handle(e);
 		}
 		
@@ -119,7 +122,7 @@ public class FollowBean {
 			}
 			
 			return followRecommendations;
-		} catch (UnauthorizedOperationException | AuthenticationException e) {
+		} catch (UnauthorizedOperationException | AuthenticationException | InternalErrorException e) {
 			this.exceptionHandler.handle(e);
 		}
 		
@@ -133,6 +136,10 @@ public class FollowBean {
 		} catch (AuthenticationException e) {
 			this.exceptionHandler.handle(e);
 		} catch (UnauthorizedOperationException e) {
+			this.exceptionHandler.handle(e);
+		} catch (InternalErrorException e) {
+			this.exceptionHandler.handle(e);
+		} catch (FollowNotFoundException e) {
 			this.exceptionHandler.handle(e);
 		}
 	}

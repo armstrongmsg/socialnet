@@ -10,6 +10,11 @@ import javax.faces.bean.RequestScoped;
 
 import com.armstrongmsg.socialnet.core.ApplicationFacade;
 import com.armstrongmsg.socialnet.exceptions.AuthenticationException;
+import com.armstrongmsg.socialnet.exceptions.FriendshipAlreadyExistsException;
+import com.armstrongmsg.socialnet.exceptions.FriendshipNotFoundException;
+import com.armstrongmsg.socialnet.exceptions.FriendshipRequestAlreadyExistsException;
+import com.armstrongmsg.socialnet.exceptions.FriendshipRequestNotFound;
+import com.armstrongmsg.socialnet.exceptions.InternalErrorException;
 import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
 import com.armstrongmsg.socialnet.exceptions.UserNotFoundException;
 import com.armstrongmsg.socialnet.model.FriendshipRequest;
@@ -83,7 +88,7 @@ public class FriendshipBean {
 	public void addFriendship() {
 		try {
 			facade.addFriendship(contextBean.getCurrentSession().getUserToken(), username);
-		} catch (UnauthorizedOperationException | AuthenticationException | UserNotFoundException e) {
+		} catch (UnauthorizedOperationException | AuthenticationException | UserNotFoundException | InternalErrorException | FriendshipAlreadyExistsException e) {
 			this.exceptionHandler.handle(e);
 		}
 	}
@@ -96,6 +101,10 @@ public class FriendshipBean {
 		} catch (UnauthorizedOperationException e) {
 			this.exceptionHandler.handle(e);
 		} catch (UserNotFoundException e) {
+			this.exceptionHandler.handle(e);
+		} catch (FriendshipRequestAlreadyExistsException e) {
+			this.exceptionHandler.handle(e);
+		} catch (InternalErrorException e) {
 			this.exceptionHandler.handle(e);
 		}
 	}
@@ -114,6 +123,8 @@ public class FriendshipBean {
 		} catch (AuthenticationException e) {
 			this.exceptionHandler.handle(e);
 		} catch (UnauthorizedOperationException e) {
+			this.exceptionHandler.handle(e);
+		} catch (InternalErrorException e) {
 			this.exceptionHandler.handle(e);
 		}
 		
@@ -135,6 +146,8 @@ public class FriendshipBean {
 			this.exceptionHandler.handle(e);
 		} catch (UnauthorizedOperationException e) {
 			this.exceptionHandler.handle(e);
+		} catch (InternalErrorException e) {
+			this.exceptionHandler.handle(e);
 		}
 		
 		return null;
@@ -149,6 +162,12 @@ public class FriendshipBean {
 			this.exceptionHandler.handle(e);
 		} catch (UserNotFoundException e) {
 			this.exceptionHandler.handle(e);
+		} catch (FriendshipRequestNotFound e) {
+			this.exceptionHandler.handle(e);
+		} catch (InternalErrorException e) {
+			this.exceptionHandler.handle(e);
+		} catch (FriendshipAlreadyExistsException e) {
+			this.exceptionHandler.handle(e);
 		}
 	}
 	
@@ -158,6 +177,10 @@ public class FriendshipBean {
 		} catch (AuthenticationException e) {
 			this.exceptionHandler.handle(e);
 		} catch (UnauthorizedOperationException e) {
+			this.exceptionHandler.handle(e);
+		} catch (FriendshipRequestNotFound e) {
+			this.exceptionHandler.handle(e);
+		} catch (InternalErrorException e) {
 			this.exceptionHandler.handle(e);
 		}
 	}
@@ -170,7 +193,7 @@ public class FriendshipBean {
 			}
 			
 			return friends;
-		} catch (AuthenticationException | UnauthorizedOperationException e) {
+		} catch (AuthenticationException | UnauthorizedOperationException | InternalErrorException e) {
 			this.exceptionHandler.handle(e);
 		}
 		
@@ -184,7 +207,7 @@ public class FriendshipBean {
 				friendRecommendations = new JsfConnector().getViewUserSummaries(facade.getUserRecommendations(token));
 			}
 			return friendRecommendations;
-		} catch (UnauthorizedOperationException | AuthenticationException e) {
+		} catch (UnauthorizedOperationException | AuthenticationException | InternalErrorException e) {
 			this.exceptionHandler.handle(e);
 		}
 		
@@ -198,6 +221,10 @@ public class FriendshipBean {
 		} catch (AuthenticationException e) {
 			this.exceptionHandler.handle(e);
 		} catch (UnauthorizedOperationException e) {
+			this.exceptionHandler.handle(e);
+		} catch (InternalErrorException e) {
+			this.exceptionHandler.handle(e);
+		} catch (FriendshipNotFoundException e) {
 			this.exceptionHandler.handle(e);
 		}
 	}

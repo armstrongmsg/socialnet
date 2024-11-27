@@ -2,11 +2,18 @@ package com.armstrongmsg.socialnet.storage;
 
 import java.util.List;
 
+import com.armstrongmsg.socialnet.exceptions.FollowAlreadyExistsException;
+import com.armstrongmsg.socialnet.exceptions.FollowNotFoundException;
+import com.armstrongmsg.socialnet.exceptions.FriendshipAlreadyExistsException;
+import com.armstrongmsg.socialnet.exceptions.FriendshipNotFoundException;
+import com.armstrongmsg.socialnet.exceptions.FriendshipRequestAlreadyExistsException;
+import com.armstrongmsg.socialnet.exceptions.FriendshipRequestNotFound;
+import com.armstrongmsg.socialnet.exceptions.InternalErrorException;
+import com.armstrongmsg.socialnet.exceptions.UserAlreadyExistsException;
 import com.armstrongmsg.socialnet.exceptions.UserNotFoundException;
 import com.armstrongmsg.socialnet.model.Follow;
 import com.armstrongmsg.socialnet.model.Friendship;
 import com.armstrongmsg.socialnet.model.FriendshipRequest;
-import com.armstrongmsg.socialnet.model.Group;
 import com.armstrongmsg.socialnet.model.User;
 import com.armstrongmsg.socialnet.storage.cache.Cache;
 import com.armstrongmsg.socialnet.storage.database.DatabaseManager;
@@ -20,75 +27,56 @@ public class StorageFacade {
 		this.databaseManager = databaseManager;
 	}
 	
-	public void shutdown() {
+	public void shutdown() throws InternalErrorException {
 		this.cache.shutdown();
 		this.databaseManager.shutdown();
 	}
 
-	public void saveUser(User user) {
+	public void saveUser(User user) throws InternalErrorException, UserAlreadyExistsException {
 		cache.putUser(user);
 		databaseManager.saveUser(user);
 	}
 
-	public void updateUser(User user) throws UserNotFoundException {
-		cache.putUser(user);
+	public void updateUser(User user) throws UserNotFoundException, InternalErrorException {
+		cache.updateUser(user);
 		databaseManager.updateUser(user);
 	}
 
-	public User getUserById(String userId) throws UserNotFoundException {
-		User user = cache.getUserById(userId);
-		
-		if (user == null) {
-			user = databaseManager.getUserById(userId);
-			cache.putUser(user);
-		}
-		
-		return user;
-	}
-	
-	public User getUserByUsername(String username) throws UserNotFoundException {
-		User user = cache.getUserByUsername(username);
-		
-		if (user == null) {
-			user = databaseManager.getUserByUsername(username);
-			cache.putUser(user);
-		}
-		
-		return user;
-	}
-
-	public Group getGroupById(String groupId) {
-		Group group = cache.getGroupById(groupId);
-		
-		if (group == null) {
-			group = databaseManager.getGroupById(groupId);
-			cache.putGroup(group);
+	public User getUserById(String userId) throws UserNotFoundException, InternalErrorException {
+		try {
+			return cache.getUserById(userId);
+		} catch (UserNotFoundException e) {
+			User user = databaseManager.getUserById(userId);
+			try {
+				cache.putUser(user);
+			} catch (UserAlreadyExistsException e1) {
+				// should never occur
+			}
 			
+			return user;
 		}
-		
-		return group;
 	}
 	
-	public Group getGroupByName(String groupName) {
-		Group group = cache.getGroupById(groupName);
-		
-		if (group == null) {
-			group = databaseManager.getGroupByName(groupName);
-			cache.putGroup(group);
+	public User getUserByUsername(String username) throws UserNotFoundException, InternalErrorException {
+		try {
+			return cache.getUserByUsername(username);
+		} catch (UserNotFoundException e) {
+			User user = databaseManager.getUserByUsername(username);
+			try {
+				cache.putUser(user);
+			} catch (UserAlreadyExistsException e1) {
+				// should never occur
+			}
+
+			return user;
 		}
-		
-		return group;
 	}
 	
-	public void saveGroup(Group group) {
-		cache.putGroup(group);
-		databaseManager.saveGroup(group);
-	}
-	
-	public List<Friendship> getFriendshipsByUserId(String userId) {
+	public List<Friendship> getFriendshipsByUserId(String userId) throws InternalErrorException {
 		List<Friendship> friendships = cache.getFriendshipsByUserId(userId);
 		
-		if (friendships == null) {
+		// FIXME should catch an exception by the cache
+		if (friendships.isEmpty()) {
 			friendships = databaseManager.getFriendshipsByUserId(userId);
 			cache.putFriendships(friendships);
 		}
@@ -96,15 +84,17 @@ public class StorageFacade {
 		return friendships;
 	}
 
-	public void saveFriendship(Friendship friendship) {
+	public void saveFriendship(Friendship friendship) 
+			throws InternalErrorException, FriendshipAlreadyExistsException {
 		databaseManager.saveFriendship(friendship);
 		cache.putFriendship(friendship);
 	}
 
-	public List<Follow> getFollowsByUserId(String userId) {
+	public List<Follow> getFollowsByUserId(String userId) throws InternalErrorException {
 		List<Follow> follows = cache.getFollowsByUserId(userId);
 		
-		if (follows == null) {
+		// FIXME should catch an exception by the cache
+		if (follows.isEmpty()) {
 			follows = databaseManager.getFollowsByUserId(userId);
 			cache.putFollows(follows);
 		}
@@ -112,29 +102,31 @@ public class StorageFacade {
 		return follows;
 	}
 	
-	public void saveFollow(Follow follow) {
+	public void saveFollow(Follow follow) throws FollowAlreadyExistsException, InternalErrorException {
 		cache.putFollow(follow);
 		databaseManager.saveFollow(follow);
 	}
 
-	public List<User> getAllUsers() {
+	public List<User> getAllUsers() throws InternalErrorException {
 		return databaseManager.getAllUsers();
 	}
 
-	public void removeUserById(String userId) throws UserNotFoundException {
+	public void removeUserById(String userId) throws UserNotFoundException, InternalErrorException {
 		cache.removeUserById(userId);
 		databaseManager.removeUserById(userId);
 	}
 
-	public void saveFriendshipRequest(FriendshipRequest friendshipRequest) {
+	public void saveFriendshipRequest(FriendshipRequest friendshipRequest) 
+			throws FriendshipRequestAlreadyExistsException, InternalErrorException {
 		databaseManager.saveFriendshipRequest(friendshipRequest);
 		cache.putFriendshipRequest(friendshipRequest);
 	}
 
-	public List<FriendshipRequest> getSentFrienshipRequestsById(String userId) {
+	public List<FriendshipRequest> getSentFrienshipRequestsById(String userId) throws InternalErrorException {
 		List<FriendshipRequest> requests = cache.getSentFriendshipRequestsById(userId);
 		
-		if (requests == null) {
+		// FIXME should catch an exception by the cache
+		if (requests.isEmpty()) {
 			requests = databaseManager.getSentFriendshipRequestsById(userId);
 			cache.putFriendshipRequests(requests);
 		}
@@ -142,10 +134,11 @@ public class StorageFacade {
 		return requests;
 	}
 
-	public List<FriendshipRequest> getReceivedFrienshipRequestsById(String userId) {
+	public List<FriendshipRequest> getReceivedFrienshipRequestsById(String userId) throws InternalErrorException {
 		List<FriendshipRequest> requests = cache.getReceivedFriendshipRequestsById(userId);
 		
-		if (requests == null) {
+		// FIXME should catch an exception by the cache
+		if (requests.isEmpty()) {
 			requests = databaseManager.getReceivedFriendshipRequestsById(userId);
 			cache.putFriendshipRequests(requests);
 		}
@@ -153,28 +146,36 @@ public class StorageFacade {
 		return requests;
 	}
 
-	public FriendshipRequest getReceivedFrienshipRequestsById(String userId, String username) {
-		FriendshipRequest request = cache.getReceivedFriendshipRequestById(userId, username);
-		
-		if (request == null) {
-			request = databaseManager.getReceivedFriendshipRequestById(userId, username);
-			cache.putFriendshipRequest(request);
+	public FriendshipRequest getReceivedFrienshipRequestsById(String userId, String username) 
+			throws FriendshipRequestNotFound, InternalErrorException {
+		try {
+			return cache.getReceivedFriendshipRequestById(userId, username);
+		} catch (FriendshipRequestNotFound e) {
+			FriendshipRequest request = databaseManager.getReceivedFriendshipRequestById(userId, username);
+			
+			try {
+				cache.putFriendshipRequest(request);
+			} catch (FriendshipRequestAlreadyExistsException e1) {
+				// should never occur
+			}
+			
+			return request;
 		}
-		
-		return request;
 	}
 
-	public void removeFriendshipRequest(FriendshipRequest friendshipRequest) {
+	public void removeFriendshipRequest(FriendshipRequest friendshipRequest) 
+			throws FriendshipRequestNotFound, InternalErrorException{
 		cache.removeFriendshipRequestById(friendshipRequest);
 		databaseManager.removeFriendshipRequestById(friendshipRequest);
 	}
 
-	public void removeFollow(Follow follow) {
+	public void removeFollow(Follow follow) throws FollowNotFoundException, InternalErrorException {
 		cache.removeFollow(follow);
 		databaseManager.removeFollow(follow);
 	}
 
-	public void removeFriendship(Friendship friendship) {
+	public void removeFriendship(Friendship friendship) 
+			throws FriendshipNotFoundException, InternalErrorException {
 		cache.removeFriendship(friendship);
 		databaseManager.removeFriendship(friendship);
 	}

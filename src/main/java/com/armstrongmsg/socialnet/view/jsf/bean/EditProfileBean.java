@@ -9,6 +9,7 @@ import org.primefaces.model.file.UploadedFile;
 
 import com.armstrongmsg.socialnet.core.ApplicationFacade;
 import com.armstrongmsg.socialnet.exceptions.AuthenticationException;
+import com.armstrongmsg.socialnet.exceptions.InternalErrorException;
 import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
 import com.armstrongmsg.socialnet.exceptions.UserNotFoundException;
 
@@ -69,7 +70,7 @@ public class EditProfileBean {
 		
 		try {
 			facade.updateProfile(currentUserToken, profileDescription, profilePic.getContent());
-		} catch (AuthenticationException | UnauthorizedOperationException | UserNotFoundException e) {
+		} catch (AuthenticationException | UnauthorizedOperationException | UserNotFoundException | InternalErrorException e) {
 			this.exceptionHandler.handle(e);
 		}
 	}
