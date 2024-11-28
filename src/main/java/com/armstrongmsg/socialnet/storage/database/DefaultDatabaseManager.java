@@ -74,15 +74,13 @@ public class DefaultDatabaseManager implements DatabaseManager {
 	@Override
 	public User saveUser(User user) {
 		this.userRepository.saveUser(user);
-		// FIXME
-		return null;
+		return user;
 	}
 	
 	@Override
 	public User updateUser(User user) throws UserNotFoundException {
 		this.userRepository.updateUser(user);
-		// FIXME
-		return null;
+		return user;
 	}
 	
 	@Override
@@ -104,8 +102,7 @@ public class DefaultDatabaseManager implements DatabaseManager {
 	@Override
 	public Friendship saveFriendship(Friendship friendship) {
 		this.friendshipRepository.saveFriendship(friendship);
-		// FIXME
-		return null;
+		return friendship;
 	}
 	
 	@Override
@@ -121,8 +118,7 @@ public class DefaultDatabaseManager implements DatabaseManager {
 	@Override
 	public Follow saveFollow(Follow follow) {
 		this.followRepository.saveFollow(follow);
-		// FIXME
-		return null;
+		return follow;
 	}
 
 	@Override
@@ -133,8 +129,7 @@ public class DefaultDatabaseManager implements DatabaseManager {
 	@Override
 	public FriendshipRequest saveFriendshipRequest(FriendshipRequest friendshipRequest) {
 		this.friendshipRequestsRepository.add(friendshipRequest);
-		// FIXME
-		return null;
+		return friendshipRequest;
 	}
 
 	@Override

@@ -18,6 +18,7 @@ import com.armstrongmsg.socialnet.model.User;
 import com.armstrongmsg.socialnet.storage.cache.Cache;
 import com.armstrongmsg.socialnet.storage.database.DatabaseManager;
 
+// TODO test
 public class StorageFacade {
 	private Cache cache;
 	private DatabaseManager databaseManager;
@@ -33,13 +34,13 @@ public class StorageFacade {
 	}
 
 	public void saveUser(User user) throws InternalErrorException, UserAlreadyExistsException {
-		cache.putUser(user);
-		databaseManager.saveUser(user);
+		User storedUser = databaseManager.saveUser(user);
+		cache.putUser(storedUser);
 	}
 
 	public void updateUser(User user) throws UserNotFoundException, InternalErrorException {
-		cache.updateUser(user);
-		databaseManager.updateUser(user);
+		User updatedUser = databaseManager.updateUser(user);
+		cache.updateUser(updatedUser);
 	}
 
 	public User getUserById(String userId) throws UserNotFoundException, InternalErrorException {
@@ -86,8 +87,8 @@ public class StorageFacade {
 
 	public void saveFriendship(Friendship friendship) 
 			throws InternalErrorException, FriendshipAlreadyExistsException {
-		databaseManager.saveFriendship(friendship);
-		cache.putFriendship(friendship);
+		Friendship storedFriendship = databaseManager.saveFriendship(friendship);
+		cache.putFriendship(storedFriendship);
 	}
 
 	public List<Follow> getFollowsByUserId(String userId) throws InternalErrorException {
@@ -103,8 +104,8 @@ public class StorageFacade {
 	}
 	
 	public void saveFollow(Follow follow) throws FollowAlreadyExistsException, InternalErrorException {
-		cache.putFollow(follow);
-		databaseManager.saveFollow(follow);
+		Follow storedFollow = databaseManager.saveFollow(follow);
+		cache.putFollow(storedFollow);
 	}
 
 	public List<User> getAllUsers() throws InternalErrorException {
@@ -112,14 +113,14 @@ public class StorageFacade {
 	}
 
 	public void removeUserById(String userId) throws UserNotFoundException, InternalErrorException {
-		cache.removeUserById(userId);
 		databaseManager.removeUserById(userId);
+		cache.removeUserById(userId);
 	}
 
 	public void saveFriendshipRequest(FriendshipRequest friendshipRequest) 
 			throws FriendshipRequestAlreadyExistsException, InternalErrorException {
-		databaseManager.saveFriendshipRequest(friendshipRequest);
-		cache.putFriendshipRequest(friendshipRequest);
+		FriendshipRequest storedRequest = databaseManager.saveFriendshipRequest(friendshipRequest);
+		cache.putFriendshipRequest(storedRequest);
 	}
 
 	public List<FriendshipRequest> getSentFrienshipRequestsById(String userId) throws InternalErrorException {
@@ -165,18 +166,18 @@ public class StorageFacade {
 
 	public void removeFriendshipRequest(FriendshipRequest friendshipRequest) 
 			throws FriendshipRequestNotFound, InternalErrorException{
-		cache.removeFriendshipRequestById(friendshipRequest);
 		databaseManager.removeFriendshipRequestById(friendshipRequest);
+		cache.removeFriendshipRequestById(friendshipRequest);
 	}
 
 	public void removeFollow(Follow follow) throws FollowNotFoundException, InternalErrorException {
-		cache.removeFollow(follow);
 		databaseManager.removeFollow(follow);
+		cache.removeFollow(follow);
 	}
 
 	public void removeFriendship(Friendship friendship) 
 			throws FriendshipNotFoundException, InternalErrorException {
-		cache.removeFriendship(friendship);
 		databaseManager.removeFriendship(friendship);
+		cache.removeFriendship(friendship);
 	}
 }
