@@ -11,6 +11,10 @@ import com.armstrongmsg.socialnet.storage.media.MediaRepository;
 public class MediaStorageFacade {
 	private MediaRepository mediaRepository;
 	
+	public MediaStorageFacade(MediaRepository mediaRepository) {
+		this.mediaRepository = mediaRepository;
+	}
+
 	public void createMedia(String requester, String id, Map<String, String> metadata, byte[] data) 
 			throws InternalErrorException, UnauthorizedOperationException { 
 		mediaRepository.createMedia(requester, id, metadata, data);

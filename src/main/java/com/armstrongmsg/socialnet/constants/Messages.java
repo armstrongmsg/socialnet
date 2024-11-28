@@ -7,18 +7,23 @@ public class Messages {
 		public static final String COULD_NOT_LOAD_ADMIN_CONFIGURATION = "Could not load admin configuration. Message: {}";
 		public static final String ERROR_WHILE_CREATING_CACHE_INSTANCE = "Error while creating cache instance. Using default. Message: {}.";
 		public static final String ERROR_WHILE_CREATING_DATABASE_MANAGER_INSTANCE = "Error while creating database manager intance. Using default. Message: {}.";
+		public static final String ERROR_WHILE_CREATING_MEDIA_REPOSITORY_INSTANCE = "Error while creating media repository instance. Using default. Message: {}.";
 		public static final String ERROR_WHILE_LOADING_CACHE_CONFIGURATION = "Error while loading cache configuration. Using default. Message: {}.";
 		public static final String ERROR_WHILE_LOADING_DATABASE_MANAGER_CONFIGURATION = 
 				"Error while loading database manager configuration. Using default. Message: {}";
+		public static final String ERROR_WHILE_LOADING_MEDIA_REPOSITORY_CONFIGURATION = 
+				"Error while loading media repository configuration. Using default. Message:{}.";
 		public static final String LOADED_ADMIN = "Loaded admin: {}";
 		public static final String LOADING_ADMIN_CONFIGURATION = "Loading admin configuration";
 		public static final String LOADING_AUTHENTICATION_PLUGIN =  "Loading authentication plugin";
 		public static final String LOADING_AUTHORIZATION_PLUGIN = "Loading authorization plugin";
 		public static final String LOADING_CACHE_CONFIGURATION = "Loading cache configuration {}.";
 		public static final String LOADING_DATABASE_MANAGER_CONFIGURATION = "Loading database manager configuration {}";
+		public static final String LOADING_MEDIA_REPOSITORY_CONFIGURATION = "Loading media repository configuration {}.";
 		public static final String LOADING_FEED_POLICY = "Loading feed policy.";
 		public static final String NO_CACHE_CONFIGURATION = "No cache configuration. Using default.";
 		public static final String NO_DATABASE_MANAGER_CONFIGURATION = "No database manager configuration. Using default.";
+		public static final String NO_MEDIA_REPOSITORY_CONFIGURATION = "No media repository configuration. Using default.";
 		public static final String RECEIVED_LOGIN_REQUEST = "Received login request.";
 		public static final String RECEIVED_ACCEPT_FRIENDSHIP_REQUEST = "Received accept friendship request. Token:{}, username:{}.";
 		public static final String RECEIVED_ADD_FOLLOW_REQUEST = "Received Add follow request. Token:{}, followed:{}.";

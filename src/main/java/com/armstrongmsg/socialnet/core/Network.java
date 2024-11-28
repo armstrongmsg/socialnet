@@ -26,6 +26,7 @@ import com.armstrongmsg.socialnet.exceptions.FriendshipNotFoundException;
 import com.armstrongmsg.socialnet.exceptions.FriendshipRequestAlreadyExistsException;
 import com.armstrongmsg.socialnet.exceptions.FriendshipRequestNotFound;
 import com.armstrongmsg.socialnet.exceptions.InternalErrorException;
+import com.armstrongmsg.socialnet.exceptions.MediaNotFoundException;
 import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
 import com.armstrongmsg.socialnet.exceptions.UserAlreadyExistsException;
 import com.armstrongmsg.socialnet.exceptions.UserNotFoundException;
@@ -40,6 +41,7 @@ import com.armstrongmsg.socialnet.model.PostVisibility;
 import com.armstrongmsg.socialnet.model.Profile;
 import com.armstrongmsg.socialnet.model.User;
 import com.armstrongmsg.socialnet.model.UserSummary;
+import com.armstrongmsg.socialnet.storage.MediaStorageFacade;
 import com.armstrongmsg.socialnet.storage.StorageFacade;
 import com.armstrongmsg.socialnet.util.ClassFactory;
 import com.armstrongmsg.socialnet.util.PropertiesUtil;
@@ -50,6 +52,7 @@ public class Network {
 	private AuthorizationPlugin authorizationPlugin;
 	private FeedPolicy feedPolicy;
 	private StorageFacade storageFacade;
+	private MediaStorageFacade mediaStorageFacade;
 	
 	private static Logger logger = LoggerFactory.getLogger(Network.class);
 	
@@ -60,8 +63,9 @@ public class Network {
 		this.authorizationPlugin = authorizationPlugin;
 	}
 
-	public Network(StorageFacade storageManager) throws FatalErrorException {
+	public Network(StorageFacade storageManager, MediaStorageFacade mediaStorageFacade) throws FatalErrorException {
 		this.storageFacade = storageManager;
+		this.mediaStorageFacade = mediaStorageFacade;
 		
 		String adminUsername = ConfigurationPropertiesDefaults.DEFAULT_ADMIN_USERNAME;
 		String adminPassword = ConfigurationPropertiesDefaults.DEFAULT_ADMIN_PASSWORD;
@@ -630,5 +634,11 @@ public class Network {
 		requester.getProfile().setDescription(profileDescription);
 		doChangeSelfProfilePic(requester, picData);
 		this.storageFacade.updateUser(requester);
+	}
+
+	public String getMedia(String userToken, String mediaId) throws AuthenticationException, MediaNotFoundException, InternalErrorException, UnauthorizedOperationException {
+		User requester = this.authenticationPlugin.getUser(userToken);
+		this.authorizationPlugin.authorize(requester, new Operation(OperationType.GET_MEDIA_URI));
+		return mediaStorageFacade.getMediaUri(requester.getUsername(), mediaId);
 	}
 }

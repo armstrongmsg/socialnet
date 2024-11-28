@@ -18,6 +18,7 @@ import com.armstrongmsg.socialnet.exceptions.FriendshipNotFoundException;
 import com.armstrongmsg.socialnet.exceptions.FriendshipRequestAlreadyExistsException;
 import com.armstrongmsg.socialnet.exceptions.FriendshipRequestNotFound;
 import com.armstrongmsg.socialnet.exceptions.InternalErrorException;
+import com.armstrongmsg.socialnet.exceptions.MediaNotFoundException;
 import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
 import com.armstrongmsg.socialnet.exceptions.UserAlreadyExistsException;
 import com.armstrongmsg.socialnet.exceptions.UserNotFoundException;
@@ -26,9 +27,14 @@ import com.armstrongmsg.socialnet.model.Post;
 import com.armstrongmsg.socialnet.model.PostVisibility;
 import com.armstrongmsg.socialnet.model.User;
 import com.armstrongmsg.socialnet.model.UserSummary;
+import com.armstrongmsg.socialnet.storage.MediaStorageFacade;
 import com.armstrongmsg.socialnet.storage.StorageFacade;
+import com.armstrongmsg.socialnet.storage.cache.Cache;
 import com.armstrongmsg.socialnet.storage.cache.CacheFactory;
+import com.armstrongmsg.socialnet.storage.database.DatabaseManager;
 import com.armstrongmsg.socialnet.storage.database.DatabaseManagerFactory;
+import com.armstrongmsg.socialnet.storage.media.MediaRepository;
+import com.armstrongmsg.socialnet.storage.media.MediaRepositoryFactory;
 import com.armstrongmsg.socialnet.util.PropertiesUtil;
 
 public class ApplicationFacade {
@@ -37,12 +43,14 @@ public class ApplicationFacade {
 
 	private Network network;
 	private StorageFacade storageManager;
+	private MediaStorageFacade mediaStorageFacade;
 	
-	private ApplicationFacade(StorageFacade storageManager) {
+	private ApplicationFacade(StorageFacade storageManager, MediaStorageFacade mediaStorageFacade) {
 		this.storageManager = storageManager;
+		this.mediaStorageFacade = mediaStorageFacade;
 
 		try {
-			this.network = new Network(this.storageManager);
+			this.network = new Network(this.storageManager, this.mediaStorageFacade);
 			PropertiesUtil properties = PropertiesUtil.getInstance();
 			if (properties.getProperty(ConfigurationProperties.BOOTSTRAP).equals(SystemConstants.PROPERTY_VALUE_TRUE)) {
 				logger.info("Starting network with bootstrap.");
@@ -53,22 +61,30 @@ public class ApplicationFacade {
 		}
 	}
 	
-	public synchronized static ApplicationFacade getInstance(StorageFacade storageFacade) {
+	public synchronized static ApplicationFacade getInstance(StorageFacade storageFacade, 
+			MediaStorageFacade mediaStorageFacade) {
 		if (instance == null) {
-			instance = new ApplicationFacade(storageFacade);
+			instance = new ApplicationFacade(storageFacade, mediaStorageFacade);
 		}
 		
 		return instance;
 	}
 	
 	public synchronized static ApplicationFacade getInstance() {
-		try {
-			return getInstance(new StorageFacade(
-					new CacheFactory().loadCacheFromConfiguration(),
-					new DatabaseManagerFactory().loadDatabaseManagerFromConfiguration()));
-		} catch (FatalErrorException e) {
-			logger.error(e.getMessage());
-			return null;
+		if (instance == null) {
+			try {
+				Cache cache = new CacheFactory().loadCacheFromConfiguration();
+				DatabaseManager dbManager = new DatabaseManagerFactory().loadDatabaseManagerFromConfiguration();
+				MediaRepository mediaRepo = new MediaRepositoryFactory().loadMediaRepositoryFromConfiguration();
+				StorageFacade storageFacade = new StorageFacade(cache, dbManager); 
+				MediaStorageFacade mediaStorageFacade = new MediaStorageFacade(mediaRepo);
+				return getInstance(storageFacade, mediaStorageFacade);
+			} catch (FatalErrorException e) {
+				logger.error(e.getMessage());
+				return null;
+			}			
+		} else {
+			return instance;
 		}
 	}
 		
@@ -542,5 +558,9 @@ public class ApplicationFacade {
 			logger.debug(Messages.Logging.USER_NOT_FOUND_EXCEPTION, e.getMessage());
 			throw e;
 		}
+	}
+	
+	public String getMediaUri(String userToken, String mediaId) throws AuthenticationException, MediaNotFoundException, InternalErrorException, UnauthorizedOperationException {
+		return this.network.getMedia(userToken, mediaId);
 	}
 }

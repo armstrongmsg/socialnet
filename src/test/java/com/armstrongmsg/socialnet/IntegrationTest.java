@@ -49,12 +49,15 @@ import com.armstrongmsg.socialnet.model.Post;
 import com.armstrongmsg.socialnet.model.PostVisibility;
 import com.armstrongmsg.socialnet.model.User;
 import com.armstrongmsg.socialnet.model.UserSummary;
+import com.armstrongmsg.socialnet.storage.MediaStorageFacade;
 import com.armstrongmsg.socialnet.storage.StorageFacade;
 import com.armstrongmsg.socialnet.storage.cache.Cache;
 import com.armstrongmsg.socialnet.storage.cache.LruCache;
 import com.armstrongmsg.socialnet.storage.cache.NoOperationCache;
 import com.armstrongmsg.socialnet.storage.database.DatabaseManager;
 import com.armstrongmsg.socialnet.storage.database.PictureLoadingAwareDatabaseManager;
+import com.armstrongmsg.socialnet.storage.media.LocalFileSystemMediaRepository;
+import com.armstrongmsg.socialnet.storage.media.MediaRepository;
 import com.armstrongmsg.socialnet.util.ApplicationPaths;
 import com.armstrongmsg.socialnet.util.ClassFactory;
 import com.armstrongmsg.socialnet.util.PersistenceTest;
@@ -89,12 +92,15 @@ public class IntegrationTest extends PersistenceTest {
 	private static final byte[] PICTURE_DATA_4 = new byte[] {10, 11, 12};
 	private ApplicationFacade facade;
 	private StorageFacade storageFacade;
+	private MediaStorageFacade mediaStorageFacade;
 	private Cache cache;
 	private DatabaseManager databaseManager;
+	private MediaRepository mediaRepository;
 	private MockedStatic<PropertiesUtil> propertiesUtilMock;
 	private MockedStatic<ApplicationPaths> pathsUtilMock;
 	private String cacheType;
 	private String databaseManagerType;
+	private String mediaRepositoryType;
 	
 	@Parameterized.Parameters
 	public static List<Object[]> getTestParameters() {
@@ -109,6 +115,7 @@ public class IntegrationTest extends PersistenceTest {
 	public IntegrationTest(String cacheType, String databaseManagerType) throws FatalErrorException {
 		this.cacheType = cacheType;
 		this.databaseManagerType = databaseManagerType;
+		this.mediaRepositoryType = LocalFileSystemMediaRepository.class.getCanonicalName();
 	}
 	
 	@Before
@@ -153,10 +160,12 @@ public class IntegrationTest extends PersistenceTest {
 		
 		this.cache = (Cache) new ClassFactory().createInstance(cacheType);
 		this.databaseManager = (DatabaseManager) new ClassFactory().createInstance(databaseManagerType);
+		this.mediaRepository = (MediaRepository) new ClassFactory().createInstance(mediaRepositoryType);
 		
 		storageFacade = new StorageFacade(this.cache, this.databaseManager);
+		mediaStorageFacade = new MediaStorageFacade(this.mediaRepository);
 		
-		facade = ApplicationFacade.getInstance(storageFacade);
+		facade = ApplicationFacade.getInstance(storageFacade, mediaStorageFacade);
 	}
 	
 	@Test
