@@ -18,6 +18,7 @@ import com.armstrongmsg.socialnet.exceptions.FriendshipNotFoundException;
 import com.armstrongmsg.socialnet.exceptions.FriendshipRequestAlreadyExistsException;
 import com.armstrongmsg.socialnet.exceptions.FriendshipRequestNotFound;
 import com.armstrongmsg.socialnet.exceptions.InternalErrorException;
+import com.armstrongmsg.socialnet.exceptions.InvalidParameterException;
 import com.armstrongmsg.socialnet.exceptions.MediaNotFoundException;
 import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
 import com.armstrongmsg.socialnet.exceptions.UserAlreadyExistsException;
@@ -100,12 +101,12 @@ public class ApplicationFacade {
 		}
 	}
 	
-	public String login(Map<String, String> credentials) throws AuthenticationException {
+	public String login(Map<String, String> credentials) throws AuthenticationException, InternalErrorException {
 		logger.debug(Messages.Logging.RECEIVED_LOGIN_REQUEST);
 		return this.network.login(credentials);
 	}
 
-	public boolean userIsAdmin(String userId) {
+	public boolean userIsAdmin(String userId) throws UserNotFoundException, InternalErrorException {
 		logger.debug(Messages.Logging.RECEIVED_USER_IS_ADMIN_REQUEST, userId);
 		return this.network.userIsAdmin(userId);
 	}
@@ -160,11 +161,32 @@ public class ApplicationFacade {
 	
 	// REGULAR USER OPERATIONS
 	
-	public void addUser(String username, String password, String profileDescription) throws InternalErrorException, UserAlreadyExistsException {
+	public void addUser(String username, String password, String profileDescription)
+			throws InternalErrorException, InvalidParameterException, UserAlreadyExistsException {
 		logger.debug(Messages.Logging.RECEIVED_ADD_USER_REQUEST, username, password, profileDescription);
-		this.network.addUser(username, password, profileDescription);
+		
+		try {
+			this.network.addUser(username, password, profileDescription);
+		} catch (InternalErrorException e) {
+			logger.debug(Messages.Logging.INTERNAL_ERROR_EXCEPTION, e.getMessage());
+			throw e;
+		}
 	}
 
+	public UserSummary getSelf(String userToken) throws AuthenticationException, InternalErrorException {
+		logger.debug(Messages.Logging.RECEIVED_GET_SELF_REQUEST, userToken);
+		
+		try {
+			return this.network.getSelf(userToken);
+		} catch (AuthenticationException e) {
+			logger.debug(Messages.Logging.AUTHENTICATION_EXCEPTION, e.getMessage());
+			throw e;
+		} catch (InternalErrorException e) {
+			logger.debug(Messages.Logging.INTERNAL_ERROR_EXCEPTION, e.getMessage());
+			throw e;
+		}
+	}
+	
 	public void createPost(String userToken, String title, String content, PostVisibility newPostVisibility, byte[] pictureData) 
 			throws AuthenticationException, UserNotFoundException, InternalErrorException, UnauthorizedOperationException {
 		logger.debug(Messages.Logging.RECEIVED_CREATE_POST_REQUEST, userToken, title, content, newPostVisibility);
@@ -447,20 +469,6 @@ public class ApplicationFacade {
 		
 		try {
 			return this.network.isFriend(userToken, username);
-		} catch (AuthenticationException e) {
-			logger.debug(Messages.Logging.AUTHENTICATION_EXCEPTION, e.getMessage());
-			throw e;
-		} catch (UnauthorizedOperationException e) {
-			logger.debug(Messages.Logging.AUTHORIZATION_EXCEPTION, e.getMessage());
-			throw e;
-		}
-	}
-
-	public UserSummary getSelf(String userToken) throws AuthenticationException, UnauthorizedOperationException, MediaNotFoundException, InternalErrorException {
-		logger.debug(Messages.Logging.RECEIVED_GET_SELF_REQUEST, userToken);
-		
-		try {
-			return this.network.getSelf(userToken);
 		} catch (AuthenticationException e) {
 			logger.debug(Messages.Logging.AUTHENTICATION_EXCEPTION, e.getMessage());
 			throw e;

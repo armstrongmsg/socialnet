@@ -41,6 +41,7 @@ import com.armstrongmsg.socialnet.exceptions.FriendshipNotFoundException;
 import com.armstrongmsg.socialnet.exceptions.FriendshipRequestAlreadyExistsException;
 import com.armstrongmsg.socialnet.exceptions.FriendshipRequestNotFound;
 import com.armstrongmsg.socialnet.exceptions.InternalErrorException;
+import com.armstrongmsg.socialnet.exceptions.InvalidParameterException;
 import com.armstrongmsg.socialnet.exceptions.MediaNotFoundException;
 import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
 import com.armstrongmsg.socialnet.exceptions.UserAlreadyExistsException;
@@ -168,7 +169,7 @@ public class IntegrationTest extends PersistenceTest {
 	}
 	
 	@Test
-	public void testAdminLogin() throws AuthenticationException {
+	public void testAdminLogin() throws AuthenticationException, InternalErrorException {
 		Map<String, String> adminCredentials = new HashMap<String, String>();
 		adminCredentials.put(AuthenticationParameters.USERNAME_KEY, ADMIN_USERNAME);
 		adminCredentials.put(AuthenticationParameters.PASSWORD_KEY, ADMIN_PASSWORD);
@@ -180,7 +181,7 @@ public class IntegrationTest extends PersistenceTest {
 	}
 	
 	@Test(expected = AuthenticationException.class)
-	public void testAdminLoginWithIncorrectCredentials() throws AuthenticationException {
+	public void testAdminLoginWithIncorrectCredentials() throws AuthenticationException, InternalErrorException {
 		Map<String, String> adminIncorrectCredentials = new HashMap<String, String>();
 		adminIncorrectCredentials.put(AuthenticationParameters.USERNAME_KEY, ADMIN_USERNAME);
 		adminIncorrectCredentials.put(AuthenticationParameters.PASSWORD_KEY, "incorrect password");
@@ -189,7 +190,7 @@ public class IntegrationTest extends PersistenceTest {
 	}
 	
 	@Test(expected = AuthenticationException.class)
-	public void testLoginAsInvalidUser() throws AuthenticationException {
+	public void testLoginAsInvalidUser() throws AuthenticationException, InternalErrorException {
 		Map<String, String> invalidUserCredentials = new HashMap<String, String>();
 		invalidUserCredentials.put(AuthenticationParameters.USERNAME_KEY, "invalid_user");
 		invalidUserCredentials.put(AuthenticationParameters.PASSWORD_KEY, "incorrect password");
@@ -293,7 +294,7 @@ public class IntegrationTest extends PersistenceTest {
 	}
 	
 	@Test
-	public void testIsAdmin() throws AuthenticationException, UnauthorizedOperationException, InternalErrorException, UserAlreadyExistsException {
+	public void testIsAdmin() throws AuthenticationException, UnauthorizedOperationException, InternalErrorException, UserAlreadyExistsException, UserNotFoundException {
 		String adminToken = loginAsAdmin();
 		
 		assertTrue(facade.userIsAdmin(ADMIN_USERNAME));
@@ -308,7 +309,7 @@ public class IntegrationTest extends PersistenceTest {
 	}
 	
 	@Test
-	public void testGetAndCreateUserBySelf() throws UnauthorizedOperationException, AuthenticationException, InternalErrorException, UserAlreadyExistsException {
+	public void testGetAndCreateUserBySelf() throws UnauthorizedOperationException, AuthenticationException, InternalErrorException, UserAlreadyExistsException, InvalidParameterException {
 		String adminToken = loginAsAdmin();
 		
 		List<User> users = facade.getUsers(adminToken);
@@ -1108,7 +1109,7 @@ public class IntegrationTest extends PersistenceTest {
 		assertEquals(UPDATED_USER_PROFILE_DESCRIPTION_1, userAfterUpdate.getProfileDescription());
 	}
 	
-	private String loginAsAdmin() throws AuthenticationException {
+	private String loginAsAdmin() throws AuthenticationException, InternalErrorException {
 		Map<String, String> adminCredentials = new HashMap<String, String>();
 		adminCredentials.put(AuthenticationParameters.USERNAME_KEY, ADMIN_USERNAME);
 		adminCredentials.put(AuthenticationParameters.PASSWORD_KEY, ADMIN_PASSWORD);
@@ -1116,7 +1117,7 @@ public class IntegrationTest extends PersistenceTest {
 		return facade.login(adminCredentials);
 	}
 	
-	private String loginAsUser(String username, String password) throws AuthenticationException {
+	private String loginAsUser(String username, String password) throws AuthenticationException, InternalErrorException {
 		Map<String, String> userCredentials = new HashMap<String, String>();
 		userCredentials.put(AuthenticationParameters.USERNAME_KEY, username);
 		userCredentials.put(AuthenticationParameters.PASSWORD_KEY, password);

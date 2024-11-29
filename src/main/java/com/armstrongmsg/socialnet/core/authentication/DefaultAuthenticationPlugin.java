@@ -21,13 +21,13 @@ public class DefaultAuthenticationPlugin implements AuthenticationPlugin {
 	}
 
 	@Override
-	public String authenticate(Map<String, String> credentials) throws AuthenticationException {
+	public String authenticate(Map<String, String> credentials) throws AuthenticationException, InternalErrorException {
 		String username = credentials.get(AuthenticationParameters.USERNAME_KEY);
 		String password = credentials.get(AuthenticationParameters.PASSWORD_KEY);
 		return authenticate(username, password);
 	}
 	
-	private String authenticate(String username, String password) throws AuthenticationException {
+	private String authenticate(String username, String password) throws AuthenticationException, InternalErrorException {
 		User user = null;
 		
 		if (admin.getUsername().equals(username)) {
@@ -37,8 +37,6 @@ public class DefaultAuthenticationPlugin implements AuthenticationPlugin {
 				user = this.storageFacade.getUserByUsername(username);
 			} catch (UserNotFoundException e) {
 				throw new AuthenticationException(String.format(Messages.Exception.COULD_NOT_FIND_USER, username));
-			} catch (InternalErrorException e) {
-				throw new AuthenticationException();
 			}
 		}
 

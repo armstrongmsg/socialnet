@@ -130,6 +130,7 @@ public class Network {
 	public void addUser(String username, String password, String profileDescription) throws InternalErrorException, UserAlreadyExistsException {
 		UUID uuid = UUID.randomUUID();
 		Profile profile = new Profile(profileDescription, new ArrayList<Post>());
+		// TODO should perform parameter validation
 		User newUser = new User(uuid.toString(), username, password, profile);
 		this.storageFacade.saveUser(newUser);
 	}
@@ -485,7 +486,7 @@ public class Network {
 		this.storageFacade.updateUser(requester);
 	}
 	
-	public String login(Map<String, String> credentials) throws AuthenticationException {
+	public String login(Map<String, String> credentials) throws AuthenticationException, InternalErrorException {
 		return this.authenticationPlugin.authenticate(credentials);
 	}
 
@@ -573,10 +574,16 @@ public class Network {
 		return false;
 	}
 	
-	public UserSummary getSelf(String userToken) throws AuthenticationException, UnauthorizedOperationException, MediaNotFoundException, InternalErrorException {
+	public UserSummary getSelf(String userToken) throws AuthenticationException, InternalErrorException {
 		User requester = this.authenticationPlugin.getUser(userToken);
-		this.authorizationPlugin.authorize(requester, new Operation(OperationType.GET_SELF));
-		UserSummary summary = getUserSummary(requester, requester);
+		UserSummary summary;
+		try {
+			summary = getUserSummary(requester, requester);
+		} catch (MediaNotFoundException e) {
+			throw new InternalErrorException();
+		} catch (UnauthorizedOperationException e) {
+			throw new InternalErrorException();
+		}
 		return summary;
 	}
 

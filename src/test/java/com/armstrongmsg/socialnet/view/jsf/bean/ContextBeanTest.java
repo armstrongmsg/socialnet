@@ -17,6 +17,8 @@ import org.mockito.Mockito;
 import com.armstrongmsg.socialnet.constants.AuthenticationParameters;
 import com.armstrongmsg.socialnet.core.ApplicationFacade;
 import com.armstrongmsg.socialnet.exceptions.AuthenticationException;
+import com.armstrongmsg.socialnet.exceptions.InternalErrorException;
+import com.armstrongmsg.socialnet.exceptions.UserNotFoundException;
 
 public class ContextBeanTest {
 	private static final String REGULAR_USERNAME = "username";
@@ -38,7 +40,7 @@ public class ContextBeanTest {
 	}
 	
 	@Test
-	public void testLoginAdmin() throws AuthenticationException {
+	public void testLoginAdmin() throws AuthenticationException, InternalErrorException, UserNotFoundException {
 		Mockito.when(facade.userIsAdmin(ADMIN_USERNAME)).thenReturn(true);
 		
 		credentials.put(AuthenticationParameters.USERNAME_KEY, ADMIN_USERNAME);
@@ -60,7 +62,7 @@ public class ContextBeanTest {
 	}
 	
 	@Test
-	public void testLoginRegularUser() throws AuthenticationException {
+	public void testLoginRegularUser() throws AuthenticationException, InternalErrorException, UserNotFoundException {
 		Mockito.when(facade.userIsAdmin(REGULAR_USERNAME)).thenReturn(false);
 		
 		credentials.put(AuthenticationParameters.USERNAME_KEY, REGULAR_USERNAME);

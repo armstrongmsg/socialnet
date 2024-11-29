@@ -13,6 +13,8 @@ public class Messages {
 				"Error while loading database manager configuration. Using default. Message: {}";
 		public static final String ERROR_WHILE_LOADING_MEDIA_REPOSITORY_CONFIGURATION = 
 				"Error while loading media repository configuration. Using default. Message:{}.";
+		public static final String INTERNAL_ERROR_EXCEPTION = "Internal error exception. Message:{}.";
+		public static final String INVALID_PARAMETER_EXCEPTION = "Invalid parameter exception. Message:{}.";
 		public static final String LOADED_ADMIN = "Loaded admin: {}";
 		public static final String LOADING_ADMIN_CONFIGURATION = "Loading admin configuration";
 		public static final String LOADING_AUTHENTICATION_PLUGIN =  "Loading authentication plugin";

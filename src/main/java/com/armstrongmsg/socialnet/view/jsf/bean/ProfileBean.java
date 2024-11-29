@@ -119,11 +119,6 @@ public class ProfileBean {
 			return loggedUserSummary.equals(contextBean.getCurrentSession().getCurrentViewUser());
 		} catch (AuthenticationException e) {
 			this.exceptionHandler.handle(e);
-		} catch (UnauthorizedOperationException e) {
-			this.exceptionHandler.handle(e);
-		} catch (MediaNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (InternalErrorException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

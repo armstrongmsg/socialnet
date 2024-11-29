@@ -12,8 +12,7 @@ import com.armstrongmsg.socialnet.constants.AuthenticationParameters;
 import com.armstrongmsg.socialnet.core.ApplicationFacade;
 import com.armstrongmsg.socialnet.exceptions.AuthenticationException;
 import com.armstrongmsg.socialnet.exceptions.InternalErrorException;
-import com.armstrongmsg.socialnet.exceptions.MediaNotFoundException;
-import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
+import com.armstrongmsg.socialnet.exceptions.UserNotFoundException;
 import com.armstrongmsg.socialnet.view.jsf.NavigationController;
 import com.armstrongmsg.socialnet.view.jsf.Session;
 import com.armstrongmsg.socialnet.view.jsf.model.JsfConnector;
@@ -98,11 +97,6 @@ public class ContextBean {
 				this.session.setCurrentViewUser(currentViewUser);
 			} catch (AuthenticationException e) {
 				this.exceptionHandler.handle(e);
-			} catch (UnauthorizedOperationException e) {
-				this.exceptionHandler.handle(e);
-			} catch (MediaNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			} catch (InternalErrorException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -142,7 +136,7 @@ public class ContextBean {
 			} else {
 				return new NavigationController().showUserHome();
 			}
-		} catch (AuthenticationException e) {
+		} catch (AuthenticationException | InternalErrorException | UserNotFoundException e) {
 			setLoginError(true);
 			return new NavigationController().showHome();
 		} finally {
