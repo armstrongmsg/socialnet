@@ -16,6 +16,7 @@ import com.armstrongmsg.socialnet.constants.AuthenticationParameters;
 import com.armstrongmsg.socialnet.core.ApplicationFacade;
 import com.armstrongmsg.socialnet.exceptions.AuthenticationException;
 import com.armstrongmsg.socialnet.exceptions.InternalErrorException;
+import com.armstrongmsg.socialnet.exceptions.MediaNotFoundException;
 import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
 import com.armstrongmsg.socialnet.model.Picture;
 import com.armstrongmsg.socialnet.view.jsf.model.UserSummary;
@@ -50,7 +51,7 @@ public class ProfileBeanTest {
 	}
 	
 	@Test
-	public void testCannotAddSelfAsFriend() throws AuthenticationException, UnauthorizedOperationException {
+	public void testCannotAddSelfAsFriend() throws AuthenticationException, UnauthorizedOperationException, MediaNotFoundException, InternalErrorException {
 		credentials.put(AuthenticationParameters.USERNAME_KEY, REGULAR_USERNAME);
 		credentials.put(AuthenticationParameters.PASSWORD_KEY, PASSWORD);
 		
@@ -69,7 +70,7 @@ public class ProfileBeanTest {
 	}
 	
 	@Test
-	public void testCanAddAsFriendNonFriendUser() throws AuthenticationException, UnauthorizedOperationException, InternalErrorException {
+	public void testCanAddAsFriendNonFriendUser() throws AuthenticationException, UnauthorizedOperationException, InternalErrorException, MediaNotFoundException {
 		credentials.put(AuthenticationParameters.USERNAME_KEY, REGULAR_USERNAME);
 		credentials.put(AuthenticationParameters.PASSWORD_KEY, PASSWORD);
 		
@@ -89,7 +90,7 @@ public class ProfileBeanTest {
 	}
 	
 	@Test
-	public void testCannotAddAsFriendAFriendUser() throws AuthenticationException, UnauthorizedOperationException, InternalErrorException {
+	public void testCannotAddAsFriendAFriendUser() throws AuthenticationException, UnauthorizedOperationException, InternalErrorException, MediaNotFoundException {
 		credentials.put(AuthenticationParameters.USERNAME_KEY, REGULAR_USERNAME);
 		credentials.put(AuthenticationParameters.PASSWORD_KEY, PASSWORD);
 		
@@ -109,7 +110,7 @@ public class ProfileBeanTest {
 	}
 	
 	@Test
-	public void testCannotFollowSelf() throws AuthenticationException, UnauthorizedOperationException {
+	public void testCannotFollowSelf() throws AuthenticationException, UnauthorizedOperationException, MediaNotFoundException, InternalErrorException {
 		credentials.put(AuthenticationParameters.USERNAME_KEY, REGULAR_USERNAME);
 		credentials.put(AuthenticationParameters.PASSWORD_KEY, PASSWORD);
 		
@@ -128,7 +129,7 @@ public class ProfileBeanTest {
 	}
 	
 	@Test
-	public void testCanFollowNotFollowedUser() throws AuthenticationException, UnauthorizedOperationException, InternalErrorException {
+	public void testCanFollowNotFollowedUser() throws AuthenticationException, UnauthorizedOperationException, InternalErrorException, MediaNotFoundException {
 		credentials.put(AuthenticationParameters.USERNAME_KEY, REGULAR_USERNAME);
 		credentials.put(AuthenticationParameters.PASSWORD_KEY, PASSWORD);
 		
@@ -148,7 +149,7 @@ public class ProfileBeanTest {
 	}
 	
 	@Test
-	public void testCannotFollowAlreadyFollowedUser() throws AuthenticationException, UnauthorizedOperationException, InternalErrorException {
+	public void testCannotFollowAlreadyFollowedUser() throws AuthenticationException, UnauthorizedOperationException, InternalErrorException, MediaNotFoundException {
 		credentials.put(AuthenticationParameters.USERNAME_KEY, REGULAR_USERNAME);
 		credentials.put(AuthenticationParameters.PASSWORD_KEY, PASSWORD);
 		

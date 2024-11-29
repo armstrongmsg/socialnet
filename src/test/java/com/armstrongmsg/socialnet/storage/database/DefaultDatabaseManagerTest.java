@@ -3,6 +3,7 @@ package com.armstrongmsg.socialnet.storage.database;
 import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Before;
@@ -70,7 +71,7 @@ public class DefaultDatabaseManagerTest {
 		post1.setTimestamp(POST_TIMESTAMP_1);
 		post1.setContent(POST_CONTENT_1);
 		post1.setVisibility(POST_VISIBILITY_1);
-		post1.setPictureId(PICTURE_ID_1);
+		post1.setMediaIds(Arrays.asList(PICTURE_ID_1));
 		
 		post2 = new Post();
 		post2.setId(POST_ID_2);
@@ -78,7 +79,7 @@ public class DefaultDatabaseManagerTest {
 		post2.setTimestamp(POST_TIMESTAMP_2);
 		post2.setContent(POST_CONTENT_2);
 		post2.setVisibility(POST_VISIBILITY_2);
-		post2.setPictureId(PICTURE_ID_2);
+		post2.setMediaIds(Arrays.asList(PICTURE_ID_2));
 		
 		userPosts = new ArrayList<Post>();
 		userPosts.add(post1);
@@ -152,9 +153,9 @@ public class DefaultDatabaseManagerTest {
 	
 	@Test
 	public void testSaveUser() {
-		userProfile.setProfilePic(profilePicture);
-		post1.setPicture(postPicture1);
-		post2.setPicture(postPicture2);
+		userProfile.setProfilePicId(PICTURE_ID_3);
+		post1.setMediaIds(Arrays.asList(PICTURE_ID_1));
+		post2.setMediaIds(Arrays.asList(PICTURE_ID_2));
 		
 		manager = new DefaultDatabaseManager(userRepository, friendshipRepository, 
 				followRepository, friendshipRequestsRepository);
@@ -167,8 +168,8 @@ public class DefaultDatabaseManagerTest {
 	@Test
 	public void testSaveUserWithDefaultProfilePic() {
 		userProfile.setProfilePicId(SystemConstants.DEFAULT_PROFILE_PIC_ID);
-		post1.setPicture(postPicture1);
-		post2.setPicture(postPicture2);
+		post1.setMediaIds(Arrays.asList(PICTURE_ID_1));
+		post2.setMediaIds(Arrays.asList(PICTURE_ID_2));
 		
 		manager = new DefaultDatabaseManager(userRepository, friendshipRepository, 
 				followRepository, friendshipRequestsRepository);
@@ -180,9 +181,9 @@ public class DefaultDatabaseManagerTest {
 	
 	@Test
 	public void testUpdateUser() throws UserNotFoundException {
-		userProfile.setProfilePic(profilePicture);
-		post1.setPicture(postPicture1);
-		post2.setPicture(postPicture2);
+		userProfile.setProfilePicId(PICTURE_ID_3);
+		post1.setMediaIds(Arrays.asList(PICTURE_ID_1));
+		post2.setMediaIds(Arrays.asList(PICTURE_ID_2));
 		
 		manager = new DefaultDatabaseManager(userRepository, friendshipRepository, 
 				followRepository, friendshipRequestsRepository);
@@ -195,8 +196,8 @@ public class DefaultDatabaseManagerTest {
 	@Test
 	public void testUpdateUserWithDefaultProfilePic() throws UserNotFoundException {
 		userProfile.setProfilePicId(SystemConstants.DEFAULT_PROFILE_PIC_ID);
-		post1.setPicture(postPicture1);
-		post2.setPicture(postPicture2);
+		post1.setMediaIds(Arrays.asList(PICTURE_ID_1));
+		post2.setMediaIds(Arrays.asList(PICTURE_ID_2));
 		
 		manager = new DefaultDatabaseManager(userRepository, friendshipRepository, 
 				followRepository, friendshipRequestsRepository);

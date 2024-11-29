@@ -5,7 +5,20 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import com.armstrongmsg.socialnet.core.ApplicationFacade;
+import com.armstrongmsg.socialnet.exceptions.AuthenticationException;
+import com.armstrongmsg.socialnet.exceptions.InternalErrorException;
+import com.armstrongmsg.socialnet.exceptions.MediaNotFoundException;
+import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
+
 public class JsfConnector {
+	private ApplicationFacade facade;
+	private String token;
+	
+	public JsfConnector(ApplicationFacade facade, String token) {
+		this.token = token;
+		this.facade = facade;
+	}
 	
 	public User getViewUser(com.armstrongmsg.socialnet.model.User modelUser) {
 		return new User(modelUser.getUserId(), modelUser.getUsername(), 
@@ -36,9 +49,15 @@ public class JsfConnector {
 	
 	public Post getViewPost(com.armstrongmsg.socialnet.model.Post modelPost) {
 		String picturePath = null;
-		
-		if (modelPost.getPicture() != null) {
-			picturePath = modelPost.getPicture().getPath();
+
+		for (String id : modelPost.getMediaIds()) {
+			try {
+				picturePath = facade.getMediaUri(token, id);
+			} catch (AuthenticationException e) {
+			} catch (MediaNotFoundException e) {
+			} catch (InternalErrorException e) {
+			} catch (UnauthorizedOperationException e) {
+			}
 		}
 		
 		return new Post(modelPost.getId(), modelPost.getTitle(), toViewDate(modelPost.getTimestamp()), 
@@ -66,7 +85,14 @@ public class JsfConnector {
 	}
 
 	public UserSummary getViewUserSummary(com.armstrongmsg.socialnet.model.UserSummary modelUserSummary) {
-		String profilePicturePath = modelUserSummary.getProfilePicture().getPath();
+		String profilePicturePath = null;
+		try {
+			profilePicturePath = facade.getMediaUri(token, modelUserSummary.getProfilePicId());
+		} catch (AuthenticationException e) {
+		} catch (MediaNotFoundException e) {
+		} catch (InternalErrorException e) {
+		} catch (UnauthorizedOperationException e) {
+		}
 		return new UserSummary(modelUserSummary.getUsername(), modelUserSummary.getProfileDescription(), profilePicturePath);
 	}
 }

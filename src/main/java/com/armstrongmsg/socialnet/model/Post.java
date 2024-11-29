@@ -1,12 +1,15 @@
 package com.armstrongmsg.socialnet.model;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -26,29 +29,23 @@ public class Post implements Comparable<Post> {
 	@Column
 	@Enumerated(EnumType.STRING)
 	private PostVisibility visibility;
-	@Column(name = "picture_id")
-	private String pictureId;
+	@Column(name = "media_ids")
+	@ElementCollection(fetch=FetchType.EAGER)
+	private List<String> mediaIds;
 	@Transient
-	private Picture picture;
+	private List<String> mediaPaths;
 	
 	public Post() {
 		
 	}
 	
-	public Post(String title, long timestamp, String content, PostVisibility visibility, Picture postPicture) {
+	public Post(String title, long timestamp, String content, PostVisibility visibility, List<String> mediaIds) {
 		this.id = UUID.randomUUID().toString();
 		this.title = title;
 		this.timestamp = timestamp;
 		this.content = content;
 		this.visibility = visibility;
-		
-		if (postPicture != null) {
-			this.pictureId = postPicture.getId();
-			this.picture = postPicture;
-		} else {
-			this.pictureId = null;
-			this.picture = null;
-		}
+		this.mediaIds = mediaIds;
 	}
 
 	public String getId() {
@@ -91,20 +88,20 @@ public class Post implements Comparable<Post> {
 		this.visibility = visibility;
 	}
 
-	public String getPictureId() {
-		return this.pictureId;
-	}
-	
-	public void setPictureId(String pictureId) {
-		this.pictureId = pictureId;
+	public List<String> getMediaIds() {
+		return mediaIds;
 	}
 
-	public void setPicture(Picture postPicture) {
-		this.picture = postPicture;
+	public void setMediaIds(List<String> pictureId) {
+		this.mediaIds = pictureId;
 	}
 
-	public Picture getPicture() {
-		return this.picture;
+	public List<String> getMediaPaths() {
+		return mediaPaths;
+	}
+
+	public void setMediaPaths(List<String> mediaPaths) {
+		this.mediaPaths = mediaPaths;
 	}
 
 	@Override

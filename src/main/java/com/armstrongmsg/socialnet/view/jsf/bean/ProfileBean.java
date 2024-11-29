@@ -20,6 +20,7 @@ import com.armstrongmsg.socialnet.constants.SystemConstants;
 import com.armstrongmsg.socialnet.core.ApplicationFacade;
 import com.armstrongmsg.socialnet.exceptions.AuthenticationException;
 import com.armstrongmsg.socialnet.exceptions.InternalErrorException;
+import com.armstrongmsg.socialnet.exceptions.MediaNotFoundException;
 import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
 import com.armstrongmsg.socialnet.exceptions.UserNotFoundException;
 import com.armstrongmsg.socialnet.model.FriendshipRequest;
@@ -27,6 +28,7 @@ import com.armstrongmsg.socialnet.util.ImageUtils;
 import com.armstrongmsg.socialnet.view.jsf.model.JsfConnector;
 import com.armstrongmsg.socialnet.view.jsf.model.UserSummary;
 
+// TODO refactor
 @ManagedBean(name = "profileBean", eager = true)
 @RequestScoped
 public class ProfileBean {
@@ -85,7 +87,7 @@ public class ProfileBean {
 			String token = contextBean.getCurrentSession().getUserToken();
 			return facade.isFriend(token, contextBean.getCurrentSession().getCurrentViewUser()
 					.getUsername());
-		} catch (AuthenticationException | UnauthorizedOperationException | InternalErrorException e) {
+		} catch (AuthenticationException | UnauthorizedOperationException | InternalErrorException | MediaNotFoundException e) {
 			this.exceptionHandler.handle(e);
 		}
 		
@@ -101,7 +103,7 @@ public class ProfileBean {
 			String token = contextBean.getCurrentSession().getUserToken();
 			return facade.follows(token, contextBean.getCurrentSession().getCurrentViewUser()
 					.getUsername());
-		} catch (AuthenticationException | UnauthorizedOperationException | InternalErrorException e) {
+		} catch (AuthenticationException | UnauthorizedOperationException | InternalErrorException | MediaNotFoundException e) {
 			this.exceptionHandler.handle(e);
 		}
 		
@@ -112,13 +114,19 @@ public class ProfileBean {
 		try {
 			if (loggedUserSummary == null) {
 				String loggedUser = contextBean.getCurrentSession().getUserToken();
-				loggedUserSummary = new JsfConnector().getViewUserSummary(facade.getSelf(loggedUser));
+				loggedUserSummary = new JsfConnector(facade, loggedUser).getViewUserSummary(facade.getSelf(loggedUser));
 			}
 			return loggedUserSummary.equals(contextBean.getCurrentSession().getCurrentViewUser());
 		} catch (AuthenticationException e) {
 			this.exceptionHandler.handle(e);
 		} catch (UnauthorizedOperationException e) {
 			this.exceptionHandler.handle(e);
+		} catch (MediaNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InternalErrorException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		
 		return false;
@@ -148,7 +156,7 @@ public class ProfileBean {
 	public boolean getIsFollowed() {
 		try {
 			String loggedUserToken = contextBean.getCurrentSession().getUserToken();
-			List<UserSummary> followedUsers = new JsfConnector().getViewUserSummaries(
+			List<UserSummary> followedUsers = new JsfConnector(facade, loggedUserToken).getViewUserSummaries(
 					facade.getFollowedUsers(loggedUserToken));
 			return followedUsers.contains(contextBean.getCurrentSession().getCurrentViewUser());
 		} catch (AuthenticationException e) {
@@ -157,6 +165,9 @@ public class ProfileBean {
 			this.exceptionHandler.handle(e);
 		} catch (InternalErrorException e) {
 			this.exceptionHandler.handle(e);
+		} catch (MediaNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		
 		return false;
@@ -165,7 +176,7 @@ public class ProfileBean {
 	public boolean getIsFriend() {
 		try {
 			String loggedUserToken = contextBean.getCurrentSession().getUserToken();
-			List<UserSummary> friends = new JsfConnector().getViewUserSummaries(
+			List<UserSummary> friends = new JsfConnector(facade, loggedUserToken).getViewUserSummaries(
 					facade.getSelfFriends(loggedUserToken));
 			return friends.contains(contextBean.getCurrentSession().getCurrentViewUser());
 		} catch (AuthenticationException e) {
@@ -174,6 +185,9 @@ public class ProfileBean {
 			this.exceptionHandler.handle(e);
 		} catch (InternalErrorException e) {
 			this.exceptionHandler.handle(e);
+		} catch (MediaNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		
 		return false;

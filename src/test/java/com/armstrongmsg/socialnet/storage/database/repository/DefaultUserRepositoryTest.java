@@ -4,12 +4,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
+import org.junit.After;
 import org.junit.Test;
 
-import com.armstrongmsg.socialnet.model.Picture;
 import com.armstrongmsg.socialnet.model.Post;
 import com.armstrongmsg.socialnet.model.PostVisibility;
 import com.armstrongmsg.socialnet.model.Profile;
@@ -56,8 +57,7 @@ public class DefaultUserRepositoryTest extends PersistenceTest {
 		assertTrue(repository.getAllUsers().isEmpty());
 
 		// Create a new user
-		Picture postPicture = new Picture(POST_PICTURE_ID, null);
-		Post post = new Post(POST_TITLE_1, POST_TIMESTAMP_1, POST_CONTENT_1, POST_VISIBILITY_1, postPicture);
+		Post post = new Post(POST_TITLE_1, POST_TIMESTAMP_1, POST_CONTENT_1, POST_VISIBILITY_1, Arrays.asList(POST_PICTURE_ID));
 		posts = Arrays.asList(post);
 		profile1 = new Profile(USER_DESCRIPTION_1, posts);
 		profile1.setProfilePicId(PROFILE_PIC_ID);
@@ -88,7 +88,7 @@ public class DefaultUserRepositoryTest extends PersistenceTest {
 		assertEquals(POST_TIMESTAMP_1, userPosts.get(0).getTimestamp());
 		assertEquals(POST_CONTENT_1, userPosts.get(0).getContent());
 		assertEquals(POST_VISIBILITY_1, userPosts.get(0).getVisibility());
-		assertEquals(POST_PICTURE_ID, userPosts.get(0).getPictureId());
+		assertEquals(POST_PICTURE_ID, userPosts.get(0).getMediaIds().get(0));
 		
 		User retrievedUserByUserId = repository.getUserById(USER_ID_1);
 		assertEquals(USER_ID_1, retrievedUserByUserId.getUserId());
@@ -102,7 +102,7 @@ public class DefaultUserRepositoryTest extends PersistenceTest {
 		assertEquals(POST_TIMESTAMP_1, retrievedUserByIdPosts.get(0).getTimestamp());
 		assertEquals(POST_CONTENT_1, retrievedUserByIdPosts.get(0).getContent());
 		assertEquals(POST_VISIBILITY_1, retrievedUserByIdPosts.get(0).getVisibility());
-		assertEquals(POST_PICTURE_ID, userPosts.get(0).getPictureId());
+		assertEquals(POST_PICTURE_ID, userPosts.get(0).getMediaIds().get(0));
 		
 		User retrievedUserByUsername = repository.getUserByUsername(USER_NAME_1);
 		assertEquals(USER_ID_1, retrievedUserByUsername.getUserId());
@@ -116,12 +116,11 @@ public class DefaultUserRepositoryTest extends PersistenceTest {
 		assertEquals(POST_TIMESTAMP_1, retrievedUserByUsernamePosts.get(0).getTimestamp());
 		assertEquals(POST_CONTENT_1, retrievedUserByUsernamePosts.get(0).getContent());
 		assertEquals(POST_VISIBILITY_1, retrievedUserByUsernamePosts.get(0).getVisibility());
-		assertEquals(POST_PICTURE_ID, userPosts.get(0).getPictureId());
+		assertEquals(POST_PICTURE_ID, userPosts.get(0).getMediaIds().get(0));
 		
 		// Update user and posts
-		Picture newPicture = new Picture(UPDATED_POST_PICTURE_ID, null);
 		Post updatedPost = new Post(UPDATED_POST_TITLE_1, UPDATED_POST_TIMESTAMP_1, 
-				UPDATED_POST_CONTENT_1, UPDATED_POST_VISIBILITY_1, newPicture);
+				UPDATED_POST_CONTENT_1, UPDATED_POST_VISIBILITY_1, Arrays.asList(UPDATED_POST_PICTURE_ID));
 		updatedPost.setId(post.getId());
 		List<Post> updatedPosts = Arrays.asList(updatedPost);
 		Profile updatedProfile1 = new Profile(UPDATED_USER_DESCRIPTION_1, updatedPosts);
@@ -151,12 +150,11 @@ public class DefaultUserRepositoryTest extends PersistenceTest {
 		assertEquals(UPDATED_POST_TIMESTAMP_1, userAfterUpdate1Posts.get(0).getTimestamp());
 		assertEquals(UPDATED_POST_CONTENT_1, userAfterUpdate1Posts.get(0).getContent());
 		assertEquals(UPDATED_POST_VISIBILITY_1, userAfterUpdate1Posts.get(0).getVisibility());
-		assertEquals(UPDATED_POST_PICTURE_ID, userAfterUpdate1Posts.get(0).getPictureId());
+		assertEquals(UPDATED_POST_PICTURE_ID, userAfterUpdate1Posts.get(0).getMediaIds().get(0));
 		
 		// Updated only post data
-		Picture newPicture2 = new Picture(UPDATED_POST_PICTURE_ID_2, null);
 		Post updatedPost2 = new Post(UPDATED_POST_TITLE_2, UPDATED_POST_TIMESTAMP_2, 
-				UPDATED_POST_CONTENT_2, UPDATED_POST_VISIBILITY_2, newPicture2);
+				UPDATED_POST_CONTENT_2, UPDATED_POST_VISIBILITY_2, Arrays.asList(UPDATED_POST_PICTURE_ID_2));
 		updatedPost.setId(post.getId());
 		List<Post> updatedPosts2 = Arrays.asList(updatedPost2);
 		Profile updatedProfile2 = new Profile(UPDATED_USER_DESCRIPTION_1, updatedPosts2);
@@ -186,7 +184,7 @@ public class DefaultUserRepositoryTest extends PersistenceTest {
 		assertEquals(UPDATED_POST_TIMESTAMP_2, userAfterUpdate2Posts.get(0).getTimestamp());
 		assertEquals(UPDATED_POST_CONTENT_2, userAfterUpdate2Posts.get(0).getContent());
 		assertEquals(UPDATED_POST_VISIBILITY_2, userAfterUpdate2Posts.get(0).getVisibility());
-		assertEquals(UPDATED_POST_PICTURE_ID_2, userAfterUpdate2Posts.get(0).getPictureId());
+		assertEquals(UPDATED_POST_PICTURE_ID_2, userAfterUpdate2Posts.get(0).getMediaIds().get(0));
 		
 		// Remove user
 		repository.removeUserById(USER_ID_1);
@@ -203,5 +201,10 @@ public class DefaultUserRepositoryTest extends PersistenceTest {
 		assertNull(repository.getUserById(USER_ID_1));
 		
 		connectionManager.close();
+	}
+	
+	@After
+	public void tearDown() throws IOException {
+		super.tearDown();
 	}
 }

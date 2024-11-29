@@ -1,7 +1,6 @@
 package com.armstrongmsg.socialnet.view.jsf.model;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -9,7 +8,13 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 
+import com.armstrongmsg.socialnet.core.ApplicationFacade;
+import com.armstrongmsg.socialnet.exceptions.AuthenticationException;
+import com.armstrongmsg.socialnet.exceptions.InternalErrorException;
+import com.armstrongmsg.socialnet.exceptions.MediaNotFoundException;
+import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
 import com.armstrongmsg.socialnet.model.Picture;
 import com.armstrongmsg.socialnet.model.PostVisibility;
 import com.armstrongmsg.socialnet.model.Profile;
@@ -34,19 +39,25 @@ public class JsfConnectorTest {
 	private static final String PICTURE_ID_1 = "pictureId1";
 	private static final byte[] PICTURE_DATA_1 = {1, 1, 1};
 	private static final String PICTURE_PATH_1 = "picturePath1";
+	private static final String USER_TOKEN = "userToken";
 	private JsfConnector connector;
 	private Picture picture1;
+	private ApplicationFacade facade;
 	
 	@Before
-	public void setUp() throws IOException {
+	public void setUp() throws IOException, AuthenticationException, MediaNotFoundException, InternalErrorException, UnauthorizedOperationException {
+		facade = Mockito.mock(ApplicationFacade.class);
+		
+		Mockito.when(facade.getMediaUri(USER_TOKEN, PICTURE_ID_1)).thenReturn(PICTURE_PATH_1);
+		
 		picture1 = new Picture(PICTURE_ID_1, PICTURE_DATA_1, PICTURE_PATH_1);
-		connector = new JsfConnector();
+		connector = new JsfConnector(facade, USER_TOKEN);
 	}
 	
 	@Test
 	public void testGetViewPost() throws IOException {
 		com.armstrongmsg.socialnet.model.Post modelPost = 
-				new com.armstrongmsg.socialnet.model.Post(POST_TITLE_1, POST_TIMESTAMP_1, POST_CONTENT_1, POST_VISIBILITY_1, picture1);
+				new com.armstrongmsg.socialnet.model.Post(POST_TITLE_1, POST_TIMESTAMP_1, POST_CONTENT_1, POST_VISIBILITY_1, Arrays.asList(PICTURE_ID_1));
 		
 		Post viewPost = connector.getViewPost(modelPost);
 		
@@ -57,24 +68,11 @@ public class JsfConnectorTest {
 	}
 	
 	@Test
-	public void testGetViewPostNullPicture() throws IOException {
-		com.armstrongmsg.socialnet.model.Post modelPost = 
-				new com.armstrongmsg.socialnet.model.Post(POST_TITLE_1, POST_TIMESTAMP_1, POST_CONTENT_1, POST_VISIBILITY_1, null);
-		
-		Post viewPost = connector.getViewPost(modelPost);
-		
-		assertEquals(POST_TITLE_1, viewPost.getTitle());
-		assertEquals(POST_CONTENT_1, viewPost.getContent());
-		assertEquals(POST_VISIBILITY_1.getValue(), viewPost.getVisibility());
-		assertNull(viewPost.getCachedPicturePath());
-	}
-	
-	@Test
 	public void testGetViewPosts() {
 		com.armstrongmsg.socialnet.model.Post modelPost1 = 
-				new com.armstrongmsg.socialnet.model.Post(POST_TITLE_1, POST_TIMESTAMP_1, POST_CONTENT_1, POST_VISIBILITY_1, null);
+				new com.armstrongmsg.socialnet.model.Post(POST_TITLE_1, POST_TIMESTAMP_1, POST_CONTENT_1, POST_VISIBILITY_1, Arrays.asList(PICTURE_ID_1));
 		com.armstrongmsg.socialnet.model.Post modelPost2 = 
-				new com.armstrongmsg.socialnet.model.Post(POST_TITLE_2, POST_TIMESTAMP_2, POST_CONTENT_2, POST_VISIBILITY_2, null);
+				new com.armstrongmsg.socialnet.model.Post(POST_TITLE_2, POST_TIMESTAMP_2, POST_CONTENT_2, POST_VISIBILITY_2, Arrays.asList(PICTURE_ID_1));
 		
 		List<Post> viewPosts = connector.getViewPosts(Arrays.asList(modelPost1, modelPost2));
 		assertEquals(2, viewPosts.size());

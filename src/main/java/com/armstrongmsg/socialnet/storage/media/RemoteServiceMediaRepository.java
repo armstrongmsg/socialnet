@@ -19,9 +19,12 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.armstrongmsg.socialnet.constants.ConfigurationProperties;
+import com.armstrongmsg.socialnet.exceptions.FatalErrorException;
 import com.armstrongmsg.socialnet.exceptions.InternalErrorException;
 import com.armstrongmsg.socialnet.exceptions.MediaNotFoundException;
 import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
+import com.armstrongmsg.socialnet.util.PropertiesUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
@@ -31,6 +34,20 @@ public class RemoteServiceMediaRepository implements MediaRepository {
 	private String serviceUrl;
 	private String servicePublicUrl;
 	private CloseableHttpClient httpclient;
+	
+	public RemoteServiceMediaRepository() throws FatalErrorException {
+		String mediaServiceUrl = PropertiesUtil.getInstance().getProperty(ConfigurationProperties.REMOTE_MEDIA_STORAGE_URL);
+		String mediaServicePublicUrl = PropertiesUtil.getInstance().getProperty(ConfigurationProperties.REMOTE_MEDIA_STORAGE_PUBLIC_URL);
+		String mediaServicePort = PropertiesUtil.getInstance().getProperty(ConfigurationProperties.REMOTE_MEDIA_STORAGE_PORT);
+		String mediaServicePublicPort = PropertiesUtil.getInstance().getProperty(ConfigurationProperties.REMOTE_MEDIA_STORAGE_PUBLIC_PORT);
+		
+		serviceUrl = mediaServiceUrl + ":" + mediaServicePort + "/media";
+		servicePublicUrl = mediaServicePublicUrl + ":" + mediaServicePublicPort + "/media";
+		httpclient = HttpClients.createDefault();
+		
+		logger.info("Media Service URL: {}", serviceUrl);
+		logger.info("Media Service Public URL: {}", servicePublicUrl);
+	}
 	
 	public RemoteServiceMediaRepository(String mediaServiceUrl, String mediaServicePublicUrl, String port, String mediaServicePublicPort) {
 		serviceUrl = mediaServiceUrl + ":" + port + "/media";

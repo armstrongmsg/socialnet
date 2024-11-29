@@ -166,7 +166,7 @@ public class ApplicationFacade {
 	}
 
 	public void createPost(String userToken, String title, String content, PostVisibility newPostVisibility, byte[] pictureData) 
-			throws AuthenticationException, UserNotFoundException, InternalErrorException {
+			throws AuthenticationException, UserNotFoundException, InternalErrorException, UnauthorizedOperationException {
 		logger.debug(Messages.Logging.RECEIVED_CREATE_POST_REQUEST, userToken, title, content, newPostVisibility);
 		
 		try {
@@ -192,7 +192,7 @@ public class ApplicationFacade {
 	}
 
 	public List<Post> getUserPosts(String userToken, String username) 
-			throws UnauthorizedOperationException, AuthenticationException, UserNotFoundException, InternalErrorException {
+			throws UnauthorizedOperationException, AuthenticationException, UserNotFoundException, InternalErrorException, MediaNotFoundException {
 		logger.debug(Messages.Logging.RECEIVED_GET_USER_POSTS_REQUEST, userToken, username);
 		
 		try {
@@ -307,7 +307,7 @@ public class ApplicationFacade {
 		}
 	}
 	
-	public List<UserSummary> getSelfFriends(String userToken) throws AuthenticationException, UnauthorizedOperationException, InternalErrorException {
+	public List<UserSummary> getSelfFriends(String userToken) throws AuthenticationException, UnauthorizedOperationException, InternalErrorException, MediaNotFoundException {
 		logger.debug(Messages.Logging.RECEIVED_GET_SELF_FRIENDS_REQUEST, userToken);
 		
 		try {
@@ -386,7 +386,7 @@ public class ApplicationFacade {
 		}
 	}
 
-	public List<UserSummary> getFollowedUsers(String userToken) throws AuthenticationException, UnauthorizedOperationException, InternalErrorException {
+	public List<UserSummary> getFollowedUsers(String userToken) throws AuthenticationException, UnauthorizedOperationException, InternalErrorException, MediaNotFoundException {
 		logger.debug(Messages.Logging.RECEIVED_GET_FOLLOWED_USERS_REQUEST, userToken);
 		
 		try {
@@ -400,7 +400,7 @@ public class ApplicationFacade {
 		}
 	}
 
-	public List<UserSummary> getUserSummaries(String userToken) throws UnauthorizedOperationException, AuthenticationException, InternalErrorException {
+	public List<UserSummary> getUserSummaries(String userToken) throws UnauthorizedOperationException, AuthenticationException, InternalErrorException, MediaNotFoundException {
 		logger.debug(Messages.Logging.RECEIVED_GET_USER_SUMMARIES_REQUEST, userToken);
 		
 		try {
@@ -414,7 +414,7 @@ public class ApplicationFacade {
 		}
 	}
 
-	public List<UserSummary> getUserRecommendations(String userToken) throws UnauthorizedOperationException, AuthenticationException, InternalErrorException {
+	public List<UserSummary> getUserRecommendations(String userToken) throws UnauthorizedOperationException, AuthenticationException, InternalErrorException, MediaNotFoundException {
 		logger.debug(Messages.Logging.RECEIVED_GET_USER_RECOMMENDATIONS_REQUEST, userToken);
 		
 		try {
@@ -428,7 +428,7 @@ public class ApplicationFacade {
 		}
 	}
 
-	public List<UserSummary> getFollowRecommendations(String userToken) throws AuthenticationException, UnauthorizedOperationException, InternalErrorException {
+	public List<UserSummary> getFollowRecommendations(String userToken) throws AuthenticationException, UnauthorizedOperationException, InternalErrorException, MediaNotFoundException {
 		logger.debug(Messages.Logging.RECEIVED_GET_FOLLOW_RECOMMENDATIONS_REQUEST, userToken);
 
 		try {
@@ -442,7 +442,7 @@ public class ApplicationFacade {
 		}
 	}
 
-	public boolean isFriend(String userToken, String username) throws AuthenticationException, UnauthorizedOperationException, InternalErrorException {
+	public boolean isFriend(String userToken, String username) throws AuthenticationException, UnauthorizedOperationException, InternalErrorException, MediaNotFoundException {
 		logger.debug(Messages.Logging.RECEIVED_IS_FRIEND_REQUEST, userToken, username);
 		
 		try {
@@ -456,7 +456,7 @@ public class ApplicationFacade {
 		}
 	}
 
-	public UserSummary getSelf(String userToken) throws AuthenticationException, UnauthorizedOperationException {
+	public UserSummary getSelf(String userToken) throws AuthenticationException, UnauthorizedOperationException, MediaNotFoundException, InternalErrorException {
 		logger.debug(Messages.Logging.RECEIVED_GET_SELF_REQUEST, userToken);
 		
 		try {
@@ -470,7 +470,7 @@ public class ApplicationFacade {
 		}
 	}
 
-	public boolean follows(String userToken, String username) throws UnauthorizedOperationException, AuthenticationException, InternalErrorException {
+	public boolean follows(String userToken, String username) throws UnauthorizedOperationException, AuthenticationException, InternalErrorException, MediaNotFoundException {
 		logger.debug(Messages.Logging.RECEIVED_FOLLOWS_REQUEST, userToken, username);
 		
 		try {
@@ -560,7 +560,18 @@ public class ApplicationFacade {
 		}
 	}
 	
-	public String getMediaUri(String userToken, String mediaId) throws AuthenticationException, MediaNotFoundException, InternalErrorException, UnauthorizedOperationException {
-		return this.network.getMedia(userToken, mediaId);
+	public String getMediaUri(String userToken, String mediaId) throws AuthenticationException, MediaNotFoundException,
+			InternalErrorException, UnauthorizedOperationException {
+		logger.debug(Messages.Logging.RECEIVED_GET_MEDIA_URI, userToken, mediaId);
+		
+		try {
+			return this.network.getMediaUri(userToken, mediaId);
+		} catch (AuthenticationException e) {
+			logger.debug(Messages.Logging.AUTHENTICATION_EXCEPTION, e.getMessage());
+			throw e;
+		} catch (UnauthorizedOperationException e) {
+			logger.debug(Messages.Logging.AUTHORIZATION_EXCEPTION, e.getMessage());
+			throw e;
+		}
 	}
 }

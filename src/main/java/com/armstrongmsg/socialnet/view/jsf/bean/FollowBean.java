@@ -13,12 +13,14 @@ import com.armstrongmsg.socialnet.exceptions.AuthenticationException;
 import com.armstrongmsg.socialnet.exceptions.FollowAlreadyExistsException;
 import com.armstrongmsg.socialnet.exceptions.FollowNotFoundException;
 import com.armstrongmsg.socialnet.exceptions.InternalErrorException;
+import com.armstrongmsg.socialnet.exceptions.MediaNotFoundException;
 import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
 import com.armstrongmsg.socialnet.exceptions.UserNotFoundException;
 import com.armstrongmsg.socialnet.view.jsf.model.JsfConnector;
 import com.armstrongmsg.socialnet.view.jsf.model.User;
 import com.armstrongmsg.socialnet.view.jsf.model.UserSummary;
 
+// TODO refactor
 @ManagedBean(name = "followBean", eager = true)
 @RequestScoped
 public class FollowBean {
@@ -102,12 +104,12 @@ public class FollowBean {
 	public List<UserSummary> getSelfFollows() {
 		try {
 			if (follows == null) {
-				follows = new JsfConnector().getViewUserSummaries(
+				follows = new JsfConnector(facade, contextBean.getCurrentSession().getUserToken()).getViewUserSummaries(
 						facade.getFollowedUsers(getContextBean().getCurrentSession().getUserToken()));
 			}
 			
 			return follows;
-		} catch (AuthenticationException | UnauthorizedOperationException | InternalErrorException e) {
+		} catch (AuthenticationException | UnauthorizedOperationException | InternalErrorException | MediaNotFoundException e) {
 			this.exceptionHandler.handle(e);
 		}
 		
@@ -118,11 +120,11 @@ public class FollowBean {
 		try {
 			if (followRecommendations == null) {
 				String token = getContextBean().getCurrentSession().getUserToken();
-				followRecommendations = new JsfConnector().getViewUserSummaries(facade.getFollowRecommendations(token));
+				followRecommendations = new JsfConnector(facade, token).getViewUserSummaries(facade.getFollowRecommendations(token));
 			}
 			
 			return followRecommendations;
-		} catch (UnauthorizedOperationException | AuthenticationException | InternalErrorException e) {
+		} catch (UnauthorizedOperationException | AuthenticationException | InternalErrorException | MediaNotFoundException e) {
 			this.exceptionHandler.handle(e);
 		}
 		

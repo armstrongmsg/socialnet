@@ -13,6 +13,7 @@ import org.primefaces.model.file.UploadedFile;
 import com.armstrongmsg.socialnet.core.ApplicationFacade;
 import com.armstrongmsg.socialnet.exceptions.AuthenticationException;
 import com.armstrongmsg.socialnet.exceptions.InternalErrorException;
+import com.armstrongmsg.socialnet.exceptions.MediaNotFoundException;
 import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
 import com.armstrongmsg.socialnet.exceptions.UserNotFoundException;
 import com.armstrongmsg.socialnet.model.PostVisibility;
@@ -21,6 +22,7 @@ import com.armstrongmsg.socialnet.view.jsf.model.JsfConnector;
 import com.armstrongmsg.socialnet.view.jsf.model.Post;
 import com.armstrongmsg.socialnet.view.jsf.model.User;
 
+// TODO refactor
 @ManagedBean(name = "postBean", eager = true)
 @RequestScoped
 public class PostBean {
@@ -145,6 +147,9 @@ public class PostBean {
 			this.exceptionHandler.handle(e);
 		} catch (InternalErrorException e) {
 			this.exceptionHandler.handle(e);
+		} catch (UnauthorizedOperationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		
 		return null;
@@ -161,7 +166,7 @@ public class PostBean {
 	public List<Post> getUserPosts() { 
 		if (userPostsAdmin == null) {
 			try {
-				userPostsAdmin = new JsfConnector().getViewPosts(facade.getUserPostsAdmin(
+				userPostsAdmin = new JsfConnector(facade, contextBean.getCurrentSession().getUserToken()).getViewPosts(facade.getUserPostsAdmin(
 						contextBean.getCurrentSession().getUserToken(), 
 						getUser().getUserId()));
 			} catch (UnauthorizedOperationException | AuthenticationException | UserNotFoundException | InternalErrorException e) {
@@ -175,7 +180,7 @@ public class PostBean {
 	public List<Post> getSelfPosts() {
 		try {
 			if (selfPosts == null) {
-				selfPosts = new JsfConnector().getViewPosts(facade.getSelfPosts(
+				selfPosts = new JsfConnector(facade, contextBean.getCurrentSession().getUserToken()).getViewPosts(facade.getSelfPosts(
 						contextBean.getCurrentSession().getUserToken()));
 			}
 		} catch (UnauthorizedOperationException | AuthenticationException e) {
@@ -188,7 +193,7 @@ public class PostBean {
 	public List<Post> getFeedPosts() {
 		if (feedPosts == null) {
 			try {
-				feedPosts = new JsfConnector().getViewPosts(
+				feedPosts = new JsfConnector(facade, contextBean.getCurrentSession().getUserToken()).getViewPosts(
 						facade.getFeedPosts(contextBean.getCurrentSession().getUserToken()));
 			} catch (UnauthorizedOperationException e) {
 				this.exceptionHandler.handle(e);
@@ -207,7 +212,7 @@ public class PostBean {
 	public List<Post> getFriendsPosts() {
 		try {
 			if (friendsPosts == null) {
-				friendsPosts = new JsfConnector().getViewPosts(
+				friendsPosts = new JsfConnector(facade, contextBean.getCurrentSession().getUserToken()).getViewPosts(
 						facade.getFriendsPosts(contextBean.getCurrentSession().getUserToken()));
 			}
 		} catch (UnauthorizedOperationException | AuthenticationException | UserNotFoundException | InternalErrorException e) {
@@ -228,11 +233,11 @@ public class PostBean {
 					username = userSummary.getUsername();
 				}
 				
-				userPosts = new JsfConnector().getViewPosts(
+				userPosts = new JsfConnector(facade, contextBean.getCurrentSession().getUserToken()).getViewPosts(
 						facade.getUserPosts(contextBean.getCurrentSession().getUserToken(), 
 								username));
 			}
-		} catch (UnauthorizedOperationException | AuthenticationException | UserNotFoundException | InternalErrorException e) {
+		} catch (UnauthorizedOperationException | AuthenticationException | UserNotFoundException | InternalErrorException | MediaNotFoundException e) {
 			this.exceptionHandler.handle(e);
 		}
 		
@@ -242,7 +247,7 @@ public class PostBean {
 	public void deletePost() throws UserNotFoundException {
 		try {
 			facade.deletePost(contextBean.getCurrentSession().getUserToken(), post.getId());
-			userPosts = new JsfConnector().getViewPosts(facade.getSelfPosts(
+			userPosts = new JsfConnector(facade, contextBean.getCurrentSession().getUserToken()).getViewPosts(facade.getSelfPosts(
 					contextBean.getCurrentSession().getUserToken()));
 		} catch (AuthenticationException e) {
 			this.exceptionHandler.handle(e);

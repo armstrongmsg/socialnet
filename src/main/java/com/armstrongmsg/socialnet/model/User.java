@@ -6,10 +6,7 @@ import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.PostLoad;
 import javax.persistence.Table;
-
-import com.armstrongmsg.socialnet.constants.SystemConstants;
 
 @Entity
 @Table(name = "Users")
@@ -23,13 +20,6 @@ public class User {
 	private String password;
 	@Embedded
 	private Profile profile;
-	
-	@PostLoad
-	public void postLoad() {
-		if (this.profile.getProfilePicId().equals(SystemConstants.DEFAULT_PROFILE_PIC_ID)) {
-			this.profile.setProfilePic(Picture.DEFAULT_PROFILE_PICTURE);
-		}
-	}
 	
 	public User() {
 		

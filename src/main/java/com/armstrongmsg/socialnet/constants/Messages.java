@@ -45,6 +45,7 @@ public class Messages {
 		public static final String RECEIVED_GET_FOLLOWED_USERS_ADMIN_REQUEST = "Received Get followed users admin request. Token:{} , userId:{}.";
 		public static final String RECEIVED_GET_FRIENDS_ADMIN_REQUEST = "Received Get friends admin request. Token:{}, userId:{}.";
 		public static final String RECEIVED_GET_FRIENDS_POSTS_REQUEST = "Received Get friends posts request. Token:{}.";
+		public static final String RECEIVED_GET_MEDIA_URI = "Received get media URI request. Token:{}, mediaId:{}.";
 		public static final String RECEIVED_GET_RECEIVED_FRIENDSHIP_REQUESTS_REQUEST = "Received get received friendship requests request. Token:{}.";
 		public static final String RECEIVED_GET_SELF_FRIENDS_REQUEST = "Received Get self friends. Token:{}.";
 		public static final String RECEIVED_GET_SELF_POSTS_REQUEST = "Received Get self posts request. Token:{}.";

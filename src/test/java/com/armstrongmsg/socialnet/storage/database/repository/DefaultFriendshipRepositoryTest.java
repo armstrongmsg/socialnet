@@ -3,9 +3,11 @@ package com.armstrongmsg.socialnet.storage.database.repository;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -102,5 +104,10 @@ public class DefaultFriendshipRepositoryTest extends PersistenceTest {
 		assertTrue(friendshipsAfterRemovalByUser2.isEmpty());
 		
 		connectionManager.close();
+	}
+	
+	@After
+	public void tearDown() throws IOException {
+		super.tearDown();
 	}
 }

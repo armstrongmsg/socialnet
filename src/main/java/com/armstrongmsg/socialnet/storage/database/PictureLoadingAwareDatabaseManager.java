@@ -9,7 +9,6 @@ import com.armstrongmsg.socialnet.exceptions.UserNotFoundException;
 import com.armstrongmsg.socialnet.model.Follow;
 import com.armstrongmsg.socialnet.model.Friendship;
 import com.armstrongmsg.socialnet.model.FriendshipRequest;
-import com.armstrongmsg.socialnet.model.Picture;
 import com.armstrongmsg.socialnet.model.Post;
 import com.armstrongmsg.socialnet.model.User;
 import com.armstrongmsg.socialnet.storage.database.repository.FollowRepository;
@@ -21,15 +20,13 @@ import com.armstrongmsg.socialnet.storage.database.repository.PictureRepository;
 import com.armstrongmsg.socialnet.storage.database.repository.UserRepository;
 import com.armstrongmsg.socialnet.util.PropertiesUtil;
 
-// TODO test
+// TODO to be removed
 public class PictureLoadingAwareDatabaseManager extends DefaultDatabaseManager {
-	private PictureRepository pictureRepository;
 	
 	public PictureLoadingAwareDatabaseManager(UserRepository userRepository, FriendshipRepository friendshipRepository,
 			FollowRepository followRepository, FriendshipRequestRepository friendshipRequestsRepository,
 			PictureRepository pictureRepository) {
 		super(userRepository, friendshipRepository, followRepository, friendshipRequestsRepository);
-		this.pictureRepository = pictureRepository;
 	}
 	
 	public PictureLoadingAwareDatabaseManager() throws FatalErrorException {
@@ -49,9 +46,7 @@ public class PictureLoadingAwareDatabaseManager extends DefaultDatabaseManager {
 			String mediaServicePublicUrl = PropertiesUtil.getInstance().getProperty(ConfigurationProperties.REMOTE_MEDIA_STORAGE_PUBLIC_URL);
 			String mediaServicePort = PropertiesUtil.getInstance().getProperty(ConfigurationProperties.REMOTE_MEDIA_STORAGE_PORT);
 			String mediaServicePublicPort = PropertiesUtil.getInstance().getProperty(ConfigurationProperties.REMOTE_MEDIA_STORAGE_PUBLIC_PORT);
-			this.pictureRepository = new MediaServicePictureRepository(mediaServiceUrl, mediaServicePublicUrl, mediaServicePort, mediaServicePublicPort);
 		} else {
-			this.pictureRepository = new LocalFileSystemPictureRepository();
 		}
 	}
 	
@@ -187,17 +182,13 @@ public class PictureLoadingAwareDatabaseManager extends DefaultDatabaseManager {
 
 	private void loadUserProfilePicture(User user) {
 		if (!user.getProfile().getProfilePicId().equals(SystemConstants.DEFAULT_PROFILE_PIC_ID)) {
-			Picture profilePic = this.pictureRepository.getPictureById(
-					user.getProfile().getProfilePicId());
-			user.getProfile().setProfilePic(profilePic);
+			
 		}
 	}
 
 	private void loadPostPicture(Post post) {
-		if (post.getPictureId() != null) {
-			Picture postPicture = 
-					this.pictureRepository.getPictureById(post.getPictureId());
-			post.setPicture(postPicture);
+		if (post.getMediaIds() != null) {
+
 		}
 	}
 
@@ -208,39 +199,19 @@ public class PictureLoadingAwareDatabaseManager extends DefaultDatabaseManager {
 	}
 	
 	private void saveUserPostsPictures(User user) {
-		for (Post post : user.getProfile().getPosts()) {
-			if (post.getPicture() != null) {
-				this.pictureRepository.savePicture(post.getPicture());
-			}
-		}
 	}
 
 	private void saveUserProfilePicture(User user) {
-		if (!user.getProfile().getProfilePic().getId().equals(SystemConstants.DEFAULT_PROFILE_PIC_ID)) {
-			this.pictureRepository.savePicture(user.getProfile().getProfilePic());
-		}
 	}
 	
 	private void removePicturesFromRemovedPosts(User user, User userInStorage) {
-		for (Post postInStorage : userInStorage.getProfile().getPosts()) {
-			if (!user.getProfile().getPosts().contains(postInStorage) && 
-					postInStorage.getPicture() != null) {
-				this.pictureRepository.deletePicture(postInStorage.getPicture());
-			}
-		}
 	}
 	
 	private void removePostsPictures(User user) {
-		for (Post post : user.getProfile().getPosts()) {
-			if (post.getPicture() != null) {
-				this.pictureRepository.deletePicture(post.getPicture());
-			}
-		}
 	}
 
 	private void removeUserPicture(User user) {
 		if (!user.getProfile().getProfilePicId().equals(SystemConstants.DEFAULT_PROFILE_PIC_ID)) {
-			this.pictureRepository.deletePicture(user.getProfile().getProfilePic());
 		}
 	}
 }

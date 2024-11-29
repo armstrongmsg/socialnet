@@ -11,12 +11,15 @@ import javax.faces.bean.SessionScoped;
 import com.armstrongmsg.socialnet.constants.AuthenticationParameters;
 import com.armstrongmsg.socialnet.core.ApplicationFacade;
 import com.armstrongmsg.socialnet.exceptions.AuthenticationException;
+import com.armstrongmsg.socialnet.exceptions.InternalErrorException;
+import com.armstrongmsg.socialnet.exceptions.MediaNotFoundException;
 import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
 import com.armstrongmsg.socialnet.view.jsf.NavigationController;
 import com.armstrongmsg.socialnet.view.jsf.Session;
 import com.armstrongmsg.socialnet.view.jsf.model.JsfConnector;
 import com.armstrongmsg.socialnet.view.jsf.model.UserSummary;
 
+// TODO refactor
 @ManagedBean(name = "contextBean", eager = true)
 @SessionScoped
 public class ContextBean {
@@ -91,12 +94,18 @@ public class ContextBean {
 		if (currentViewUser == null) {
 			try {
 				String currentUserToken = this.session.getUserToken();
-				currentViewUser = new JsfConnector().getViewUserSummary(facade.getSelf(currentUserToken));
+				currentViewUser = new JsfConnector(facade, currentUserToken).getViewUserSummary(facade.getSelf(currentUserToken));
 				this.session.setCurrentViewUser(currentViewUser);
 			} catch (AuthenticationException e) {
 				this.exceptionHandler.handle(e);
 			} catch (UnauthorizedOperationException e) {
 				this.exceptionHandler.handle(e);
+			} catch (MediaNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (InternalErrorException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 		

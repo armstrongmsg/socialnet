@@ -8,7 +8,6 @@ import javax.persistence.Embeddable;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
-import javax.persistence.Transient;
 
 import com.armstrongmsg.socialnet.constants.SystemConstants;
 
@@ -21,15 +20,12 @@ public class Profile {
 	private List<Post> posts;
 	@Column(name = "profile_pic_id")
 	private String profilePicId;
-	@Transient
-	private Picture profilePic;
 	
 	public Profile() {
 		
 	}
 	
 	public Profile(String description, List<Post> posts) {
-		this.profilePic = new Picture(SystemConstants.DEFAULT_PROFILE_PIC_ID);
 		this.profilePicId = SystemConstants.DEFAULT_PROFILE_PIC_ID;
 		this.description = description;
 		this.posts = posts;
@@ -54,17 +50,9 @@ public class Profile {
 	public void setProfilePicId(String profilePicId) {
 		this.profilePicId = profilePicId;
 	}
-
-	public Picture getProfilePic() {
-		return profilePic;
-	}
-
-	public void setProfilePic(Picture profilePic) {
-		this.profilePic = profilePic;
-	}
 	
-	public void createPost(String title, String content, PostVisibility newPostVisibility, Picture postPicture) {
-		Post newPost = new Post(title, System.currentTimeMillis(), content, newPostVisibility, postPicture);
+	public void createPost(String title, String content, PostVisibility newPostVisibility, List<String> pictureIds) {
+		Post newPost = new Post(title, System.currentTimeMillis(), content, newPostVisibility, pictureIds);
 		posts.add(newPost);
 	}
 }
