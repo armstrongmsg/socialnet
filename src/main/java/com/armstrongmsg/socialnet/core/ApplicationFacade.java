@@ -15,7 +15,6 @@ import com.armstrongmsg.socialnet.exceptions.FollowAlreadyExistsException;
 import com.armstrongmsg.socialnet.exceptions.FollowNotFoundException;
 import com.armstrongmsg.socialnet.exceptions.FriendshipAlreadyExistsException;
 import com.armstrongmsg.socialnet.exceptions.FriendshipNotFoundException;
-import com.armstrongmsg.socialnet.exceptions.FriendshipRequestAlreadyExistsException;
 import com.armstrongmsg.socialnet.exceptions.FriendshipRequestNotFound;
 import com.armstrongmsg.socialnet.exceptions.InternalErrorException;
 import com.armstrongmsg.socialnet.exceptions.InvalidParameterException;
@@ -242,7 +241,7 @@ public class ApplicationFacade {
 	}
 	
 	public void addFriendshipRequest(String userToken, String username) 
-			throws AuthenticationException, UnauthorizedOperationException, UserNotFoundException, FriendshipRequestAlreadyExistsException, InternalErrorException {
+			throws AuthenticationException, UserNotFoundException, InternalErrorException {
 		logger.debug(Messages.Logging.RECEIVED_ADD_FRIENDSHIP_REQUEST, userToken, username);
 		
 		try {
@@ -250,11 +249,11 @@ public class ApplicationFacade {
 		} catch (AuthenticationException e) {
 			logger.debug(Messages.Logging.AUTHENTICATION_EXCEPTION, e.getMessage());
 			throw e;
-		} catch (UnauthorizedOperationException e) {
-			logger.debug(Messages.Logging.AUTHORIZATION_EXCEPTION, e.getMessage());
-			throw e;
 		} catch (UserNotFoundException e) {
 			logger.debug(Messages.Logging.USER_NOT_FOUND_EXCEPTION, e.getMessage());
+			throw e;
+		} catch (InternalErrorException e) {
+			logger.debug(Messages.Logging.INTERNAL_ERROR_EXCEPTION, e.getMessage());
 			throw e;
 		}
 	}

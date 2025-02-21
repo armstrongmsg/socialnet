@@ -12,7 +12,6 @@ import com.armstrongmsg.socialnet.core.ApplicationFacade;
 import com.armstrongmsg.socialnet.exceptions.AuthenticationException;
 import com.armstrongmsg.socialnet.exceptions.FriendshipAlreadyExistsException;
 import com.armstrongmsg.socialnet.exceptions.FriendshipNotFoundException;
-import com.armstrongmsg.socialnet.exceptions.FriendshipRequestAlreadyExistsException;
 import com.armstrongmsg.socialnet.exceptions.FriendshipRequestNotFound;
 import com.armstrongmsg.socialnet.exceptions.InternalErrorException;
 import com.armstrongmsg.socialnet.exceptions.MediaNotFoundException;
@@ -100,11 +99,7 @@ public class FriendshipBean {
 			facade.addFriendshipRequest(contextBean.getCurrentSession().getUserToken(), username);
 		} catch (AuthenticationException e) {
 			this.exceptionHandler.handle(e);
-		} catch (UnauthorizedOperationException e) {
-			this.exceptionHandler.handle(e);
 		} catch (UserNotFoundException e) {
-			this.exceptionHandler.handle(e);
-		} catch (FriendshipRequestAlreadyExistsException e) {
 			this.exceptionHandler.handle(e);
 		} catch (InternalErrorException e) {
 			this.exceptionHandler.handle(e);

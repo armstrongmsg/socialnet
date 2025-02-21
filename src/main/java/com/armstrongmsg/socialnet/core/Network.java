@@ -226,15 +226,18 @@ public class Network {
 		this.storageFacade.saveFriendship(new Friendship(user1, user2));
 	}
 
-	public void addFriendshipRequest(String userToken, String username) 
-			throws AuthenticationException, UnauthorizedOperationException, UserNotFoundException, FriendshipRequestAlreadyExistsException, InternalErrorException {
+	public void addFriendshipRequest(String userToken, String username) throws AuthenticationException, InternalErrorException, UserNotFoundException {
 		User requester = this.authenticationPlugin.getUser(userToken);
-		this.authorizationPlugin.authorize(requester, new Operation(OperationType.ADD_FRIENDSHIP_REQUEST));
 		
 		if (!hasSentFriendshipRequestTo(requester, username) && 
 				!hasReceivedFriendshipRequestFrom(requester, username)) {
 			User friend = findUserByUsername(username);
-			this.storageFacade.saveFriendshipRequest(new FriendshipRequest(requester, friend));
+			try {
+				// TODO test
+				this.storageFacade.saveFriendshipRequest(new FriendshipRequest(requester, friend));
+			} catch (FriendshipRequestAlreadyExistsException e) {
+				throw new InternalErrorException(e);
+			}
 		} else {
 			logger.debug(Messages.Logging.FRIENDSHIP_REQUEST_ALREADY_RECEIVED_IGNORING_REQUEST, 
 					requester.getUserId(), username);
