@@ -669,20 +669,27 @@ public class Network {
 	}
 
 	public void unfriend(String userToken, String username) 
-			throws AuthenticationException, UnauthorizedOperationException, InternalErrorException, FriendshipNotFoundException {
+			throws AuthenticationException, InternalErrorException, FriendshipNotFoundException {
 		User requester = this.authenticationPlugin.getUser(userToken);
-		this.authorizationPlugin.authorize(requester, new Operation(OperationType.UNFRIEND));
-		
 		List<Friendship> friendships = this.storageFacade.getFriendshipsByUserId(requester.getUserId());
+		
+		Friendship foundFriendship = null;
 		
 		for (Friendship friendship : friendships) {
 			if (friendship.getFriend1().getUsername().equals(username)) {
-				this.storageFacade.removeFriendship(friendship);
+				foundFriendship = friendship;
 			}
 			
 			if (friendship.getFriend2().getUsername().equals(username)) {
-				this.storageFacade.removeFriendship(friendship);
+				foundFriendship = friendship;
 			}
+		}
+		
+		if (foundFriendship != null) {
+			this.storageFacade.removeFriendship(foundFriendship);
+		} else {
+			// TODO add message
+			throw new FriendshipNotFoundException();
 		}
 	}
 
