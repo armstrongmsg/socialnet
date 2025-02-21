@@ -187,12 +187,12 @@ public class ApplicationFacade {
 		}
 	}
 	
-	public void createPost(String userToken, String title, String content, PostVisibility newPostVisibility, byte[] pictureData)
+	public void createPost(String userToken, String title, String content, PostVisibility newPostVisibility, List<byte[]> postMediaData)
 			throws AuthenticationException, InternalErrorException, InvalidParameterException {
 		logger.debug(Messages.Logging.RECEIVED_CREATE_POST_REQUEST, userToken, title, content, newPostVisibility);
 		
 		try {
-			this.network.createPost(userToken, title, content, newPostVisibility, pictureData);
+			this.network.createPost(userToken, title, content, newPostVisibility, postMediaData);
 		} catch (AuthenticationException e) {
 			logger.debug(Messages.Logging.AUTHENTICATION_EXCEPTION, e.getMessage());
 			throw e;

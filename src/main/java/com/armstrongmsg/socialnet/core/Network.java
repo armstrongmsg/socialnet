@@ -154,7 +154,7 @@ public class Network {
 		}
 	}
 
-	public void createPost(String userToken, String title, String content, PostVisibility newPostVisibility, byte[] pictureData) 
+	public void createPost(String userToken, String title, String content, PostVisibility newPostVisibility, List<byte[]> postMediaData) 
 			throws AuthenticationException, InternalErrorException, InvalidParameterException {
 		User user = this.authenticationPlugin.getUser(userToken);
 		
@@ -174,13 +174,21 @@ public class Network {
 			throw new InvalidParameterException();
 		}
 		
-		if (pictureData == null) {
+		if (postMediaData == null) {
 			// TODO add message
 			throw new InvalidParameterException();	
 		}
 
+		byte[] mediaData;
+		
+		if (!postMediaData.isEmpty()) {
+			mediaData = postMediaData.get(0);
+		} else {
+			mediaData = new byte[] {};
+		}
+		
 		try {
-			String pictureId = createMedia(user, pictureData);
+			String pictureId = createMedia(user, mediaData);
 			List<String> pictureIds = new ArrayList<String>();
 			pictureIds.add(pictureId);
 			user.getProfile().createPost(title, content, newPostVisibility, pictureIds);

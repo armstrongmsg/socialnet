@@ -343,7 +343,9 @@ public class IntegrationTest extends PersistenceTest {
 		List<Post> userPosts = facade.getUserPostsAdmin(adminToken, users.get(0).getUserId());
 		assertTrue(userPosts.isEmpty());
 		
-		facade.createPost(userToken, NEW_POST_TITLE, NEW_POST_CONTENT, NEW_POST_VISIBILITY, PICTURE_DATA);
+		ArrayList<byte[]> postMediaData = new ArrayList<byte[]>();
+		postMediaData.add(PICTURE_DATA);
+		facade.createPost(userToken, NEW_POST_TITLE, NEW_POST_CONTENT, NEW_POST_VISIBILITY, postMediaData);
 		
 		List<Post> userPostsAfterCreation = facade.getUserPostsAdmin(adminToken, users.get(0).getUserId());
 		
@@ -399,7 +401,9 @@ public class IntegrationTest extends PersistenceTest {
 		List<Post> userPosts = facade.getSelfPosts(userToken);
 		assertTrue(userPosts.isEmpty());
 		
-		facade.createPost(userToken, NEW_POST_TITLE, NEW_POST_CONTENT, NEW_POST_VISIBILITY, PICTURE_DATA);
+		ArrayList<byte[]> postMediaData = new ArrayList<byte[]>();
+		postMediaData.add(PICTURE_DATA);
+		facade.createPost(userToken, NEW_POST_TITLE, NEW_POST_CONTENT, NEW_POST_VISIBILITY, postMediaData);
 		
 		List<Post> userPostsAfterCreation = facade.getSelfPosts(userToken);
 		
@@ -435,8 +439,13 @@ public class IntegrationTest extends PersistenceTest {
 		assertTrue(user2PostsForUser1.isEmpty());
 		assertTrue(user1PostsForUser2.isEmpty());
 		
-		facade.createPost(user1Token, NEW_POST_TITLE, NEW_POST_CONTENT, NEW_POST_VISIBILITY, PICTURE_DATA);
-		facade.createPost(user2Token, NEW_POST_TITLE_2, NEW_POST_CONTENT_2, NEW_POST_VISIBILITY_2, PICTURE_DATA_2);
+		ArrayList<byte[]> postMediaData = new ArrayList<byte[]>();
+		postMediaData.add(PICTURE_DATA);
+		facade.createPost(user1Token, NEW_POST_TITLE, NEW_POST_CONTENT, NEW_POST_VISIBILITY, postMediaData);
+		
+		ArrayList<byte[]> postMediaData2 = new ArrayList<byte[]>();
+		postMediaData2.add(PICTURE_DATA_2);
+		facade.createPost(user2Token, NEW_POST_TITLE_2, NEW_POST_CONTENT_2, NEW_POST_VISIBILITY_2, postMediaData2);
 		
 		List<Post> user1PostsAfter = facade.getUserPosts(user1Token, NEW_USERNAME_1);
 		
@@ -658,8 +667,13 @@ public class IntegrationTest extends PersistenceTest {
 		
 		facade.addFriendship(userToken1, NEW_USERNAME_2);
 		
-		facade.createPost(userToken1, NEW_POST_TITLE, NEW_POST_CONTENT, NEW_POST_VISIBILITY, PICTURE_DATA);
-		facade.createPost(userToken1, NEW_POST_TITLE_2, NEW_POST_CONTENT_2, NEW_POST_VISIBILITY_2, PICTURE_DATA_2);
+		ArrayList<byte[]> postMediaData = new ArrayList<byte[]>();
+		postMediaData.add(PICTURE_DATA);
+		facade.createPost(userToken1, NEW_POST_TITLE, NEW_POST_CONTENT, NEW_POST_VISIBILITY, postMediaData);
+		
+		ArrayList<byte[]> postMediaData2 = new ArrayList<byte[]>();
+		postMediaData2.add(PICTURE_DATA_2);
+		facade.createPost(userToken1, NEW_POST_TITLE_2, NEW_POST_CONTENT_2, NEW_POST_VISIBILITY_2, postMediaData2);
 		
 		List<Post> postsFriendsUser1 = facade.getFriendsPosts(userToken1);
 		List<Post> postsFriendsUser2 = facade.getFriendsPosts(userToken2);
@@ -696,16 +710,24 @@ public class IntegrationTest extends PersistenceTest {
 		String userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);	
 		String userToken2 = loginAsUser(NEW_USERNAME_2, NEW_USER_PASSWORD_2);
 		
-		facade.createPost(userToken2, NEW_POST_TITLE, NEW_POST_CONTENT, PostVisibility.PUBLIC, PICTURE_DATA);
+		ArrayList<byte[]> postMediaData = new ArrayList<byte[]>();
+		postMediaData.add(PICTURE_DATA);
+		facade.createPost(userToken2, NEW_POST_TITLE, NEW_POST_CONTENT, PostVisibility.PUBLIC, postMediaData);
 		
 		Thread.sleep(5);
-		facade.createPost(userToken2, NEW_POST_TITLE_2, NEW_POST_CONTENT_2, PostVisibility.PUBLIC, PICTURE_DATA_2);
+		ArrayList<byte[]> postMediaData2 = new ArrayList<byte[]>();
+		postMediaData2.add(PICTURE_DATA_2);
+		facade.createPost(userToken2, NEW_POST_TITLE_2, NEW_POST_CONTENT_2, PostVisibility.PUBLIC, postMediaData2);
 		
 		Thread.sleep(5);
-		facade.createPost(userToken2, NEW_POST_TITLE_3, NEW_POST_CONTENT_3, PostVisibility.PUBLIC, PICTURE_DATA_3);
+		ArrayList<byte[]> postMediaData3 = new ArrayList<byte[]>();
+		postMediaData3.add(PICTURE_DATA_3);
+		facade.createPost(userToken2, NEW_POST_TITLE_3, NEW_POST_CONTENT_3, PostVisibility.PUBLIC, postMediaData3);
 		
 		Thread.sleep(5);
-		facade.createPost(userToken2, NEW_POST_TITLE_4, NEW_POST_CONTENT_4, PostVisibility.PRIVATE, PICTURE_DATA_4);
+		ArrayList<byte[]> postMediaData4 = new ArrayList<byte[]>();
+		postMediaData4.add(PICTURE_DATA_4);
+		facade.createPost(userToken2, NEW_POST_TITLE_4, NEW_POST_CONTENT_4, PostVisibility.PRIVATE, postMediaData4);
 		
 		List<Post> postsBeforeFollow = facade.getFeedPosts(userToken1);
 		
@@ -748,7 +770,10 @@ public class IntegrationTest extends PersistenceTest {
 		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
 		
 		String userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
-		facade.createPost(userToken1, NEW_POST_TITLE, NEW_POST_CONTENT, PostVisibility.PRIVATE, PICTURE_DATA);
+		
+		ArrayList<byte[]> postMediaData = new ArrayList<byte[]>();
+		postMediaData.add(PICTURE_DATA);
+		facade.createPost(userToken1, NEW_POST_TITLE, NEW_POST_CONTENT, PostVisibility.PRIVATE, postMediaData);
 		
 		List<Post> postsBeforeDelete = facade.getSelfPosts(userToken1);
 		

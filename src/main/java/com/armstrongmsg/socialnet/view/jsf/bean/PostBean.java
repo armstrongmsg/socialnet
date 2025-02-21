@@ -1,5 +1,6 @@
 package com.armstrongmsg.socialnet.view.jsf.bean;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -143,7 +144,9 @@ public class PostBean {
 				visibility = PostVisibility.PRIVATE;
 			}
 			
-			facade.createPost(token, title, content, visibility, picData);
+			ArrayList<byte[]> postMediaData = new ArrayList<byte[]>();
+			postMediaData.add(picData);
+			facade.createPost(token, title, content, visibility, postMediaData);
 		} catch (AuthenticationException e) {
 			this.exceptionHandler.handle(e);
 		} catch (InternalErrorException e) {
