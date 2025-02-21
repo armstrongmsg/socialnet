@@ -493,7 +493,7 @@ public class ApplicationFacade {
 		}
 	}
 
-	public boolean follows(String userToken, String username) throws UnauthorizedOperationException, AuthenticationException, InternalErrorException, MediaNotFoundException {
+	public boolean follows(String userToken, String username) throws AuthenticationException, InternalErrorException {
 		logger.debug(Messages.Logging.RECEIVED_FOLLOWS_REQUEST, userToken, username);
 		
 		try {
@@ -501,8 +501,8 @@ public class ApplicationFacade {
 		} catch (AuthenticationException e) {
 			logger.debug(Messages.Logging.AUTHENTICATION_EXCEPTION, e.getMessage());
 			throw e;
-		} catch (UnauthorizedOperationException e) {
-			logger.debug(Messages.Logging.AUTHORIZATION_EXCEPTION, e.getMessage());
+		} catch (InternalErrorException e) {
+			logger.debug(Messages.Logging.INTERNAL_ERROR_EXCEPTION, e.getMessage());
 			throw e;
 		}
 	}

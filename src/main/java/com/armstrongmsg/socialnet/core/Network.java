@@ -677,10 +677,14 @@ public class Network {
 		return summary;
 	}
 
-	public boolean follows(String userToken, String username) throws UnauthorizedOperationException, AuthenticationException, InternalErrorException, MediaNotFoundException {
+	public boolean follows(String userToken, String username) throws AuthenticationException, InternalErrorException {
 		User requester = this.authenticationPlugin.getUser(userToken);
-		this.authorizationPlugin.authorize(requester, new Operation(OperationType.FOLLOWS));
-		List<UserSummary> follows = doGetFollowedUsers(requester);
+		List<UserSummary> follows;
+		try {
+			follows = doGetFollowedUsers(requester);
+		} catch (MediaNotFoundException | UnauthorizedOperationException e) {
+			throw new InternalErrorException(e);
+		}
 		
 		for (UserSummary summary : follows) {
 			if (summary.getUsername().equals(username)) {
