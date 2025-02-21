@@ -507,7 +507,7 @@ public class ApplicationFacade {
 		}
 	}
 
-	public void unfollow(String userToken, String username) throws AuthenticationException, UnauthorizedOperationException, InternalErrorException, FollowNotFoundException {
+	public void unfollow(String userToken, String username) throws AuthenticationException, InternalErrorException, FollowNotFoundException {
 		logger.debug(Messages.Logging.RECEIVED_UNFOLLOW_REQUEST, userToken, username);
 		
 		try {
@@ -515,8 +515,11 @@ public class ApplicationFacade {
 		} catch (AuthenticationException e) {
 			logger.debug(Messages.Logging.AUTHENTICATION_EXCEPTION, e.getMessage());
 			throw e;
-		} catch (UnauthorizedOperationException e) {
-			logger.debug(Messages.Logging.AUTHORIZATION_EXCEPTION, e.getMessage());
+		} catch (InternalErrorException e) {
+			logger.debug(Messages.Logging.INTERNAL_ERROR_EXCEPTION, e.getMessage());
+			throw e;
+		} catch (FollowNotFoundException e) {
+			logger.debug(Messages.Logging.FOLLOW_NOT_FOUND_EXCEPTION, e.getMessage());
 			throw e;
 		}
 	}

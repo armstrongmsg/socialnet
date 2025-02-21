@@ -695,17 +695,19 @@ public class Network {
 		return false;
 	}
 
-	public void unfollow(String userToken, String username) throws AuthenticationException, UnauthorizedOperationException, InternalErrorException, FollowNotFoundException {
+	public void unfollow(String userToken, String username) throws AuthenticationException, InternalErrorException, FollowNotFoundException {
 		User requester = this.authenticationPlugin.getUser(userToken);
-		this.authorizationPlugin.authorize(requester, new Operation(OperationType.UNFOLLOW));
-		
 		List<Follow> follows = this.storageFacade.getFollowsByUserId(requester.getUserId());
 		
 		for (Follow follow : follows) {
 			if (follow.getFollowed().getUsername().equals(username)) {
 				this.storageFacade.removeFollow(follow);
+				return;
 			}
 		}
+		
+		// TODO add message
+		throw new FollowNotFoundException();
 	}
 
 	public void unfriend(String userToken, String username) 

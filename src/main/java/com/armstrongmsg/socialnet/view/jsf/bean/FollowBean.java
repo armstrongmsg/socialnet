@@ -136,8 +136,6 @@ public class FollowBean {
 			facade.unfollow(token, username);
 		} catch (AuthenticationException e) {
 			this.exceptionHandler.handle(e);
-		} catch (UnauthorizedOperationException e) {
-			this.exceptionHandler.handle(e);
 		} catch (InternalErrorException e) {
 			this.exceptionHandler.handle(e);
 		} catch (FollowNotFoundException e) {
