@@ -573,22 +573,6 @@ public class Network {
 		}
 	}
 
-	public List<UserSummary> getUserSummaries(String token) throws UnauthorizedOperationException, AuthenticationException, InternalErrorException, MediaNotFoundException {
-		User requester = this.authenticationPlugin.getUser(token);
-		this.authorizationPlugin.authorize(requester, new Operation(OperationType.GET_USER_SUMMARIES));
-		
-		List<UserSummary> userSummaries = new ArrayList<UserSummary>();
-		
-		for (User user : this.storageFacade.getAllUsers()) {
-			if (!user.equals(requester)) {
-				UserSummary summary = getUserSummary(requester, user);
-				userSummaries.add(summary);
-			}
-		}
-
-		return userSummaries;
-	}
-
 	public List<UserSummary> getUserRecommendations(String token) throws AuthenticationException, InternalErrorException {
 		User requester = this.authenticationPlugin.getUser(token);
 		

@@ -872,32 +872,6 @@ public class IntegrationTest extends PersistenceTest {
 	}
 	
 	@Test
-	public void testGetUserSummaries() throws UnauthorizedOperationException, AuthenticationException, InternalErrorException, UserAlreadyExistsException, MediaNotFoundException {
-		String adminToken = loginAsAdmin();
-		
-		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
-		facade.addUser(adminToken, NEW_USERNAME_2, NEW_USER_PASSWORD_2, NEW_USER_PROFILE_DESCRIPTION_2);
-		
-		String userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);	
-		String userToken2 = loginAsUser(NEW_USERNAME_2, NEW_USER_PASSWORD_2);
-		
-		List<UserSummary> summariesUser1 = facade.getUserSummaries(userToken1);
-		List<UserSummary> summariesUser2 = facade.getUserSummaries(userToken2);
-		
-		assertEquals(1, summariesUser1.size());
-		assertEquals(NEW_USERNAME_2, summariesUser1.get(0).getUsername());
-		assertEquals(NEW_USER_PROFILE_DESCRIPTION_2, summariesUser1.get(0).getProfileDescription());
-		assertEquals(SystemConstants.DEFAULT_PROFILE_PIC_ID, summariesUser1.get(0).getProfilePicId());
-		assertEquals(SystemConstants.DEFAULT_PROFILE_PIC_PATH, summariesUser1.get(0).getProfilePicPath());
-		
-		assertEquals(1, summariesUser2.size());
-		assertEquals(NEW_USERNAME_1, summariesUser2.get(0).getUsername());
-		assertEquals(NEW_USER_PROFILE_DESCRIPTION_1, summariesUser2.get(0).getProfileDescription());
-		assertEquals(SystemConstants.DEFAULT_PROFILE_PIC_ID, summariesUser2.get(0).getProfilePicId());
-		assertEquals(SystemConstants.DEFAULT_PROFILE_PIC_PATH, summariesUser1.get(0).getProfilePicPath());
-	}
-	
-	@Test
 	public void testGetUserRecommendations() throws AuthenticationException, UnauthorizedOperationException, UserNotFoundException, 
 		InternalErrorException, UserAlreadyExistsException, FriendshipAlreadyExistsException, MediaNotFoundException {
 		String adminToken = loginAsAdmin();

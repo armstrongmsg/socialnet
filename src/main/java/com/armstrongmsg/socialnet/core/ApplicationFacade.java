@@ -436,20 +436,6 @@ public class ApplicationFacade {
 		}
 	}
 
-	public List<UserSummary> getUserSummaries(String userToken) throws UnauthorizedOperationException, AuthenticationException, InternalErrorException, MediaNotFoundException {
-		logger.debug(Messages.Logging.RECEIVED_GET_USER_SUMMARIES_REQUEST, userToken);
-		
-		try {
-			return this.network.getUserSummaries(userToken);
-		} catch (AuthenticationException e) {
-			logger.debug(Messages.Logging.AUTHENTICATION_EXCEPTION, e.getMessage());
-			throw e;
-		} catch (UnauthorizedOperationException e) {
-			logger.debug(Messages.Logging.AUTHORIZATION_EXCEPTION, e.getMessage());
-			throw e;
-		}
-	}
-
 	public List<UserSummary> getUserRecommendations(String userToken) 
 			throws AuthenticationException, InternalErrorException {
 		logger.debug(Messages.Logging.RECEIVED_GET_USER_RECOMMENDATIONS_REQUEST, userToken);

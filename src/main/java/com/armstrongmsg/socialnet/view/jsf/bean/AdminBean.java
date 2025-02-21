@@ -11,7 +11,6 @@ import javax.faces.bean.SessionScoped;
 import com.armstrongmsg.socialnet.core.ApplicationFacade;
 import com.armstrongmsg.socialnet.exceptions.AuthenticationException;
 import com.armstrongmsg.socialnet.exceptions.InternalErrorException;
-import com.armstrongmsg.socialnet.exceptions.MediaNotFoundException;
 import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
 import com.armstrongmsg.socialnet.exceptions.UserAlreadyExistsException;
 import com.armstrongmsg.socialnet.exceptions.UserNotFoundException;
@@ -124,17 +123,6 @@ public class AdminBean {
 		}
 
 		return users;
-	}
-	
-	public List<UserSummary> getUserSummaries() {
-		try {
-			String token = contextBean.getCurrentSession().getUserToken();
-			return new JsfConnector(facade, token).getViewUserSummaries(facade.getUserSummaries(token));
-		} catch (UnauthorizedOperationException | AuthenticationException | InternalErrorException | MediaNotFoundException e) {
-			this.exceptionHandler.handle(e);
-		}
-		
-		return new ArrayList<UserSummary>();
 	}
 
 	public String addUser() {
