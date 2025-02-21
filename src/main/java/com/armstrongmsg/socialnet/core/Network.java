@@ -574,20 +574,28 @@ public class Network {
 		return userSummaries;
 	}
 
-	public List<UserSummary> getUserRecommendations(String token) throws UnauthorizedOperationException, AuthenticationException, InternalErrorException, MediaNotFoundException {
+	public List<UserSummary> getUserRecommendations(String token) throws AuthenticationException, InternalErrorException {
 		User requester = this.authenticationPlugin.getUser(token);
-		this.authorizationPlugin.authorize(requester, new Operation(OperationType.GET_USER_RECOMMENDATIONS));
 		
-		List<UserSummary> friends = doGetSelfFriends(requester);
+		List<UserSummary> friends;
+		try {
+			friends = doGetSelfFriends(requester);
+		} catch (UnauthorizedOperationException e) {
+			throw new InternalErrorException(e);
+		}
+		
 		List<UserSummary> userSummaries = new ArrayList<UserSummary>();
 		
 		for (User user : this.storageFacade.getAllUsers()) {
-			UserSummary summary = getUserSummary(requester, user);
-			
-			if (!user.equals(requester) && !friends.contains(summary)
-					&& !hasSentFriendshipRequestTo(requester, user.getUsername())
-					&& !hasReceivedFriendshipRequestFrom(requester, user.getUsername())) {
-				userSummaries.add(summary);
+			try {
+				UserSummary summary = getUserSummary(requester, user);
+				if (!user.equals(requester) && !friends.contains(summary)
+						&& !hasSentFriendshipRequestTo(requester, user.getUsername())
+						&& !hasReceivedFriendshipRequestFrom(requester, user.getUsername())) {
+					userSummaries.add(summary);
+				}
+			} catch (UnauthorizedOperationException e) {
+				throw new InternalErrorException(e);
 			}
 		}
 		

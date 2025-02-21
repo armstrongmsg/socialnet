@@ -192,7 +192,7 @@ public class FriendshipBean {
 				friendRecommendations = new JsfConnector(facade, token).getViewUserSummaries(facade.getUserRecommendations(token));
 			}
 			return friendRecommendations;
-		} catch (UnauthorizedOperationException | AuthenticationException | InternalErrorException | MediaNotFoundException e) {
+		} catch (AuthenticationException | InternalErrorException e) {
 			this.exceptionHandler.handle(e);
 		}
 		
