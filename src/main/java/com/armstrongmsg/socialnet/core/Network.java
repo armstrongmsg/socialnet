@@ -437,10 +437,13 @@ public class Network {
 		return followedUsers;
 	}
 
-	public List<UserSummary> getFollowedUsers(String userToken) throws AuthenticationException, UnauthorizedOperationException, InternalErrorException, MediaNotFoundException {
+	public List<UserSummary> getFollowedUsers(String userToken) throws AuthenticationException, InternalErrorException {
 		User requester = this.authenticationPlugin.getUser(userToken);
-		this.authorizationPlugin.authorize(requester, new Operation(OperationType.GET_FOLLOWED_USERS));
-		return doGetFollowedUsers(requester);
+		try {
+			return doGetFollowedUsers(requester);
+		} catch (MediaNotFoundException | UnauthorizedOperationException e) {
+			throw new InternalErrorException(e);
+		}
 	}
 	
 	private List<UserSummary> doGetFollowedUsers(User requester) throws InternalErrorException, MediaNotFoundException, UnauthorizedOperationException {

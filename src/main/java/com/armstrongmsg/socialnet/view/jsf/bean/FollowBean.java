@@ -109,7 +109,7 @@ public class FollowBean {
 			}
 			
 			return follows;
-		} catch (AuthenticationException | UnauthorizedOperationException | InternalErrorException | MediaNotFoundException e) {
+		} catch (AuthenticationException | InternalErrorException e) {
 			this.exceptionHandler.handle(e);
 		}
 		
