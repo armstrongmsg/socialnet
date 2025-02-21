@@ -13,6 +13,7 @@ import org.primefaces.model.file.UploadedFile;
 import com.armstrongmsg.socialnet.core.ApplicationFacade;
 import com.armstrongmsg.socialnet.exceptions.AuthenticationException;
 import com.armstrongmsg.socialnet.exceptions.InternalErrorException;
+import com.armstrongmsg.socialnet.exceptions.InvalidParameterException;
 import com.armstrongmsg.socialnet.exceptions.MediaNotFoundException;
 import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
 import com.armstrongmsg.socialnet.exceptions.UserNotFoundException;
@@ -147,9 +148,8 @@ public class PostBean {
 			this.exceptionHandler.handle(e);
 		} catch (InternalErrorException e) {
 			this.exceptionHandler.handle(e);
-		} catch (UnauthorizedOperationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (InvalidParameterException e) {
+			this.exceptionHandler.handle(e);
 		}
 		
 		return null;

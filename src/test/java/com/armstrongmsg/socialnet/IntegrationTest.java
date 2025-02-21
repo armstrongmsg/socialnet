@@ -330,7 +330,8 @@ public class IntegrationTest extends PersistenceTest {
 	}
 	
 	@Test
-	public void testCreateAndGetPostByAdmin() throws AuthenticationException, UnauthorizedOperationException, UserNotFoundException, InternalErrorException, UserAlreadyExistsException {
+	public void testCreateAndGetPostByAdmin() throws AuthenticationException, InternalErrorException, UnauthorizedOperationException, 
+		UserAlreadyExistsException, UserNotFoundException, InvalidParameterException {
 		String adminToken = loginAsAdmin();
 		
 		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
@@ -388,7 +389,7 @@ public class IntegrationTest extends PersistenceTest {
 	
 	@Test
 	public void testCreateAndGetPostByNonAdmin() 
-			throws UnauthorizedOperationException, AuthenticationException, UserNotFoundException, InternalErrorException, UserAlreadyExistsException {
+			throws UnauthorizedOperationException, AuthenticationException, UserNotFoundException, InternalErrorException, UserAlreadyExistsException, InvalidParameterException {
 		String adminToken = loginAsAdmin();
 		
 		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
@@ -414,7 +415,7 @@ public class IntegrationTest extends PersistenceTest {
 	@Test
 	public void testGetOtherUserPostsByNonAdmin() 
 			throws AuthenticationException, UnauthorizedOperationException, UserNotFoundException, 
-			InternalErrorException, UserAlreadyExistsException, FriendshipAlreadyExistsException, MediaNotFoundException {
+			InternalErrorException, UserAlreadyExistsException, FriendshipAlreadyExistsException, MediaNotFoundException, InvalidParameterException {
 		String adminToken = loginAsAdmin();
 		
 		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
@@ -646,7 +647,7 @@ public class IntegrationTest extends PersistenceTest {
 	
 	@Test
 	public void testGetFriendsPosts() throws AuthenticationException, UnauthorizedOperationException, UserNotFoundException, 
-		InternalErrorException, UserAlreadyExistsException, FriendshipAlreadyExistsException {
+		InternalErrorException, UserAlreadyExistsException, FriendshipAlreadyExistsException, InvalidParameterException {
 		String adminToken = loginAsAdmin();
 		
 		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
@@ -682,7 +683,7 @@ public class IntegrationTest extends PersistenceTest {
 	@Test
 	public void testGetFeedPosts() throws AuthenticationException, UnauthorizedOperationException, InternalErrorException, 
 		UserAlreadyExistsException, UserNotFoundException, InterruptedException, 
-		FollowAlreadyExistsException, FriendshipAlreadyExistsException {
+		FollowAlreadyExistsException, FriendshipAlreadyExistsException, InvalidParameterException {
 		String adminToken = loginAsAdmin();
 		
 		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
@@ -741,7 +742,7 @@ public class IntegrationTest extends PersistenceTest {
 	
 	@Test
 	public void testDeletePost() throws AuthenticationException, UnauthorizedOperationException, UserNotFoundException, 
-		InternalErrorException, UserAlreadyExistsException {
+		InternalErrorException, UserAlreadyExistsException, InvalidParameterException {
 		String adminToken = loginAsAdmin();
 		
 		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);

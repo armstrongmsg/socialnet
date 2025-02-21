@@ -155,15 +155,41 @@ public class Network {
 	}
 
 	public void createPost(String userToken, String title, String content, PostVisibility newPostVisibility, byte[] pictureData) 
-			throws AuthenticationException, UserNotFoundException, InternalErrorException, UnauthorizedOperationException {
+			throws AuthenticationException, InternalErrorException, InvalidParameterException {
 		User user = this.authenticationPlugin.getUser(userToken);
-
-		String pictureId = createMedia(user, pictureData);
-		List<String> pictureIds = new ArrayList<String>();
-		pictureIds.add(pictureId);
 		
-		user.getProfile().createPost(title, content, newPostVisibility, pictureIds);
-		this.storageFacade.updateUser(user);
+		// TODO test
+		if (title == null) {
+			// TODO add message
+			throw new InvalidParameterException();
+		}
+		
+		if (content == null) {
+			// TODO add message
+			throw new InvalidParameterException();
+		}
+		
+		if (newPostVisibility == null) {
+			// TODO add message
+			throw new InvalidParameterException();
+		}
+		
+		if (pictureData == null) {
+			// TODO add message
+			throw new InvalidParameterException();	
+		}
+
+		try {
+			String pictureId = createMedia(user, pictureData);
+			List<String> pictureIds = new ArrayList<String>();
+			pictureIds.add(pictureId);
+			user.getProfile().createPost(title, content, newPostVisibility, pictureIds);
+			this.storageFacade.updateUser(user);
+		} catch (UnauthorizedOperationException e) {
+			throw new InternalErrorException(e);
+		} catch (UserNotFoundException e) {
+			throw new InternalErrorException(e);
+		}
 	}
 	
 	public List<Post> getUserPostsAdmin(String userToken, String userId) 
