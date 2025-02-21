@@ -15,7 +15,6 @@ import com.armstrongmsg.socialnet.core.ApplicationFacade;
 import com.armstrongmsg.socialnet.exceptions.AuthenticationException;
 import com.armstrongmsg.socialnet.exceptions.InternalErrorException;
 import com.armstrongmsg.socialnet.exceptions.InvalidParameterException;
-import com.armstrongmsg.socialnet.exceptions.MediaNotFoundException;
 import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
 import com.armstrongmsg.socialnet.exceptions.UserNotFoundException;
 import com.armstrongmsg.socialnet.model.PostVisibility;
@@ -240,7 +239,7 @@ public class PostBean {
 						facade.getUserPosts(contextBean.getCurrentSession().getUserToken(), 
 								username));
 			}
-		} catch (UnauthorizedOperationException | AuthenticationException | UserNotFoundException | InternalErrorException | MediaNotFoundException e) {
+		} catch (UnauthorizedOperationException | AuthenticationException | UserNotFoundException | InternalErrorException e) {
 			this.exceptionHandler.handle(e);
 		}
 		

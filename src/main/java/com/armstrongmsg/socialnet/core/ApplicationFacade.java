@@ -220,7 +220,7 @@ public class ApplicationFacade {
 	}
 
 	public List<Post> getUserPosts(String userToken, String username) 
-			throws UnauthorizedOperationException, AuthenticationException, UserNotFoundException, InternalErrorException, MediaNotFoundException {
+			throws AuthenticationException, UnauthorizedOperationException, UserNotFoundException, InternalErrorException {
 		logger.debug(Messages.Logging.RECEIVED_GET_USER_POSTS_REQUEST, userToken, username);
 		
 		try {
@@ -233,6 +233,9 @@ public class ApplicationFacade {
 			throw e;
 		} catch (UserNotFoundException e) {
 			logger.debug(Messages.Logging.USER_NOT_FOUND_EXCEPTION, e.getMessage());
+			throw e;
+		} catch (InternalErrorException e) {
+			logger.debug(Messages.Logging.INTERNAL_ERROR_EXCEPTION, e.getMessage());
 			throw e;
 		}
 	}

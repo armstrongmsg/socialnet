@@ -347,7 +347,7 @@ public class Network {
 		return this.doGetSelfFriends(requester);
 	}
 	
-	private List<UserSummary> doGetSelfFriends(User requester) throws InternalErrorException, MediaNotFoundException, UnauthorizedOperationException {
+	private List<UserSummary> doGetSelfFriends(User requester) throws InternalErrorException, UnauthorizedOperationException {
 		List<Friendship> userFriendships = this.storageFacade.getFriendshipsByUserId(requester.getUserId());
 		List<UserSummary> friends = new ArrayList<UserSummary>();
 		
@@ -368,10 +368,14 @@ public class Network {
 		return friends;
 	}
 	
-	private UserSummary getUserSummary(User requester, User user) throws MediaNotFoundException, InternalErrorException, UnauthorizedOperationException {
-		String pictureUri = getProfilePicPath(requester, user);
-		return new UserSummary(user.getUsername(), user.getProfile().getDescription(), 
-				user.getProfile().getProfilePicId(), pictureUri);
+	private UserSummary getUserSummary(User requester, User user) throws InternalErrorException, UnauthorizedOperationException {
+		try {
+			String pictureUri = getProfilePicPath(requester, user);
+			return new UserSummary(user.getUsername(), user.getProfile().getDescription(), 
+					user.getProfile().getProfilePicId(), pictureUri);
+		} catch (MediaNotFoundException e) {
+			throw new InternalErrorException(e);
+		}
 	}
 
 	private String getProfilePicPath(User requester, User friend)
@@ -491,10 +495,12 @@ public class Network {
 		return this.feedPolicy.filter(feedCandidatePosts);
 	}
 
-	public List<Post> getUserPosts(String token, String username) throws UnauthorizedOperationException, AuthenticationException, UserNotFoundException, InternalErrorException, MediaNotFoundException {
+	public List<Post> getUserPosts(String token, String username) throws AuthenticationException, UnauthorizedOperationException, InternalErrorException, UserNotFoundException {
 		User requester = this.authenticationPlugin.getUser(token);
+		// FIXME should add target user info
 		this.authorizationPlugin.authorize(requester, new Operation(OperationType.GET_USER_POSTS));
 		
+		// TODO move to authorization
 		if (doIsFriend(requester, username) || requester.getUsername().equals(username)) {
 			User user = findUserByUsername(username);
 			return user.getProfile().getPosts();
@@ -596,7 +602,7 @@ public class Network {
 		return doIsFriend(requester, username);
 	}
 	
-	private boolean doIsFriend(User requester, String username) throws InternalErrorException, MediaNotFoundException, UnauthorizedOperationException {
+	private boolean doIsFriend(User requester, String username) throws InternalErrorException, UnauthorizedOperationException {
 		List<UserSummary> friends = doGetSelfFriends(requester);
 		
 		for (UserSummary friend : friends) {
@@ -613,8 +619,6 @@ public class Network {
 		UserSummary summary;
 		try {
 			summary = getUserSummary(requester, requester);
-		} catch (MediaNotFoundException e) {
-			throw new InternalErrorException();
 		} catch (UnauthorizedOperationException e) {
 			throw new InternalErrorException();
 		}
