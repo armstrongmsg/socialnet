@@ -346,10 +346,13 @@ public class Network {
 		return friends;
 	}
 	
-	public List<UserSummary> getSelfFriends(String userToken) throws AuthenticationException, UnauthorizedOperationException, InternalErrorException, MediaNotFoundException {
+	public List<UserSummary> getSelfFriends(String userToken) throws AuthenticationException, InternalErrorException {
 		User requester = this.authenticationPlugin.getUser(userToken);
-		this.authorizationPlugin.authorize(requester, new Operation(OperationType.GET_FRIENDS));
-		return this.doGetSelfFriends(requester);
+		try {
+			return this.doGetSelfFriends(requester);
+		} catch (UnauthorizedOperationException e) {
+			throw new InternalErrorException(e);
+		}
 	}
 	
 	private List<UserSummary> doGetSelfFriends(User requester) throws InternalErrorException, UnauthorizedOperationException {

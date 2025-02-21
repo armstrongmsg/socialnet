@@ -175,13 +175,8 @@ public class ProfileBean {
 			return friends.contains(contextBean.getCurrentSession().getCurrentViewUser());
 		} catch (AuthenticationException e) {
 			this.exceptionHandler.handle(e);
-		} catch (UnauthorizedOperationException e) {
-			this.exceptionHandler.handle(e);
 		} catch (InternalErrorException e) {
 			this.exceptionHandler.handle(e);
-		} catch (MediaNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 		
 		return false;
