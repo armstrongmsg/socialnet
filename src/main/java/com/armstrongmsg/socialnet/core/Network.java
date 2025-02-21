@@ -266,10 +266,8 @@ public class Network {
 		return false;
 	}
 	
-	public List<FriendshipRequest> getSentFriendshipRequests(String userToken) throws AuthenticationException, UnauthorizedOperationException, InternalErrorException {
+	public List<FriendshipRequest> getSentFriendshipRequests(String userToken) throws AuthenticationException, InternalErrorException {
 		User requester = this.authenticationPlugin.getUser(userToken);
-		this.authorizationPlugin.authorize(requester, new Operation(OperationType.GET_SENT_FRIENDSHIP_REQUESTS));
-		
 		return this.storageFacade.getSentFrienshipRequestsById(requester.getUserId());
 	}
 	
