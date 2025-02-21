@@ -205,7 +205,7 @@ public class ApplicationFacade {
 		}
 	}
 
-	public List<Post> getSelfPosts(String userToken) throws UnauthorizedOperationException, AuthenticationException {
+	public List<Post> getSelfPosts(String userToken) throws AuthenticationException, InternalErrorException {
 		logger.debug(Messages.Logging.RECEIVED_GET_SELF_POSTS_REQUEST, userToken);
 		
 		try {
@@ -213,8 +213,8 @@ public class ApplicationFacade {
 		} catch (AuthenticationException e) {
 			logger.debug(Messages.Logging.AUTHENTICATION_EXCEPTION, e.getMessage());
 			throw e;
-		} catch (UnauthorizedOperationException e) {
-			logger.debug(Messages.Logging.AUTHORIZATION_EXCEPTION, e.getMessage());
+		} catch (InternalErrorException e) {
+			logger.debug(Messages.Logging.INTERNAL_ERROR_EXCEPTION, e.getMessage());
 			throw e;
 		}
 	}

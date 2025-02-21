@@ -186,7 +186,7 @@ public class PostBean {
 				selfPosts = new JsfConnector(facade, contextBean.getCurrentSession().getUserToken()).getViewPosts(facade.getSelfPosts(
 						contextBean.getCurrentSession().getUserToken()));
 			}
-		} catch (UnauthorizedOperationException | AuthenticationException e) {
+		} catch (AuthenticationException | InternalErrorException e) {
 			this.exceptionHandler.handle(e);
 		}
 		

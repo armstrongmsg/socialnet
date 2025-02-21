@@ -210,9 +210,8 @@ public class Network {
 		return user.getProfile().getPosts();
 	}
 	
-	public List<Post> getSelfPosts(String userToken) throws AuthenticationException, UnauthorizedOperationException {
+	public List<Post> getSelfPosts(String userToken) throws AuthenticationException, InternalErrorException {
 		User requester = this.authenticationPlugin.getUser(userToken);
-		this.authorizationPlugin.authorize(requester, new OperationOnUser(OperationType.GET_SELF_POSTS, requester));
 		return requester.getProfile().getPosts();
 	}
 
