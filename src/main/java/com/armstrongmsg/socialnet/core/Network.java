@@ -458,10 +458,13 @@ public class Network {
 		return this.admin.getUserId().equals(userId);
 	}
 
-	public List<Post> getFriendsPosts(String token) throws UnauthorizedOperationException, AuthenticationException, UserNotFoundException, InternalErrorException {
+	public List<Post> getFriendsPosts(String token) throws AuthenticationException, InternalErrorException {
 		User requester = this.authenticationPlugin.getUser(token);
-		this.authorizationPlugin.authorize(requester, new Operation(OperationType.GET_FRIENDS_POSTS));
-		return doGetFriendsPosts(requester);
+		try {
+			return doGetFriendsPosts(requester);
+		} catch (UserNotFoundException e) {
+			throw new InternalErrorException(e);
+		}
 	}
 	
 	private List<Post> doGetFriendsPosts(User requester) throws UserNotFoundException, InternalErrorException {

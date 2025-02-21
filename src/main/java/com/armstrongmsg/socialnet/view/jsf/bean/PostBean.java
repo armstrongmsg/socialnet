@@ -218,7 +218,7 @@ public class PostBean {
 				friendsPosts = new JsfConnector(facade, contextBean.getCurrentSession().getUserToken()).getViewPosts(
 						facade.getFriendsPosts(contextBean.getCurrentSession().getUserToken()));
 			}
-		} catch (UnauthorizedOperationException | AuthenticationException | UserNotFoundException | InternalErrorException e) {
+		} catch (AuthenticationException | InternalErrorException e) {
 			this.exceptionHandler.handle(e);
 		}
 		
