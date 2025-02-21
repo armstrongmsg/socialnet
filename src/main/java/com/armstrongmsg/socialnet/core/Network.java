@@ -276,21 +276,28 @@ public class Network {
 		return this.storageFacade.getReceivedFrienshipRequestsById(requester.getUserId());
 	}
 	
-	public void acceptFriendshipRequest(String userToken, String username) 
-			throws AuthenticationException, UnauthorizedOperationException, UserNotFoundException, FriendshipRequestNotFound, InternalErrorException, FriendshipAlreadyExistsException {
+	public void acceptFriendshipRequest(String userToken, String username) throws AuthenticationException, FriendshipRequestNotFound, InternalErrorException {
 		User requester = this.authenticationPlugin.getUser(userToken);
-		this.authorizationPlugin.authorize(requester, new Operation(OperationType.ACCEPT_FRIENDSHIP_REQUEST));
-		
 		FriendshipRequest request = this.storageFacade.getReceivedFrienshipRequestsById(requester.getUserId(), username);
 		
 		if (request == null) {
-			throw new UnauthorizedOperationException(
+			throw new FriendshipRequestNotFound(
 					String.format(Messages.Exception.FRIENDSHIP_REQUEST_NOT_FOUND, userToken, username));
 		}
 		
-		User friend = findUserByUsername(username);
-		this.storageFacade.saveFriendship(new Friendship(requester, friend));
-		this.storageFacade.removeFriendshipRequest(request);
+		User friend;
+		try {
+			friend = findUserByUsername(username);
+		} catch (UserNotFoundException e) {
+			throw new InternalErrorException(e);
+		}
+		
+		try {
+			this.storageFacade.saveFriendship(new Friendship(requester, friend));
+			this.storageFacade.removeFriendshipRequest(request);
+		} catch (FriendshipAlreadyExistsException e) {
+			throw new InternalErrorException(e);
+		}
 	}
 	
 	public void rejectFriendshipRequest(String userToken, String username) throws AuthenticationException, UnauthorizedOperationException, FriendshipRequestNotFound, InternalErrorException {
