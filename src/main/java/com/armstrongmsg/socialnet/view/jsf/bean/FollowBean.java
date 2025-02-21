@@ -13,7 +13,6 @@ import com.armstrongmsg.socialnet.exceptions.AuthenticationException;
 import com.armstrongmsg.socialnet.exceptions.FollowAlreadyExistsException;
 import com.armstrongmsg.socialnet.exceptions.FollowNotFoundException;
 import com.armstrongmsg.socialnet.exceptions.InternalErrorException;
-import com.armstrongmsg.socialnet.exceptions.MediaNotFoundException;
 import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
 import com.armstrongmsg.socialnet.exceptions.UserNotFoundException;
 import com.armstrongmsg.socialnet.view.jsf.model.JsfConnector;
@@ -124,7 +123,7 @@ public class FollowBean {
 			}
 			
 			return followRecommendations;
-		} catch (UnauthorizedOperationException | AuthenticationException | InternalErrorException | MediaNotFoundException e) {
+		} catch (AuthenticationException | InternalErrorException e) {
 			this.exceptionHandler.handle(e);
 		}
 		

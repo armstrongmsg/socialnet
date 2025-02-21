@@ -617,15 +617,25 @@ public class Network {
 		return userSummaries;
 	}
 
-	public List<UserSummary> getFollowRecommendations(String token) throws AuthenticationException, UnauthorizedOperationException, InternalErrorException, MediaNotFoundException {
+	public List<UserSummary> getFollowRecommendations(String token) throws AuthenticationException, InternalErrorException {
 		User requester = this.authenticationPlugin.getUser(token);
-		this.authorizationPlugin.authorize(requester, new Operation(OperationType.GET_FOLLOW_RECOMMENDATIONS));
 		
-		List<UserSummary> follows = this.doGetFollowedUsers(requester);
+		List<UserSummary> follows;
+		try {
+			follows = this.doGetFollowedUsers(requester);
+		} catch (MediaNotFoundException | UnauthorizedOperationException e) {
+			throw new InternalErrorException(e);
+		}
+		
 		List<UserSummary> userSummaries = new ArrayList<UserSummary>();
 		
 		for (User user : this.storageFacade.getAllUsers()) {
-			UserSummary summary = getUserSummary(requester, user);
+			UserSummary summary;
+			try {
+				summary = getUserSummary(requester, user);
+			} catch (UnauthorizedOperationException e) {
+				throw new InternalErrorException(e);
+			}
 			
 			if (!user.equals(requester) && !follows.contains(summary)) {
 				userSummaries.add(summary);
