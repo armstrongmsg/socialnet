@@ -19,7 +19,7 @@ import com.armstrongmsg.socialnet.exceptions.PostNotFoundException;
 import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
 import com.armstrongmsg.socialnet.exceptions.UserNotFoundException;
 import com.armstrongmsg.socialnet.model.PostVisibility;
-import com.armstrongmsg.socialnet.model.UserSummary;
+import com.armstrongmsg.socialnet.model.UserView;
 import com.armstrongmsg.socialnet.view.jsf.model.JsfConnector;
 import com.armstrongmsg.socialnet.view.jsf.model.Post;
 import com.armstrongmsg.socialnet.view.jsf.model.User;
@@ -227,7 +227,7 @@ public class PostBean {
 				String username = contextBean.getCurrentSession().getCurrentViewUser().getUsername();
 				
 				if (username.isEmpty()) {
-					UserSummary userSummary = facade.getSelf(
+					UserView userSummary = facade.getSelf(
 							contextBean.getCurrentSession().getUserToken());
 					username = userSummary.getUsername();
 				}

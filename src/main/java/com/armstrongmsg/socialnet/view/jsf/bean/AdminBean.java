@@ -16,7 +16,7 @@ import com.armstrongmsg.socialnet.exceptions.UserAlreadyExistsException;
 import com.armstrongmsg.socialnet.exceptions.UserNotFoundException;
 import com.armstrongmsg.socialnet.view.jsf.model.JsfConnector;
 import com.armstrongmsg.socialnet.view.jsf.model.User;
-import com.armstrongmsg.socialnet.view.jsf.model.UserSummary;
+import com.armstrongmsg.socialnet.view.jsf.model.UserView;
 
 // TODO refactor
 @ManagedBean(name = "adminBean", eager = true)
@@ -28,7 +28,7 @@ public class AdminBean {
 	private String profileDescription;
 	private User user;
 	private List<User> users;
-	private UserSummary userSummary;
+	private UserView userSummary;
 	private ApplicationFacade facade;
 	private JsfExceptionHandler exceptionHandler;
 	
@@ -84,11 +84,11 @@ public class AdminBean {
 		this.user = user;
 	}
 
-	public UserSummary getUserSummary() {
+	public UserView getUserSummary() {
 		return userSummary;
 	}
 
-	public void setUserSummary(UserSummary userSummary) {
+	public void setUserSummary(UserView userSummary) {
 		this.userSummary = userSummary;
 	}
 

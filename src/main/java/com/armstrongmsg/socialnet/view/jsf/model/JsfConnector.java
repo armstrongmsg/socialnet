@@ -74,17 +74,17 @@ public class JsfConnector {
 		return newViewPosts;
 	}
 
-	public List<UserSummary> getViewUserSummaries(List<com.armstrongmsg.socialnet.model.UserSummary> modelUserSummaries) {
-		List<UserSummary> viewUserSummaries = new ArrayList<UserSummary>();
+	public List<UserView> getViewUserSummaries(List<com.armstrongmsg.socialnet.model.UserView> modelUserSummaries) {
+		List<UserView> viewUserSummaries = new ArrayList<UserView>();
 		
-		for (com.armstrongmsg.socialnet.model.UserSummary modelUserSummary : modelUserSummaries) {
+		for (com.armstrongmsg.socialnet.model.UserView modelUserSummary : modelUserSummaries) {
 			viewUserSummaries.add(getViewUserSummary(modelUserSummary));
 		}
 		
 		return viewUserSummaries;
 	}
 
-	public UserSummary getViewUserSummary(com.armstrongmsg.socialnet.model.UserSummary modelUserSummary) {
+	public UserView getViewUserSummary(com.armstrongmsg.socialnet.model.UserView modelUserSummary) {
 		String profilePicturePath = null;
 		try {
 			profilePicturePath = facade.getMediaUri(token, modelUserSummary.getProfilePicId());
@@ -93,6 +93,6 @@ public class JsfConnector {
 		} catch (InternalErrorException e) {
 		} catch (UnauthorizedOperationException e) {
 		}
-		return new UserSummary(modelUserSummary.getUsername(), modelUserSummary.getProfileDescription(), profilePicturePath);
+		return new UserView(modelUserSummary.getUsername(), modelUserSummary.getProfileDescription(), profilePicturePath);
 	}
 }

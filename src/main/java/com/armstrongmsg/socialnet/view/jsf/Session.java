@@ -2,13 +2,13 @@ package com.armstrongmsg.socialnet.view.jsf;
 
 import java.util.Objects;
 
-import com.armstrongmsg.socialnet.view.jsf.model.UserSummary;
+import com.armstrongmsg.socialnet.view.jsf.model.UserView;
 
 public class Session {
 	private boolean admin;
 	private boolean logged;
 	private String userToken;
-	private UserSummary viewUser;
+	private UserView viewUser;
 
 	public Session(String userToken) {
 		this.userToken = userToken;
@@ -40,11 +40,11 @@ public class Session {
 		this.logged = logged;
 	}
 
-	public UserSummary getCurrentViewUser() {
+	public UserView getCurrentViewUser() {
 		return viewUser;
 	}
 
-	public void setCurrentViewUser(UserSummary viewUser) {
+	public void setCurrentViewUser(UserView viewUser) {
 		this.viewUser = viewUser;
 	}
 

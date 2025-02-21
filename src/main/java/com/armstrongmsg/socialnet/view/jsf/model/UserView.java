@@ -2,12 +2,12 @@ package com.armstrongmsg.socialnet.view.jsf.model;
 
 import java.util.Objects;
 
-public class UserSummary {
+public class UserView {
 	private String username;
 	private String profileDescription;
 	private String profilePicPath;
 	
-	public UserSummary(String username, String profileDescription, String profilePicPath) {
+	public UserView(String username, String profileDescription, String profilePicPath) {
 		this.username = username;
 		this.profileDescription = profileDescription;
 		this.profilePicPath = profilePicPath;
@@ -50,7 +50,7 @@ public class UserSummary {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		UserSummary other = (UserSummary) obj;
+		UserView other = (UserView) obj;
 		return Objects.equals(profileDescription, other.profileDescription) && Objects.equals(username, other.username);
 	}
 }

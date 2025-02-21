@@ -49,7 +49,7 @@ import com.armstrongmsg.socialnet.model.FriendshipRequest;
 import com.armstrongmsg.socialnet.model.Post;
 import com.armstrongmsg.socialnet.model.PostVisibility;
 import com.armstrongmsg.socialnet.model.User;
-import com.armstrongmsg.socialnet.model.UserSummary;
+import com.armstrongmsg.socialnet.model.UserView;
 import com.armstrongmsg.socialnet.storage.MediaStorageFacade;
 import com.armstrongmsg.socialnet.storage.StorageFacade;
 import com.armstrongmsg.socialnet.storage.cache.Cache;
@@ -645,11 +645,11 @@ public class IntegrationTest extends PersistenceTest {
 		
 		facade.addFriendship(userToken1, NEW_USERNAME_2);
 		
-		List<UserSummary> friends1 = facade.getSelfFriends(userToken1);
-		List<UserSummary> friends2 = facade.getSelfFriends(userToken2);
+		List<UserView> friends1 = facade.getSelfFriends(userToken1);
+		List<UserView> friends2 = facade.getSelfFriends(userToken2);
 		
-		UserSummary user1Summary = new UserSummary(NEW_USERNAME_1, NEW_USER_PROFILE_DESCRIPTION_1, SystemConstants.DEFAULT_PROFILE_PIC_ID, SystemConstants.DEFAULT_PROFILE_PIC_PATH);
-		UserSummary user2Summary = new UserSummary(NEW_USERNAME_2, NEW_USER_PROFILE_DESCRIPTION_2, SystemConstants.DEFAULT_PROFILE_PIC_ID, SystemConstants.DEFAULT_PROFILE_PIC_PATH);
+		UserView user1Summary = new UserView(NEW_USERNAME_1, NEW_USER_PROFILE_DESCRIPTION_1, SystemConstants.DEFAULT_PROFILE_PIC_ID, SystemConstants.DEFAULT_PROFILE_PIC_PATH);
+		UserView user2Summary = new UserView(NEW_USERNAME_2, NEW_USER_PROFILE_DESCRIPTION_2, SystemConstants.DEFAULT_PROFILE_PIC_ID, SystemConstants.DEFAULT_PROFILE_PIC_PATH);
 		
 		assertTrue(friends1.contains(user2Summary));
 		assertTrue(friends2.contains(user1Summary));
@@ -859,10 +859,10 @@ public class IntegrationTest extends PersistenceTest {
 		
 		facade.addFollow(userToken1, NEW_USERNAME_2);
 		
-		List<UserSummary> followsUser1 = facade.getFollowedUsers(userToken1);
-		List<UserSummary> followsUser2 = facade.getFollowedUsers(userToken2);
+		List<UserView> followsUser1 = facade.getFollowedUsers(userToken1);
+		List<UserView> followsUser2 = facade.getFollowedUsers(userToken2);
 		
-		UserSummary user2Summary = new UserSummary(NEW_USERNAME_2, NEW_USER_PROFILE_DESCRIPTION_2, 
+		UserView user2Summary = new UserView(NEW_USERNAME_2, NEW_USER_PROFILE_DESCRIPTION_2, 
 				SystemConstants.DEFAULT_PROFILE_PIC_ID, SystemConstants.DEFAULT_PROFILE_PIC_PATH);
 				
 		assertEquals(1, followsUser1.size());
@@ -882,8 +882,8 @@ public class IntegrationTest extends PersistenceTest {
 		String userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);	
 		String userToken2 = loginAsUser(NEW_USERNAME_2, NEW_USER_PASSWORD_2);
 		
-		List<UserSummary> recommendationsUser1 = facade.getUserRecommendations(userToken1);
-		List<UserSummary> recommendationsUser2 = facade.getUserRecommendations(userToken2);
+		List<UserView> recommendationsUser1 = facade.getUserRecommendations(userToken1);
+		List<UserView> recommendationsUser2 = facade.getUserRecommendations(userToken2);
 		
 		assertEquals(1, recommendationsUser1.size());
 		assertEquals(NEW_USERNAME_2, recommendationsUser1.get(0).getUsername());
@@ -897,8 +897,8 @@ public class IntegrationTest extends PersistenceTest {
 		
 		facade.addFriendshipAdmin(adminToken, user1.getUserId(), user2.getUserId());
 		
-		List<UserSummary> recommendationsUser1AfterFriendship = facade.getUserRecommendations(userToken1);
-		List<UserSummary> recommendationsUser2AfterFriendship = facade.getUserRecommendations(userToken2);
+		List<UserView> recommendationsUser1AfterFriendship = facade.getUserRecommendations(userToken1);
+		List<UserView> recommendationsUser2AfterFriendship = facade.getUserRecommendations(userToken2);
 		
 		assertTrue(recommendationsUser1AfterFriendship.isEmpty());
 		assertTrue(recommendationsUser2AfterFriendship.isEmpty());
@@ -915,8 +915,8 @@ public class IntegrationTest extends PersistenceTest {
 		String userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);	
 		String userToken2 = loginAsUser(NEW_USERNAME_2, NEW_USER_PASSWORD_2);
 		
-		List<UserSummary> recommendationsUser1 = facade.getFollowRecommendations(userToken1);
-		List<UserSummary> recommendationsUser2 = facade.getFollowRecommendations(userToken2);
+		List<UserView> recommendationsUser1 = facade.getFollowRecommendations(userToken1);
+		List<UserView> recommendationsUser2 = facade.getFollowRecommendations(userToken2);
 		
 		assertEquals(1, recommendationsUser1.size());
 		assertEquals(NEW_USERNAME_2, recommendationsUser1.get(0).getUsername());
@@ -930,8 +930,8 @@ public class IntegrationTest extends PersistenceTest {
 		
 		facade.addFollowAdmin(adminToken, user1.getUserId(), user2.getUserId());
 		
-		List<UserSummary> recommendationsUser1AfterFollow = facade.getFollowRecommendations(userToken1);
-		List<UserSummary> recommendationsUser2AfterFollow = facade.getFollowRecommendations(userToken2);
+		List<UserView> recommendationsUser1AfterFollow = facade.getFollowRecommendations(userToken1);
+		List<UserView> recommendationsUser2AfterFollow = facade.getFollowRecommendations(userToken2);
 		
 		assertTrue(recommendationsUser1AfterFollow.isEmpty());
 		
@@ -976,8 +976,8 @@ public class IntegrationTest extends PersistenceTest {
 		String userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);	
 		String userToken2 = loginAsUser(NEW_USERNAME_2, NEW_USER_PASSWORD_2);
 		
-		UserSummary self1 = facade.getSelf(userToken1);
-		UserSummary self2 = facade.getSelf(userToken2);
+		UserView self1 = facade.getSelf(userToken1);
+		UserView self2 = facade.getSelf(userToken2);
 		
 		assertEquals(NEW_USERNAME_1, self1.getUsername());
 		assertEquals(NEW_USER_PROFILE_DESCRIPTION_1, self1.getProfileDescription());
@@ -1033,14 +1033,14 @@ public class IntegrationTest extends PersistenceTest {
 		
 		facade.addFollowAdmin(adminToken, user1.getUserId(), user2.getUserId());
 		
-		List<UserSummary> followsBefore = facade.getFollowedUsers(userToken1);
+		List<UserView> followsBefore = facade.getFollowedUsers(userToken1);
 		
 		assertEquals(1, followsBefore.size());
 		assertEquals(NEW_USERNAME_2, followsBefore.get(0).getUsername());
 		
 		facade.unfollow(userToken1, NEW_USERNAME_2);
 		
-		List<UserSummary> followsAfter = facade.getFollowedUsers(userToken1);
+		List<UserView> followsAfter = facade.getFollowedUsers(userToken1);
 		
 		assertTrue(followsAfter.isEmpty());
 	}
@@ -1061,14 +1061,14 @@ public class IntegrationTest extends PersistenceTest {
 		
 		facade.addFriendshipAdmin(adminToken, user1.getUserId(), user2.getUserId());
 		
-		List<UserSummary> friendsBefore = facade.getSelfFriends(userToken1);
+		List<UserView> friendsBefore = facade.getSelfFriends(userToken1);
 		
 		assertEquals(1, friendsBefore.size());
 		assertEquals(NEW_USERNAME_2, friendsBefore.get(0).getUsername());
 		
 		facade.unfriend(userToken1, NEW_USERNAME_2);
 		
-		List<UserSummary> friendsAfter = facade.getSelfFriends(userToken1);
+		List<UserView> friendsAfter = facade.getSelfFriends(userToken1);
 		
 		assertTrue(friendsAfter.isEmpty());		
 	}
@@ -1084,7 +1084,7 @@ public class IntegrationTest extends PersistenceTest {
 		
 		String userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
 		
-		UserSummary userView = facade.getSelf(userToken1);
+		UserView userView = facade.getSelf(userToken1);
 		assertEquals(SystemConstants.DEFAULT_PROFILE_PIC_ID, userView.getProfilePicId());
 		
 		byte[] profilePicData = new byte[] {1, 1, 1};
@@ -1113,7 +1113,7 @@ public class IntegrationTest extends PersistenceTest {
 		
 		facade.updateProfile(userToken1, UPDATED_USER_PROFILE_DESCRIPTION_1, new byte[] {1, 1, 1});
 		
-		UserSummary userAfterUpdate = facade.getSelf(userToken1);
+		UserView userAfterUpdate = facade.getSelf(userToken1);
 		
 		assertEquals(UPDATED_USER_PROFILE_DESCRIPTION_1, userAfterUpdate.getProfileDescription());
 

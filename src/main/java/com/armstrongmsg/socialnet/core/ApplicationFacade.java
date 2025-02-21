@@ -27,7 +27,7 @@ import com.armstrongmsg.socialnet.model.FriendshipRequest;
 import com.armstrongmsg.socialnet.model.Post;
 import com.armstrongmsg.socialnet.model.PostVisibility;
 import com.armstrongmsg.socialnet.model.User;
-import com.armstrongmsg.socialnet.model.UserSummary;
+import com.armstrongmsg.socialnet.model.UserView;
 import com.armstrongmsg.socialnet.storage.MediaStorageFacade;
 import com.armstrongmsg.socialnet.storage.StorageFacade;
 import com.armstrongmsg.socialnet.storage.cache.Cache;
@@ -173,7 +173,7 @@ public class ApplicationFacade {
 		}
 	}
 
-	public UserSummary getSelf(String userToken) throws AuthenticationException, InternalErrorException {
+	public UserView getSelf(String userToken) throws AuthenticationException, InternalErrorException {
 		logger.debug(Messages.Logging.RECEIVED_GET_SELF_REQUEST, userToken);
 		
 		try {
@@ -341,7 +341,7 @@ public class ApplicationFacade {
 		}
 	}
 	
-	public List<UserSummary> getSelfFriends(String userToken) throws AuthenticationException, InternalErrorException {
+	public List<UserView> getSelfFriends(String userToken) throws AuthenticationException, InternalErrorException {
 		logger.debug(Messages.Logging.RECEIVED_GET_SELF_FRIENDS_REQUEST, userToken);
 		
 		try {
@@ -422,7 +422,7 @@ public class ApplicationFacade {
 		}
 	}
 
-	public List<UserSummary> getFollowedUsers(String userToken) throws AuthenticationException, InternalErrorException {
+	public List<UserView> getFollowedUsers(String userToken) throws AuthenticationException, InternalErrorException {
 		logger.debug(Messages.Logging.RECEIVED_GET_FOLLOWED_USERS_REQUEST, userToken);
 		
 		try {
@@ -436,7 +436,7 @@ public class ApplicationFacade {
 		}
 	}
 
-	public List<UserSummary> getUserRecommendations(String userToken) 
+	public List<UserView> getUserRecommendations(String userToken) 
 			throws AuthenticationException, InternalErrorException {
 		logger.debug(Messages.Logging.RECEIVED_GET_USER_RECOMMENDATIONS_REQUEST, userToken);
 		
@@ -451,7 +451,7 @@ public class ApplicationFacade {
 		}
 	}
 
-	public List<UserSummary> getFollowRecommendations(String userToken) throws AuthenticationException, InternalErrorException {
+	public List<UserView> getFollowRecommendations(String userToken) throws AuthenticationException, InternalErrorException {
 		logger.debug(Messages.Logging.RECEIVED_GET_FOLLOW_RECOMMENDATIONS_REQUEST, userToken);
 
 		try {

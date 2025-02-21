@@ -16,7 +16,7 @@ import com.armstrongmsg.socialnet.exceptions.UserNotFoundException;
 import com.armstrongmsg.socialnet.view.jsf.NavigationController;
 import com.armstrongmsg.socialnet.view.jsf.Session;
 import com.armstrongmsg.socialnet.view.jsf.model.JsfConnector;
-import com.armstrongmsg.socialnet.view.jsf.model.UserSummary;
+import com.armstrongmsg.socialnet.view.jsf.model.UserView;
 
 // TODO refactor
 @ManagedBean(name = "contextBean", eager = true)
@@ -87,8 +87,8 @@ public class ContextBean {
 		this.session = session;
 	}
 	
-	public UserSummary getViewUser() {
-		UserSummary currentViewUser = this.session.getCurrentViewUser();
+	public UserView getViewUser() {
+		UserView currentViewUser = this.session.getCurrentViewUser();
 		
 		if (currentViewUser == null) {
 			try {
@@ -106,7 +106,7 @@ public class ContextBean {
 		return currentViewUser;
 	}
 
-	public void setViewUser(UserSummary viewUser) {
+	public void setViewUser(UserView viewUser) {
 		this.session.setCurrentViewUser(viewUser);
 	}
 	

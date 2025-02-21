@@ -26,7 +26,7 @@ import com.armstrongmsg.socialnet.exceptions.UserNotFoundException;
 import com.armstrongmsg.socialnet.model.FriendshipRequest;
 import com.armstrongmsg.socialnet.util.ImageUtils;
 import com.armstrongmsg.socialnet.view.jsf.model.JsfConnector;
-import com.armstrongmsg.socialnet.view.jsf.model.UserSummary;
+import com.armstrongmsg.socialnet.view.jsf.model.UserView;
 
 // TODO refactor
 @ManagedBean(name = "profileBean", eager = true)
@@ -35,7 +35,7 @@ public class ProfileBean {
 	private static final String IMAGE_TYPE = "image/jpeg";
 	private static final int PIC_MAX_WIDTH = 300;
 	private static final int PIC_MAX_HEIGHT = 300;
-	private UserSummary loggedUserSummary;
+	private UserView loggedUserSummary;
 	private UploadedFile profilePic;
 	private ApplicationFacade facade;
 	private JsfExceptionHandler exceptionHandler;
@@ -149,7 +149,7 @@ public class ProfileBean {
 	public boolean getIsFollowed() {
 		try {
 			String loggedUserToken = contextBean.getCurrentSession().getUserToken();
-			List<UserSummary> followedUsers = new JsfConnector(facade, loggedUserToken).getViewUserSummaries(
+			List<UserView> followedUsers = new JsfConnector(facade, loggedUserToken).getViewUserSummaries(
 					facade.getFollowedUsers(loggedUserToken));
 			return followedUsers.contains(contextBean.getCurrentSession().getCurrentViewUser());
 		} catch (AuthenticationException e) {
@@ -164,7 +164,7 @@ public class ProfileBean {
 	public boolean getIsFriend() {
 		try {
 			String loggedUserToken = contextBean.getCurrentSession().getUserToken();
-			List<UserSummary> friends = new JsfConnector(facade, loggedUserToken).getViewUserSummaries(
+			List<UserView> friends = new JsfConnector(facade, loggedUserToken).getViewUserSummaries(
 					facade.getSelfFriends(loggedUserToken));
 			return friends.contains(contextBean.getCurrentSession().getCurrentViewUser());
 		} catch (AuthenticationException e) {
@@ -193,7 +193,7 @@ public class ProfileBean {
 	
 	// TODO to be removed
 	public StreamedContent getUserPic() throws IOException {
-		UserSummary viewUser = this.contextBean.getViewUser();
+		UserView viewUser = this.contextBean.getViewUser();
 		String loggedUserToken = contextBean.getCurrentSession().getUserToken();
 		try {
 			byte[] picData = this.facade.getUserPic(loggedUserToken, viewUser.getUsername());

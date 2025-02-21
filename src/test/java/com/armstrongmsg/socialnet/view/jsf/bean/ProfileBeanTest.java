@@ -19,7 +19,7 @@ import com.armstrongmsg.socialnet.exceptions.InternalErrorException;
 import com.armstrongmsg.socialnet.exceptions.MediaNotFoundException;
 import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
 import com.armstrongmsg.socialnet.model.Picture;
-import com.armstrongmsg.socialnet.view.jsf.model.UserSummary;
+import com.armstrongmsg.socialnet.view.jsf.model.UserView;
 
 public class ProfileBeanTest {
 	private static final String REGULAR_USERNAME = "username";
@@ -57,12 +57,12 @@ public class ProfileBeanTest {
 		
 		Mockito.when(facade.login(credentials)).thenReturn(USER_TOKEN);
 		Mockito.when(facade.getSelf(USER_TOKEN)).thenReturn(
-				new com.armstrongmsg.socialnet.model.UserSummary(REGULAR_USERNAME, REGULAR_PROFILE_DESCRIPTION, profilePicture));
+				new com.armstrongmsg.socialnet.model.UserView(REGULAR_USERNAME, REGULAR_PROFILE_DESCRIPTION, profilePicture));
 		
 		contextBean.setUsername(REGULAR_USERNAME);
 		contextBean.setPassword(PASSWORD);
 		contextBean.login();
-		contextBean.setViewUser(new UserSummary(REGULAR_USERNAME, REGULAR_PROFILE_DESCRIPTION, null));
+		contextBean.setViewUser(new UserView(REGULAR_USERNAME, REGULAR_PROFILE_DESCRIPTION, null));
 		
 		bean = new ProfileBean(contextBean, applicationBean);
 		
@@ -76,13 +76,13 @@ public class ProfileBeanTest {
 		
 		Mockito.when(facade.login(credentials)).thenReturn(USER_TOKEN);
 		Mockito.when(facade.getSelf(USER_TOKEN)).thenReturn(
-				new com.armstrongmsg.socialnet.model.UserSummary(REGULAR_USERNAME, REGULAR_PROFILE_DESCRIPTION, profilePicture));
+				new com.armstrongmsg.socialnet.model.UserView(REGULAR_USERNAME, REGULAR_PROFILE_DESCRIPTION, profilePicture));
 		Mockito.when(facade.isFriend(USER_TOKEN, REGULAR_USERNAME_2)).thenReturn(false);
 		
 		contextBean.setUsername(REGULAR_USERNAME);
 		contextBean.setPassword(PASSWORD);
 		contextBean.login();
-		contextBean.setViewUser(new UserSummary(REGULAR_USERNAME_2, REGULAR_PROFILE_DESCRIPTION_2, null));
+		contextBean.setViewUser(new UserView(REGULAR_USERNAME_2, REGULAR_PROFILE_DESCRIPTION_2, null));
 		
 		bean = new ProfileBean(contextBean, applicationBean);
 		
@@ -96,13 +96,13 @@ public class ProfileBeanTest {
 		
 		Mockito.when(facade.login(credentials)).thenReturn(USER_TOKEN);
 		Mockito.when(facade.getSelf(USER_TOKEN)).thenReturn(
-				new com.armstrongmsg.socialnet.model.UserSummary(REGULAR_USERNAME, REGULAR_PROFILE_DESCRIPTION, profilePicture));
+				new com.armstrongmsg.socialnet.model.UserView(REGULAR_USERNAME, REGULAR_PROFILE_DESCRIPTION, profilePicture));
 		Mockito.when(facade.isFriend(USER_TOKEN, REGULAR_USERNAME_2)).thenReturn(true);
 		
 		contextBean.setUsername(REGULAR_USERNAME);
 		contextBean.setPassword(PASSWORD);
 		contextBean.login();
-		contextBean.setViewUser(new UserSummary(REGULAR_USERNAME_2, REGULAR_PROFILE_DESCRIPTION_2, null));
+		contextBean.setViewUser(new UserView(REGULAR_USERNAME_2, REGULAR_PROFILE_DESCRIPTION_2, null));
 		
 		bean = new ProfileBean(contextBean, applicationBean);
 		
@@ -116,12 +116,12 @@ public class ProfileBeanTest {
 		
 		Mockito.when(facade.login(credentials)).thenReturn(USER_TOKEN);
 		Mockito.when(facade.getSelf(USER_TOKEN)).thenReturn(
-				new com.armstrongmsg.socialnet.model.UserSummary(REGULAR_USERNAME, REGULAR_PROFILE_DESCRIPTION, profilePicture));
+				new com.armstrongmsg.socialnet.model.UserView(REGULAR_USERNAME, REGULAR_PROFILE_DESCRIPTION, profilePicture));
 		
 		contextBean.setUsername(REGULAR_USERNAME);
 		contextBean.setPassword(PASSWORD);
 		contextBean.login();
-		contextBean.setViewUser(new UserSummary(REGULAR_USERNAME, REGULAR_PROFILE_DESCRIPTION, null));
+		contextBean.setViewUser(new UserView(REGULAR_USERNAME, REGULAR_PROFILE_DESCRIPTION, null));
 		
 		bean = new ProfileBean(contextBean, applicationBean);
 		
@@ -135,13 +135,13 @@ public class ProfileBeanTest {
 		
 		Mockito.when(facade.login(credentials)).thenReturn(USER_TOKEN);
 		Mockito.when(facade.getSelf(USER_TOKEN)).thenReturn(
-				new com.armstrongmsg.socialnet.model.UserSummary(REGULAR_USERNAME, REGULAR_PROFILE_DESCRIPTION, profilePicture));
+				new com.armstrongmsg.socialnet.model.UserView(REGULAR_USERNAME, REGULAR_PROFILE_DESCRIPTION, profilePicture));
 		Mockito.when(facade.follows(USER_TOKEN, REGULAR_USERNAME_2)).thenReturn(false);
 		
 		contextBean.setUsername(REGULAR_USERNAME);
 		contextBean.setPassword(PASSWORD);
 		contextBean.login();
-		contextBean.setViewUser(new UserSummary(REGULAR_USERNAME_2, REGULAR_PROFILE_DESCRIPTION_2, null));
+		contextBean.setViewUser(new UserView(REGULAR_USERNAME_2, REGULAR_PROFILE_DESCRIPTION_2, null));
 		
 		bean = new ProfileBean(contextBean, applicationBean);
 		
@@ -155,13 +155,13 @@ public class ProfileBeanTest {
 		
 		Mockito.when(facade.login(credentials)).thenReturn(USER_TOKEN);
 		Mockito.when(facade.getSelf(USER_TOKEN)).thenReturn(
-				new com.armstrongmsg.socialnet.model.UserSummary(REGULAR_USERNAME, REGULAR_PROFILE_DESCRIPTION, profilePicture));
+				new com.armstrongmsg.socialnet.model.UserView(REGULAR_USERNAME, REGULAR_PROFILE_DESCRIPTION, profilePicture));
 		Mockito.when(facade.follows(USER_TOKEN, REGULAR_USERNAME_2)).thenReturn(true);
 		
 		contextBean.setUsername(REGULAR_USERNAME);
 		contextBean.setPassword(PASSWORD);
 		contextBean.login();
-		contextBean.setViewUser(new UserSummary(REGULAR_USERNAME_2, REGULAR_PROFILE_DESCRIPTION_2, null));
+		contextBean.setViewUser(new UserView(REGULAR_USERNAME_2, REGULAR_PROFILE_DESCRIPTION_2, null));
 		
 		bean = new ProfileBean(contextBean, applicationBean);
 		

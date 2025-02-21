@@ -43,7 +43,7 @@ import com.armstrongmsg.socialnet.model.Post;
 import com.armstrongmsg.socialnet.model.PostVisibility;
 import com.armstrongmsg.socialnet.model.Profile;
 import com.armstrongmsg.socialnet.model.User;
-import com.armstrongmsg.socialnet.model.UserSummary;
+import com.armstrongmsg.socialnet.model.UserView;
 import com.armstrongmsg.socialnet.storage.MediaStorageFacade;
 import com.armstrongmsg.socialnet.storage.StorageFacade;
 import com.armstrongmsg.socialnet.util.ClassFactory;
@@ -346,7 +346,7 @@ public class Network {
 		return friends;
 	}
 	
-	public List<UserSummary> getSelfFriends(String userToken) throws AuthenticationException, InternalErrorException {
+	public List<UserView> getSelfFriends(String userToken) throws AuthenticationException, InternalErrorException {
 		User requester = this.authenticationPlugin.getUser(userToken);
 		try {
 			return this.doGetSelfFriends(requester);
@@ -355,12 +355,12 @@ public class Network {
 		}
 	}
 	
-	private List<UserSummary> doGetSelfFriends(User requester) throws InternalErrorException, UnauthorizedOperationException {
+	private List<UserView> doGetSelfFriends(User requester) throws InternalErrorException, UnauthorizedOperationException {
 		List<Friendship> userFriendships = this.storageFacade.getFriendshipsByUserId(requester.getUserId());
-		List<UserSummary> friends = new ArrayList<UserSummary>();
+		List<UserView> friends = new ArrayList<UserView>();
 		
 		for (Friendship friendship : userFriendships) {
-			UserSummary summary = null;
+			UserView summary = null;
 			
 			if (friendship.getFriend1().equals(requester)) {				
 				summary = getUserSummary(requester, friendship.getFriend2());
@@ -376,10 +376,10 @@ public class Network {
 		return friends;
 	}
 	
-	private UserSummary getUserSummary(User requester, User user) throws InternalErrorException, UnauthorizedOperationException {
+	private UserView getUserSummary(User requester, User user) throws InternalErrorException, UnauthorizedOperationException {
 		try {
 			String pictureUri = getProfilePicPath(requester, user);
-			return new UserSummary(user.getUsername(), user.getProfile().getDescription(), 
+			return new UserView(user.getUsername(), user.getProfile().getDescription(), 
 					user.getProfile().getProfilePicId(), pictureUri);
 		} catch (MediaNotFoundException e) {
 			throw new InternalErrorException(e);
@@ -437,7 +437,7 @@ public class Network {
 		return followedUsers;
 	}
 
-	public List<UserSummary> getFollowedUsers(String userToken) throws AuthenticationException, InternalErrorException {
+	public List<UserView> getFollowedUsers(String userToken) throws AuthenticationException, InternalErrorException {
 		User requester = this.authenticationPlugin.getUser(userToken);
 		try {
 			return doGetFollowedUsers(requester);
@@ -446,13 +446,13 @@ public class Network {
 		}
 	}
 	
-	private List<UserSummary> doGetFollowedUsers(User requester) throws InternalErrorException, MediaNotFoundException, UnauthorizedOperationException {
+	private List<UserView> doGetFollowedUsers(User requester) throws InternalErrorException, MediaNotFoundException, UnauthorizedOperationException {
 		List<Follow> userFollows = this.storageFacade.getFollowsByUserId(requester.getUserId());
-		List<UserSummary> followedUsers = new ArrayList<UserSummary>();
+		List<UserView> followedUsers = new ArrayList<UserView>();
 		
 		for (Follow follow : userFollows) {
 			if (follow.getFollower().equals(requester)) {
-				UserSummary summary = getUserSummary(requester, follow.getFollowed());
+				UserView summary = getUserSummary(requester, follow.getFollowed());
 				followedUsers.add(summary);
 			}
 		}
@@ -573,21 +573,21 @@ public class Network {
 		}
 	}
 
-	public List<UserSummary> getUserRecommendations(String token) throws AuthenticationException, InternalErrorException {
+	public List<UserView> getUserRecommendations(String token) throws AuthenticationException, InternalErrorException {
 		User requester = this.authenticationPlugin.getUser(token);
 		
-		List<UserSummary> friends;
+		List<UserView> friends;
 		try {
 			friends = doGetSelfFriends(requester);
 		} catch (UnauthorizedOperationException e) {
 			throw new InternalErrorException(e);
 		}
 		
-		List<UserSummary> userSummaries = new ArrayList<UserSummary>();
+		List<UserView> userSummaries = new ArrayList<UserView>();
 		
 		for (User user : this.storageFacade.getAllUsers()) {
 			try {
-				UserSummary summary = getUserSummary(requester, user);
+				UserView summary = getUserSummary(requester, user);
 				if (!user.equals(requester) && !friends.contains(summary)
 						&& !hasSentFriendshipRequestTo(requester, user.getUsername())
 						&& !hasReceivedFriendshipRequestFrom(requester, user.getUsername())) {
@@ -601,20 +601,20 @@ public class Network {
 		return userSummaries;
 	}
 
-	public List<UserSummary> getFollowRecommendations(String token) throws AuthenticationException, InternalErrorException {
+	public List<UserView> getFollowRecommendations(String token) throws AuthenticationException, InternalErrorException {
 		User requester = this.authenticationPlugin.getUser(token);
 		
-		List<UserSummary> follows;
+		List<UserView> follows;
 		try {
 			follows = this.doGetFollowedUsers(requester);
 		} catch (MediaNotFoundException | UnauthorizedOperationException e) {
 			throw new InternalErrorException(e);
 		}
 		
-		List<UserSummary> userSummaries = new ArrayList<UserSummary>();
+		List<UserView> userSummaries = new ArrayList<UserView>();
 		
 		for (User user : this.storageFacade.getAllUsers()) {
-			UserSummary summary;
+			UserView summary;
 			try {
 				summary = getUserSummary(requester, user);
 			} catch (UnauthorizedOperationException e) {
@@ -639,9 +639,9 @@ public class Network {
 	}
 	
 	private boolean doIsFriend(User requester, String username) throws InternalErrorException, UnauthorizedOperationException {
-		List<UserSummary> friends = doGetSelfFriends(requester);
+		List<UserView> friends = doGetSelfFriends(requester);
 		
-		for (UserSummary friend : friends) {
+		for (UserView friend : friends) {
 			if (friend.getUsername().equals(username)) {
 				return true;
 			}
@@ -650,9 +650,9 @@ public class Network {
 		return false;
 	}
 	
-	public UserSummary getSelf(String userToken) throws AuthenticationException, InternalErrorException {
+	public UserView getSelf(String userToken) throws AuthenticationException, InternalErrorException {
 		User requester = this.authenticationPlugin.getUser(userToken);
-		UserSummary summary;
+		UserView summary;
 		try {
 			summary = getUserSummary(requester, requester);
 		} catch (UnauthorizedOperationException e) {
@@ -663,14 +663,14 @@ public class Network {
 
 	public boolean follows(String userToken, String username) throws AuthenticationException, InternalErrorException {
 		User requester = this.authenticationPlugin.getUser(userToken);
-		List<UserSummary> follows;
+		List<UserView> follows;
 		try {
 			follows = doGetFollowedUsers(requester);
 		} catch (MediaNotFoundException | UnauthorizedOperationException e) {
 			throw new InternalErrorException(e);
 		}
 		
-		for (UserSummary summary : follows) {
+		for (UserView summary : follows) {
 			if (summary.getUsername().equals(username)) {
 				return true;
 			}

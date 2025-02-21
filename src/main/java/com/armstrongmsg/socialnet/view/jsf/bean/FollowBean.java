@@ -17,7 +17,7 @@ import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
 import com.armstrongmsg.socialnet.exceptions.UserNotFoundException;
 import com.armstrongmsg.socialnet.view.jsf.model.JsfConnector;
 import com.armstrongmsg.socialnet.view.jsf.model.User;
-import com.armstrongmsg.socialnet.view.jsf.model.UserSummary;
+import com.armstrongmsg.socialnet.view.jsf.model.UserView;
 
 // TODO refactor
 @ManagedBean(name = "followBean", eager = true)
@@ -26,8 +26,8 @@ public class FollowBean {
 	private User follower;
 	private User followed;
 	private String username;
-	private List<UserSummary> follows;
-	private List<UserSummary> followRecommendations;
+	private List<UserView> follows;
+	private List<UserView> followRecommendations;
 	private ApplicationFacade facade;
 	private JsfExceptionHandler exceptionHandler;
 	
@@ -100,7 +100,7 @@ public class FollowBean {
 		}
 	}
 	
-	public List<UserSummary> getSelfFollows() {
+	public List<UserView> getSelfFollows() {
 		try {
 			if (follows == null) {
 				follows = new JsfConnector(facade, contextBean.getCurrentSession().getUserToken()).getViewUserSummaries(
@@ -112,10 +112,10 @@ public class FollowBean {
 			this.exceptionHandler.handle(e);
 		}
 		
-		return new ArrayList<UserSummary>();
+		return new ArrayList<UserView>();
 	}
 	
-	public List<UserSummary> getFollowRecommendations() {
+	public List<UserView> getFollowRecommendations() {
 		try {
 			if (followRecommendations == null) {
 				String token = getContextBean().getCurrentSession().getUserToken();
@@ -127,7 +127,7 @@ public class FollowBean {
 			this.exceptionHandler.handle(e);
 		}
 		
-		return new ArrayList<UserSummary>();
+		return new ArrayList<UserView>();
 	}
 	
 	public void unfollow() {

@@ -19,7 +19,7 @@ import com.armstrongmsg.socialnet.exceptions.UserNotFoundException;
 import com.armstrongmsg.socialnet.model.FriendshipRequest;
 import com.armstrongmsg.socialnet.view.jsf.model.JsfConnector;
 import com.armstrongmsg.socialnet.view.jsf.model.User;
-import com.armstrongmsg.socialnet.view.jsf.model.UserSummary;
+import com.armstrongmsg.socialnet.view.jsf.model.UserView;
 
 // TODO refactor
 @ManagedBean(name = "friendshipBean", eager = true)
@@ -28,8 +28,8 @@ public class FriendshipBean {
 	private User user1;
 	private User user2;
 	private String username;
-	private List<UserSummary> friends;
-	private List<UserSummary> friendRecommendations;
+	private List<UserView> friends;
+	private List<UserView> friendRecommendations;
 	private ApplicationFacade facade;
 	private JsfExceptionHandler exceptionHandler;
 	
@@ -169,7 +169,7 @@ public class FriendshipBean {
 		}
 	}
 	
-	public List<UserSummary> getSelfFriends() {
+	public List<UserView> getSelfFriends() {
 		try {
 			if (friends == null) {
 				friends = new JsfConnector(facade, contextBean.getCurrentSession().getUserToken()).getViewUserSummaries(
@@ -181,10 +181,10 @@ public class FriendshipBean {
 			this.exceptionHandler.handle(e);
 		}
 		
-		return new ArrayList<UserSummary>();
+		return new ArrayList<UserView>();
 	}
 	
-	public List<UserSummary> getFriendRecommendations() {
+	public List<UserView> getFriendRecommendations() {
 		try {
 			if (friendRecommendations == null) {
 				String token = contextBean.getCurrentSession().getUserToken();
@@ -195,7 +195,7 @@ public class FriendshipBean {
 			this.exceptionHandler.handle(e);
 		}
 		
-		return new ArrayList<UserSummary>();
+		return new ArrayList<UserView>();
 	}
 	
 	public void unfriend() {
