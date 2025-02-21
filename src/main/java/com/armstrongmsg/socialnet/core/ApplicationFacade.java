@@ -369,7 +369,7 @@ public class ApplicationFacade {
 		}
 	}
 	
-	public List<Post> getFeedPosts(String token) throws AuthenticationException, UnauthorizedOperationException, UserNotFoundException, InternalErrorException {
+	public List<Post> getFeedPosts(String token) throws AuthenticationException, InternalErrorException {
 		logger.debug(Messages.Logging.RECEIVED_GET_FEED_POSTS_REQUEST, token);
 
 		try {
@@ -377,11 +377,8 @@ public class ApplicationFacade {
 		} catch (AuthenticationException e) {
 			logger.debug(Messages.Logging.AUTHENTICATION_EXCEPTION, e.getMessage());
 			throw e;
-		} catch (UnauthorizedOperationException e) {
-			logger.debug(Messages.Logging.AUTHORIZATION_EXCEPTION, e.getMessage());
-			throw e;
-		} catch (UserNotFoundException e) {
-			logger.debug(Messages.Logging.USER_NOT_FOUND_EXCEPTION, e.getMessage());
+		} catch (InternalErrorException e) {
+			logger.debug(Messages.Logging.INTERNAL_ERROR_EXCEPTION, e.getMessage());
 			throw e;
 		}
 	}

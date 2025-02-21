@@ -495,15 +495,18 @@ public class Network {
 		return followedUsersPublicPosts;
 	}
 	
-	public List<Post> getFeedPosts(String token) throws AuthenticationException, UnauthorizedOperationException, UserNotFoundException, InternalErrorException {
+	public List<Post> getFeedPosts(String token) throws AuthenticationException, InternalErrorException {
 		User requester = this.authenticationPlugin.getUser(token);
-		this.authorizationPlugin.authorize(requester, new Operation(OperationType.GET_FEED_POSTS));
-		List<Post> friendsPosts = doGetFriendsPosts(requester);
-		List<Post> followedUsersPosts = doGetFollowedPosts(requester);
-		List<Post> feedCandidatePosts = new ArrayList<Post>();
-		feedCandidatePosts.addAll(friendsPosts);
-		feedCandidatePosts.addAll(followedUsersPosts);
-		return this.feedPolicy.filter(feedCandidatePosts);
+		try {
+			List<Post> friendsPosts = doGetFriendsPosts(requester);
+			List<Post> followedUsersPosts = doGetFollowedPosts(requester);
+			List<Post> feedCandidatePosts = new ArrayList<Post>();
+			feedCandidatePosts.addAll(friendsPosts);
+			feedCandidatePosts.addAll(followedUsersPosts);
+			return this.feedPolicy.filter(feedCandidatePosts);
+		} catch (UserNotFoundException e) {
+			throw new InternalErrorException(e);
+		}
 	}
 
 	public List<Post> getUserPosts(String token, String username) throws AuthenticationException, UnauthorizedOperationException, InternalErrorException, UserNotFoundException {

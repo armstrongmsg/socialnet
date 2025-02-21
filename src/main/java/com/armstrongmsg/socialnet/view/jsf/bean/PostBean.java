@@ -198,11 +198,7 @@ public class PostBean {
 			try {
 				feedPosts = new JsfConnector(facade, contextBean.getCurrentSession().getUserToken()).getViewPosts(
 						facade.getFeedPosts(contextBean.getCurrentSession().getUserToken()));
-			} catch (UnauthorizedOperationException e) {
-				this.exceptionHandler.handle(e);
 			} catch (AuthenticationException e) {
-				this.exceptionHandler.handle(e);
-			} catch (UserNotFoundException e) {
 				this.exceptionHandler.handle(e);
 			} catch (InternalErrorException e) {
 				this.exceptionHandler.handle(e);
