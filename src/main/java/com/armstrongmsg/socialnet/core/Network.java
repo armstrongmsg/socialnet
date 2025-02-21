@@ -406,12 +406,15 @@ public class Network {
 	}
 	
 	public void addFollow(String userToken, String followedUsername) 
-			throws AuthenticationException, UnauthorizedOperationException, UserNotFoundException, FollowAlreadyExistsException, InternalErrorException {
+			throws AuthenticationException, UserNotFoundException, InternalErrorException {
 		User requester = this.authenticationPlugin.getUser(userToken);
-		this.authorizationPlugin.authorize(requester, new Operation(OperationType.ADD_FOLLOW));
-		
 		User followed = findUserByUsername(followedUsername);
-		this.storageFacade.saveFollow(new Follow(requester, followed));
+		try {
+			this.storageFacade.saveFollow(new Follow(requester, followed));
+		} catch (FollowAlreadyExistsException e) {
+			// TODO should we throw this FollowAlreadyExistsException?
+			throw new InternalErrorException(e);
+		}
 	}
 	
 	public List<User> getFollowedUsers(String userToken, String userId) throws UnauthorizedOperationException, AuthenticationException, UserNotFoundException, InternalErrorException {
