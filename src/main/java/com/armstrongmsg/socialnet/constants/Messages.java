@@ -26,6 +26,7 @@ public class Messages {
 		public static final String NO_CACHE_CONFIGURATION = "No cache configuration. Using default.";
 		public static final String NO_DATABASE_MANAGER_CONFIGURATION = "No database manager configuration. Using default.";
 		public static final String NO_MEDIA_REPOSITORY_CONFIGURATION = "No media repository configuration. Using default.";
+		public static final String POST_NOT_FOUND_EXCEPTION = "Post not found exception. Message:{}.";
 		public static final String RECEIVED_LOGIN_REQUEST = "Received login request.";
 		public static final String RECEIVED_ACCEPT_FRIENDSHIP_REQUEST = "Received accept friendship request. Token:{}, username:{}.";
 		public static final String RECEIVED_ADD_FOLLOW_REQUEST = "Received Add follow request. Token:{}, followed:{}.";

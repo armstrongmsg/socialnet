@@ -15,6 +15,7 @@ import com.armstrongmsg.socialnet.core.ApplicationFacade;
 import com.armstrongmsg.socialnet.exceptions.AuthenticationException;
 import com.armstrongmsg.socialnet.exceptions.InternalErrorException;
 import com.armstrongmsg.socialnet.exceptions.InvalidParameterException;
+import com.armstrongmsg.socialnet.exceptions.PostNotFoundException;
 import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
 import com.armstrongmsg.socialnet.exceptions.UserNotFoundException;
 import com.armstrongmsg.socialnet.model.PostVisibility;
@@ -246,7 +247,7 @@ public class PostBean {
 		return userPosts;
 	}
 	
-	public void deletePost() throws UserNotFoundException {
+	public void deletePost() {
 		try {
 			facade.deletePost(contextBean.getCurrentSession().getUserToken(), post.getId());
 			userPosts = new JsfConnector(facade, contextBean.getCurrentSession().getUserToken()).getViewPosts(facade.getSelfPosts(
@@ -256,6 +257,8 @@ public class PostBean {
 		} catch (UnauthorizedOperationException e) {
 			this.exceptionHandler.handle(e);
 		} catch (InternalErrorException e) {
+			this.exceptionHandler.handle(e);
+		} catch (PostNotFoundException e) {
 			this.exceptionHandler.handle(e);
 		}
 	}

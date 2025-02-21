@@ -30,6 +30,7 @@ import com.armstrongmsg.socialnet.exceptions.FriendshipRequestNotFound;
 import com.armstrongmsg.socialnet.exceptions.InternalErrorException;
 import com.armstrongmsg.socialnet.exceptions.InvalidParameterException;
 import com.armstrongmsg.socialnet.exceptions.MediaNotFoundException;
+import com.armstrongmsg.socialnet.exceptions.PostNotFoundException;
 import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
 import com.armstrongmsg.socialnet.exceptions.UserAlreadyExistsException;
 import com.armstrongmsg.socialnet.exceptions.UserNotFoundException;
@@ -509,7 +510,7 @@ public class Network {
 		return new ArrayList<Post>();
 	}
 	
-	public void deletePost(String token, String postId) throws AuthenticationException, UnauthorizedOperationException, UserNotFoundException, InternalErrorException {
+	public void deletePost(String token, String postId) throws AuthenticationException, UnauthorizedOperationException, PostNotFoundException, InternalErrorException {
 		User requester = this.authenticationPlugin.getUser(token);
 		this.authorizationPlugin.authorize(requester, new Operation(OperationType.DELETE_POST));
 		
@@ -522,8 +523,19 @@ public class Network {
 			}
 		}
 		
+		// TODO test
+		if (postToDelete == null) {
+			// TODO add message
+			throw new PostNotFoundException();
+		}
+		
 		posts.remove(postToDelete);
-		this.storageFacade.updateUser(requester);
+		
+		try {
+			this.storageFacade.updateUser(requester);
+		} catch (UserNotFoundException e) {
+			throw new InternalErrorException(e);
+		}
 	}
 	
 	public String login(Map<String, String> credentials) throws AuthenticationException, InternalErrorException {

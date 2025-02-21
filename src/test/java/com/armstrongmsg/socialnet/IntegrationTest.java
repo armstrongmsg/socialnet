@@ -41,6 +41,7 @@ import com.armstrongmsg.socialnet.exceptions.FriendshipRequestNotFound;
 import com.armstrongmsg.socialnet.exceptions.InternalErrorException;
 import com.armstrongmsg.socialnet.exceptions.InvalidParameterException;
 import com.armstrongmsg.socialnet.exceptions.MediaNotFoundException;
+import com.armstrongmsg.socialnet.exceptions.PostNotFoundException;
 import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
 import com.armstrongmsg.socialnet.exceptions.UserAlreadyExistsException;
 import com.armstrongmsg.socialnet.exceptions.UserNotFoundException;
@@ -764,7 +765,7 @@ public class IntegrationTest extends PersistenceTest {
 	
 	@Test
 	public void testDeletePost() throws AuthenticationException, UnauthorizedOperationException, UserNotFoundException, 
-		InternalErrorException, UserAlreadyExistsException, InvalidParameterException {
+		InternalErrorException, UserAlreadyExistsException, InvalidParameterException, PostNotFoundException {
 		String adminToken = loginAsAdmin();
 		
 		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);

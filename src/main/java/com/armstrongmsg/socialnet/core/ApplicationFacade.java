@@ -20,6 +20,7 @@ import com.armstrongmsg.socialnet.exceptions.FriendshipRequestNotFound;
 import com.armstrongmsg.socialnet.exceptions.InternalErrorException;
 import com.armstrongmsg.socialnet.exceptions.InvalidParameterException;
 import com.armstrongmsg.socialnet.exceptions.MediaNotFoundException;
+import com.armstrongmsg.socialnet.exceptions.PostNotFoundException;
 import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
 import com.armstrongmsg.socialnet.exceptions.UserAlreadyExistsException;
 import com.armstrongmsg.socialnet.exceptions.UserNotFoundException;
@@ -386,7 +387,8 @@ public class ApplicationFacade {
 		}
 	}
 
-	public void deletePost(String token, String postId) throws AuthenticationException, UnauthorizedOperationException, UserNotFoundException, InternalErrorException {
+	public void deletePost(String token, String postId)
+			throws AuthenticationException, UnauthorizedOperationException, PostNotFoundException, InternalErrorException {
 		logger.debug(Messages.Logging.RECEIVED_DELETE_POST_REQUEST, token, postId);
 		
 		try {
@@ -396,6 +398,12 @@ public class ApplicationFacade {
 			throw e;
 		} catch (UnauthorizedOperationException e) {
 			logger.debug(Messages.Logging.AUTHORIZATION_EXCEPTION, e.getMessage());
+			throw e;
+		} catch (PostNotFoundException e) {
+			logger.debug(Messages.Logging.POST_NOT_FOUND_EXCEPTION, e.getMessage());
+			throw e;
+		} catch (InternalErrorException e) {
+			logger.debug(Messages.Logging.INTERNAL_ERROR_EXCEPTION, e.getMessage());
 			throw e;
 		}
 	}
