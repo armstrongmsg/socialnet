@@ -25,6 +25,7 @@ public class Messages {
 		public static final String LOADING_DATABASE_MANAGER_CONFIGURATION = "Loading database manager configuration {}";
 		public static final String LOADING_MEDIA_REPOSITORY_CONFIGURATION = "Loading media repository configuration {}.";
 		public static final String LOADING_FEED_POLICY = "Loading feed policy.";
+		public static final String MEDIA_NOT_FOUND_EXCEPTION = "Media not found exception. Message:{}.";
 		public static final String NO_CACHE_CONFIGURATION = "No cache configuration. Using default.";
 		public static final String NO_DATABASE_MANAGER_CONFIGURATION = "No database manager configuration. Using default.";
 		public static final String NO_MEDIA_REPOSITORY_CONFIGURATION = "No media repository configuration. Using default.";

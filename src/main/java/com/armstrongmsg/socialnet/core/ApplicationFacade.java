@@ -597,8 +597,9 @@ public class ApplicationFacade {
 		}
 	}
 	
-	public String getMediaUri(String userToken, String mediaId) throws AuthenticationException, MediaNotFoundException,
-			InternalErrorException, UnauthorizedOperationException {
+	public String getMediaUri(String userToken, String mediaId)
+			throws AuthenticationException, MediaNotFoundException, InternalErrorException, 
+			UnauthorizedOperationException {
 		logger.debug(Messages.Logging.RECEIVED_GET_MEDIA_URI, userToken, mediaId);
 		
 		try {
@@ -608,6 +609,12 @@ public class ApplicationFacade {
 			throw e;
 		} catch (UnauthorizedOperationException e) {
 			logger.debug(Messages.Logging.AUTHORIZATION_EXCEPTION, e.getMessage());
+			throw e;
+		} catch (InternalErrorException e) {
+			logger.debug(Messages.Logging.INTERNAL_ERROR_EXCEPTION, e.getMessage());
+			throw e;
+		} catch (MediaNotFoundException e) {
+			logger.debug(Messages.Logging.MEDIA_NOT_FOUND_EXCEPTION, e.getMessage());
 			throw e;
 		}
 	}
