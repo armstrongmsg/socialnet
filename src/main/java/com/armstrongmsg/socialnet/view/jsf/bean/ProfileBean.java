@@ -88,7 +88,7 @@ public class ProfileBean {
 			String token = contextBean.getCurrentSession().getUserToken();
 			return facade.isFriend(token, contextBean.getCurrentSession().getCurrentViewUser()
 					.getUsername());
-		} catch (AuthenticationException | UnauthorizedOperationException | InternalErrorException | MediaNotFoundException e) {
+		} catch (AuthenticationException | InternalErrorException e) {
 			this.exceptionHandler.handle(e);
 		}
 		

@@ -612,10 +612,13 @@ public class Network {
 		return userSummaries;
 	}
 
-	public boolean isFriend(String userToken, String username) throws AuthenticationException, UnauthorizedOperationException, InternalErrorException, MediaNotFoundException {
+	public boolean isFriend(String userToken, String username) throws AuthenticationException, InternalErrorException {
 		User requester = this.authenticationPlugin.getUser(userToken);
-		this.authorizationPlugin.authorize(requester, new Operation(OperationType.IS_FRIEND));
-		return doIsFriend(requester, username);
+		try {
+			return doIsFriend(requester, username);
+		} catch (UnauthorizedOperationException e) {
+			throw new InternalErrorException(e);
+		}
 	}
 	
 	private boolean doIsFriend(User requester, String username) throws InternalErrorException, UnauthorizedOperationException {
