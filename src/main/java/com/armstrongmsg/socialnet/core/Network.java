@@ -28,6 +28,7 @@ import com.armstrongmsg.socialnet.exceptions.FriendshipNotFoundException;
 import com.armstrongmsg.socialnet.exceptions.FriendshipRequestAlreadyExistsException;
 import com.armstrongmsg.socialnet.exceptions.FriendshipRequestNotFound;
 import com.armstrongmsg.socialnet.exceptions.InternalErrorException;
+import com.armstrongmsg.socialnet.exceptions.InvalidParameterException;
 import com.armstrongmsg.socialnet.exceptions.MediaNotFoundException;
 import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
 import com.armstrongmsg.socialnet.exceptions.UserAlreadyExistsException;
@@ -633,11 +634,25 @@ public class Network {
 	}
 
 	public void changeSelfProfilePic(String userToken, byte[] picData) 
-			throws AuthenticationException, UnauthorizedOperationException, UserNotFoundException, InternalErrorException {
+			throws AuthenticationException, InternalErrorException, InvalidParameterException {
+		if (picData == null) {
+			// TODO add message
+			throw new InvalidParameterException();
+		}
+		
 		User requester = this.authenticationPlugin.getUser(userToken);
-		this.authorizationPlugin.authorize(requester, new Operation(OperationType.CHANGE_SELF_PROFILE_PIC));
-		doChangeSelfProfilePic(requester, picData);
-		this.storageFacade.updateUser(requester);
+		
+		try {
+			doChangeSelfProfilePic(requester, picData);
+		} catch (UnauthorizedOperationException e) {
+			throw new InternalErrorException(e);
+		}
+		
+		try {
+			this.storageFacade.updateUser(requester);
+		} catch (UserNotFoundException e) {
+			throw new InternalErrorException(e);
+		}
 	}
 
 	private void doChangeSelfProfilePic(User requester, byte[] picData) throws InternalErrorException, UnauthorizedOperationException {

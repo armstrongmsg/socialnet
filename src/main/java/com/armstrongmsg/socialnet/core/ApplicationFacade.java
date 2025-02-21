@@ -520,7 +520,7 @@ public class ApplicationFacade {
 		}
 	}
 	
-	public void changeSelfProfilePic(String userToken, byte[] picData) throws AuthenticationException, UnauthorizedOperationException, UserNotFoundException, InternalErrorException {
+	public void changeSelfProfilePic(String userToken, byte[] picData) throws AuthenticationException, InternalErrorException, InvalidParameterException {
 		logger.debug(Messages.Logging.RECEIVED_CHANGE_PROFILE_PIC_REQUEST, userToken);
 
 		try {
@@ -528,8 +528,11 @@ public class ApplicationFacade {
 		} catch (AuthenticationException e) {
 			logger.debug(Messages.Logging.AUTHENTICATION_EXCEPTION, e.getMessage());
 			throw e;
-		} catch (UnauthorizedOperationException e) {
-			logger.debug(Messages.Logging.AUTHORIZATION_EXCEPTION, e.getMessage());
+		} catch (InvalidParameterException e) {
+			logger.debug(Messages.Logging.INVALID_PARAMETER_EXCEPTION, e.getMessage());
+			throw e;
+		} catch (InternalErrorException e) {
+			logger.debug(Messages.Logging.INTERNAL_ERROR_EXCEPTION, e.getMessage());
 			throw e;
 		}
 	}

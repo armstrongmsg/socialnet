@@ -1,13 +1,12 @@
 package com.armstrongmsg.socialnet;
 
-import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,7 +16,6 @@ import java.util.Map;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -64,6 +62,7 @@ import com.armstrongmsg.socialnet.util.ApplicationPaths;
 import com.armstrongmsg.socialnet.util.ClassFactory;
 import com.armstrongmsg.socialnet.util.PersistenceTest;
 import com.armstrongmsg.socialnet.util.PropertiesUtil;
+import com.armstrongmsg.socialnet.util.TestFileUtils;
 
 @RunWith(Parameterized.class)
 public class IntegrationTest extends PersistenceTest {
@@ -1073,24 +1072,32 @@ public class IntegrationTest extends PersistenceTest {
 		assertTrue(friendsAfter.isEmpty());		
 	}
 	
-	// TODO rewrite this test
 	@Test
-	@Ignore
-	public void testChangeAndGetProfilePic() throws AuthenticationException, UnauthorizedOperationException, UserNotFoundException, 
-		InternalErrorException, UserAlreadyExistsException {
+	public void testChangeAndGetProfilePic() 
+			throws AuthenticationException, InternalErrorException, UnauthorizedOperationException, 
+			UserAlreadyExistsException, UserNotFoundException, InvalidParameterException, MediaNotFoundException, 
+			FileNotFoundException, IOException {
 		String adminToken = loginAsAdmin();
 		
 		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
 		
 		String userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
 		
-		assertNull(facade.getUserPic(userToken1, NEW_USERNAME_1));
+		UserSummary userView = facade.getSelf(userToken1);
+		assertEquals(SystemConstants.DEFAULT_PROFILE_PIC_ID, userView.getProfilePicId());
 		
 		byte[] profilePicData = new byte[] {1, 1, 1};
 		
 		facade.changeSelfProfilePic(userToken1, profilePicData);
+
+		userView = facade.getSelf(userToken1);
+		String picId = userView.getProfilePicId();
 		
-		assertArrayEquals(new byte[] {1, 1, 1}, facade.getUserPic(userToken1, NEW_USERNAME_1));
+		assertNotNull(picId);
+		
+		String picUri = facade.getMediaUri(userToken1, picId);
+		
+		TestFileUtils.assertFileHasContent(TEST_CACHE_PATH + File.separator + picUri, new byte[] {1, 1, 1});
 	}
 	
 	@Test
@@ -1126,7 +1133,8 @@ public class IntegrationTest extends PersistenceTest {
 	}
 
 	private void assertPicturePathExists(String picturePath) {
-		String pictureFullPath = TEST_CACHE_PATH + File.separator + picturePath; 
+		String pictureFullPath = TEST_CACHE_PATH + File.separator + 
+				LocalFileSystemMediaRepository.DEFAULT_MEDIA_LOCAL_PATH + File.separator + picturePath; 
 		assertNotNull(picturePath);
 		assertTrue(new File(pictureFullPath).exists());
 	}

@@ -20,6 +20,7 @@ import com.armstrongmsg.socialnet.constants.SystemConstants;
 import com.armstrongmsg.socialnet.core.ApplicationFacade;
 import com.armstrongmsg.socialnet.exceptions.AuthenticationException;
 import com.armstrongmsg.socialnet.exceptions.InternalErrorException;
+import com.armstrongmsg.socialnet.exceptions.InvalidParameterException;
 import com.armstrongmsg.socialnet.exceptions.MediaNotFoundException;
 import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
 import com.armstrongmsg.socialnet.exceptions.UserNotFoundException;
@@ -188,7 +189,7 @@ public class ProfileBean {
 		return false;
 	}
 	
-	public void saveProfilePic() throws UserNotFoundException { 
+	public void saveProfilePic() { 
 		try {
 			byte[] picData = this.profilePic.getContent();
 			String loggedUserToken = contextBean.getCurrentSession().getUserToken();
@@ -196,9 +197,9 @@ public class ProfileBean {
 			contextBean.getCurrentSession().setCurrentViewUser(null);
 		} catch (AuthenticationException e) {
 			this.exceptionHandler.handle(e);
-		} catch (UnauthorizedOperationException e) {
-			this.exceptionHandler.handle(e);
 		} catch (InternalErrorException e) {
+			this.exceptionHandler.handle(e);
+		} catch (InvalidParameterException e) {
 			this.exceptionHandler.handle(e);
 		}
 	}

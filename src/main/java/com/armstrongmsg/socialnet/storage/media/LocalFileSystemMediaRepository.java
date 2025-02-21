@@ -12,12 +12,12 @@ import com.armstrongmsg.socialnet.exceptions.MediaNotFoundException;
 import com.armstrongmsg.socialnet.util.ApplicationPaths;
 
 public class LocalFileSystemMediaRepository implements MediaRepository {
+	public static final String DEFAULT_MEDIA_LOCAL_PATH = "pics/";
 	private String pictureRepositoryLocalPath;
 
 	public LocalFileSystemMediaRepository(String pictureRepositoryLocalPath) {
-		this.pictureRepositoryLocalPath = pictureRepositoryLocalPath;
-
-		File path = new File(pictureRepositoryLocalPath);
+		this.pictureRepositoryLocalPath = pictureRepositoryLocalPath + File.separator + DEFAULT_MEDIA_LOCAL_PATH;
+		File path = new File(this.pictureRepositoryLocalPath);
 
 		if (!path.exists()) {
 			path.mkdirs();
@@ -25,13 +25,7 @@ public class LocalFileSystemMediaRepository implements MediaRepository {
 	}
 
 	public LocalFileSystemMediaRepository() throws FatalErrorException {
-		// FIXME constant
-		pictureRepositoryLocalPath = ApplicationPaths.getApplicationBasePath() + File.separator + "pics";
-		File path = new File(pictureRepositoryLocalPath);
-
-		if (!path.exists()) {
-			path.mkdirs();
-		}
+		this(ApplicationPaths.getApplicationBasePath() + File.separator + DEFAULT_MEDIA_LOCAL_PATH);
 	}
 
 	@Override
@@ -70,30 +64,34 @@ public class LocalFileSystemMediaRepository implements MediaRepository {
 			throw new MediaNotFoundException();
 		}
 
-		return "pics/" + id;
+		return DEFAULT_MEDIA_LOCAL_PATH + id;
 	}
 
 	@Override
-	public void deleteMedia(String requester, String id) {
+	public void deleteMedia(String requester, String id) throws MediaNotFoundException {
 		File localPath = new File(pictureRepositoryLocalPath + File.separator + id);
 
 		if (localPath.exists()) {
 			localPath.delete();
+		} else {
+			// TODO add message
+			throw new MediaNotFoundException();
 		}
 	}
 
 	@Override
-	public void updateMedia(String requester, String id, Map<String, String> metadata, byte[] data) throws InternalErrorException {
+	public void updateMedia(String requester, String id, Map<String, String> metadata, byte[] data) throws InternalErrorException, MediaNotFoundException {
 		String pictureLocalPath = pictureRepositoryLocalPath + File.separator + id;
 		File localPathFile = new File(pictureLocalPath);
 		FileOutputStream out = null;
 
 		try {
 			if (!localPathFile.exists()) {
-				localPathFile.createNewFile();
-				out = new FileOutputStream(localPathFile);
-				out.write(data);
+				// TODO add message
+				throw new MediaNotFoundException();
 			}
+			out = new FileOutputStream(localPathFile);
+			out.write(data);
 		} catch (IOException e) {
 			// TODO add message
 			throw new InternalErrorException();
