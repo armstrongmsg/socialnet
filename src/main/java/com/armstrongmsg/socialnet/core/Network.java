@@ -300,14 +300,12 @@ public class Network {
 		}
 	}
 	
-	public void rejectFriendshipRequest(String userToken, String username) throws AuthenticationException, UnauthorizedOperationException, FriendshipRequestNotFound, InternalErrorException {
+	public void rejectFriendshipRequest(String userToken, String username) throws AuthenticationException, FriendshipRequestNotFound, InternalErrorException {
 		User requester = this.authenticationPlugin.getUser(userToken);
-		this.authorizationPlugin.authorize(requester, new Operation(OperationType.REJECT_FRIENDSHIP_REQUEST));
-		
 		FriendshipRequest request = this.storageFacade.getReceivedFrienshipRequestsById(requester.getUserId(), username);
 		
 		if (request == null) {
-			throw new UnauthorizedOperationException(
+			throw new FriendshipRequestNotFound(
 					String.format(Messages.Exception.FRIENDSHIP_REQUEST_NOT_FOUND, userToken, username));
 		}
 		

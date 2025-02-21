@@ -300,13 +300,13 @@ public class ApplicationFacade {
 			logger.debug(Messages.Logging.FRIENDSHIP_REQUEST_NOT_FOUND_EXCEPTION, e.getMessage());
 			throw e;
 		} catch (InternalErrorException e) {
-			logger.debug(Messages.Logging.USER_NOT_FOUND_EXCEPTION, e.getMessage());
+			logger.debug(Messages.Logging.INTERNAL_ERROR_EXCEPTION, e.getMessage());
 			throw e;
 		}
 	}
 	
-	public void rejectFriendshipRequest(String userToken, String username) throws AuthenticationException, UnauthorizedOperationException, 
-		FriendshipRequestNotFound, InternalErrorException {
+	public void rejectFriendshipRequest(String userToken, String username) 
+			throws AuthenticationException, FriendshipRequestNotFound, InternalErrorException {
 		logger.debug(Messages.Logging.RECEIVED_REJECT_FRIENDSHIP_REQUEST, userToken, username);
 		
 		try {
@@ -314,10 +314,13 @@ public class ApplicationFacade {
 		} catch (AuthenticationException e) {
 			logger.debug(Messages.Logging.AUTHENTICATION_EXCEPTION, e.getMessage());
 			throw e;
-		} catch (UnauthorizedOperationException e) {
-			logger.debug(Messages.Logging.AUTHORIZATION_EXCEPTION, e.getMessage());
+		} catch (FriendshipRequestNotFound e) {
+			logger.debug(Messages.Logging.FRIENDSHIP_REQUEST_NOT_FOUND_EXCEPTION, e.getMessage());
 			throw e;
-		}
+		} catch (InternalErrorException e) {
+			logger.debug(Messages.Logging.INTERNAL_ERROR_EXCEPTION, e.getMessage());
+			throw e;
+		} 
 	}
 	
 	public void addFriendship(String userToken, String username) throws UnauthorizedOperationException, AuthenticationException, UserNotFoundException, 
