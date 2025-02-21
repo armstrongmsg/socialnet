@@ -668,13 +668,26 @@ public class Network {
 		return null;
 	}
 
-	public void updateProfile(String userToken, String profileDescription, byte[] picData) 
-			throws AuthenticationException, UnauthorizedOperationException, UserNotFoundException, InternalErrorException {
+	public void updateProfile(String userToken, String profileDescription, byte[] picData) throws AuthenticationException, InternalErrorException, InvalidParameterException {
+		if (picData == null) {
+			// TODO add message
+			throw new InvalidParameterException();
+		}
+		
 		User requester = this.authenticationPlugin.getUser(userToken);
-		this.authorizationPlugin.authorize(requester, new Operation(OperationType.UPDATE_USER_PROFILE));
 		requester.getProfile().setDescription(profileDescription);
-		doChangeSelfProfilePic(requester, picData);
-		this.storageFacade.updateUser(requester);
+		
+		try {
+			doChangeSelfProfilePic(requester, picData);
+		} catch (UnauthorizedOperationException e) {
+			throw new InternalErrorException(e);
+		}
+		
+		try {
+			this.storageFacade.updateUser(requester);
+		} catch (UserNotFoundException e) {
+			throw new InternalErrorException(e);
+		}
 	}
 
 	public String getMediaUri(String userToken, String mediaId) throws AuthenticationException, MediaNotFoundException, InternalErrorException, UnauthorizedOperationException {

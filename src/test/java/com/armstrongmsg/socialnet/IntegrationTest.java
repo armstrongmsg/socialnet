@@ -1102,7 +1102,8 @@ public class IntegrationTest extends PersistenceTest {
 	
 	@Test
 	public void testUpdateProfile() throws AuthenticationException, UnauthorizedOperationException, UserNotFoundException, 
-		InternalErrorException, UserAlreadyExistsException, MediaNotFoundException {
+		InternalErrorException, UserAlreadyExistsException, MediaNotFoundException, InvalidParameterException, 
+		FileNotFoundException, IOException {
 		String adminToken = loginAsAdmin();
 		
 		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
@@ -1114,6 +1115,11 @@ public class IntegrationTest extends PersistenceTest {
 		UserSummary userAfterUpdate = facade.getSelf(userToken1);
 		
 		assertEquals(UPDATED_USER_PROFILE_DESCRIPTION_1, userAfterUpdate.getProfileDescription());
+
+		String picId = userAfterUpdate.getProfilePicId();
+		assertNotNull(picId);
+		String picUri = facade.getMediaUri(userToken1, picId);
+		TestFileUtils.assertFileHasContent(TEST_CACHE_PATH + File.separator + picUri, new byte[] {1, 1, 1});
 	}
 	
 	private String loginAsAdmin() throws AuthenticationException, InternalErrorException {

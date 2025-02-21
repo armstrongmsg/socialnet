@@ -537,6 +537,7 @@ public class ApplicationFacade {
 		}
 	}
 
+	// TODO to be removed
 	public byte[] getUserPic(String userToken, String username) throws AuthenticationException, UnauthorizedOperationException, UserNotFoundException, InternalErrorException{
 		logger.debug(Messages.Logging.RECEIVED_GET_USER_PROFILE_PIC, userToken);
 		
@@ -554,7 +555,8 @@ public class ApplicationFacade {
 		}
 	}
 
-	public void updateProfile(String userToken, String profileDescription, byte[] picData) throws AuthenticationException, UnauthorizedOperationException, UserNotFoundException, InternalErrorException {
+	public void updateProfile(String userToken, String profileDescription, byte[] picData) 
+			throws AuthenticationException, InternalErrorException, InvalidParameterException {
 		logger.debug(Messages.Logging.RECEIVED_UPDATE_USER_PROFILE, userToken);
 		
 		try {
@@ -562,11 +564,11 @@ public class ApplicationFacade {
 		} catch (AuthenticationException e) {
 			logger.debug(Messages.Logging.AUTHENTICATION_EXCEPTION, e.getMessage());
 			throw e;
-		} catch (UnauthorizedOperationException e) {
-			logger.debug(Messages.Logging.AUTHORIZATION_EXCEPTION, e.getMessage());
+		} catch (InternalErrorException e) {
+			logger.debug(Messages.Logging.INTERNAL_ERROR_EXCEPTION, e.getMessage());
 			throw e;
-		} catch (UserNotFoundException e) {
-			logger.debug(Messages.Logging.USER_NOT_FOUND_EXCEPTION, e.getMessage());
+		} catch (InvalidParameterException e) { 
+			logger.debug(Messages.Logging.INVALID_PARAMETER_EXCEPTION, e.getMessage());
 			throw e;
 		}
 	}

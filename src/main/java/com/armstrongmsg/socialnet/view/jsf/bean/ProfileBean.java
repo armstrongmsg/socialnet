@@ -204,6 +204,7 @@ public class ProfileBean {
 		}
 	}
 	
+	// TODO to be removed
 	public StreamedContent getUserPic() throws IOException {
 		UserSummary viewUser = this.contextBean.getViewUser();
 		String loggedUserToken = contextBean.getCurrentSession().getUserToken();
