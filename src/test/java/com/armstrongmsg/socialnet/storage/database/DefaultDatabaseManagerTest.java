@@ -12,7 +12,6 @@ import org.mockito.Mockito;
 
 import com.armstrongmsg.socialnet.constants.SystemConstants;
 import com.armstrongmsg.socialnet.exceptions.UserNotFoundException;
-import com.armstrongmsg.socialnet.model.Picture;
 import com.armstrongmsg.socialnet.model.Post;
 import com.armstrongmsg.socialnet.model.PostVisibility;
 import com.armstrongmsg.socialnet.model.Profile;
@@ -20,7 +19,6 @@ import com.armstrongmsg.socialnet.model.User;
 import com.armstrongmsg.socialnet.storage.database.repository.FollowRepository;
 import com.armstrongmsg.socialnet.storage.database.repository.FriendshipRepository;
 import com.armstrongmsg.socialnet.storage.database.repository.FriendshipRequestRepository;
-import com.armstrongmsg.socialnet.storage.database.repository.PictureRepository;
 import com.armstrongmsg.socialnet.storage.database.repository.UserRepository;
 
 public class DefaultDatabaseManagerTest {
@@ -41,30 +39,19 @@ public class DefaultDatabaseManagerTest {
 	private static final String PICTURE_ID_1 = "pictureId1";
 	private static final String PICTURE_ID_2 = "pictureId2";
 	private static final String PICTURE_ID_3 = "pictureId3";
-	private static final byte[] PICTURE_DATA_1 = {1, 1, 1};
-	private static final byte[] PICTURE_DATA_2 = {2, 2, 2};
-	private static final byte[] PICTURE_DATA_3 = {3, 3, 3};
 	private UserRepository userRepository;
 	private FriendshipRepository friendshipRepository;
 	private FollowRepository followRepository;
 	private FriendshipRequestRepository friendshipRequestsRepository;
-	private PictureRepository pictureRepository;
 	private DefaultDatabaseManager manager;
-	private Picture postPicture1;
 	private Post post1;
 	private Post post2;
 	private User user;
 	private List<Post> userPosts;
-	private Picture postPicture2;
-	private Picture profilePicture;
 	private Profile userProfile;
 	
 	@Before
 	public void setUp() {
-		postPicture1 = new Picture(PICTURE_ID_1, PICTURE_DATA_1);
-		postPicture2 = new Picture(PICTURE_ID_2, PICTURE_DATA_2);
-		profilePicture = new Picture(PICTURE_ID_3, PICTURE_DATA_3);
-		
 		post1 = new Post();
 		post1.setId(POST_ID_1);
 		post1.setTitle(POST_TITLE_1);
@@ -84,12 +71,7 @@ public class DefaultDatabaseManagerTest {
 		userPosts = new ArrayList<Post>();
 		userPosts.add(post1);
 		userPosts.add(post2);
-		
-		pictureRepository = Mockito.mock(PictureRepository.class);
-		Mockito.when(pictureRepository.getPictureById(PICTURE_ID_1)).thenReturn(postPicture1);
-		Mockito.when(pictureRepository.getPictureById(PICTURE_ID_2)).thenReturn(postPicture2);
-		Mockito.when(pictureRepository.getPictureById(PICTURE_ID_3)).thenReturn(profilePicture);
-		
+			
 		userProfile = new Profile(USER_DESCRIPTION, userPosts);
 		userProfile.setProfilePicId(PICTURE_ID_3);
 		
