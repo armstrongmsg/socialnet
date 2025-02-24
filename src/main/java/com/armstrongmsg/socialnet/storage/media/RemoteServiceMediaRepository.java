@@ -109,19 +109,19 @@ public class RemoteServiceMediaRepository implements MediaRepository {
 	@Override
 	public void deleteMedia(String requester, String id)
 			throws MediaNotFoundException, InternalErrorException, UnauthorizedOperationException {
-		// TODO Auto-generated method stub
+		// TODO implement
 	}
 
 	@Override
 	public void updateMedia(String requester, String id, Map<String, String> metadata, byte[] data)
 			throws MediaNotFoundException, InternalErrorException, UnauthorizedOperationException {
-		// TODO Auto-generated method stub
+		// TODO implement
 	}
 
 	@Override
 	public List<String> searchMedia(String requester, String metadataKey, String metadataValue)
 			throws InternalErrorException {
-		// TODO Auto-generated method stub
+		// TODO implement
 		return null;
 	}
 }

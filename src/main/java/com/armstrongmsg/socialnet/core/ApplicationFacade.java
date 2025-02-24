@@ -323,6 +323,7 @@ public class ApplicationFacade {
 		} 
 	}
 	
+	// TODO to be removed
 	public void addFriendship(String userToken, String username) throws UnauthorizedOperationException, AuthenticationException, UserNotFoundException, 
 		InternalErrorException, FriendshipAlreadyExistsException {
 		logger.debug(Messages.Logging.RECEIVED_ADD_FRIENDSHIP_REQUEST, userToken, username);
