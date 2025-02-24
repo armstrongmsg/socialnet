@@ -10,11 +10,9 @@ import javax.faces.bean.RequestScoped;
 
 import com.armstrongmsg.socialnet.core.ApplicationFacade;
 import com.armstrongmsg.socialnet.exceptions.AuthenticationException;
-import com.armstrongmsg.socialnet.exceptions.FriendshipAlreadyExistsException;
 import com.armstrongmsg.socialnet.exceptions.FriendshipNotFoundException;
 import com.armstrongmsg.socialnet.exceptions.FriendshipRequestNotFound;
 import com.armstrongmsg.socialnet.exceptions.InternalErrorException;
-import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
 import com.armstrongmsg.socialnet.exceptions.UserNotFoundException;
 import com.armstrongmsg.socialnet.model.FriendshipRequest;
 import com.armstrongmsg.socialnet.view.jsf.model.JsfConnector;
@@ -83,14 +81,6 @@ public class FriendshipBean {
 
 	public void setApplicationBean(ApplicationBean applicationBean) {
 		this.applicationBean = applicationBean;
-	}
-	
-	public void addFriendship() {
-		try {
-			facade.addFriendship(contextBean.getCurrentSession().getUserToken(), username);
-		} catch (UnauthorizedOperationException | AuthenticationException | UserNotFoundException | InternalErrorException | FriendshipAlreadyExistsException e) {
-			this.exceptionHandler.handle(e);
-		}
 	}
 	
 	public void addFriendshipRequest() {

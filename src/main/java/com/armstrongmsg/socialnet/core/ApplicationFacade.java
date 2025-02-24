@@ -323,25 +323,6 @@ public class ApplicationFacade {
 		} 
 	}
 	
-	// TODO to be removed
-	public void addFriendship(String userToken, String username) throws UnauthorizedOperationException, AuthenticationException, UserNotFoundException, 
-		InternalErrorException, FriendshipAlreadyExistsException {
-		logger.debug(Messages.Logging.RECEIVED_ADD_FRIENDSHIP_REQUEST, userToken, username);
-		
-		try {
-			this.network.addFriendship(userToken, username);
-		} catch (AuthenticationException e) {
-			logger.debug(Messages.Logging.AUTHENTICATION_EXCEPTION, e.getMessage());
-			throw e;
-		} catch (UnauthorizedOperationException e) {
-			logger.debug(Messages.Logging.AUTHORIZATION_EXCEPTION, e.getMessage());
-			throw e;
-		} catch (UserNotFoundException e) {
-			logger.debug(Messages.Logging.USER_NOT_FOUND_EXCEPTION, e.getMessage());
-			throw e;
-		}
-	}
-	
 	public List<UserView> getSelfFriends(String userToken) throws AuthenticationException, InternalErrorException {
 		logger.debug(Messages.Logging.RECEIVED_GET_SELF_FRIENDS_REQUEST, userToken);
 		

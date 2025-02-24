@@ -633,29 +633,6 @@ public class IntegrationTest extends PersistenceTest {
 	}
 	
 	@Test
-	public void testAddFriendship() throws UnauthorizedOperationException, AuthenticationException, UserNotFoundException,
-		InternalErrorException, UserAlreadyExistsException, FriendshipAlreadyExistsException, MediaNotFoundException {
-		String adminToken = loginAsAdmin();
-		
-		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
-		facade.addUser(adminToken, NEW_USERNAME_2, NEW_USER_PASSWORD_2, NEW_USER_PROFILE_DESCRIPTION_2);
-		
-		String userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
-		String userToken2 = loginAsUser(NEW_USERNAME_2, NEW_USER_PASSWORD_2);
-		
-		facade.addFriendship(userToken1, NEW_USERNAME_2);
-		
-		List<UserView> friends1 = facade.getSelfFriends(userToken1);
-		List<UserView> friends2 = facade.getSelfFriends(userToken2);
-		
-		UserView user1Summary = new UserView(NEW_USERNAME_1, NEW_USER_PROFILE_DESCRIPTION_1, SystemConstants.DEFAULT_PROFILE_PIC_ID, SystemConstants.DEFAULT_PROFILE_PIC_PATH);
-		UserView user2Summary = new UserView(NEW_USERNAME_2, NEW_USER_PROFILE_DESCRIPTION_2, SystemConstants.DEFAULT_PROFILE_PIC_ID, SystemConstants.DEFAULT_PROFILE_PIC_PATH);
-		
-		assertTrue(friends1.contains(user2Summary));
-		assertTrue(friends2.contains(user1Summary));
-	}
-	
-	@Test
 	public void testGetFriendsPosts() throws AuthenticationException, UnauthorizedOperationException, UserNotFoundException, 
 		InternalErrorException, UserAlreadyExistsException, FriendshipAlreadyExistsException, InvalidParameterException {
 		String adminToken = loginAsAdmin();
@@ -666,7 +643,10 @@ public class IntegrationTest extends PersistenceTest {
 		String userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);	
 		String userToken2 = loginAsUser(NEW_USERNAME_2, NEW_USER_PASSWORD_2);
 		
-		facade.addFriendship(userToken1, NEW_USERNAME_2);
+		List<User> users = facade.getUsers(adminToken);
+		User user1 = users.get(0);
+		User user2 = users.get(1);
+		facade.addFriendshipAdmin(adminToken, user1.getUserId(), user2.getUserId());
 		
 		ArrayList<byte[]> postMediaData = new ArrayList<byte[]>();
 		postMediaData.add(PICTURE_DATA);
