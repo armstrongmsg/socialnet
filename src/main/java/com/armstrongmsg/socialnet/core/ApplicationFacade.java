@@ -38,6 +38,7 @@ import com.armstrongmsg.socialnet.storage.media.MediaRepository;
 import com.armstrongmsg.socialnet.storage.media.MediaRepositoryFactory;
 import com.armstrongmsg.socialnet.util.PropertiesUtil;
 
+// TODO test exceptions
 public class ApplicationFacade {
 	private static Logger logger = LoggerFactory.getLogger(ApplicationFacade.class);
 	private static ApplicationFacade instance;

@@ -28,6 +28,7 @@ import com.armstrongmsg.socialnet.util.PropertiesUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
+// TODO test
 public class RemoteServiceMediaRepository implements MediaRepository {
 	private static Logger logger = LoggerFactory.getLogger(RemoteServiceMediaRepository.class);
 

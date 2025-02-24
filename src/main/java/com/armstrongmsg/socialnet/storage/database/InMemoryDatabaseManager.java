@@ -9,6 +9,7 @@ import com.armstrongmsg.socialnet.model.Friendship;
 import com.armstrongmsg.socialnet.model.FriendshipRequest;
 import com.armstrongmsg.socialnet.model.User;
 
+// TODO test
 public class InMemoryDatabaseManager implements DatabaseManager {
 	private List<User> users;
 	private List<Friendship> friendships;

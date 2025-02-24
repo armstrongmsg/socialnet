@@ -11,6 +11,7 @@ import com.armstrongmsg.socialnet.model.Admin;
 import com.armstrongmsg.socialnet.model.User;
 import com.armstrongmsg.socialnet.storage.StorageFacade;
 
+// TODO test
 public class DefaultAuthenticationPlugin implements AuthenticationPlugin {
 	private static final String TOKEN_FIELD_SEPARATOR = "#&#";
 	private Admin admin;
