@@ -746,14 +746,6 @@ public class Network {
 		requester.getProfile().setProfilePicId(picId);
 	}
 
-	// TODO to be removed
-	public byte[] getUserProfilePic(String loggedUserToken, String username) 
-			throws AuthenticationException, UnauthorizedOperationException, UserNotFoundException, InternalErrorException {
-		User requester = this.authenticationPlugin.getUser(loggedUserToken);
-		this.authorizationPlugin.authorize(requester, new Operation(OperationType.GET_USER_PROFILE_PIC));
-		return null;
-	}
-
 	public void updateProfile(String userToken, String profileDescription, byte[] picData) throws AuthenticationException, InternalErrorException, InvalidParameterException {
 		if (picData == null) {
 			// TODO add message

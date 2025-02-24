@@ -1,10 +1,5 @@
 package com.armstrongmsg.socialnet.view.jsf.bean;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -12,19 +7,13 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.RequestScoped;
 
-import org.primefaces.model.DefaultStreamedContent;
-import org.primefaces.model.StreamedContent;
 import org.primefaces.model.file.UploadedFile;
 
-import com.armstrongmsg.socialnet.constants.SystemConstants;
 import com.armstrongmsg.socialnet.core.ApplicationFacade;
 import com.armstrongmsg.socialnet.exceptions.AuthenticationException;
 import com.armstrongmsg.socialnet.exceptions.InternalErrorException;
 import com.armstrongmsg.socialnet.exceptions.InvalidParameterException;
-import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
-import com.armstrongmsg.socialnet.exceptions.UserNotFoundException;
 import com.armstrongmsg.socialnet.model.FriendshipRequest;
-import com.armstrongmsg.socialnet.util.ImageUtils;
 import com.armstrongmsg.socialnet.view.jsf.model.JsfConnector;
 import com.armstrongmsg.socialnet.view.jsf.model.UserView;
 
@@ -32,9 +21,6 @@ import com.armstrongmsg.socialnet.view.jsf.model.UserView;
 @ManagedBean(name = "profileBean", eager = true)
 @RequestScoped
 public class ProfileBean {
-	private static final String IMAGE_TYPE = "image/jpeg";
-	private static final int PIC_MAX_WIDTH = 300;
-	private static final int PIC_MAX_HEIGHT = 300;
 	private UserView loggedUserSummary;
 	private UploadedFile profilePic;
 	private ApplicationFacade facade;
@@ -189,44 +175,5 @@ public class ProfileBean {
 		} catch (InvalidParameterException e) {
 			this.exceptionHandler.handle(e);
 		}
-	}
-	
-	// TODO to be removed
-	public StreamedContent getUserPic() throws IOException {
-		UserView viewUser = this.contextBean.getViewUser();
-		String loggedUserToken = contextBean.getCurrentSession().getUserToken();
-		try {
-			byte[] picData = this.facade.getUserPic(loggedUserToken, viewUser.getUsername());
-			
-			if (picData == null) {
-				String defaultProfilePicPath = Thread.currentThread().getContextClassLoader().
-						getResource("").getPath() + File.separator + SystemConstants.DEFAULT_PROFILE_PIC;
-				InputStream profilePicStream = new FileInputStream(new File(defaultProfilePicPath));
-				return DefaultStreamedContent.
-						builder().
-						contentType(IMAGE_TYPE).
-						stream(() -> profilePicStream).
-						build();
-			} else {
-				byte[] rescaledPic = new ImageUtils().rescale(picData, PIC_MAX_HEIGHT, PIC_MAX_WIDTH);
-				InputStream profilePicStream = new ByteArrayInputStream(rescaledPic);
-				return DefaultStreamedContent.
-						builder().
-						contentType(IMAGE_TYPE).
-						stream(() -> profilePicStream).
-						build();
-			}
-			
-		} catch (AuthenticationException e) {
-			this.exceptionHandler.handle(e);
-		} catch (UnauthorizedOperationException e) {
-			this.exceptionHandler.handle(e);
-		} catch (UserNotFoundException e) {
-			this.exceptionHandler.handle(e);
-		} catch (InternalErrorException e) {
-			this.exceptionHandler.handle(e);
-		}
-		
-		return null;
 	}
 }
