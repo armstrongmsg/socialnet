@@ -90,6 +90,7 @@ public class Messages {
 		public static final String FRIENDSHIP_REQUEST_NOT_FOUND = "Friendship request not found. Token: %s, username: %s.";
 		public static final String INVALID_CREDENTIALS = "Invalid credentials for user %s.";
 		public static final String INVALID_PROPERTY = "Invalid property %s.";
+		public static final String INVALID_TOKEN = "Invalid token.";
 		public static final String USER_IS_NOT_AUTHORIZED = "User %s is not authorized to perform operation %s.";
 		public static final String COULD_NOT_FIND_USER = "Could not find user %s.";
 		public static final String CONSTRUCTOR_NOT_FOUND_ON_INSTANTIATION = 

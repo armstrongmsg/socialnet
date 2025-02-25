@@ -11,9 +11,8 @@ import com.armstrongmsg.socialnet.model.Admin;
 import com.armstrongmsg.socialnet.model.User;
 import com.armstrongmsg.socialnet.storage.StorageFacade;
 
-// TODO test
 public class DefaultAuthenticationPlugin implements AuthenticationPlugin {
-	private static final String TOKEN_FIELD_SEPARATOR = "#&#";
+	static final String TOKEN_FIELD_SEPARATOR = "#&#";
 	private Admin admin;
 	private StorageFacade storageFacade;
 	
@@ -55,10 +54,15 @@ public class DefaultAuthenticationPlugin implements AuthenticationPlugin {
 
 	@Override
 	public User getUser(String token) throws AuthenticationException {
-		String[] tokenFields = token.split(TOKEN_FIELD_SEPARATOR);
-		String username = tokenFields[1];
-		
 		try {
+			String[] tokenFields = token.split(TOKEN_FIELD_SEPARATOR);
+			
+			if (tokenFields.length != 2) {
+				throw new AuthenticationException(Messages.Exception.INVALID_TOKEN);
+			}
+			
+			String username = tokenFields[1];
+			
 			if (admin.getUsername().equals(username)) {
 				return admin;
 			} else {
