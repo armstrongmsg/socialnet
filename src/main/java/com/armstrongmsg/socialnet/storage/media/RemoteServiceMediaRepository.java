@@ -5,36 +5,32 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.message.BasicHeader;
-import org.apache.http.util.EntityUtils;
+import org.apache.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.armstrongmsg.socialnet.constants.ConfigurationProperties;
+import com.armstrongmsg.socialnet.constants.Messages;
 import com.armstrongmsg.socialnet.exceptions.FatalErrorException;
 import com.armstrongmsg.socialnet.exceptions.InternalErrorException;
 import com.armstrongmsg.socialnet.exceptions.MediaNotFoundException;
 import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
+import com.armstrongmsg.socialnet.util.HttpResponse;
+import com.armstrongmsg.socialnet.util.HttpUtils;
 import com.armstrongmsg.socialnet.util.PropertiesUtil;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
 
-// TODO test
 public class RemoteServiceMediaRepository implements MediaRepository {
 	private static Logger logger = LoggerFactory.getLogger(RemoteServiceMediaRepository.class);
+	
+	static final String CONTENT_TYPE_KEY = "Content-Type";
+	static final String CONTENT_TYPE_VALUE = "application/json";
+	static final String MEDIA_ID_KEY = "id";
+	static final String METADATA_KEY = "metadata";
+	static final String DATA_KEY = "data";
 
 	private String serviceUrl;
 	private String servicePublicUrl;
-	private CloseableHttpClient httpclient;
+	private HttpUtils httpUtils;
 	
 	public RemoteServiceMediaRepository() throws FatalErrorException {
 		String mediaServiceUrl = PropertiesUtil.getInstance().getProperty(ConfigurationProperties.REMOTE_MEDIA_STORAGE_URL);
@@ -44,62 +40,56 @@ public class RemoteServiceMediaRepository implements MediaRepository {
 		
 		serviceUrl = mediaServiceUrl + ":" + mediaServicePort + "/media";
 		servicePublicUrl = mediaServicePublicUrl + ":" + mediaServicePublicPort + "/media";
-		httpclient = HttpClients.createDefault();
 		
-		logger.info("Media Service URL: {}", serviceUrl);
-		logger.info("Media Service Public URL: {}", servicePublicUrl);
+		logger.info(Messages.Logging.MEDIA_SERVICE_URL, serviceUrl);
+		logger.info(Messages.Logging.MEDIA_SERVICE_PUBLIC_URL, servicePublicUrl);
+		
+		this.httpUtils = new HttpUtils();
 	}
 	
 	public RemoteServiceMediaRepository(String mediaServiceUrl, String mediaServicePublicUrl, String port, String mediaServicePublicPort) {
 		serviceUrl = mediaServiceUrl + ":" + port + "/media";
 		servicePublicUrl = mediaServicePublicUrl + ":" + mediaServicePublicPort + "/media";
-		httpclient = HttpClients.createDefault();
 		
-		logger.info("Media Service URL: {}", serviceUrl);
-		logger.info("Media Service Public URL: {}", servicePublicUrl);
+		logger.info(Messages.Logging.MEDIA_SERVICE_URL, serviceUrl);
+		logger.info(Messages.Logging.MEDIA_SERVICE_PUBLIC_URL, servicePublicUrl);
+		
+		this.httpUtils = new HttpUtils();
 	}
 	
+	RemoteServiceMediaRepository(String serviceUrl, String servicePublicUrl, HttpUtils httpUtils) {
+		this.serviceUrl = serviceUrl;
+		this.servicePublicUrl = servicePublicUrl;
+		this.httpUtils = httpUtils;
+	}
+
 	@Override
 	public void createMedia(String requester, String id, Map<String, String> metadata, byte[] data)
 			throws InternalErrorException, UnauthorizedOperationException {
 		try {
-			HttpPost httpPost = new HttpPost(this.serviceUrl);
 			Map<String, Object> body = new HashMap<String, Object>();
-			// FIXME constant
-			body.put("id", id);
-			body.put("metadata", metadata);
-			body.put("data", data);
+			body.put(MEDIA_ID_KEY, id);
+			body.put(METADATA_KEY, metadata);
+			body.put(DATA_KEY, data);
 			
-		    ObjectWriter ow = new ObjectMapper().writer();
-		    String jsonBody = ow.writeValueAsString(body);
+			Map<String, String> header = new HashMap<String, String>();
+			header.put(CONTENT_TYPE_KEY, CONTENT_TYPE_VALUE);
 			
-		    HttpEntity stringEntity = new StringEntity(jsonBody, ContentType.APPLICATION_JSON);
-		    httpPost.setEntity(stringEntity);
+			HttpResponse response = httpUtils.post(this.serviceUrl, body, header);
+			int code = response.getCode();
 			
-		    // FIXME constant
-			Header header = new BasicHeader("Content-Type", "application/json");
-			httpPost.setHeader(header);
-			CloseableHttpResponse response = httpclient.execute(httpPost);
-			
-			try {
-				HttpEntity entity = response.getEntity();
-				EntityUtils.consume(entity);
-			} finally {
-				response.close();
+			if (code > 201) {
+				throw new InternalErrorException(
+						String.format(Messages.Exception.ERROR_WHILE_ACCESSING_SERVICE_TO_CREATE_MEDIA, 
+								id, String.valueOf(code)));
 			}
-		} catch (ClientProtocolException e) {
-			logger.debug("Exception when saving picture:{}, message:{}", 
-					id, e.getMessage());
-			// TODO add message
-			throw new InternalErrorException();
 		} catch (IOException e) {
-			logger.debug("Exception when saving picture:{}, message:{}", 
-					id, e.getMessage());
-			// TODO add message
-			throw new InternalErrorException();
+			throw new InternalErrorException(
+					String.format(Messages.Exception.ERROR_WHILE_ACCESSING_SERVICE_TO_CREATE_MEDIA, 
+							id, e.getMessage()));
 		}
 	}
-
+	
 	@Override
 	public String getMediaUri(String requester, String id)
 			throws MediaNotFoundException, InternalErrorException, UnauthorizedOperationException {
@@ -110,7 +100,27 @@ public class RemoteServiceMediaRepository implements MediaRepository {
 	@Override
 	public void deleteMedia(String requester, String id)
 			throws MediaNotFoundException, InternalErrorException, UnauthorizedOperationException {
-		// TODO implement
+		try {
+			Map<String, String> header = new HashMap<String, String>();
+			HttpResponse response = httpUtils.delete(this.serviceUrl + "/" + id, header);
+			int code = response.getCode();
+			
+			if (code > 200) {
+				if (code == HttpStatus.SC_NOT_FOUND) {
+					throw new MediaNotFoundException(
+						String.format(Messages.Exception.ERROR_WHILE_ACCESSING_SERVICE_TO_DELETE_MEDIA, 
+								id, String.valueOf(code)));
+				} else {
+					throw new InternalErrorException(
+						String.format(Messages.Exception.ERROR_WHILE_ACCESSING_SERVICE_TO_DELETE_MEDIA, 
+							id, String.valueOf(code)));
+				}
+			}
+		} catch (IOException e) {
+			throw new InternalErrorException(
+					String.format(Messages.Exception.ERROR_WHILE_ACCESSING_SERVICE_TO_DELETE_MEDIA, 
+							id, String.valueOf(e.getMessage())));
+		}
 	}
 
 	@Override

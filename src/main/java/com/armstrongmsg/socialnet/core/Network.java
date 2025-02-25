@@ -543,8 +543,14 @@ public class Network {
 		
 		try {
 			this.storageFacade.updateUser(requester);
+			
+			for (String mediaId : postToDelete.getMediaIds()) {
+				this.mediaStorageFacade.deleteMedia(requester.getUserId(), mediaId);
+			}
 		} catch (UserNotFoundException e) {
 			throw new InternalErrorException(e);
+		} catch (MediaNotFoundException e) {
+			// TODO treat
 		}
 	}
 	

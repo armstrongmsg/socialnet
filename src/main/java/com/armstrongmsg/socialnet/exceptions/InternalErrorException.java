@@ -10,4 +10,8 @@ public class InternalErrorException extends Exception {
 	public InternalErrorException(Exception cause) {
 		super(cause);
 	}
+	
+	public InternalErrorException(String message) {
+		super(message);
+	}
 }

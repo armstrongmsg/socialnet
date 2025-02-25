@@ -27,6 +27,8 @@ public class Messages {
 		public static final String LOADING_MEDIA_REPOSITORY_CONFIGURATION = "Loading media repository configuration {}.";
 		public static final String LOADING_FEED_POLICY = "Loading feed policy.";
 		public static final String MEDIA_NOT_FOUND_EXCEPTION = "Media not found exception. Message:{}.";
+		public static final String MEDIA_SERVICE_URL = "Media Service URL: {}.";
+		public static final String MEDIA_SERVICE_PUBLIC_URL = "Media Service Public URL: {}.";
 		public static final String NO_CACHE_CONFIGURATION = "No cache configuration. Using default.";
 		public static final String NO_DATABASE_MANAGER_CONFIGURATION = "No database manager configuration. Using default.";
 		public static final String NO_MEDIA_REPOSITORY_CONFIGURATION = "No media repository configuration. Using default.";
@@ -83,6 +85,8 @@ public class Messages {
 		public static final String COULD_NOT_LOAD_ADMIN_CONFIGURATION = "Could not load admin configuration. Message: %s";
 		public static final String COULD_NOT_LOAD_CACHE_CONFIGURATION_PROPERTY = "Could not load cache configuration property %s.";
 		public static final String ERROR_ON_INSTANTIATION = "Error while instantiating class %s. Message: %s."; 
+		public static final String ERROR_WHILE_ACCESSING_SERVICE_TO_CREATE_MEDIA = "Error while accessing service to create media. Media ID: %s. Message: %s.";
+		public static final String ERROR_WHILE_ACCESSING_SERVICE_TO_DELETE_MEDIA = "Error while accessing service to delete media. Media ID: %s. Message: %s.";
 		public static final String FRIENDSHIP_REQUEST_NOT_FOUND = "Friendship request not found. Token: %s, username: %s.";
 		public static final String INVALID_CREDENTIALS = "Invalid credentials for user %s.";
 		public static final String INVALID_PROPERTY = "Invalid property %s.";
