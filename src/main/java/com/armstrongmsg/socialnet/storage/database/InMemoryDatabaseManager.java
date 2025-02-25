@@ -9,7 +9,6 @@ import com.armstrongmsg.socialnet.model.Friendship;
 import com.armstrongmsg.socialnet.model.FriendshipRequest;
 import com.armstrongmsg.socialnet.model.User;
 
-// TODO test
 public class InMemoryDatabaseManager implements DatabaseManager {
 	private List<User> users;
 	private List<Friendship> friendships;
@@ -52,8 +51,10 @@ public class InMemoryDatabaseManager implements DatabaseManager {
 	}
 	
 	@Override
-	public User updateUser(User user) {
-		// FIXME
+	public User updateUser(User user) throws UserNotFoundException {
+		getUserById(user.getUserId());
+		users.remove(user);
+		users.add(user);
 		return user;
 	}
 
@@ -104,7 +105,6 @@ public class InMemoryDatabaseManager implements DatabaseManager {
 
 	@Override
 	public Follow saveFollow(Follow follow) {
-		// FIXME
 		this.follows.add(follow);
 		return follow;
 	}
@@ -128,7 +128,6 @@ public class InMemoryDatabaseManager implements DatabaseManager {
 	@Override
 	public FriendshipRequest saveFriendshipRequest(FriendshipRequest friendshipRequest) {
 		this.friendshipRequests.add(friendshipRequest);
-		// FIXME
 		return friendshipRequest;
 	}
 
