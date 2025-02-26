@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import com.armstrongmsg.socialnet.constants.Messages;
 import com.armstrongmsg.socialnet.exceptions.FatalErrorException;
 import com.armstrongmsg.socialnet.exceptions.InternalErrorException;
 import com.armstrongmsg.socialnet.exceptions.MediaNotFoundException;
@@ -41,16 +42,16 @@ public class LocalFileSystemMediaRepository implements MediaRepository {
 				out.write(data);
 			}
 		} catch (IOException e) {
-			// TODO add message
-			throw new InternalErrorException();
+			throw new InternalErrorException(
+					String.format(Messages.Exception.ERROR_WHILE_CREATING_MEDIA_LOCALLY, id, e.getMessage()));
 		} finally {
 			try {
 				if (out != null) {
 					out.close();
 				}
 			} catch (IOException e) {
-				// TODO add message
-				throw new InternalErrorException();
+				throw new InternalErrorException(
+						String.format(Messages.Exception.ERROR_WHILE_CREATING_MEDIA_LOCALLY, id, e.getMessage()));
 			}
 		}
 	}
@@ -60,8 +61,8 @@ public class LocalFileSystemMediaRepository implements MediaRepository {
 		File localPath = new File(pictureRepositoryLocalPath + File.separator + id);
 
 		if (!localPath.exists()) {
-			// TODO add message
-			throw new MediaNotFoundException();
+			throw new MediaNotFoundException(
+					String.format(Messages.Exception.MEDIA_NOT_FOUND, id));
 		}
 
 		return DEFAULT_MEDIA_LOCAL_PATH + id;
@@ -74,35 +75,38 @@ public class LocalFileSystemMediaRepository implements MediaRepository {
 		if (localPath.exists()) {
 			localPath.delete();
 		} else {
-			// TODO add message
-			throw new MediaNotFoundException();
+			throw new MediaNotFoundException(
+					String.format(Messages.Exception.MEDIA_NOT_FOUND, id));
 		}
 	}
 
 	@Override
-	public void updateMedia(String requester, String id, Map<String, String> metadata, byte[] data) throws InternalErrorException, MediaNotFoundException {
+	public void updateMedia(String requester, String id, Map<String, String> metadata, byte[] data) 
+			throws InternalErrorException, MediaNotFoundException {
 		String pictureLocalPath = pictureRepositoryLocalPath + File.separator + id;
 		File localPathFile = new File(pictureLocalPath);
 		FileOutputStream out = null;
 
 		try {
 			if (!localPathFile.exists()) {
-				// TODO add message
-				throw new MediaNotFoundException();
+				throw new MediaNotFoundException(
+						String.format(Messages.Exception.MEDIA_NOT_FOUND, id));
 			}
 			out = new FileOutputStream(localPathFile);
 			out.write(data);
 		} catch (IOException e) {
-			// TODO add message
-			throw new InternalErrorException();
+			throw new InternalErrorException(
+					String.format(Messages.Exception.ERROR_WHILE_ACCESSING_MEDIA_LOCALLY, 
+							id, e.getMessage()));
 		} finally {
 			try {
 				if (out != null) {
 					out.close();
 				}
 			} catch (IOException e) {
-				// TODO add message
-				throw new InternalErrorException();
+				throw new InternalErrorException(
+						String.format(Messages.Exception.ERROR_WHILE_ACCESSING_MEDIA_LOCALLY, 
+								id, e.getMessage()));
 			}
 		}
 	}

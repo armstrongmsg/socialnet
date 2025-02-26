@@ -85,12 +85,15 @@ public class Messages {
 		public static final String COULD_NOT_LOAD_ADMIN_CONFIGURATION = "Could not load admin configuration. Message: %s";
 		public static final String COULD_NOT_LOAD_CACHE_CONFIGURATION_PROPERTY = "Could not load cache configuration property %s.";
 		public static final String ERROR_ON_INSTANTIATION = "Error while instantiating class %s. Message: %s."; 
+		public static final String ERROR_WHILE_ACCESSING_MEDIA_LOCALLY = "Error while accessing media locally. Media ID: %s. Message: %s.";
 		public static final String ERROR_WHILE_ACCESSING_SERVICE_TO_CREATE_MEDIA = "Error while accessing service to create media. Media ID: %s. Message: %s.";
 		public static final String ERROR_WHILE_ACCESSING_SERVICE_TO_DELETE_MEDIA = "Error while accessing service to delete media. Media ID: %s. Message: %s.";
+		public static final String ERROR_WHILE_CREATING_MEDIA_LOCALLY = "Error while creating media locally. Media ID: %s. Message:%s.";
 		public static final String FRIENDSHIP_REQUEST_NOT_FOUND = "Friendship request not found. Token: %s, username: %s.";
 		public static final String INVALID_CREDENTIALS = "Invalid credentials for user %s.";
 		public static final String INVALID_PROPERTY = "Invalid property %s.";
 		public static final String INVALID_TOKEN = "Invalid token.";
+		public static final String MEDIA_NOT_FOUND = "Media not found. Media ID: %s.";
 		public static final String USER_IS_NOT_AUTHORIZED = "User %s is not authorized to perform operation %s.";
 		public static final String COULD_NOT_FIND_USER = "Could not find user %s.";
 		public static final String CONSTRUCTOR_NOT_FOUND_ON_INSTANTIATION = 
