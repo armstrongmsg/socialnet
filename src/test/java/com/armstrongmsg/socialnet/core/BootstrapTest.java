@@ -10,6 +10,7 @@ import com.armstrongmsg.socialnet.constants.ConfigurationProperties;
 import com.armstrongmsg.socialnet.constants.SystemConstants;
 import com.armstrongmsg.socialnet.exceptions.FatalErrorException;
 import com.armstrongmsg.socialnet.exceptions.InternalErrorException;
+import com.armstrongmsg.socialnet.exceptions.InvalidParameterException;
 import com.armstrongmsg.socialnet.exceptions.UserAlreadyExistsException;
 import com.armstrongmsg.socialnet.util.PropertiesUtil;
 
@@ -58,7 +59,8 @@ public class BootstrapTest {
 	}
 	
 	@Test
-	public void testStartNetwork() throws FatalErrorException, InternalErrorException, UserAlreadyExistsException {
+	public void testStartNetwork() 
+			throws FatalErrorException, InternalErrorException, UserAlreadyExistsException, InvalidParameterException {
 		this.bootstrap = new Bootstrap();
 		this.bootstrap.startNetwork(network);
 		

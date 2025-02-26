@@ -1,7 +1,6 @@
 package com.armstrongmsg.socialnet.model;
 
 import java.util.Objects;
-import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -25,7 +24,7 @@ public class FriendshipRequest {
 	}
 	
 	public FriendshipRequest(User requester, User requested) {
-		this.id = UUID.randomUUID().toString();
+		this.id = requester.getUserId() + "-" + requested.getUserId();
 		this.requester = requester;
 		this.requested = requested;
 	}

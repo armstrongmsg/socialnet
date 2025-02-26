@@ -95,7 +95,7 @@ public class FollowBean {
 	public void addFollow() {
 		try {
 			facade.addFollow(getContextBean().getCurrentSession().getUserToken(), getUsername());
-		} catch (AuthenticationException | UserNotFoundException | InternalErrorException e) {
+		} catch (AuthenticationException | UserNotFoundException | InternalErrorException | FollowAlreadyExistsException e) {
 			this.exceptionHandler.handle(e);
 		}
 	}

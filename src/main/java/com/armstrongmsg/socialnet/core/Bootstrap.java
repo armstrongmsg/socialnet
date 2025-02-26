@@ -12,6 +12,7 @@ import com.armstrongmsg.socialnet.constants.Messages;
 import com.armstrongmsg.socialnet.constants.SystemConstants;
 import com.armstrongmsg.socialnet.exceptions.FatalErrorException;
 import com.armstrongmsg.socialnet.exceptions.InternalErrorException;
+import com.armstrongmsg.socialnet.exceptions.InvalidParameterException;
 import com.armstrongmsg.socialnet.exceptions.UserAlreadyExistsException;
 import com.armstrongmsg.socialnet.util.PropertiesUtil;
 
@@ -72,6 +73,8 @@ public class Bootstrap {
 			} catch (InternalErrorException e) {
 				throw new FatalErrorException(e.getMessage());
 			} catch (UserAlreadyExistsException e) {
+				throw new FatalErrorException(e.getMessage());
+			} catch (InvalidParameterException e) {
 				throw new FatalErrorException(e.getMessage());
 			}
 		}

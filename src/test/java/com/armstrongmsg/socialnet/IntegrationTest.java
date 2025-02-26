@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -309,7 +310,9 @@ public class IntegrationTest extends PersistenceTest {
 	}
 	
 	@Test
-	public void testGetAndCreateUserBySelf() throws UnauthorizedOperationException, AuthenticationException, InternalErrorException, UserAlreadyExistsException, InvalidParameterException {
+	public void testGetAndCreateUserBySelf() 
+			throws UnauthorizedOperationException, AuthenticationException, 
+			InternalErrorException, UserAlreadyExistsException, InvalidParameterException {
 		String adminToken = loginAsAdmin();
 		
 		List<User> users = facade.getUsers(adminToken);
@@ -328,6 +331,46 @@ public class IntegrationTest extends PersistenceTest {
 		assertEquals(NEW_USER_PROFILE_DESCRIPTION_1, createdUser.getProfile().getDescription());
 		assertTrue(createdUser.getProfile().getPosts().isEmpty());
 		assertEquals(SystemConstants.DEFAULT_PROFILE_PIC_ID, createdUser.getProfile().getProfilePicId());
+	}
+	
+	@Test(expected = UserAlreadyExistsException.class)
+	public void testCannotCreateUserWithAlreadyUsedUsername() 
+			throws AuthenticationException, InternalErrorException, UnauthorizedOperationException, 
+			InvalidParameterException, UserAlreadyExistsException {
+		String adminToken = loginAsAdmin();
+		
+		List<User> users = facade.getUsers(adminToken);
+		
+		assertTrue(users.isEmpty());
+		
+		facade.addUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
+		facade.addUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
+	}
+	
+	@Test(expected = InvalidParameterException.class)
+	public void testCannotCreateUserWithNullPassword() 
+			throws AuthenticationException, InternalErrorException, UnauthorizedOperationException, 
+			InvalidParameterException, UserAlreadyExistsException {
+		String adminToken = loginAsAdmin();
+		
+		List<User> users = facade.getUsers(adminToken);
+		
+		assertTrue(users.isEmpty());
+		
+		facade.addUser(NEW_USERNAME_1, null, NEW_USER_PROFILE_DESCRIPTION_1);
+	}
+	
+	@Test(expected = InvalidParameterException.class)
+	public void testCannotCreateUserWithEmptyPassword() 
+			throws AuthenticationException, InternalErrorException, UnauthorizedOperationException, 
+			InvalidParameterException, UserAlreadyExistsException {
+		String adminToken = loginAsAdmin();
+		
+		List<User> users = facade.getUsers(adminToken);
+		
+		assertTrue(users.isEmpty());
+		
+		facade.addUser(NEW_USERNAME_1, "", NEW_USER_PROFILE_DESCRIPTION_1);
 	}
 	
 	@Test
@@ -392,7 +435,8 @@ public class IntegrationTest extends PersistenceTest {
 	
 	@Test
 	public void testCreateAndGetPostByNonAdmin() 
-			throws UnauthorizedOperationException, AuthenticationException, UserNotFoundException, InternalErrorException, UserAlreadyExistsException, InvalidParameterException {
+			throws UnauthorizedOperationException, AuthenticationException, UserNotFoundException, 
+			InternalErrorException, UserAlreadyExistsException, InvalidParameterException {
 		String adminToken = loginAsAdmin();
 		
 		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
@@ -415,6 +459,66 @@ public class IntegrationTest extends PersistenceTest {
 		assertEquals(NEW_POST_CONTENT, createdPost.getContent());
 		assertEquals(NEW_POST_VISIBILITY, createdPost.getVisibility());
 		assertPicturePathExists(createdPost.getMediaIds().get(0));
+	}
+	
+	@Test(expected = InvalidParameterException.class)
+	public void testCannotCreatePostWithNullTitle() 
+			throws AuthenticationException, InternalErrorException, UnauthorizedOperationException, 
+			UserAlreadyExistsException, InvalidParameterException {
+		String adminToken = loginAsAdmin();
+		
+		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
+		
+		String userToken = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
+		
+		ArrayList<byte[]> postMediaData = new ArrayList<byte[]>();
+		postMediaData.add(PICTURE_DATA);
+		facade.createPost(userToken, null, NEW_POST_CONTENT, NEW_POST_VISIBILITY, postMediaData);
+	}
+	
+	@Test(expected = InvalidParameterException.class)
+	public void testCannotCreatePostWithNullContent() 
+			throws AuthenticationException, InternalErrorException, UnauthorizedOperationException, 
+			UserAlreadyExistsException, InvalidParameterException {
+		String adminToken = loginAsAdmin();
+		
+		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
+		
+		String userToken = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
+		
+		ArrayList<byte[]> postMediaData = new ArrayList<byte[]>();
+		postMediaData.add(PICTURE_DATA);
+		facade.createPost(userToken, NEW_POST_TITLE, null, NEW_POST_VISIBILITY, postMediaData);
+	}
+	
+	@Test(expected = InvalidParameterException.class)
+	public void testCannotCreatePostWithNullPostVisibility() 
+			throws AuthenticationException, InternalErrorException, UnauthorizedOperationException, 
+			UserAlreadyExistsException, InvalidParameterException {
+		String adminToken = loginAsAdmin();
+		
+		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
+		
+		String userToken = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
+		
+		ArrayList<byte[]> postMediaData = new ArrayList<byte[]>();
+		postMediaData.add(PICTURE_DATA);
+		facade.createPost(userToken, NEW_POST_TITLE, NEW_POST_CONTENT, null, postMediaData);
+	}
+	
+	@Test(expected = InvalidParameterException.class)
+	public void testCannotCreatePostWithNullMediaData() 
+			throws AuthenticationException, InternalErrorException, UnauthorizedOperationException, 
+			UserAlreadyExistsException, InvalidParameterException {
+		String adminToken = loginAsAdmin();
+		
+		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
+		
+		String userToken = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
+		
+		ArrayList<byte[]> postMediaData = new ArrayList<byte[]>();
+		postMediaData.add(PICTURE_DATA);
+		facade.createPost(userToken, NEW_POST_TITLE, NEW_POST_CONTENT, NEW_POST_VISIBILITY, null);
 	}
 	
 	@Test
@@ -769,6 +873,32 @@ public class IntegrationTest extends PersistenceTest {
 	}
 	
 	@Test
+	public void testDeleteNotFoundPost() 
+			throws UnauthorizedOperationException, AuthenticationException, InternalErrorException, 
+			UserAlreadyExistsException, InvalidParameterException {
+		String adminToken = loginAsAdmin();
+		
+		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
+		
+		String userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
+	
+		ArrayList<byte[]> postMediaData = new ArrayList<byte[]>();
+		postMediaData.add(PICTURE_DATA);
+		facade.createPost(userToken1, NEW_POST_TITLE, NEW_POST_CONTENT, PostVisibility.PRIVATE, postMediaData);
+		
+		List<Post> postsBeforeDelete = facade.getSelfPosts(userToken1);
+		
+		assertEquals(1, postsBeforeDelete.size());
+		assertEquals(NEW_POST_TITLE, postsBeforeDelete.get(0).getTitle());
+		
+		try {
+			facade.deletePost(userToken1, "invalid-post-id");
+			fail("Expected exception.");
+		} catch (PostNotFoundException e) {
+		}
+	}
+	
+	@Test
 	public void testAddFollowAdmin() throws UnauthorizedOperationException, AuthenticationException, UserNotFoundException, 
 		InternalErrorException, UserAlreadyExistsException, FollowAlreadyExistsException {
 		String adminToken = loginAsAdmin();
@@ -849,6 +979,26 @@ public class IntegrationTest extends PersistenceTest {
 		assertTrue(followsUser1.contains(user2Summary));
 		
 		assertTrue(followsUser2.isEmpty());
+	}
+	
+	@Test
+	public void testCannotAddAlreadyCreatedFollow() 
+			throws AuthenticationException, UserNotFoundException, InternalErrorException, 
+			UnauthorizedOperationException, UserAlreadyExistsException, FollowAlreadyExistsException {
+		String adminToken = loginAsAdmin();
+		
+		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
+		facade.addUser(adminToken, NEW_USERNAME_2, NEW_USER_PASSWORD_2, NEW_USER_PROFILE_DESCRIPTION_2);
+
+		String userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);	
+		facade.addFollow(userToken1, NEW_USERNAME_2);
+		
+		try {
+			facade.addFollow(userToken1, NEW_USERNAME_2);
+			fail("Expected exception");
+		} catch (FollowAlreadyExistsException e) {
+			
+		}
 	}
 	
 	@Test

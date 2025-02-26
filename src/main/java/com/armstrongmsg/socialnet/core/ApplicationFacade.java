@@ -388,7 +388,7 @@ public class ApplicationFacade {
 	}
 
 	public void addFollow(String userToken, String followedUsername) 
-			throws AuthenticationException, UserNotFoundException, InternalErrorException {
+			throws AuthenticationException, UserNotFoundException, InternalErrorException, FollowAlreadyExistsException {
 		logger.debug(Messages.Logging.RECEIVED_ADD_FOLLOW_REQUEST, userToken, followedUsername);
 		
 		try {
@@ -401,6 +401,9 @@ public class ApplicationFacade {
 			throw e;
 		} catch (UserNotFoundException e) {
 			logger.debug(Messages.Logging.USER_NOT_FOUND_EXCEPTION, e.getMessage());
+			throw e;
+		} catch (FollowAlreadyExistsException e) {
+			logger.debug(Messages.Logging.FOLLOW_ALREADY_EXISTS_EXCEPTION, e.getMessage());
 			throw e;
 		}
 	}

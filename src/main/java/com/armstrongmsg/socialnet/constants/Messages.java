@@ -13,6 +13,7 @@ public class Messages {
 				"Error while loading database manager configuration. Using default. Message: {}";
 		public static final String ERROR_WHILE_LOADING_MEDIA_REPOSITORY_CONFIGURATION = 
 				"Error while loading media repository configuration. Using default. Message:{}.";
+		public static final String FOLLOW_ALREADY_EXISTS_EXCEPTION = "Follow already exists exception. Message:{}.";
 		public static final String FOLLOW_NOT_FOUND_EXCEPTION = "Follow not found exception. Message:{}.";
 		public static final String FRIENDSHIP_NOT_FOUND_EXCEPTION = "Friendship not found exception. Message:{}.";
 		public static final String FRIENDSHIP_REQUEST_NOT_FOUND_EXCEPTION = "Friendship request not found exception. Message:{}.";
@@ -79,6 +80,7 @@ public class Messages {
 	}
 	
 	public static class Exception {
+		public static final String BLANK_PASSWORD = "Blank password.";
 		public static final String CANNOT_LOAD_BOOTSTRAP_PROPERTY = "Cannot load bootstrap property %s.";
 		public static final String CANNOT_LOAD_LOCAL_PATH_PROPERTY = "Cannot load local path property %s.";
 		public static final String CLASS_NOT_FOUND_ON_INSTANTIATION = "Could not find class %s. Message: %s.";
@@ -90,14 +92,25 @@ public class Messages {
 		public static final String ERROR_WHILE_ACCESSING_SERVICE_TO_DELETE_MEDIA = "Error while accessing service to delete media. Media ID: %s. Message: %s.";
 		public static final String ERROR_WHILE_CREATING_MEDIA_LOCALLY = "Error while creating media locally. Media ID: %s. Message:%s.";
 		public static final String FRIENDSHIP_REQUEST_NOT_FOUND = "Friendship request not found. Token: %s, username: %s.";
+		public static final String FOLLOW_NOT_FOUND = "Follow not found. User ID:%s, username:%s.";
+		public static final String FRIENDSHIP_NOT_FOUND_EXCEPTION = "Friendship not found. User ID: %s, username: %s.";
 		public static final String INVALID_CREDENTIALS = "Invalid credentials for user %s.";
 		public static final String INVALID_PROPERTY = "Invalid property %s.";
 		public static final String INVALID_TOKEN = "Invalid token.";
 		public static final String MEDIA_NOT_FOUND = "Media not found. Media ID: %s.";
+		public static final String NULL_PASSWORD = "Null password.";
+		public static final String PICTURE_DATA_CANNOT_BE_NULL = "Picture data cannot be null.";
+		public static final String POST_CONTENT_IS_NULL = "Post content is null.";
+		public static final String POST_TITLE_IS_NULL = "Post title is null.";
+		public static final String POST_VISIBILITY_IS_NULL = "Post visibility is null.";
+		public static final String POST_MEDIA_DATA_IS_NULL = "Post media data is null.";
+		public static final String POST_NOT_FOUND = "Post not found. Post ID: %s.";
 		public static final String USER_IS_NOT_AUTHORIZED = "User %s is not authorized to perform operation %s.";
+		public static final String USERNAME_ALREADY_IN_USE = "Username already in use. Username: %s.";
 		public static final String COULD_NOT_FIND_USER = "Could not find user %s.";
 		public static final String CONSTRUCTOR_NOT_FOUND_ON_INSTANTIATION = 
 				"Could not find correct constructor of class %s. Message: %s.";
+		public static final String USER_IS_ALREADY_FOLLOWED = "User %s already follows user %s.";
 		public static final String USER_NOT_FOUND_EXCEPTION = "User not found exception.";
 	}
 }

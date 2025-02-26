@@ -1,7 +1,6 @@
 package com.armstrongmsg.socialnet.model;
 
 import java.util.Objects;
-import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -25,7 +24,7 @@ public class Follow extends Relationship {
 	}
 	
 	public Follow(User follower, User followed) {
-		this.id = UUID.randomUUID().toString();
+		this.id = follower.getUserId() + "-" + followed.getUserId();
 		this.follower = follower;
 		this.followed = followed;
 	}

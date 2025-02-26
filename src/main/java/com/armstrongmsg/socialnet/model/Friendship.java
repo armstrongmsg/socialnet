@@ -1,7 +1,6 @@
 package com.armstrongmsg.socialnet.model;
 
 import java.util.Objects;
-import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -31,7 +30,7 @@ public class Friendship extends Relationship {
 	}
 	
 	public Friendship(User friend1, User friend2) {
-		this.id = UUID.randomUUID().toString();
+		this.id = friend1.getUserId() + "-" + friend2.getUserId();
 		this.friend1 = friend1;
 		this.friend2 = friend2;
 	}

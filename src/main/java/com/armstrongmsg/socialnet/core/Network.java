@@ -129,10 +129,25 @@ public class Network {
 		this.storageFacade.saveUser(newUser);
 	}
 	
-	public void addUser(String username, String password, String profileDescription) throws InternalErrorException, UserAlreadyExistsException {
+	public void addUser(String username, String password, String profileDescription) 
+			throws InternalErrorException, UserAlreadyExistsException, InvalidParameterException {
+		try {
+			this.storageFacade.getUserByUsername(username);
+			throw new UserAlreadyExistsException(
+					String.format(Messages.Exception.USERNAME_ALREADY_IN_USE, username));
+		} catch (UserNotFoundException e) {
+		}
+		
+		if (password == null) {
+			throw new InvalidParameterException(Messages.Exception.NULL_PASSWORD);
+		}
+		
+		if (password.isBlank()) {
+			throw new InvalidParameterException(Messages.Exception.BLANK_PASSWORD);
+		}
+		
 		UUID uuid = UUID.randomUUID();
 		Profile profile = new Profile(profileDescription, new ArrayList<Post>());
-		// TODO should perform parameter validation
 		User newUser = new User(uuid.toString(), username, password, profile);
 		this.storageFacade.saveUser(newUser);
 	}
@@ -155,29 +170,25 @@ public class Network {
 		}
 	}
 
-	public void createPost(String userToken, String title, String content, PostVisibility newPostVisibility, List<byte[]> postMediaData) 
+	public void createPost(String userToken, String title, String content, 
+			PostVisibility newPostVisibility, List<byte[]> postMediaData) 
 			throws AuthenticationException, InternalErrorException, InvalidParameterException {
 		User user = this.authenticationPlugin.getUser(userToken);
 		
-		// TODO test
 		if (title == null) {
-			// TODO add message
-			throw new InvalidParameterException();
+			throw new InvalidParameterException(Messages.Exception.POST_TITLE_IS_NULL);
 		}
 		
 		if (content == null) {
-			// TODO add message
-			throw new InvalidParameterException();
+			throw new InvalidParameterException(Messages.Exception.POST_CONTENT_IS_NULL);
 		}
 		
 		if (newPostVisibility == null) {
-			// TODO add message
-			throw new InvalidParameterException();
+			throw new InvalidParameterException(Messages.Exception.POST_VISIBILITY_IS_NULL);
 		}
 		
 		if (postMediaData == null) {
-			// TODO add message
-			throw new InvalidParameterException();	
+			throw new InvalidParameterException(Messages.Exception.POST_MEDIA_DATA_IS_NULL);	
 		}
 
 		byte[] mediaData;
@@ -233,9 +244,10 @@ public class Network {
 				!hasReceivedFriendshipRequestFrom(requester, username)) {
 			User friend = findUserByUsername(username);
 			try {
-				// TODO test
-				this.storageFacade.saveFriendshipRequest(new FriendshipRequest(requester, friend));
+				FriendshipRequest r = new FriendshipRequest(requester, friend);
+				this.storageFacade.saveFriendshipRequest(r);
 			} catch (FriendshipRequestAlreadyExistsException e) {
+				// should never occur
 				throw new InternalErrorException(e);
 			}
 		} else {
@@ -397,15 +409,15 @@ public class Network {
 	}
 	
 	public void addFollow(String userToken, String followedUsername) 
-			throws AuthenticationException, UserNotFoundException, InternalErrorException {
+			throws AuthenticationException, UserNotFoundException, InternalErrorException, FollowAlreadyExistsException {
 		User requester = this.authenticationPlugin.getUser(userToken);
 		User followed = findUserByUsername(followedUsername);
-		try {
-			this.storageFacade.saveFollow(new Follow(requester, followed));
-		} catch (FollowAlreadyExistsException e) {
-			// TODO should we throw this FollowAlreadyExistsException?
-			throw new InternalErrorException(e);
+		
+		if (doFollows(requester, followedUsername)) {
+			throw new FollowAlreadyExistsException(
+					String.format(Messages.Exception.USER_IS_ALREADY_FOLLOWED, requester.getUserId(), followedUsername));
 		}
+		this.storageFacade.saveFollow(new Follow(requester, followed));
 	}
 	
 	public List<User> getFollowedUsers(String userToken, String userId) throws UnauthorizedOperationException, AuthenticationException, UserNotFoundException, InternalErrorException {
@@ -520,7 +532,8 @@ public class Network {
 		return new ArrayList<Post>();
 	}
 	
-	public void deletePost(String token, String postId) throws AuthenticationException, UnauthorizedOperationException, PostNotFoundException, InternalErrorException {
+	public void deletePost(String token, String postId) 
+			throws AuthenticationException, UnauthorizedOperationException, PostNotFoundException, InternalErrorException {
 		User requester = this.authenticationPlugin.getUser(token);
 		this.authorizationPlugin.authorize(requester, new Operation(OperationType.DELETE_POST));
 		
@@ -533,10 +546,8 @@ public class Network {
 			}
 		}
 		
-		// TODO test
 		if (postToDelete == null) {
-			// TODO add message
-			throw new PostNotFoundException();
+			throw new PostNotFoundException(String.format(Messages.Exception.POST_NOT_FOUND, postId));
 		}
 		
 		posts.remove(postToDelete);
@@ -550,7 +561,7 @@ public class Network {
 		} catch (UserNotFoundException e) {
 			throw new InternalErrorException(e);
 		} catch (MediaNotFoundException e) {
-			// TODO treat
+			throw new InternalErrorException(e);
 		}
 	}
 	
@@ -660,6 +671,10 @@ public class Network {
 
 	public boolean follows(String userToken, String username) throws AuthenticationException, InternalErrorException {
 		User requester = this.authenticationPlugin.getUser(userToken);
+		return doFollows(requester, username);
+	}
+	
+	private boolean doFollows(User requester, String username) throws InternalErrorException {
 		List<UserView> follows;
 		try {
 			follows = doGetFollowedUsers(requester);
@@ -676,7 +691,8 @@ public class Network {
 		return false;
 	}
 
-	public void unfollow(String userToken, String username) throws AuthenticationException, InternalErrorException, FollowNotFoundException {
+	public void unfollow(String userToken, String username) 
+			throws AuthenticationException, InternalErrorException, FollowNotFoundException {
 		User requester = this.authenticationPlugin.getUser(userToken);
 		List<Follow> follows = this.storageFacade.getFollowsByUserId(requester.getUserId());
 		
@@ -687,8 +703,8 @@ public class Network {
 			}
 		}
 		
-		// TODO add message
-		throw new FollowNotFoundException();
+		throw new FollowNotFoundException(
+				String.format(Messages.Exception.FOLLOW_NOT_FOUND, requester.getUserId(), username));
 	}
 
 	public void unfriend(String userToken, String username) 
@@ -711,16 +727,15 @@ public class Network {
 		if (foundFriendship != null) {
 			this.storageFacade.removeFriendship(foundFriendship);
 		} else {
-			// TODO add message
-			throw new FriendshipNotFoundException();
+			throw new FriendshipNotFoundException(
+					String.format(Messages.Exception.FRIENDSHIP_NOT_FOUND_EXCEPTION, requester.getUserId(), username));
 		}
 	}
 
 	public void changeSelfProfilePic(String userToken, byte[] picData) 
 			throws AuthenticationException, InternalErrorException, InvalidParameterException {
 		if (picData == null) {
-			// TODO add message
-			throw new InvalidParameterException();
+			throw new InvalidParameterException(Messages.Exception.PICTURE_DATA_CANNOT_BE_NULL);
 		}
 		
 		User requester = this.authenticationPlugin.getUser(userToken);
@@ -738,15 +753,16 @@ public class Network {
 		}
 	}
 
-	private void doChangeSelfProfilePic(User requester, byte[] picData) throws InternalErrorException, UnauthorizedOperationException {
+	private void doChangeSelfProfilePic(User requester, byte[] picData) 
+			throws InternalErrorException, UnauthorizedOperationException {
 		String picId = createMedia(requester, picData);
 		requester.getProfile().setProfilePicId(picId);
 	}
 
-	public void updateProfile(String userToken, String profileDescription, byte[] picData) throws AuthenticationException, InternalErrorException, InvalidParameterException {
+	public void updateProfile(String userToken, String profileDescription, byte[] picData) 
+			throws AuthenticationException, InternalErrorException, InvalidParameterException {
 		if (picData == null) {
-			// TODO add message
-			throw new InvalidParameterException();
+			throw new InvalidParameterException(Messages.Exception.PICTURE_DATA_CANNOT_BE_NULL);
 		}
 		
 		User requester = this.authenticationPlugin.getUser(userToken);
