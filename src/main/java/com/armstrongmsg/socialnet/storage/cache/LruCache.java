@@ -103,7 +103,7 @@ public class LruCache implements Cache {
 		if (!this.users.contains(user)) {
 			if (this.users.size() >= totalCapacity) {
 				// FIXME
-				this.users.remove(0);
+				this.users.remove(this.users.size() - 1);
 			}
 			
 			this.users.add(user);
