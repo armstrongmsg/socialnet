@@ -9,7 +9,6 @@ import com.armstrongmsg.socialnet.exceptions.FatalErrorException;
 import com.armstrongmsg.socialnet.util.ClassFactory;
 import com.armstrongmsg.socialnet.util.PropertiesUtil;
 
-// TODO test
 public class MediaRepositoryFactory {
 	private static Logger logger = LoggerFactory.getLogger(MediaRepositoryFactory.class);
 	private ClassFactory classFactory;

@@ -8,7 +8,6 @@ import com.armstrongmsg.socialnet.exceptions.MediaNotFoundException;
 import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
 import com.armstrongmsg.socialnet.storage.media.MediaRepository;
 
-// TODO test
 public class MediaStorageFacade {
 	private MediaRepository mediaRepository;
 	
