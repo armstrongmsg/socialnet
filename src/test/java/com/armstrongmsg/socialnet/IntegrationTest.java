@@ -599,6 +599,20 @@ public class IntegrationTest extends PersistenceTest {
 		assertPicturePathExists(user1PostsForUser2AfterFriendship.get(0).getMediaIds().get(0));
 	}
 	
+	@Test(expected = UserNotFoundException.class)
+	public void testCannotGetInvalidUserPostsByNonAdmin() 
+			throws AuthenticationException, InternalErrorException, UnauthorizedOperationException, 
+			UserAlreadyExistsException, UserNotFoundException {
+		String adminToken = loginAsAdmin();
+		
+		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
+		facade.addUser(adminToken, NEW_USERNAME_2, NEW_USER_PASSWORD_2, NEW_USER_PROFILE_DESCRIPTION_2);
+		
+		String user1Token = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
+		
+		facade.getUserPosts(user1Token, "invalidUser");
+	}
+	
 	@Test
 	public void testAddFriendshipAdmin() 
 			throws UnauthorizedOperationException, AuthenticationException, UserNotFoundException, 
@@ -708,8 +722,8 @@ public class IntegrationTest extends PersistenceTest {
 		assertTrue(facade.getSelfFriends(userToken1).isEmpty());
 		assertTrue(facade.getSelfFriends(userToken2).isEmpty());
 		
-		List<FriendshipRequest> requestsSentBefore = facade.getSentFriendshipRequests(userToken1);
 		List<FriendshipRequest> requestsReceivedBefore = facade.getReceivedFriendshipRequests(userToken2);
+		List<FriendshipRequest> requestsSentBefore = facade.getSentFriendshipRequests(userToken1);
 		assertTrue(requestsSentBefore.isEmpty());
 		assertTrue(requestsReceivedBefore.isEmpty());
 		
@@ -734,6 +748,47 @@ public class IntegrationTest extends PersistenceTest {
 		assertEquals(NEW_USERNAME_1, facade.getSelfFriends(userToken2).get(0).getUsername());
 		assertTrue(requestsSentAfterAccept.isEmpty());
 		assertTrue(requestsReceivedAfterAccept.isEmpty());
+	}
+
+	@Test(expected = UserNotFoundException.class)
+	public void testCannotRequestFriendshipToInvalidUser() 
+			throws AuthenticationException, InternalErrorException, UnauthorizedOperationException, 
+			UserAlreadyExistsException, UserNotFoundException {
+		String adminToken = loginAsAdmin();
+		
+		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
+		
+		String userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
+		
+		facade.addFriendshipRequest(userToken1, NEW_USERNAME_2);
+	}
+	
+	@Test(expected = FriendshipRequestNotFound.class)
+	public void testCannotAcceptInvalidFriendshipRequest() 
+			throws AuthenticationException, InternalErrorException, UnauthorizedOperationException,
+			UserAlreadyExistsException, FriendshipRequestNotFound {
+		String adminToken = loginAsAdmin();
+		
+		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
+		facade.addUser(adminToken, NEW_USERNAME_2, NEW_USER_PASSWORD_2, NEW_USER_PROFILE_DESCRIPTION_2);
+		
+		String userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
+		
+		facade.acceptFriendshipRequest(userToken1, NEW_USERNAME_2);
+	}
+	
+	@Test(expected = FriendshipRequestNotFound.class)
+	public void testCannotRejectInvalidFriendshipRequest() 
+			throws AuthenticationException, InternalErrorException, UnauthorizedOperationException,
+			UserAlreadyExistsException, FriendshipRequestNotFound {
+		String adminToken = loginAsAdmin();
+		
+		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
+		facade.addUser(adminToken, NEW_USERNAME_2, NEW_USER_PASSWORD_2, NEW_USER_PROFILE_DESCRIPTION_2);
+		
+		String userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
+		
+		facade.rejectFriendshipRequest(userToken1, NEW_USERNAME_2);
 	}
 	
 	@Test
@@ -1001,6 +1056,18 @@ public class IntegrationTest extends PersistenceTest {
 		}
 	}
 	
+	@Test(expected = UserNotFoundException.class)
+	public void testCannotFollowInvalidUser()
+			throws UnauthorizedOperationException, AuthenticationException, InternalErrorException, 
+			UserAlreadyExistsException, UserNotFoundException, FollowAlreadyExistsException {
+		String adminToken = loginAsAdmin();
+		
+		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
+
+		String userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);	
+		facade.addFollow(userToken1, NEW_USERNAME_2);
+	}
+	
 	@Test
 	public void testGetUserRecommendations() throws AuthenticationException, UnauthorizedOperationException, UserNotFoundException, 
 		InternalErrorException, UserAlreadyExistsException, FriendshipAlreadyExistsException, MediaNotFoundException {
@@ -1175,6 +1242,20 @@ public class IntegrationTest extends PersistenceTest {
 		assertTrue(followsAfter.isEmpty());
 	}
 	
+	@Test(expected = FollowNotFoundException.class)
+	public void testUnfollowFollowNotFound() 
+			throws UnauthorizedOperationException, AuthenticationException, InternalErrorException, 
+			UserAlreadyExistsException, FollowNotFoundException {
+		String adminToken = loginAsAdmin();
+		
+		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
+		facade.addUser(adminToken, NEW_USERNAME_2, NEW_USER_PASSWORD_2, NEW_USER_PROFILE_DESCRIPTION_2);
+		
+		String userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
+		
+		facade.unfollow(userToken1, NEW_USERNAME_2);
+	}
+	
 	@Test
 	public void testUnfriend() throws AuthenticationException, UnauthorizedOperationException, UserNotFoundException, 
 		InternalErrorException, UserAlreadyExistsException, FriendshipAlreadyExistsException, FriendshipNotFoundException, MediaNotFoundException {
@@ -1201,6 +1282,24 @@ public class IntegrationTest extends PersistenceTest {
 		List<UserView> friendsAfter = facade.getSelfFriends(userToken1);
 		
 		assertTrue(friendsAfter.isEmpty());		
+	}
+	
+	@Test
+	public void testUnfriendFriendshipNotFound() 
+			throws UnauthorizedOperationException, AuthenticationException, InternalErrorException, 
+			UserAlreadyExistsException {
+		String adminToken = loginAsAdmin();
+		
+		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
+		facade.addUser(adminToken, NEW_USERNAME_2, NEW_USER_PASSWORD_2, NEW_USER_PROFILE_DESCRIPTION_2);
+		
+		String userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
+		
+		try {
+			facade.unfriend(userToken1, NEW_USERNAME_2);
+			fail("Expected exception.");
+		} catch (FriendshipNotFoundException e) {
+		}
 	}
 	
 	@Test
@@ -1232,6 +1331,23 @@ public class IntegrationTest extends PersistenceTest {
 	}
 	
 	@Test
+	public void testChangeAndGetProfilePicDataCannotBeNull() 
+			throws UnauthorizedOperationException, AuthenticationException, InternalErrorException, 
+			UserAlreadyExistsException {
+		String adminToken = loginAsAdmin();
+		
+		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
+		
+		String userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
+		
+		try {
+			facade.changeSelfProfilePic(userToken1, null);
+			fail("Expected exception.");
+		} catch (InvalidParameterException e) {
+		}
+	}
+	
+	@Test
 	public void testUpdateProfile() throws AuthenticationException, UnauthorizedOperationException, UserNotFoundException, 
 		InternalErrorException, UserAlreadyExistsException, MediaNotFoundException, InvalidParameterException, 
 		FileNotFoundException, IOException {
@@ -1251,6 +1367,37 @@ public class IntegrationTest extends PersistenceTest {
 		assertNotNull(picId);
 		String picUri = facade.getMediaUri(userToken1, picId);
 		TestFileUtils.assertFileHasContent(TEST_CACHE_PATH + File.separator + picUri, new byte[] {1, 1, 1});
+	}
+	
+	@Test
+	public void testUpdateProfilePicDataCannotBeNull() 
+			throws AuthenticationException, InternalErrorException, UnauthorizedOperationException, 
+			UserAlreadyExistsException {
+		String adminToken = loginAsAdmin();
+		
+		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
+		
+		String userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
+		
+		try {
+			facade.updateProfile(userToken1, UPDATED_USER_PROFILE_DESCRIPTION_1, null);
+			fail("Expected exception.");
+		} catch (InvalidParameterException e) {
+		}
+	}
+	
+	@Test
+	public void testGetDefaultProfilePicUri() 
+			throws AuthenticationException, InternalErrorException, UnauthorizedOperationException,
+			UserAlreadyExistsException, MediaNotFoundException {
+		String adminToken = loginAsAdmin();
+		
+		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
+		
+		String userToken1 = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
+		
+		assertEquals(SystemConstants.DEFAULT_PROFILE_PIC_PATH, 
+				facade.getMediaUri(userToken1, SystemConstants.DEFAULT_PROFILE_PIC_ID));
 	}
 	
 	private String loginAsAdmin() throws AuthenticationException, InternalErrorException {

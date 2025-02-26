@@ -522,10 +522,10 @@ public class Network {
 		User requester = this.authenticationPlugin.getUser(token);
 		// FIXME should add target user info
 		this.authorizationPlugin.authorize(requester, new Operation(OperationType.GET_USER_POSTS));
+		User user = findUserByUsername(username);
 		
 		// TODO move to authorization
 		if (doIsFriend(requester, username) || requester.getUsername().equals(username)) {
-			User user = findUserByUsername(username);
 			return user.getProfile().getPosts();
 		}
 		
@@ -781,9 +781,9 @@ public class Network {
 		}
 	}
 
-	public String getMediaUri(String userToken, String mediaId) throws AuthenticationException, MediaNotFoundException, InternalErrorException, UnauthorizedOperationException {
+	public String getMediaUri(String userToken, String mediaId) 
+			throws AuthenticationException, MediaNotFoundException, InternalErrorException, UnauthorizedOperationException {
 		User requester = this.authenticationPlugin.getUser(userToken);
-		this.authorizationPlugin.authorize(requester, new Operation(OperationType.GET_MEDIA_URI));
 		
 		if (mediaId.equals(SystemConstants.DEFAULT_PROFILE_PIC_ID)) {
 			return SystemConstants.DEFAULT_PROFILE_PIC_PATH;
