@@ -22,24 +22,19 @@ import com.armstrongmsg.socialnet.model.PostVisibility;
 import com.armstrongmsg.socialnet.model.UserView;
 import com.armstrongmsg.socialnet.view.jsf.model.JsfConnector;
 import com.armstrongmsg.socialnet.view.jsf.model.Post;
-import com.armstrongmsg.socialnet.view.jsf.model.User;
 
-// TODO refactor
 @ManagedBean(name = "postBean", eager = true)
 @RequestScoped
 public class PostBean {
-	private User user;
 	private String title;
 	private String content;
 	private String postVisibility;
 	private boolean privatePost;
 	private List<PostVisibility> visibilities = Arrays.asList(PostVisibility.values());
 	private Post post;
-	private List<Post> userPostsAdmin;
 	private List<Post> selfPosts;
 	private List<Post> friendsPosts;
 	private List<Post> feedPosts;
-	private String username;
 	private List<Post> userPosts;
 	private UploadedFile postPic;
 	private ApplicationFacade facade;
@@ -57,12 +52,20 @@ public class PostBean {
 		exceptionHandler = new JsfExceptionHandler();
 	}
 	
-	public User getUser() {
-		return user;
+	public ContextBean getContextBean() {
+		return contextBean;
 	}
 
-	public void setUser(User user) {
-		this.user = user;
+	public void setContextBean(ContextBean contextBean) {
+		this.contextBean = contextBean;
+	}
+
+	public ApplicationBean getApplicationBean() {
+		return applicationBean;
+	}
+
+	public void setApplicationBean(ApplicationBean applicationBean) {
+		this.applicationBean = applicationBean;
 	}
 	
 	public String getTitle() {
@@ -97,14 +100,6 @@ public class PostBean {
 		this.privatePost = privatePost;
 	}
 
-	public String getUsername() {
-		return username;
-	}
-
-	public void setUsername(String username) {
-		this.username = username;
-	}
-	
 	public UploadedFile getPostPic() {
 		return postPic;
 	}
@@ -113,24 +108,24 @@ public class PostBean {
 		this.postPic = postPic;
 	}
 	
-	public ContextBean getContextBean() {
-		return contextBean;
+	public List<PostVisibility> getVisibilities() {
+		return visibilities;
 	}
 
-	public void setContextBean(ContextBean contextBean) {
-		this.contextBean = contextBean;
+	public void setVisibilities(List<PostVisibility> visibilities) {
+		this.visibilities = visibilities;
 	}
-
-	public ApplicationBean getApplicationBean() {
-		return applicationBean;
+	
+	public Post getPost() {
+		return post;
 	}
-
-	public void setApplicationBean(ApplicationBean applicationBean) {
-		this.applicationBean = applicationBean;
+	
+	public void setPost(Post post) {
+		this.post = post;
 	}
 	
 	public String createPost() throws UserNotFoundException {
-		String token = contextBean.getCurrentSession().getUserToken();
+		String loggedUserToken = contextBean.getCurrentSession().getUserToken();
 		try {
 			byte[] picData = null;
 			
@@ -146,7 +141,7 @@ public class PostBean {
 			
 			ArrayList<byte[]> postMediaData = new ArrayList<byte[]>();
 			postMediaData.add(picData);
-			facade.createPost(token, title, content, visibility, postMediaData);
+			facade.createPost(loggedUserToken, title, content, visibility, postMediaData);
 		} catch (AuthenticationException e) {
 			this.exceptionHandler.handle(e);
 		} catch (InternalErrorException e) {
@@ -158,35 +153,16 @@ public class PostBean {
 		return null;
 	}
 	
-	public Post getPost() {
-		return post;
-	}
-	
-	public void setPost(Post post) {
-		this.post = post;
-	}
-	
-	public List<Post> getUserPosts() { 
-		if (userPostsAdmin == null) {
-			try {
-				userPostsAdmin = new JsfConnector(facade, contextBean.getCurrentSession().getUserToken()).getViewPosts(facade.getUserPostsAdmin(
-						contextBean.getCurrentSession().getUserToken(), 
-						getUser().getUserId()));
-			} catch (UnauthorizedOperationException | AuthenticationException | UserNotFoundException | InternalErrorException e) {
-				this.exceptionHandler.handle(e);
-			}
-		}
-		
-		return userPostsAdmin;
-	}
-	
 	public List<Post> getSelfPosts() {
 		try {
+			String loggedUserToken = contextBean.getCurrentSession().getUserToken();
 			if (selfPosts == null) {
-				selfPosts = new JsfConnector(facade, contextBean.getCurrentSession().getUserToken()).getViewPosts(facade.getSelfPosts(
-						contextBean.getCurrentSession().getUserToken()));
+				selfPosts = new JsfConnector(facade, loggedUserToken).getViewPosts(
+						facade.getSelfPosts(loggedUserToken));
 			}
-		} catch (AuthenticationException | InternalErrorException e) {
+		} catch (AuthenticationException e) {
+			this.exceptionHandler.handle(e);
+		} catch (InternalErrorException e) {
 			this.exceptionHandler.handle(e);
 		}
 		
@@ -196,8 +172,9 @@ public class PostBean {
 	public List<Post> getFeedPosts() {
 		if (feedPosts == null) {
 			try {
-				feedPosts = new JsfConnector(facade, contextBean.getCurrentSession().getUserToken()).getViewPosts(
-						facade.getFeedPosts(contextBean.getCurrentSession().getUserToken()));
+				String loggedUserToken = contextBean.getCurrentSession().getUserToken();
+				feedPosts = new JsfConnector(facade, loggedUserToken).getViewPosts(
+						facade.getFeedPosts(loggedUserToken));
 			} catch (AuthenticationException e) {
 				this.exceptionHandler.handle(e);
 			} catch (InternalErrorException e) {
@@ -211,10 +188,13 @@ public class PostBean {
 	public List<Post> getFriendsPosts() {
 		try {
 			if (friendsPosts == null) {
-				friendsPosts = new JsfConnector(facade, contextBean.getCurrentSession().getUserToken()).getViewPosts(
-						facade.getFriendsPosts(contextBean.getCurrentSession().getUserToken()));
+				String loggedUserToken = contextBean.getCurrentSession().getUserToken();
+				friendsPosts = new JsfConnector(facade, loggedUserToken).getViewPosts(
+						facade.getFriendsPosts(loggedUserToken));
 			}
-		} catch (AuthenticationException | InternalErrorException e) {
+		} catch (AuthenticationException e) {
+			this.exceptionHandler.handle(e);
+		} catch (InternalErrorException e) {
 			this.exceptionHandler.handle(e);
 		}
 		
@@ -225,18 +205,23 @@ public class PostBean {
 		try {
 			if (userPosts == null) {
 				String username = contextBean.getCurrentSession().getCurrentViewUser().getUsername();
+				String loggedUserToken = contextBean.getCurrentSession().getUserToken();
 				
 				if (username.isEmpty()) {
-					UserView userSummary = facade.getSelf(
-							contextBean.getCurrentSession().getUserToken());
+					UserView userSummary = facade.getSelf(loggedUserToken);
 					username = userSummary.getUsername();
 				}
 				
-				userPosts = new JsfConnector(facade, contextBean.getCurrentSession().getUserToken()).getViewPosts(
-						facade.getUserPosts(contextBean.getCurrentSession().getUserToken(), 
-								username));
+				userPosts = new JsfConnector(facade, loggedUserToken).getViewPosts(
+						facade.getUserPosts(loggedUserToken, username));
 			}
-		} catch (UnauthorizedOperationException | AuthenticationException | UserNotFoundException | InternalErrorException e) {
+		} catch (UnauthorizedOperationException e) {
+			this.exceptionHandler.handle(e);
+		} catch (AuthenticationException e) {
+			this.exceptionHandler.handle(e);
+		} catch (InternalErrorException e) {
+			this.exceptionHandler.handle(e);
+		} catch (UserNotFoundException e) {
 			this.exceptionHandler.handle(e);
 		}
 		
@@ -245,9 +230,10 @@ public class PostBean {
 	
 	public void deletePost() {
 		try {
-			facade.deletePost(contextBean.getCurrentSession().getUserToken(), post.getId());
-			userPosts = new JsfConnector(facade, contextBean.getCurrentSession().getUserToken()).getViewPosts(facade.getSelfPosts(
-					contextBean.getCurrentSession().getUserToken()));
+			String loggedUserToken = contextBean.getCurrentSession().getUserToken();
+			facade.deletePost(loggedUserToken, post.getId());
+			userPosts = new JsfConnector(facade, loggedUserToken).getViewPosts(
+					facade.getSelfPosts(loggedUserToken));
 		} catch (AuthenticationException e) {
 			this.exceptionHandler.handle(e);
 		} catch (UnauthorizedOperationException e) {
@@ -257,13 +243,5 @@ public class PostBean {
 		} catch (PostNotFoundException e) {
 			this.exceptionHandler.handle(e);
 		}
-	}
-
-	public List<PostVisibility> getVisibilities() {
-		return visibilities;
-	}
-
-	public void setVisibilities(List<PostVisibility> visibilities) {
-		this.visibilities = visibilities;
 	}
 }

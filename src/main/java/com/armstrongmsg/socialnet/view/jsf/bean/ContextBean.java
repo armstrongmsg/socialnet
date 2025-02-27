@@ -18,7 +18,6 @@ import com.armstrongmsg.socialnet.view.jsf.Session;
 import com.armstrongmsg.socialnet.view.jsf.model.JsfConnector;
 import com.armstrongmsg.socialnet.view.jsf.model.UserView;
 
-// TODO refactor
 @ManagedBean(name = "contextBean", eager = true)
 @SessionScoped
 public class ContextBean {
@@ -93,7 +92,8 @@ public class ContextBean {
 		if (currentViewUser == null) {
 			try {
 				String currentUserToken = this.session.getUserToken();
-				currentViewUser = new JsfConnector(facade, currentUserToken).getViewUserSummary(facade.getSelf(currentUserToken));
+				currentViewUser = new JsfConnector(facade, currentUserToken).getViewUserSummary(
+						facade.getSelf(currentUserToken));
 				this.session.setCurrentViewUser(currentViewUser);
 			} catch (AuthenticationException e) {
 				this.exceptionHandler.handle(e);

@@ -19,7 +19,6 @@ import com.armstrongmsg.socialnet.view.jsf.model.JsfConnector;
 import com.armstrongmsg.socialnet.view.jsf.model.User;
 import com.armstrongmsg.socialnet.view.jsf.model.UserView;
 
-// TODO refactor
 @ManagedBean(name = "friendshipBean", eager = true)
 @RequestScoped
 public class FriendshipBean {
@@ -85,7 +84,8 @@ public class FriendshipBean {
 	
 	public void addFriendshipRequest() {
 		try {
-			facade.addFriendshipRequest(contextBean.getCurrentSession().getUserToken(), username);
+			String loggedUserToken = contextBean.getCurrentSession().getUserToken();
+			facade.addFriendshipRequest(loggedUserToken, username);
 		} catch (AuthenticationException e) {
 			this.exceptionHandler.handle(e);
 		} catch (UserNotFoundException e) {
@@ -97,8 +97,9 @@ public class FriendshipBean {
 	
 	public List<String> getSentFriendshipRequests() {
 		try {
+			String loggedUserToken = contextBean.getCurrentSession().getUserToken();
 			List<FriendshipRequest> requests = 
-					facade.getSentFriendshipRequests(contextBean.getCurrentSession().getUserToken());
+					facade.getSentFriendshipRequests(loggedUserToken);
 			List<String> usernames = new ArrayList<String>();
 			
 			for (FriendshipRequest request : requests) {
@@ -117,8 +118,9 @@ public class FriendshipBean {
 	
 	public List<String> getReceivedFriendshipRequests() {
 		try {
+			String loggedUserToken = contextBean.getCurrentSession().getUserToken();
 			List<FriendshipRequest> requests = 
-					facade.getReceivedFriendshipRequests(contextBean.getCurrentSession().getUserToken());
+					facade.getReceivedFriendshipRequests(loggedUserToken);
 			List<String> usernames = new ArrayList<String>();
 			
 			for (FriendshipRequest request : requests) {
@@ -137,7 +139,8 @@ public class FriendshipBean {
 	
 	public void accceptFriendshipRequest() {
 		try {
-			facade.acceptFriendshipRequest(contextBean.getCurrentSession().getUserToken(), username);
+			String loggedUserToken = contextBean.getCurrentSession().getUserToken();
+			facade.acceptFriendshipRequest(loggedUserToken, username);
 		} catch (AuthenticationException e) {
 			this.exceptionHandler.handle(e);
 		} catch (FriendshipRequestNotFound e) {
@@ -149,7 +152,8 @@ public class FriendshipBean {
 	
 	public void rejectFriendshipRequest() {
 		try {
-			facade.rejectFriendshipRequest(contextBean.getCurrentSession().getUserToken(), username);
+			String loggedUserToken = contextBean.getCurrentSession().getUserToken();
+			facade.rejectFriendshipRequest(loggedUserToken, username);
 		} catch (AuthenticationException e) {
 			this.exceptionHandler.handle(e);
 		} catch (FriendshipRequestNotFound e) {
@@ -161,13 +165,17 @@ public class FriendshipBean {
 	
 	public List<UserView> getSelfFriends() {
 		try {
+			String loggedUserToken = contextBean.getCurrentSession().getUserToken();
+			
 			if (friends == null) {
-				friends = new JsfConnector(facade, contextBean.getCurrentSession().getUserToken()).getViewUserSummaries(
-						facade.getSelfFriends(contextBean.getCurrentSession().getUserToken()));
+				friends = new JsfConnector(facade, loggedUserToken).getViewUserSummaries(
+						facade.getSelfFriends(loggedUserToken));
 			}
 			
 			return friends;
-		} catch (AuthenticationException | InternalErrorException e) {
+		} catch (AuthenticationException e) {
+			this.exceptionHandler.handle(e);
+		} catch (InternalErrorException e) {
 			this.exceptionHandler.handle(e);
 		}
 		
@@ -177,11 +185,14 @@ public class FriendshipBean {
 	public List<UserView> getFriendRecommendations() {
 		try {
 			if (friendRecommendations == null) {
-				String token = contextBean.getCurrentSession().getUserToken();
-				friendRecommendations = new JsfConnector(facade, token).getViewUserSummaries(facade.getUserRecommendations(token));
+				String loggedUserToken = contextBean.getCurrentSession().getUserToken();
+				friendRecommendations = new JsfConnector(facade, loggedUserToken).getViewUserSummaries(
+						facade.getUserRecommendations(loggedUserToken));
 			}
 			return friendRecommendations;
-		} catch (AuthenticationException | InternalErrorException e) {
+		} catch (AuthenticationException e) {
+			this.exceptionHandler.handle(e);
+		} catch (InternalErrorException e) {
 			this.exceptionHandler.handle(e);
 		}
 		
@@ -190,8 +201,8 @@ public class FriendshipBean {
 	
 	public void unfriend() {
 		try {
-			String token = contextBean.getCurrentSession().getUserToken();
-			facade.unfriend(token, username);
+			String loggedUserToken = contextBean.getCurrentSession().getUserToken();
+			facade.unfriend(loggedUserToken, username);
 		} catch (AuthenticationException e) {
 			this.exceptionHandler.handle(e);
 		} catch (InternalErrorException e) {

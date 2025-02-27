@@ -32,22 +32,6 @@ public class EditProfileBean {
 		exceptionHandler = new JsfExceptionHandler();
 	}
 	
-	public String getProfileDescription() {
-		return profileDescription;
-	}
-
-	public void setProfileDescription(String profileDescription) {
-		this.profileDescription = profileDescription;
-	}
-	
-	public UploadedFile getProfilePic() {
-		return profilePic;
-	}
-
-	public void setProfilePic(UploadedFile profilePic) {
-		this.profilePic = profilePic;
-	}
-	
 	public ContextBean getContextBean() {
 		return contextBean;
 	}
@@ -64,12 +48,32 @@ public class EditProfileBean {
 		this.applicationBean = applicationBean;
 	}
 	
+	public String getProfileDescription() {
+		return profileDescription;
+	}
+
+	public void setProfileDescription(String profileDescription) {
+		this.profileDescription = profileDescription;
+	}
+	
+	public UploadedFile getProfilePic() {
+		return profilePic;
+	}
+
+	public void setProfilePic(UploadedFile profilePic) {
+		this.profilePic = profilePic;
+	}
+	
 	public void updateProfile() {
 		String currentUserToken = contextBean.getCurrentSession().getUserToken();
 		
 		try {
 			facade.updateProfile(currentUserToken, profileDescription, profilePic.getContent());
-		} catch (AuthenticationException | InternalErrorException | InvalidParameterException e) {
+		} catch (AuthenticationException e) {
+			this.exceptionHandler.handle(e);
+		} catch (InternalErrorException e) {
+			this.exceptionHandler.handle(e);
+		} catch (InvalidParameterException e) {
 			this.exceptionHandler.handle(e);
 		}
 	}

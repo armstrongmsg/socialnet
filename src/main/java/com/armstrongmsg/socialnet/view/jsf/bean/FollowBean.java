@@ -13,13 +13,11 @@ import com.armstrongmsg.socialnet.exceptions.AuthenticationException;
 import com.armstrongmsg.socialnet.exceptions.FollowAlreadyExistsException;
 import com.armstrongmsg.socialnet.exceptions.FollowNotFoundException;
 import com.armstrongmsg.socialnet.exceptions.InternalErrorException;
-import com.armstrongmsg.socialnet.exceptions.UnauthorizedOperationException;
 import com.armstrongmsg.socialnet.exceptions.UserNotFoundException;
 import com.armstrongmsg.socialnet.view.jsf.model.JsfConnector;
 import com.armstrongmsg.socialnet.view.jsf.model.User;
 import com.armstrongmsg.socialnet.view.jsf.model.UserView;
 
-// TODO refactor
 @ManagedBean(name = "followBean", eager = true)
 @RequestScoped
 public class FollowBean {
@@ -42,7 +40,23 @@ public class FollowBean {
 		facade = applicationBean.getFacade();
 		exceptionHandler = new JsfExceptionHandler();
 	}
-	
+
+	public ContextBean getContextBean() {
+		return contextBean;
+	}
+
+	public void setContextBean(ContextBean contextBean) {
+		this.contextBean = contextBean;
+	}
+
+	public ApplicationBean getApplicationBean() {
+		return applicationBean;
+	}
+
+	public void setApplicationBean(ApplicationBean applicationBean) {
+		this.applicationBean = applicationBean;
+	}
+
 	public User getFollower() {
 		return follower;
 	}
@@ -66,36 +80,18 @@ public class FollowBean {
 	public void setUsername(String username) {
 		this.username = username;
 	}
-	
-	public ContextBean getContextBean() {
-		return contextBean;
-	}
 
-	public void setContextBean(ContextBean contextBean) {
-		this.contextBean = contextBean;
-	}
-
-	public ApplicationBean getApplicationBean() {
-		return applicationBean;
-	}
-
-	public void setApplicationBean(ApplicationBean applicationBean) {
-		this.applicationBean = applicationBean;
-	}
-	
-	public void addFollowAdmin() {
-		try {
-			facade.addFollowAdmin(getContextBean().getCurrentSession().getUserToken(), 
-					getContextBean().getCurrentSession().getUserToken(), followed.getUserId());
-		} catch (UnauthorizedOperationException | AuthenticationException | UserNotFoundException | InternalErrorException | FollowAlreadyExistsException e) {
-			this.exceptionHandler.handle(e);
-		}
-	}
-	
 	public void addFollow() {
 		try {
-			facade.addFollow(getContextBean().getCurrentSession().getUserToken(), getUsername());
-		} catch (AuthenticationException | UserNotFoundException | InternalErrorException | FollowAlreadyExistsException e) {
+			String loggedUserToken = getContextBean().getCurrentSession().getUserToken();
+			facade.addFollow(loggedUserToken, getUsername());
+		} catch (AuthenticationException e) {
+			this.exceptionHandler.handle(e);
+		} catch (UserNotFoundException e) {
+			this.exceptionHandler.handle(e);
+		} catch (InternalErrorException e) {
+			this.exceptionHandler.handle(e);
+		} catch (FollowAlreadyExistsException e) {
 			this.exceptionHandler.handle(e);
 		}
 	}
@@ -103,12 +99,15 @@ public class FollowBean {
 	public List<UserView> getSelfFollows() {
 		try {
 			if (follows == null) {
-				follows = new JsfConnector(facade, contextBean.getCurrentSession().getUserToken()).getViewUserSummaries(
-						facade.getFollowedUsers(getContextBean().getCurrentSession().getUserToken()));
+				String loggedUserToken = getContextBean().getCurrentSession().getUserToken();
+				follows = new JsfConnector(facade, loggedUserToken).getViewUserSummaries(
+						facade.getFollowedUsers(loggedUserToken));
 			}
 			
 			return follows;
-		} catch (AuthenticationException | InternalErrorException e) {
+		} catch (AuthenticationException e) {
+			this.exceptionHandler.handle(e);
+		} catch (InternalErrorException e) {
 			this.exceptionHandler.handle(e);
 		}
 		
@@ -118,12 +117,15 @@ public class FollowBean {
 	public List<UserView> getFollowRecommendations() {
 		try {
 			if (followRecommendations == null) {
-				String token = getContextBean().getCurrentSession().getUserToken();
-				followRecommendations = new JsfConnector(facade, token).getViewUserSummaries(facade.getFollowRecommendations(token));
+				String loggedUserToken = getContextBean().getCurrentSession().getUserToken();
+				followRecommendations = new JsfConnector(facade, loggedUserToken).getViewUserSummaries(
+						facade.getFollowRecommendations(loggedUserToken));
 			}
 			
 			return followRecommendations;
-		} catch (AuthenticationException | InternalErrorException e) {
+		} catch (AuthenticationException e) {
+			this.exceptionHandler.handle(e);
+		} catch (InternalErrorException e) {
 			this.exceptionHandler.handle(e);
 		}
 		
@@ -132,8 +134,8 @@ public class FollowBean {
 	
 	public void unfollow() {
 		try {
-			String token = getContextBean().getCurrentSession().getUserToken();
-			facade.unfollow(token, username);
+			String loggedUserToken = getContextBean().getCurrentSession().getUserToken();
+			facade.unfollow(loggedUserToken, username);
 		} catch (AuthenticationException e) {
 			this.exceptionHandler.handle(e);
 		} catch (InternalErrorException e) {

@@ -17,7 +17,6 @@ import com.armstrongmsg.socialnet.model.FriendshipRequest;
 import com.armstrongmsg.socialnet.view.jsf.model.JsfConnector;
 import com.armstrongmsg.socialnet.view.jsf.model.UserView;
 
-// TODO refactor
 @ManagedBean(name = "profileBean", eager = true)
 @RequestScoped
 public class ProfileBean {
@@ -73,7 +72,9 @@ public class ProfileBean {
 			String token = contextBean.getCurrentSession().getUserToken();
 			return facade.isFriend(token, contextBean.getCurrentSession().getCurrentViewUser()
 					.getUsername());
-		} catch (AuthenticationException | InternalErrorException e) {
+		} catch (AuthenticationException e) {
+			this.exceptionHandler.handle(e);
+		} catch (InternalErrorException e) {
 			this.exceptionHandler.handle(e);
 		}
 		
@@ -89,7 +90,9 @@ public class ProfileBean {
 			String token = contextBean.getCurrentSession().getUserToken();
 			return facade.follows(token, contextBean.getCurrentSession().getCurrentViewUser()
 					.getUsername());
-		} catch (AuthenticationException | InternalErrorException e) {
+		} catch (AuthenticationException e) {
+			this.exceptionHandler.handle(e);
+		} catch (InternalErrorException e) {
 			this.exceptionHandler.handle(e);
 		}
 		
@@ -100,7 +103,8 @@ public class ProfileBean {
 		try {
 			if (loggedUserSummary == null) {
 				String loggedUser = contextBean.getCurrentSession().getUserToken();
-				loggedUserSummary = new JsfConnector(facade, loggedUser).getViewUserSummary(facade.getSelf(loggedUser));
+				loggedUserSummary = new JsfConnector(facade, loggedUser).
+						getViewUserSummary(facade.getSelf(loggedUser));
 			}
 			return loggedUserSummary.equals(contextBean.getCurrentSession().getCurrentViewUser());
 		} catch (AuthenticationException e) {
@@ -114,7 +118,8 @@ public class ProfileBean {
 
 	public boolean getFriendRequestIsSent() {
 		try {
-			List<FriendshipRequest> requests = facade.getSentFriendshipRequests(contextBean.getCurrentSession().getUserToken());
+			String loggedUserToken = contextBean.getCurrentSession().getUserToken();
+			List<FriendshipRequest> requests = facade.getSentFriendshipRequests(loggedUserToken);
 			String viewedUsername = contextBean.getCurrentSession().getCurrentViewUser().getUsername(); 
 			
 			for (FriendshipRequest request : requests) {

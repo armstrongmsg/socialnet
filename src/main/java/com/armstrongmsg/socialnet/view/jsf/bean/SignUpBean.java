@@ -19,6 +19,7 @@ public class SignUpBean {
 	private String password;
 	private String passwordCheck;
 	private boolean passwordInputsDoNotMatch;
+	private JsfExceptionHandler exceptionHandler;
 	private ApplicationFacade facade;
 
 	@ManagedProperty(value="#{applicationBean}")
@@ -27,6 +28,7 @@ public class SignUpBean {
 	@PostConstruct
 	public void initialize() {
 		facade = applicationBean.getFacade();
+		exceptionHandler = new JsfExceptionHandler();
 	}
 	
 	public String getUsername() {
@@ -81,7 +83,7 @@ public class SignUpBean {
 		try {
 			facade.addUser(username, getPassword(), profileDescription);
 		} catch (InternalErrorException | UserAlreadyExistsException | InvalidParameterException e) {
-			// TODO handle
+			this.exceptionHandler.handle(e);
 		}
 		return new NavigationController().showHome();
 	}
