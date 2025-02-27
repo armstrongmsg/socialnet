@@ -21,7 +21,6 @@ import com.armstrongmsg.socialnet.model.FriendshipRequest;
 import com.armstrongmsg.socialnet.model.User;
 import com.armstrongmsg.socialnet.util.PropertiesUtil;
 
-// TODO write tests specific for this class
 public class LruCache implements Cache {
 	private int totalCapacity;
 	private List<User> users;
@@ -69,7 +68,6 @@ public class LruCache implements Cache {
 			this.users.remove(foundUser);
 			this.users.add(0, foundUser);
 		} else {
-			// TODO add message
 			throw new UserNotFoundException();
 		}
 		
@@ -91,7 +89,6 @@ public class LruCache implements Cache {
 			this.users.remove(foundUser);
 			this.users.add(0, foundUser);
 		} else {
-			// TODO add message
 			throw new UserNotFoundException();
 		}
 		
@@ -102,13 +99,11 @@ public class LruCache implements Cache {
 	public void putUser(User user) throws UserAlreadyExistsException {
 		if (!this.users.contains(user)) {
 			if (this.users.size() >= totalCapacity) {
-				// FIXME
 				this.users.remove(this.users.size() - 1);
 			}
 			
 			this.users.add(user);
 		} else {
-			// TODO add message
 			throw new UserAlreadyExistsException();
 		}
 	}
@@ -116,7 +111,6 @@ public class LruCache implements Cache {
 	@Override
 	public void updateUser(User user) throws UserNotFoundException, InternalErrorException {
 		if (!this.users.contains(user)) {
-			// TODO add message
 			throw new UserNotFoundException();
 		} else {
 			int index = this.users.indexOf(user);
@@ -168,7 +162,6 @@ public class LruCache implements Cache {
 			
 			friendships.add(friendship);
 		} else {
-			// TODO add message
 			throw new FriendshipAlreadyExistsException();
 		}
 	}
@@ -179,7 +172,6 @@ public class LruCache implements Cache {
 			try {
 				putFriendship(friendship);
 			} catch (FriendshipAlreadyExistsException e) {
-				// TODO add message
 			}
 		}
 	}
@@ -187,7 +179,6 @@ public class LruCache implements Cache {
 	@Override
 	public void removeFriendship(Friendship friendship) throws FriendshipNotFoundException {
 		if (!this.friendships.remove(friendship)) {
-			// TODO add message
 			throw new FriendshipNotFoundException();
 		}
 	}
@@ -229,7 +220,6 @@ public class LruCache implements Cache {
 			
 			follows.add(follow);		
 		} else {
-			// TODO add message
 			throw new FollowAlreadyExistsException();
 		}
 	}
@@ -240,7 +230,6 @@ public class LruCache implements Cache {
 			try {
 				putFollow(follow);
 			} catch (FollowAlreadyExistsException e) {
-				// TODO add message
 			}
 		}
 	}
@@ -248,7 +237,6 @@ public class LruCache implements Cache {
 	@Override
 	public void removeFollow(Follow follow) throws FollowNotFoundException {
 		if (!this.follows.remove(follow)) {
-			// TODO add message
 			throw new FollowNotFoundException();
 		}
 	}
@@ -262,7 +250,6 @@ public class LruCache implements Cache {
 			
 			friendshipRequests.add(friendshipRequest);		
 		} else {
-			// TODO add message
 			throw new FriendshipRequestAlreadyExistsException();
 		}
 	}
@@ -273,7 +260,6 @@ public class LruCache implements Cache {
 			try {
 				putFriendshipRequest(request);
 			} catch (FriendshipRequestAlreadyExistsException e) {
-				// TODO add message
 			}
 		}
 	}
@@ -313,14 +299,12 @@ public class LruCache implements Cache {
 			}
 		}
 
-		// TODO add message
 		throw new FriendshipRequestNotFound();
 	}
 
 	@Override
 	public void removeFriendshipRequestById(FriendshipRequest friendshipRequest) throws FriendshipRequestNotFound {
 		if (!this.friendshipRequests.remove(friendshipRequest)) {
-			// TODO add message
 			throw new FriendshipRequestNotFound();
 		}
 	}

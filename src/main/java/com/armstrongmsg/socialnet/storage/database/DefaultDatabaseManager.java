@@ -19,7 +19,6 @@ import com.armstrongmsg.socialnet.storage.database.repository.FriendshipReposito
 import com.armstrongmsg.socialnet.storage.database.repository.FriendshipRequestRepository;
 import com.armstrongmsg.socialnet.storage.database.repository.UserRepository;
 
-// TODO test
 public class DefaultDatabaseManager implements DatabaseManager {
 	private UserRepository userRepository;
 	private FriendshipRepository friendshipRepository;

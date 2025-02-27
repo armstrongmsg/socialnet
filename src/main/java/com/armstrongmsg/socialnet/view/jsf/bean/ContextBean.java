@@ -98,8 +98,7 @@ public class ContextBean {
 			} catch (AuthenticationException e) {
 				this.exceptionHandler.handle(e);
 			} catch (InternalErrorException e) {
-				// FIXME
-				e.printStackTrace();
+				this.exceptionHandler.handle(e);
 			}
 		}
 		

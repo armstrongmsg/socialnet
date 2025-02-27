@@ -37,7 +37,6 @@ public class DefaultCache implements Cache {
 			}
 		}
 
-		// TODO add message
 		throw new UserNotFoundException();
 	}
 
@@ -49,7 +48,6 @@ public class DefaultCache implements Cache {
 			}
 		}
 		
-		// TODO add message
 		throw new UserNotFoundException();
 	}
 
@@ -58,7 +56,6 @@ public class DefaultCache implements Cache {
 		if (!this.users.contains(user)) {
 			this.users.add(user);
 		} else {
-			// TODO add message
 			throw new UserAlreadyExistsException();
 		}
 	}
@@ -66,7 +63,6 @@ public class DefaultCache implements Cache {
 	@Override
 	public void updateUser(User user) throws UserNotFoundException {
 		if (!this.users.contains(user)) {
-			// TODO add message
 			throw new UserNotFoundException();
 		} else {
 			int index = this.users.indexOf(user);
@@ -120,7 +116,6 @@ public class DefaultCache implements Cache {
 		if (!this.friendships.contains(friendship)) {
 			this.friendships.add(friendship);
 		} else {
-			// TODO add message
 			throw new FriendshipAlreadyExistsException();
 		}
 	}
@@ -131,7 +126,6 @@ public class DefaultCache implements Cache {
 			try {
 				putFriendship(friendship);
 			} catch (FriendshipAlreadyExistsException e) {
-				// TODO add message
 			}
 		}
 	}
@@ -139,7 +133,6 @@ public class DefaultCache implements Cache {
 	@Override
 	public void removeFriendship(Friendship friendship) throws FriendshipNotFoundException {
 		if (!this.friendships.remove(friendship)) {
-			// TODO add message
 			throw new FriendshipNotFoundException();
 		}
 	}
@@ -183,7 +176,6 @@ public class DefaultCache implements Cache {
 		if (!this.follows.contains(follow)) {
 			this.follows.add(follow);
 		} else {
-			// TODO add message
 			throw new FollowAlreadyExistsException();
 		}
 	}
@@ -194,7 +186,6 @@ public class DefaultCache implements Cache {
 			try {
 				this.putFollow(follow);
 			} catch (FollowAlreadyExistsException e) {
-				// TODO add message
 			}
 		}
 	}
@@ -202,7 +193,6 @@ public class DefaultCache implements Cache {
 	@Override
 	public void removeFollow(Follow follow) throws FollowNotFoundException {
 		if (!this.follows.remove(follow)) {
-			// TODO add message
 			throw new FollowNotFoundException();
 		}
 	}
@@ -212,7 +202,6 @@ public class DefaultCache implements Cache {
 		if (!this.friendshipRequests.contains(friendshipRequest)) {
 			this.friendshipRequests.add(friendshipRequest);
 		} else {
-			// TODO add message
 			throw new FriendshipRequestAlreadyExistsException();
 		}
 	}
@@ -252,7 +241,6 @@ public class DefaultCache implements Cache {
 			}
 		}
 		
-		// TODO add message
 		throw new FriendshipRequestNotFound();
 	}
 
@@ -269,7 +257,6 @@ public class DefaultCache implements Cache {
 			try {
 				this.putFriendshipRequest(request);
 			} catch (FriendshipRequestAlreadyExistsException e) {
-				// TODO add message
 			}
 		}
 	}

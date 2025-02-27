@@ -76,7 +76,6 @@ public class StorageFacade {
 	public List<Friendship> getFriendshipsByUserId(String userId) throws InternalErrorException {
 		List<Friendship> friendships = cache.getFriendshipsByUserId(userId);
 		
-		// FIXME should catch an exception by the cache
 		if (friendships.isEmpty()) {
 			friendships = databaseManager.getFriendshipsByUserId(userId);
 			cache.putFriendships(friendships);
@@ -94,7 +93,6 @@ public class StorageFacade {
 	public List<Follow> getFollowsByUserId(String userId) throws InternalErrorException {
 		List<Follow> follows = cache.getFollowsByUserId(userId);
 		
-		// FIXME should catch an exception by the cache
 		if (follows.isEmpty()) {
 			follows = databaseManager.getFollowsByUserId(userId);
 			cache.putFollows(follows);
@@ -126,7 +124,6 @@ public class StorageFacade {
 	public List<FriendshipRequest> getSentFrienshipRequestsById(String userId) throws InternalErrorException {
 		List<FriendshipRequest> requests = cache.getSentFriendshipRequestsById(userId);
 		
-		// FIXME should catch an exception by the cache
 		if (requests.isEmpty()) {
 			requests = databaseManager.getSentFriendshipRequestsById(userId);
 			cache.putFriendshipRequests(requests);
@@ -138,7 +135,6 @@ public class StorageFacade {
 	public List<FriendshipRequest> getReceivedFrienshipRequestsById(String userId) throws InternalErrorException {
 		List<FriendshipRequest> requests = cache.getReceivedFriendshipRequestsById(userId);
 		
-		// FIXME should catch an exception by the cache
 		if (requests.isEmpty()) {
 			requests = databaseManager.getReceivedFriendshipRequestsById(userId);
 			cache.putFriendshipRequests(requests);
