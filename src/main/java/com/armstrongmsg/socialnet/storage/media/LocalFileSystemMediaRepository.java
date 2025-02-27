@@ -26,7 +26,7 @@ public class LocalFileSystemMediaRepository implements MediaRepository {
 	}
 
 	public LocalFileSystemMediaRepository() throws FatalErrorException {
-		this(ApplicationPaths.getApplicationBasePath() + File.separator + DEFAULT_MEDIA_LOCAL_PATH);
+		this(ApplicationPaths.getApplicationBasePath());
 	}
 
 	@Override
