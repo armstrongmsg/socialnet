@@ -10,6 +10,7 @@
 <h:head>
 	<title>Friends</title>
 	<h:outputStylesheet library="css" name="styles.css" />
+	<h:outputStylesheet library="webjars" name="primeflex/3.3.1/primeflex.min.css" />
 </h:head>
 
 <h:body>
@@ -64,16 +65,23 @@
 		<!-- DEPRECATED! -->
 		<p:panelGrid columns="1">
 			<div>Your friends</div>
-			<p:dataGrid var="friend" value="#{friendshipBean.selfFriends}">
+			<p:dataGrid var="friend" value="#{friendshipBean.selfFriends}" 
+					emptyMessage="No friends found.">
 				<p:panelGrid columns="1">
 					<p:column>
-							<p:graphicImage value="#{friend.cachedPicturePath}" width="70"/>
-							<p:commandButton value="#{friend.username}"
-								action="#{navigationController.showPage}" ajax="false">
-								<f:param name="pageId" value="user-profile" />
-								<f:setPropertyActionListener target="#{contextBean.viewUser}"
-									value="#{friend}" />
-							</p:commandButton>
+						<div class="grid">
+							<div class="col-12">
+								<p:graphicImage value="#{friend.cachedPicturePath}" width="70"/>
+							</div>
+							<div class="col-12">
+								<p:commandButton value="#{friend.username}"
+									action="#{navigationController.showPage}" ajax="false">
+										<f:param name="pageId" value="user-profile" />
+											<f:setPropertyActionListener target="#{contextBean.viewUser}"
+												value="#{friend}" />
+								</p:commandButton>
+							</div>
+						</div>
 					</p:column>
 				</p:panelGrid>
 			</p:dataGrid>
@@ -88,6 +96,7 @@
 				emptyMessage="No request found.">
 				<p:column>
 					<h:panelGrid columns="1">
+						<p:graphicImage value="#{friend.cachedPicturePath}" width="70"/>
 						<h:outputText value="#{username}" />
 					</h:panelGrid>
 				</p:column>
@@ -130,16 +139,22 @@
 		<p:panelGrid columns="1">
 			<div>Recommended users</div>
 			<p:dataGrid var="user"
-				value="#{friendshipBean.friendRecommendations}">
+				value="#{friendshipBean.friendRecommendations}" emptyMessage="No recommendation found.">
 				<p:panelGrid columns="1">
 					<p:column>
-						<p:graphicImage value="#{user.cachedPicturePath}" cache="false" width="70"/>
-						<p:commandButton value="#{user.username}"
-							action="#{navigationController.showPage}" ajax="false">
-							<f:param name="pageId" value="user-profile" />
-							<f:setPropertyActionListener target="#{contextBean.viewUser}"
-								value="#{user}" />
-						</p:commandButton>
+						<div class="grid">
+							<div class="col-12">
+								<p:graphicImage value="#{user.cachedPicturePath}" cache="false" width="70"/>	
+							</div>
+							<div class="col-12">
+								<p:commandButton value="#{user.username}"
+									action="#{navigationController.showPage}" ajax="false">
+										<f:param name="pageId" value="user-profile" />
+											<f:setPropertyActionListener target="#{contextBean.viewUser}"
+												value="#{user}" />
+								</p:commandButton>	
+							</div>
+						</div>
 					</p:column>
 				</p:panelGrid>
 			</p:dataGrid>

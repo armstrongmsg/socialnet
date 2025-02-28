@@ -10,6 +10,7 @@
 <h:head>
 	<title>User profile</title>
 	<h:outputStylesheet library="css" name="styles.css" />
+	<h:outputStylesheet library="webjars" name="primeflex/3.3.1/primeflex.min.css" />
 </h:head>
 
 <h:body>
@@ -60,64 +61,92 @@
 		</p:toolbar>
 	</h:form>
 
-	<h:form>
-		<p:toolbar>
-			<f:facet name="left">
-				<p:panelGrid columns="1">
-					<p:graphicImage value="#{contextBean.viewUser.cachedPicturePath}" cache="false" width="150"/>
-					<h:outputText value="#{contextBean.viewUser.username}" />
-					<h:outputText value="#{contextBean.viewUser.profileDescription}" />
-				</p:panelGrid>
-			</f:facet>
-
-			<f:facet name="right">
-				<p:commandButton value="Add as friend"
-					action="#{friendshipBean.addFriendshipRequest}"
-					rendered="#{profileBean.canAddAsFriend}" ajax="false">
-					<f:setPropertyActionListener target="#{friendshipBean.username}"
-						value="#{contextBean.viewUser.username}" />
-				</p:commandButton>
-
-				<h:outputText value="Friend request sent"
-					rendered="#{profileBean.friendRequestIsSent}" />
-
-				<p:commandButton value="Unfriend"
-					action="#{friendshipBean.unfriend}"
-					rendered="#{profileBean.isFriend}" ajax="false">
-					<f:setPropertyActionListener target="#{friendshipBean.username}"
-						value="#{contextBean.viewUser.username}" />
-				</p:commandButton>
-
-				<p:commandButton value="Follow" action="#{followBean.addFollow}"
-					rendered="#{profileBean.canFollow}" ajax="false">
-					<f:setPropertyActionListener target="#{followBean.username}"
-						value="#{contextBean.viewUser.username}" />
-				</p:commandButton>
-
-				<p:commandButton value="Unfollow" action="#{followBean.unfollow}"
-					rendered="#{profileBean.isFollowed}" ajax="false">
-					<f:setPropertyActionListener target="#{followBean.username}"
-						value="#{contextBean.viewUser.username}" />
-				</p:commandButton>
-			</f:facet>
-		</p:toolbar>
-	</h:form>
-
-	<h:form>
-        <p:dataScroller value="#{postBean.posts}" var="post" chunkSize="10" mode="inline"
-                        scrollHeight="500">
-            <p:panelGrid columns="2">
-                <p:graphicImage value="#{post.cachedPicturePath}" width="800"/>
-            	<div>#{post.date}</div>
-            	<div>#{post.title}</div>
-                <div>#{post.content}</div>
-                <div><p:commandButton value="Delete" action="#{postBean.deletePost}"
-						rendered="#{profileBean.isSelfProfile}" ajax="false">
-						<f:setPropertyActionListener target="#{postBean.post}"
-							value="#{post}" />
-					</p:commandButton></div>
-            </p:panelGrid>
-        </p:dataScroller>
-    </h:form>
+	<div class="card">
+	    <div class="grid">
+	        <div class="col-2 flex align-items-start justify-content-center">
+	        	<div class="grid">
+	        		<div class="col-12 flex align-items-start justify-content-center">
+	        			<p:graphicImage value="#{contextBean.viewUser.cachedPicturePath}" cache="false" width="150"/>
+	        		</div>
+	        		
+	        		<div class="col-12 flex align-items-start justify-content-center">
+	        			<h:outputText value="#{contextBean.viewUser.username}" />
+	        		</div>
+	        		
+	        		<div class="col-12 flex align-items-start justify-content-center">
+	        			<h:outputText value="#{contextBean.viewUser.profileDescription}" />
+	        		</div>
+	        		
+	        		<div class="col-12 flex align-items-start justify-content-center">
+	        			<h:form>
+	        				<p:commandButton value="Add as friend"
+								action="#{friendshipBean.addFriendshipRequest}"
+									rendered="#{profileBean.canAddAsFriend}" ajax="false">
+										<f:setPropertyActionListener target="#{friendshipBean.username}"
+											value="#{contextBean.viewUser.username}" />
+							</p:commandButton>
+							
+							<h:outputText value="Friend request sent"
+								rendered="#{profileBean.friendRequestIsSent}" />
+								
+							<p:commandButton value="Unfriend"
+								action="#{friendshipBean.unfriend}"
+									rendered="#{profileBean.isFriend}" ajax="false">
+										<f:setPropertyActionListener target="#{friendshipBean.username}"
+											value="#{contextBean.viewUser.username}" />
+							</p:commandButton>
+	        			</h:form>
+	        		</div>	
+	        			
+	        		<div class="col-12 flex align-items-start justify-content-center">
+	        			<h:form>
+	        				<p:commandButton value="Follow" action="#{followBean.addFollow}"
+								rendered="#{profileBean.canFollow}" ajax="false">
+									<f:setPropertyActionListener target="#{followBean.username}"
+										value="#{contextBean.viewUser.username}" />
+							</p:commandButton>
+				
+							<p:commandButton value="Unfollow" action="#{followBean.unfollow}"
+								rendered="#{profileBean.isFollowed}" ajax="false">
+									<f:setPropertyActionListener target="#{followBean.username}"
+										value="#{contextBean.viewUser.username}" />
+							</p:commandButton>		
+	        			</h:form>	
+	        		</div>
+	        	</div>
+	        </div>
+	        <div class="col-9">
+	        	<h:form>
+	        		<p:dataScroller value="#{postBean.posts}" var="post" chunkSize="10" mode="inline"
+	                        scrollHeight="750">
+		                <div class="grid">
+			            	<div class="col-8">
+			            		<p:graphicImage value="#{post.cachedPicturePath}" width="800"/>
+			            	</div>
+			            	
+			            	<div>
+			            		<div>
+			            			<h:outputText value="#{post.date}" />
+			            		</div>
+			                	<div>
+			                		<h:outputText value="#{post.title}" />
+			                	</div>
+			                	<div>
+			                		<h:outputText value="#{post.content}" />
+			                	</div>
+			                	<div>
+			                		<p:commandButton value="Delete" action="#{postBean.deletePost}"
+										rendered="#{profileBean.isSelfProfile}" ajax="false">
+										<f:setPropertyActionListener target="#{postBean.post}"
+											value="#{post}" />
+									</p:commandButton>
+			                	</div>
+			                </div>
+		            	</div>            
+	       	     	</p:dataScroller>
+	    		</h:form>
+	        </div>
+	    </div>
+    </div>
 </h:body>
 </html>
