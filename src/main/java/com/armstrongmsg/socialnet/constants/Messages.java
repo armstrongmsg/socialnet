@@ -101,6 +101,7 @@ public class Messages {
 		public static final String NULL_PASSWORD = "Null password.";
 		public static final String PICTURE_DATA_CANNOT_BE_NULL = "Picture data cannot be null.";
 		public static final String POST_CONTENT_IS_NULL = "Post content is null.";
+		public static final String POST_MEDIA_DATA_ELEMENT_IS_NULL = "Post media data element is null.";
 		public static final String POST_TITLE_IS_NULL = "Post title is null.";
 		public static final String POST_VISIBILITY_IS_NULL = "Post visibility is null.";
 		public static final String POST_MEDIA_DATA_IS_NULL = "Post media data is null.";

@@ -461,6 +461,33 @@ public class IntegrationTest extends PersistenceTest {
 		assertPicturePathExists(createdPost.getMediaIds().get(0));
 	}
 	
+	@Test
+	public void testCreateAndGetPostByNonAdminWithNoMediaData() 
+			throws UnauthorizedOperationException, AuthenticationException, UserNotFoundException, 
+			InternalErrorException, UserAlreadyExistsException, InvalidParameterException {
+		String adminToken = loginAsAdmin();
+		
+		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
+		
+		String userToken = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
+		
+		List<Post> userPosts = facade.getSelfPosts(userToken);
+		assertTrue(userPosts.isEmpty());
+		
+		ArrayList<byte[]> postMediaData = new ArrayList<byte[]>();
+		facade.createPost(userToken, NEW_POST_TITLE, NEW_POST_CONTENT, NEW_POST_VISIBILITY, postMediaData);
+		
+		List<Post> userPostsAfterCreation = facade.getSelfPosts(userToken);
+		
+		assertEquals(1, userPostsAfterCreation.size());
+		Post createdPost = userPostsAfterCreation.get(0);
+		
+		assertEquals(NEW_POST_TITLE, createdPost.getTitle());
+		assertEquals(NEW_POST_CONTENT, createdPost.getContent());
+		assertEquals(NEW_POST_VISIBILITY, createdPost.getVisibility());
+		assertTrue(createdPost.getMediaIds().isEmpty());
+	}
+	
 	@Test(expected = InvalidParameterException.class)
 	public void testCannotCreatePostWithNullTitle() 
 			throws AuthenticationException, InternalErrorException, UnauthorizedOperationException, 
@@ -519,6 +546,21 @@ public class IntegrationTest extends PersistenceTest {
 		ArrayList<byte[]> postMediaData = new ArrayList<byte[]>();
 		postMediaData.add(PICTURE_DATA);
 		facade.createPost(userToken, NEW_POST_TITLE, NEW_POST_CONTENT, NEW_POST_VISIBILITY, null);
+	}
+	
+	@Test(expected = InvalidParameterException.class)
+	public void testCannotCreatePostWithNullMediaDataElement() 
+			throws AuthenticationException, InternalErrorException, UnauthorizedOperationException, 
+			UserAlreadyExistsException, InvalidParameterException {
+		String adminToken = loginAsAdmin();
+		
+		facade.addUser(adminToken, NEW_USERNAME_1, NEW_USER_PASSWORD_1, NEW_USER_PROFILE_DESCRIPTION_1);
+		
+		String userToken = loginAsUser(NEW_USERNAME_1, NEW_USER_PASSWORD_1);
+		
+		ArrayList<byte[]> postMediaData = new ArrayList<byte[]>();
+		postMediaData.add(null);
+		facade.createPost(userToken, NEW_POST_TITLE, NEW_POST_CONTENT, NEW_POST_VISIBILITY, postMediaData);
 	}
 	
 	@Test

@@ -191,18 +191,21 @@ public class Network {
 			throw new InvalidParameterException(Messages.Exception.POST_MEDIA_DATA_IS_NULL);	
 		}
 
-		byte[] mediaData;
-		
-		if (!postMediaData.isEmpty()) {
-			mediaData = postMediaData.get(0);
-		} else {
-			mediaData = new byte[] {};
+		for (byte[] postMediaDataElement : postMediaData) {
+			if (postMediaDataElement == null) {
+				throw new InvalidParameterException(Messages.Exception.POST_MEDIA_DATA_ELEMENT_IS_NULL);	
+			}
 		}
 		
 		try {
-			String pictureId = createMedia(user, mediaData);
 			List<String> pictureIds = new ArrayList<String>();
-			pictureIds.add(pictureId);
+			
+			if (!postMediaData.isEmpty()) {
+				byte[] mediaData = postMediaData.get(0);
+				String pictureId = createMedia(user, mediaData);
+				pictureIds.add(pictureId);
+			}
+			
 			user.getProfile().createPost(title, content, newPostVisibility, pictureIds);
 			this.storageFacade.updateUser(user);
 		} catch (UnauthorizedOperationException e) {

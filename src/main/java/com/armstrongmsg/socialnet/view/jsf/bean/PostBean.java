@@ -127,10 +127,11 @@ public class PostBean {
 	public String createPost() throws UserNotFoundException {
 		String loggedUserToken = contextBean.getCurrentSession().getUserToken();
 		try {
-			byte[] picData = null;
+			ArrayList<byte[]> postMediaData = new ArrayList<byte[]>();
 			
 			if (this.postPic != null) {
-				picData = this.postPic.getContent();
+				byte[] picData = this.postPic.getContent();
+				postMediaData.add(picData);
 			}
 			
 			PostVisibility visibility = PostVisibility.PUBLIC;
@@ -139,8 +140,6 @@ public class PostBean {
 				visibility = PostVisibility.PRIVATE;
 			}
 			
-			ArrayList<byte[]> postMediaData = new ArrayList<byte[]>();
-			postMediaData.add(picData);
 			facade.createPost(loggedUserToken, title, content, visibility, postMediaData);
 		} catch (AuthenticationException e) {
 			this.exceptionHandler.handle(e);
